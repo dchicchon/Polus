@@ -1,0 +1,225 @@
+#date {
+  display: flex;
+  justify-content: center;
+  color: white;
+  font-size: 2rem;
+  font-weight: 100;
+  padding-bottom: 0.5rem;
+}
+
+#clock {
+  display: flex;
+  justify-content: center;
+  color: white;
+  font-size: 4.75rem;
+  font-weight: 100;
+  padding-bottom: 0.5rem;
+}
+
+.view {
+  display: flex;
+  justify-content: center;
+  width: 15%;
+  margin: 0 auto;
+  font-weight: 100;
+}
+
+section {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* =========================================== */
+/* DAY VIEW */
+/* =========================================== */
+
+#today {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 95%;
+  margin: 0 auto;
+  animation-name: fadeIn;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+.dayTitle {
+  text-align: center;
+}
+
+.dayDetails {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dayDetails ul {
+  margin: 0 auto;
+  list-style-type: none;
+  width: 62.5%;
+  /* display: flex; */
+  /* justify-content: center; */
+  /* flex-direction: column; */
+  padding: 0;
+}
+
+.dayDetails ul li {
+  background: rgba(21, 115, 170, 0.63);
+  transition: background 0.5s;
+  color: white;
+  /* width: 50%; */
+  margin: 0.25rem;
+  padding: 0.5rem;
+  border-radius: 25px;
+  font-size: 1rem;
+}
+
+.dayDetails ul li:hover {
+  background: rgba(24, 127, 187, 0.993);
+  cursor: pointer;
+}
+
+/* =========================================== */
+/* =========================================== */
+
+/* =========================================== */
+/* WEEK VIEW */
+/* =========================================== */
+#week {
+  animation-name: fadeIn;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+  backface-visibility: hidden;
+}
+
+.weekday {
+  border: 0.5px solid rgba(32, 32, 32, 0.555);
+  min-height: 14rem;
+  width: 11rem;
+  background: rgba(0, 0, 0, 0);
+  border-radius: 25px 25px 10px 10px;
+  padding: 0.5rem;
+  transition: transform 0.5s;
+  transform: translateZ(0);
+}
+
+.weekday:hover {
+  transform: translateY(-2.5%);
+}
+
+.weekDate {
+  color: white;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.weekTitle {
+  /* background: rgb(233, 230, 230); */
+  /* background: rgb(24, 127, 187) ; */
+  padding: 0.25rem;
+  color: white;
+  text-align: center;
+  font-size: 1.5rem;
+  letter-spacing: 0.25rem;
+  font-weight: 100;
+  border-radius: 25px 25px 0 0;
+}
+
+.details ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.details ul li {
+  /* background: rgb(24, 127, 187); */
+  background: rgba(21, 115, 170, 0.63);
+  transition: background 0.5s;
+  color: white;
+  margin: 0.25rem;
+  padding: 0.5rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+}
+
+.details ul li:hover {
+  background: rgba(24, 127, 187, 0.993);
+  cursor: pointer;
+}
+
+.add {
+  background: none;
+  width: 1.5rem;
+  font-size: 1.25rem;
+  border-radius: 100%;
+  margin-left: 10px;
+  transition: background 0.5s;
+  padding: 0 0.4rem;
+}
+.add:hover {
+  background: rgba(43, 129, 185, 0.76);
+}
+
+.newItem {
+  border: none;
+  width: 95%;
+  background: none;
+  color: white;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.newItem:focus {
+  border: none;
+  outline: none;
+}
+
+/* =========================================== */
+/* =========================================== */
+
+/* =========================================== */
+/* MONTH VIEW */
+/* =========================================== */
+
+#month {
+  animation-name: fadeIn;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+.month {
+  border: 0.5px solid rgba(32, 32, 32, 0.555);
+  width: 80%;
+  background: rgba(0, 0, 0, 0);
+  border-radius: 25px 25px 10px 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.monthTitle {
+}
+
+.monthDay {
+  width: 10rem;
+  height: 7.6rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.5s;
+}
+
+.monthDay:hover {
+  background: rgba(102, 101, 101, 0.623);
+}
+
+/* =========================================== */
+/* =========================================== */
