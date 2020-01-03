@@ -150,17 +150,38 @@ const createWeek = () => {
 
     // Probably can run this get function at the top of the page for only one time
     chrome.storage.sync.get([`${date}`], function(result) {
-      console.log(date);
-      console.log(result);
+      //   console.log(date);
+      //   console.log(result);
       if (!isEmpty(result)) {
-        console.log(result[`${date}`]);
+        // console.log(result[`${date}`]);
         let entriesArr = result[`${date}`];
         for (let i = 0; i < entriesArr.length; i++) {
           let entryListItem = document.createElement("li");
           let entryInput = document.createElement("input");
+
+          //   Delete. Should remove the entire note and delete the entry in storage.
+          //   1. Give the button the key of the entry index
           let entryDelete = document.createElement("button");
           entryDelete.textContent = "x";
+          entryDelete.setAttribute("value", `${i}`);
           entryDelete.setAttribute("class", "delete");
+
+          //   We can use a helper function here
+          entryDelete.onclick = function() {
+            chrome.storage.sync.get([`${date}`], function(result) {
+              let dateEntries = result[`${date}`];
+              let index = parseInt(entryDelete.value);
+              let newEntries = arrayRemove(dateEntries, index);
+
+              console.log(index);
+              console.log(newEntries);
+              chrome.storage.sync.set({ [date]: newEntries }, function() {
+                console.log(date);
+                console.log("Removed Entry");
+              });
+            });
+          };
+
           entryInput.setAttribute("class", "newItem");
           entryInput.value = entriesArr[i];
           entryListItem.appendChild(entryInput);
@@ -170,19 +191,14 @@ const createWeek = () => {
       }
     });
 
-    let ul = document.createElement("ul");
+    // let ul = document.createElement("ul");
 
     // Need to find a way to pass the js object to the btn? Maybe I can pass it by creating the event listener here
     let btn = document.createElement("button");
     btn.textContent = "+";
     btn.setAttribute("class", "add");
 
-    // Make a chrome object of the day itself
-    // so 12/31/2019 should be an object
-    // and it should have an array of entries
-    // so a different version would be like
-    // I hope I can do this
-    //  12/31/2019 : []
+    // This can go in the add function later on. For now, no clue how to include the date in a seperate function
     btn.onclick = function() {
       let entryListItem = document.createElement("li");
       let entryInput = document.createElement("input");
@@ -200,7 +216,7 @@ const createWeek = () => {
           console.log(entryInput.value);
           chrome.storage.sync.get([`${date}`], function(result) {
             // Create a date object if it does not exist.
-            console.log(date);
+            // console.log(date);
             if (isEmpty(result)) {
               let entries = [`${entryInput.value}`];
               chrome.storage.sync.set({ [date]: entries }, function() {});
@@ -216,34 +232,9 @@ const createWeek = () => {
       };
       let ul = this.previousElementSibling;
       entryListItem.appendChild(entryInput);
-      ul.appendChild(entryListItem);
-      // Check if date object exists
-
-      //
-
-      //   At the moment it looks like its getting the nex day in front of it rather than its actual Date
-      //   chrome.storage.sync.get(["entries"], function(result) {
-      //     // console.log(result["entries"]);
-
-      //     let oldEntries = result["entries"];
-      //     let newEntries = [entry];
-      //     if (oldEntries !== null) {
-      //       let combineEntries = newEntries.concat(oldEntries);
-      //       chrome.storage.sync.set({ entries: combineEntries }, function() {
-      //         console.log("Updated Entries");
-      //         console.log(combineEntries);
-      //       });
-      //     } else {
-      //       chrome.storage.sync.set({ entries: newEntries }, function() {
-      //         console.log(`Entries is set to ${newEntries}`);
-      //       });
-      //     }
-      //   });
+      detailsList.appendChild(entryListItem);
     };
 
-    // btn.addEventListener()
-
-    details.appendChild(ul);
     details.appendChild(btn);
 
     weekday.appendChild(weekDate);
@@ -339,37 +330,7 @@ const updateTime = () => {
 const addFunction = () => {
   let addButtons = document.getElementsByClassName("add");
   for (let i = 0; i < addButtons.length; i++) {
-    addButtons[i].onclick = function() {
-      // The JavaScript this keyword refers to the object it belongs to.
-      let listItem = document.createElement("li");
-      let inputItem = document.createElement("input");
-      inputItem.setAttribute("class", "newItem");
-      inputItem.setAttribute("autofocus", "true");
-
-      // Click on item to edit it. In here, we should update the note in the db as well
-      inputItem.onclick = function() {
-        console.log("editing item!");
-      };
-
-      // https://stackoverflow.com/questions/11365632/how-to-detect-when-the-user-presses-enter-in-an-input-field
-      // When I press 'enter' (keyCode = 13)
-      inputItem.onkeypress = function(e) {
-        if (!e) e = window.event;
-        let keyCode = e.keyCode || e.which;
-
-        // This is where I should enter the note in the db; Also include a submit button
-        if (keyCode === 13) {
-          this.blur();
-          console.log("Entered Note!");
-        }
-      };
-
-      let ul = this.previousElementSibling;
-      listItem.appendChild(inputItem);
-      ul.appendChild(listItem);
-      // this.previousSibling.appendChild(newItem)
-      // let newItem = document.createElement("p")
-    };
+    addButtons[i].onclick = function() {};
   }
 };
 
@@ -381,6 +342,13 @@ function isEmpty(obj) {
   }
   return true;
 }
+
+const arrayRemove = (arr, value) => {
+  return arr.filter(function(ele) {
+    return arr.indexOf(ele) != value;
+  });
+};
+
 // +++++++++++++++++++++++++++++++++++++++++
 
 // START APP
@@ -397,7 +365,7 @@ const startApp = () => {
   updateTime(); // this updates the clock
 
   //   add function moved to each creation block
-  //   addFunction(); // ability to include new items on a day
+  // addFunction(); // ability to include new items on a day
   let timer = setInterval(updateTime, 1000); // set a timer that executes the updateTime() function every second
 };
 
