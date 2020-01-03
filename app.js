@@ -1,10 +1,6 @@
-// Find out what this is
-// update: the first time the user adds the extension, I believe we set initial variables
+// The first time the user adds the extension, we set initial storage
 chrome.runtime.onInstalled.addListener(function() {
-  // Removed entries array for the moment
-  chrome.storage.sync.set({ view: "today" }, function() {
-    // console.log("Storage key set to today");
-  });
+  chrome.storage.sync.set({ view: "today" }, function() {});
 });
 
 // MAIN VARIABLES
@@ -77,9 +73,6 @@ const viewFunction = () => {
 };
 // +++++++++++++++++++++++++++++++++++++++++
 
-// there are months in a year, 12 of them. In our case, we only want to show the next three months
-// for each month there are a certain amount of days (30, 31, feb = 28?)
-
 // PLANNER BUILDS
 // ========================================
 const createToday = () => {
@@ -106,7 +99,6 @@ const createToday = () => {
   chrome.storage.sync.get([`${date}`], function(result) {
     // console.log("Get storage");
     if (!isEmpty(result)) {
-      console.log(result[`${date}`]);
       let entriesArr = result[`${date}`];
       for (let i = 0; i < entriesArr.length; i++) {
         let entryListItem = document.createElement("li");
@@ -154,7 +146,6 @@ const createToday = () => {
   dayView.appendChild(details);
 };
 
-// Currently appending today over and over again, be sure to set it to other days as well
 const createWeek = () => {
   for (let i = 0; i <= 6; i++) {
     // Parent elm
@@ -297,33 +288,67 @@ const createWeek = () => {
 };
 
 const createMonth = () => {
-  let currentDate = new Date();
+  let currentDate = new Date(),
+    month = currentDate.getMonth(),
+    year = currentDate.getFullYear();
 
   // Create the element
   let monthDiv = document.createElement("div");
   let monthTitle = document.createElement("h4");
-  // let dayDiv = document.createElement("div") // does not work
-
   // Set attributes
   monthDiv.setAttribute("class", "month");
   monthTitle.setAttribute("class", "monthTitle");
+  monthTitle.textContent = months[month];
 
-  monthTitle.textContent = currentDate.getMonth();
+  // The number of days in this month
+  let daysInMonth = new Date(year, month, 0).getDate();
+  console.log(daysInMonth);
 
-  // Do it 31 times for each day
-  // monthDiv.appendChild(monthTitle)
+  //   Lets create a dayDiv for however many days in the month there are
 
-  for (let x = 1; x <= 5; x++) {
-    let rowDiv = document.createElement("div");
-    rowDiv.setAttribute("class", "row");
-    for (let y = 0; y <= 6; y++) {
-      let dayDiv = document.createElement("div");
-      dayDiv.setAttribute("class", "monthDay");
-      dayDiv.textContent = y + x;
-      rowDiv.appendChild(dayDiv);
-    }
-    monthDiv.appendChild(rowDiv);
+  for (let i = 0; i < daysInMonth; i++) {
+    //   Now lets give each div a date object
+    let dayDate = new Date(year, month, i + 1), // ex. 1/20/20
+      day = dayDate.getDate(),
+      date = `${month + 1}/${day}/${year}`;
+    let dayDiv = document.createElement("div");
+    dayDiv.setAttribute("class", "monthDay");
+    dayDiv.textContent = `${day} ${weekdays[dayDate.getUTCDay()]}`;
+    let details = document.createElement("div");
+    let detailsList = document.createElement("ul");
+
+    chrome.storage.sync.get([`${date}`], function(result) {
+      if (!isEmpty(result)) {
+        let entriesArr = result[`${date}`];
+        for (let j = 0; j < entriesArr.length; j++) {
+          let entryListItem = document.createElement("li");
+          let entryInput = document.createElement("input");
+          entryInput.setAttribute("class", "newItem");
+          entryInput.value = entriesArr[j];
+          entryListItem.appendChild(entryInput);
+          detailsList.appendChild(entryListItem);
+        }
+      }
+    });
+
+    details.setAttribute("class", "details");
+    details.appendChild(detailsList);
+    dayDiv.appendChild(details);
+
+    monthDiv.appendChild(dayDiv);
   }
+
+  //   for (let x = 1; x <= 5; x++) {
+  //     let rowDiv = document.createElement("div");
+  //     rowDiv.setAttribute("class", "row");
+  //     for (let y = 0; y <= 6; y++) {
+  //       let dayDiv = document.createElement("div");
+  //       dayDiv.setAttribute("class", "monthDay");
+  //       dayDiv.textContent = y + x;
+  //       rowDiv.appendChild(dayDiv);
+  //     }
+  //     monthDiv.appendChild(rowDiv);
+  //   }
   monthView.appendChild(monthTitle);
   monthView.appendChild(monthDiv);
 };
