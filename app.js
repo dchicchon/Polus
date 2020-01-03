@@ -142,8 +142,13 @@ const createWeek = () => {
 
     // I should check chrome storage here to see if I need to fill up anything
     let details = document.createElement("div");
+    let detailsList = document.createElement("ul");
+    details.appendChild(detailsList);
     details.setAttribute("class", "details");
 
+    // This creates a list of entries. For each entry we create a "div" element that surrounds it. Instead, I should make it an input element with the value of the entry
+
+    // Probably can run this get function at the top of the page for only one time
     chrome.storage.sync.get([`${date}`], function(result) {
       console.log(date);
       console.log(result);
@@ -151,9 +156,16 @@ const createWeek = () => {
         console.log(result[`${date}`]);
         let entriesArr = result[`${date}`];
         for (let i = 0; i < entriesArr.length; i++) {
-          let entry = document.createElement("div");
-          entry.textContent = entriesArr[i];
-          details.appendChild(entry);
+          let entryListItem = document.createElement("li");
+          let entryInput = document.createElement("input");
+          let entryDelete = document.createElement("button");
+          entryDelete.textContent = "x";
+          entryDelete.setAttribute("class", "delete");
+          entryInput.setAttribute("class", "newItem");
+          entryInput.value = entriesArr[i];
+          entryListItem.appendChild(entryInput);
+          entryListItem.appendChild(entryDelete);
+          detailsList.appendChild(entryListItem);
         }
       }
     });
@@ -172,23 +184,40 @@ const createWeek = () => {
     // I hope I can do this
     //  12/31/2019 : []
     btn.onclick = function() {
-      // Check if date object exists
+      let entryListItem = document.createElement("li");
+      let entryInput = document.createElement("input");
+      entryInput.setAttribute("class", "newItem");
+      entryInput.setAttribute("autofocus", "true");
 
-      chrome.storage.sync.get([`${date}`], function(result) {
-        // Create a date object if it does not exist.
-        console.log(date);
-        if (isEmpty(result)) {
-          let entries = ["Entry Number 1"];
-          chrome.storage.sync.set({ [date]: entries }, function() {});
-        } else {
-          let dateEntries = result[`${date}`];
-          let key = dateEntries.length;
-          dateEntries.push(`Entry Number ${key + 1}`);
-          chrome.storage.sync.set({ [date]: dateEntries }, function() {
-            console.log(dateEntries);
+      //   on enter
+      entryInput.onkeypress = function(e) {
+        if (!e) e = window.event;
+        let keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+          // remove focus
+          this.blur();
+          //   Check input value
+          console.log(entryInput.value);
+          chrome.storage.sync.get([`${date}`], function(result) {
+            // Create a date object if it does not exist.
+            console.log(date);
+            if (isEmpty(result)) {
+              let entries = [`${entryInput.value}`];
+              chrome.storage.sync.set({ [date]: entries }, function() {});
+            } else {
+              let dateEntries = result[`${date}`];
+              dateEntries.push(`${entryInput.value}`);
+              chrome.storage.sync.set({ [date]: dateEntries }, function() {
+                console.log(dateEntries);
+              });
+            }
           });
         }
-      });
+      };
+      let ul = this.previousElementSibling;
+      entryListItem.appendChild(entryInput);
+      ul.appendChild(entryListItem);
+      // Check if date object exists
 
       //
 

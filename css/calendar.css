@@ -39,6 +39,34 @@ section {
   }
 }
 
+.add {
+  background: none;
+  width: 1.5rem;
+  font-size: 1.25rem;
+  border-radius: 100%;
+  margin-left: 10px;
+  transition: background 0.5s;
+  padding: 0 0.4rem;
+}
+.add:hover {
+  background: rgba(43, 129, 185, 0.76);
+}
+
+.delete {
+  background: none;
+  width: 1rem;
+  font-size: 0.9rem;
+  border-radius: 100%;
+  margin: 0;
+  transition: background 0.5s;
+  padding: 0 0.4rem;
+}
+
+.delete:hover {
+  background: rgba(90, 90, 90, 0.329);
+  /* background: rgba(43, 129, 185, 0.76); */
+}
+
 /* =========================================== */
 /* DAY VIEW */
 /* =========================================== */
@@ -106,10 +134,10 @@ section {
 .weekday {
   border: 0.5px solid rgba(32, 32, 32, 0.555);
   min-height: 14rem;
-  width: 11rem;
+  width: 11.5rem;
   background: rgba(0, 0, 0, 0);
   border-radius: 25px 25px 10px 10px;
-  padding: 0.5rem;
+  padding: 0.5rem 0rem;
   transition: transform 0.5s;
   transform: translateZ(0);
 }
@@ -157,22 +185,10 @@ section {
   cursor: pointer;
 }
 
-.add {
-  background: none;
-  width: 1.5rem;
-  font-size: 1.25rem;
-  border-radius: 100%;
-  margin-left: 10px;
-  transition: background 0.5s;
-  padding: 0 0.4rem;
-}
-.add:hover {
-  background: rgba(43, 129, 185, 0.76);
-}
-
 .newItem {
   border: none;
-  width: 95%;
+  width: 90%;
+  float: left;
   background: none;
   color: white;
   text-overflow: ellipsis;
