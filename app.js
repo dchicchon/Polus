@@ -3,7 +3,7 @@
 chrome.runtime.onInstalled.addListener(function() {
   // Removed entries array for the moment
   chrome.storage.sync.set({ view: "today" }, function() {
-    console.log("Storage key set to week");
+    // console.log("Storage key set to today");
   });
 });
 
@@ -84,28 +84,71 @@ const viewFunction = () => {
 // ========================================
 const createToday = () => {
   let currentDate = new Date();
-  // let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  // let weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  let year = currentDate.getFullYear(),
+    month = currentDate.getMonth() + 1,
+    day = currentDate.getDate(),
+    date = `${month}/${day}/${year}`,
+    showdate = `${weekdays[currentDate.getDay()]}, ${
+      months[currentDate.getMonth()]
+    } ${currentDate.getDate()}, ${currentDate.getFullYear()}`; // might assign this straight to textContent later
 
   let dayTitle = document.createElement("h5");
-  // Monday, November 27th 2019 or Monday 11/27/2019. Customize this!
-  // Fix this later to get the cool 'th' on it or 'st' or 'nd'. Maybe start using moment? Or other time packages
-  let date = `${weekdays[currentDate.getDay()]}, ${
-    months[currentDate.getMonth()]
-  } ${currentDate.getDate()}th ${currentDate.getFullYear()}`; // might assign this straight to textContent later
   dayTitle.setAttribute("class", "dayTitle");
-  dayTitle.textContent = date;
+  dayTitle.textContent = showdate;
 
   // note: turns out theres semantic html called details which pops open stuff which might be useful later on;
   let details = document.createElement("div");
+  let detailsList = document.createElement("ul");
+  details.appendChild(detailsList);
   details.setAttribute("class", "dayDetails");
 
-  let ul = document.createElement("ul");
+  chrome.storage.sync.get([`${date}`], function(result) {
+    // console.log("Get storage");
+    if (!isEmpty(result)) {
+      console.log(result[`${date}`]);
+      let entriesArr = result[`${date}`];
+      for (let i = 0; i < entriesArr.length; i++) {
+        let entryListItem = document.createElement("li");
+        let entryInput = document.createElement("input");
+
+        //   Delete. Should remove the entire note and delete the entry in storage.
+        //   1. Give the button the key of the entry index
+        let entryDelete = document.createElement("button");
+        entryDelete.textContent = "x";
+        entryDelete.setAttribute("value", `${i}`);
+        entryDelete.setAttribute("class", "delete");
+
+        //   We can use a helper function here
+        entryDelete.onclick = function() {
+          chrome.storage.sync.get([`${date}`], function(result) {
+            let dateEntries = result[`${date}`];
+            let index = parseInt(entryDelete.value);
+            let newEntries = arrayRemove(dateEntries, index);
+
+            console.log(index);
+            console.log(newEntries);
+            chrome.storage.sync.set({ [date]: newEntries }, function() {
+              console.log(date);
+              console.log("Removed Entry");
+            });
+          });
+        };
+
+        entryInput.setAttribute("class", "newItem");
+        entryInput.value = entriesArr[i];
+        entryListItem.appendChild(entryInput);
+        entryListItem.appendChild(entryDelete);
+        detailsList.appendChild(entryListItem);
+      }
+    }
+  });
+
   let addBtn = document.createElement("button");
   addBtn.setAttribute("class", "add");
   addBtn.textContent = "+";
 
-  details.appendChild(ul);
+  //   details.appendChild(ul);
   details.appendChild(addBtn);
   dayView.appendChild(dayTitle);
   dayView.appendChild(details);
@@ -122,7 +165,7 @@ const createWeek = () => {
     let year = thisDate.getFullYear(),
       month = thisDate.getMonth() + 1,
       day = thisDate.getDate(),
-      date = `${month}/${day}/${year} `;
+      date = `${month}/${day}/${year}`;
 
     let weekday = document.createElement("div");
     weekday.setAttribute("class", "weekday");
@@ -132,26 +175,15 @@ const createWeek = () => {
     weekDate.setAttribute("class", "weekDate");
     let weekTitle = document.createElement("div");
     weekTitle.setAttribute("class", "weekTitle");
-    // Make today the center day
-
-    // Before I got the day of the week, but now I'm getting the timestamp
-    // weekTitle.textContent = `${weekdays[currentDate.getDate() + i]}`; // this is where im goofing. I am relying on the arr to give me the weekday.
-    // console.log(thisDate);
     weekDate.textContent = `${day}`;
-    weekTitle.textContent = `${weekdays[thisDate.getDay()]}`; // this is where im goofing. I am relying on the arr to give me the weekday.
+    weekTitle.textContent = `${weekdays[thisDate.getDay()]}`;
 
-    // I should check chrome storage here to see if I need to fill up anything
     let details = document.createElement("div");
     let detailsList = document.createElement("ul");
     details.appendChild(detailsList);
     details.setAttribute("class", "details");
 
-    // This creates a list of entries. For each entry we create a "div" element that surrounds it. Instead, I should make it an input element with the value of the entry
-
-    // Probably can run this get function at the top of the page for only one time
     chrome.storage.sync.get([`${date}`], function(result) {
-      //   console.log(date);
-      //   console.log(result);
       if (!isEmpty(result)) {
         // console.log(result[`${date}`]);
         let entriesArr = result[`${date}`];
@@ -184,6 +216,29 @@ const createWeek = () => {
 
           entryInput.setAttribute("class", "newItem");
           entryInput.value = entriesArr[i];
+
+          //   Edit Entry.
+          entryInput.onkeypress = function(e) {
+            if (!e) e = window.event;
+            let keyCode = e.keyCode || e.which;
+            if (keyCode === 13) {
+              // remove focus
+              this.blur();
+              chrome.storage.sync.get([`${date}`], function(result) {
+                let dateEntries = result[`${date}`];
+
+                // Get the index of the current Entry
+                let index = dateEntries.indexOf(dateEntries[i]);
+                if (index !== -1) {
+                  // Find and replace the element at the index with the new value
+                  dateEntries[index] = entryInput.value;
+                }
+
+                chrome.storage.sync.set({ [date]: dateEntries }, function() {});
+              });
+            }
+          };
+
           entryListItem.appendChild(entryInput);
           entryListItem.appendChild(entryDelete);
           detailsList.appendChild(entryListItem);
@@ -191,9 +246,6 @@ const createWeek = () => {
       }
     });
 
-    // let ul = document.createElement("ul");
-
-    // Need to find a way to pass the js object to the btn? Maybe I can pass it by creating the event listener here
     let btn = document.createElement("button");
     btn.textContent = "+";
     btn.setAttribute("class", "add");
@@ -205,7 +257,7 @@ const createWeek = () => {
       entryInput.setAttribute("class", "newItem");
       entryInput.setAttribute("autofocus", "true");
 
-      //   on enter
+      //   On enter key, we push the entryInput value to the date object for chrome storage
       entryInput.onkeypress = function(e) {
         if (!e) e = window.event;
         let keyCode = e.keyCode || e.which;
@@ -213,7 +265,7 @@ const createWeek = () => {
           // remove focus
           this.blur();
           //   Check input value
-          console.log(entryInput.value);
+          //   console.log(entryInput.value);
           chrome.storage.sync.get([`${date}`], function(result) {
             // Create a date object if it does not exist.
             // console.log(date);
@@ -224,13 +276,12 @@ const createWeek = () => {
               let dateEntries = result[`${date}`];
               dateEntries.push(`${entryInput.value}`);
               chrome.storage.sync.set({ [date]: dateEntries }, function() {
-                console.log(dateEntries);
+                // console.log(dateEntries);
               });
             }
           });
         }
       };
-      let ul = this.previousElementSibling;
       entryListItem.appendChild(entryInput);
       detailsList.appendChild(entryListItem);
     };
@@ -324,9 +375,10 @@ const updateTime = () => {
 };
 // +++++++++++++++++++++++++++++++++++++++++
 
-// ADD ITEMS TO DAY
-// =========================================
-// Put this in function maybe?
+// HELPER FUNCTIONS
+// ============================
+
+// Add function for buttons. Currently not working
 const addFunction = () => {
   let addButtons = document.getElementsByClassName("add");
   for (let i = 0; i < addButtons.length; i++) {
@@ -334,6 +386,7 @@ const addFunction = () => {
   }
 };
 
+// Check if object is empty
 function isEmpty(obj) {
   for (let key in obj) {
     if (obj.hasOwnProperty(key)) {
@@ -343,6 +396,7 @@ function isEmpty(obj) {
   return true;
 }
 
+// Remove item in array at specific array index
 const arrayRemove = (arr, value) => {
   return arr.filter(function(ele) {
     return arr.indexOf(ele) != value;
