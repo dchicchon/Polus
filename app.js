@@ -113,6 +113,7 @@ const createToday = () => {
 
         //   We can use a helper function here
         entryDelete.onclick = function() {
+          this.parentNode.style.display = "none";
           chrome.storage.sync.get([`${date}`], function(result) {
             let dateEntries = result[`${date}`];
             let index = parseInt(entryDelete.value);
@@ -136,12 +137,72 @@ const createToday = () => {
     }
   });
 
-  let addBtn = document.createElement("button");
-  addBtn.setAttribute("class", "add");
-  addBtn.textContent = "+";
+  let btn = document.createElement("button");
+  btn.setAttribute("class", "add");
+  btn.textContent = "+";
+
+  btn.onclick = function() {
+    let entryListItem = document.createElement("li");
+    let entryInput = document.createElement("input");
+    entryInput.setAttribute("class", "newItem");
+    entryInput.setAttribute("autofocus", "true");
+
+    // THIS NOT WORKING AT THE MOMENT
+    // let entryDelete = document.createElement("button");
+    // entryDelete.textContent = "x";
+    // entryDelete.setAttribute("value", `${}`);
+    // entryDelete.setAttribute("class", "delete");
+
+    // //   We can use a helper function here
+    // entryDelete.onclick = function() {
+    //   this.parentNode.style.display = "none";
+    //   chrome.storage.sync.get([`${date}`], function(result) {
+    //     let dateEntries = result[`${date}`];
+    //     let index = parseInt(entryDelete.value);
+    //     let newEntries = arrayRemove(dateEntries, index);
+
+    //     chrome.storage.sync.set({ [date]: newEntries }, function() {
+    //       // console.log(date);
+    //       console.log("Removed Entry");
+    //     });
+    //   });
+    // };
+
+    //   On enter key, we push the entryInput value to the date object for chrome storage
+    entryInput.onkeypress = function(e) {
+      if (!e) e = window.event;
+      let keyCode = e.keyCode || e.which;
+      if (keyCode === 13) {
+        // remove focus
+        this.blur();
+        //   Check input value
+        //   console.log(entryInput.value);
+        chrome.storage.sync.get([`${date}`], function(result) {
+          // Create a date object if it does not exist.
+          // console.log(date);
+          if (isEmpty(result)) {
+            let entries = [`${entryInput.value}`];
+            chrome.storage.sync.set({ [date]: entries }, function() {});
+          } else {
+            let dateEntries = result[`${date}`];
+            dateEntries.push(`${entryInput.value}`);
+            chrome.storage.sync.set({ [date]: dateEntries }, function() {
+              // console.log(dateEntries);
+            });
+          }
+        });
+      }
+    };
+
+    entryListItem.appendChild(entryInput);
+    // entryListItem.appendChild(entryDelete);
+    detailsList.appendChild(entryListItem);
+  };
+
+  details.appendChild(btn);
 
   //   details.appendChild(ul);
-  details.appendChild(addBtn);
+  // details.appendChild(addBtn);
   dayView.appendChild(dayTitle);
   dayView.appendChild(details);
 };
@@ -191,6 +252,7 @@ const createWeek = () => {
 
           //   We can use a helper function here
           entryDelete.onclick = function() {
+            this.parentNode.style.display = "none";
             chrome.storage.sync.get([`${date}`], function(result) {
               let dateEntries = result[`${date}`];
               let index = parseInt(entryDelete.value);
@@ -238,8 +300,8 @@ const createWeek = () => {
     });
 
     let btn = document.createElement("button");
-    btn.textContent = "+";
     btn.setAttribute("class", "add");
+    btn.textContent = "+";
 
     // This can go in the add function later on. For now, no clue how to include the date in a seperate function
     btn.onclick = function() {
@@ -302,7 +364,7 @@ const createMonth = () => {
 
   // The number of days in this month
   let daysInMonth = new Date(year, month, 0).getDate();
-  console.log(daysInMonth);
+  // console.log(daysInMonth);
 
   //   Lets create a dayDiv for however many days in the month there are
 
@@ -323,17 +385,79 @@ const createMonth = () => {
         for (let j = 0; j < entriesArr.length; j++) {
           let entryListItem = document.createElement("li");
           let entryInput = document.createElement("input");
+
+          let entryDelete = document.createElement("button");
+          entryDelete.textContent = "x";
+          entryDelete.setAttribute("value", `${j}`);
+          entryDelete.setAttribute("class", "delete");
+
+          //   We can use a helper function here
+          entryDelete.onclick = function() {
+            this.parentNode.style.display = "none";
+            chrome.storage.sync.get([`${date}`], function(result) {
+              let dateEntries = result[`${date}`];
+              let index = parseInt(entryDelete.value);
+              let newEntries = arrayRemove(dateEntries, index);
+
+              chrome.storage.sync.set({ [date]: newEntries }, function() {
+                // console.log(date);
+                console.log("Removed Entry");
+              });
+            });
+          };
+
           entryInput.setAttribute("class", "newItem");
           entryInput.value = entriesArr[j];
           entryListItem.appendChild(entryInput);
+          entryListItem.appendChild(entryDelete);
           detailsList.appendChild(entryListItem);
         }
       }
     });
 
+    let btn = document.createElement("button");
+    btn.textContent = "+";
+    btn.setAttribute("class", "add");
+
+    // This can go in the add function later on. For now, no clue how to include the date in a seperate function
+    btn.onclick = function() {
+      let entryListItem = document.createElement("li");
+      let entryInput = document.createElement("input");
+      entryInput.setAttribute("class", "newItem");
+      entryInput.setAttribute("autofocus", "true");
+
+      //   On enter key, we push the entryInput value to the date object for chrome storage
+      entryInput.onkeypress = function(e) {
+        if (!e) e = window.event;
+        let keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+          // remove focus
+          this.blur();
+          //   Check input value
+          //   console.log(entryInput.value);
+          chrome.storage.sync.get([`${date}`], function(result) {
+            // Create a date object if it does not exist.
+            // console.log(date);
+            if (isEmpty(result)) {
+              let entries = [`${entryInput.value}`];
+              chrome.storage.sync.set({ [date]: entries }, function() {});
+            } else {
+              let dateEntries = result[`${date}`];
+              dateEntries.push(`${entryInput.value}`);
+              chrome.storage.sync.set({ [date]: dateEntries }, function() {
+                // console.log(dateEntries);
+              });
+            }
+          });
+        }
+      };
+      entryListItem.appendChild(entryInput);
+      detailsList.appendChild(entryListItem);
+    };
     details.setAttribute("class", "details");
     details.appendChild(detailsList);
     dayDiv.appendChild(details);
+    details.appendChild(btn);
 
     monthDiv.appendChild(dayDiv);
   }

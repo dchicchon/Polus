@@ -107,7 +107,7 @@ section {
   background: rgba(21, 115, 170, 0.63);
   transition: background 0.5s;
   color: white;
-  /* width: 50%; */
+  height: 1rem;
   margin: 0.25rem;
   padding: 0.5rem;
   border-radius: 25px;
