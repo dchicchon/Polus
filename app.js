@@ -319,7 +319,7 @@ const createWeek = () => {
 
 const createMonth = () => {
   let currentDate = new Date(),
-    month = currentDate.getMonth() + 1,
+    month = currentDate.getMonth(),
     year = currentDate.getFullYear();
 
   // Create the element
@@ -347,6 +347,7 @@ const createMonth = () => {
     let details = document.createElement("div");
     let detailsList = document.createElement("ul");
 
+    // Gets storage items and creates an li element for each item
     chrome.storage.sync.get([`${date}`], function(result) {
       if (!isEmpty(result)) {
         let entriesArr = result[`${date}`];
