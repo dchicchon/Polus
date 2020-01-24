@@ -1,6 +1,7 @@
 {
     "name": "Planner",
-    "version": "1.0",
+    "version": "1.0.0.1",
+    "manifest_version": 2,
     "description": "An online planner to help make you more effecient!",
     "incognito": "split",
     "chrome_url_overrides": {
@@ -8,7 +9,11 @@
     },
     "permissions": [
         "activeTab",
-        "storage"
+        "storage",
+        "alarms"
     ],
-    "manifest_version": 2
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    }
 }

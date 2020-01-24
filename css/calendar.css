@@ -76,7 +76,10 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 95%;
+  border: 0.5px solid rgba(32, 32, 32, 0.555);
+  border-radius: 25px 25px 10px 10px;
+  width: 50%;
+  padding: 1rem 2rem;
   margin: 0 auto;
   animation-name: fadeIn;
   animation-duration: 0.5s;
@@ -85,38 +88,6 @@ section {
 
 .dayTitle {
   text-align: center;
-}
-
-.dayDetails {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.dayDetails ul {
-  margin: 0 auto;
-  list-style-type: none;
-  width: 62.5%;
-  /* display: flex; */
-  /* justify-content: center; */
-  /* flex-direction: column; */
-  padding: 0;
-}
-
-.dayDetails ul li {
-  background: rgba(21, 115, 170, 0.63);
-  transition: background 0.5s;
-  color: white;
-  height: 1rem;
-  margin: 0.25rem;
-  padding: 0.5rem;
-  border-radius: 25px;
-  font-size: 1rem;
-}
-
-.dayDetails ul li:hover {
-  background: rgba(24, 127, 187, 0.993);
-  cursor: pointer;
 }
 
 /* =========================================== */
@@ -134,7 +105,7 @@ section {
 
 .weekday {
   border: 0.5px solid rgba(32, 32, 32, 0.555);
-  min-height: 14rem;
+  height: 19rem;
   width: 11.75rem;
   background: rgba(0, 0, 0, 0);
   border-radius: 25px 25px 10px 10px;
@@ -144,7 +115,7 @@ section {
 }
 
 .weekday:hover {
-  transform: translateY(-2.5%);
+  transform: translateY(-1.5%);
 }
 
 .weekDate {
@@ -165,12 +136,14 @@ section {
   border-radius: 25px 25px 0 0;
 }
 
+.details {
+  overflow: auto;
+  height: 15rem;
+}
 /* This should be a set height and should just scroll when there are many entries */
 .details ul {
   list-style-type: none;
-  /* overflow: scroll; */
   padding: 0;
-  /* max-height: 95%; */
 }
 
 .details ul li {
@@ -191,7 +164,7 @@ section {
 
 .newItem {
   border: none;
-  width: 90%;
+  width: 85%;
   float: left;
   background: none;
   color: white;
@@ -220,10 +193,10 @@ section {
 }
 
 .month {
-  border: 0.5px solid rgba(32, 32, 32, 0.555);
+  /* border: 0.5px solid rgba(32, 32, 32, 0.555); */
   width: 95%;
   background: rgba(0, 0, 0, 0);
-  border-radius: 25px 25px 10px 10px;
+  /* border-radius: 25px 25px 10px 10px; */
   /* display: flex; */
   margin: 0 auto;
   flex-wrap: wrap;
@@ -235,15 +208,16 @@ section {
 
 .monthDay {
   width: 9.75rem;
-  height: 15rem;
+  height: fit-content;
   padding: 0.75rem;
+  border: 0.5px solid rgba(32, 32, 32, 0.555);
   float: left;
   background: rgba(0, 0, 0, 0);
   transition: background 0.5s;
 }
 
 /* .monthDay:hover { */
-  /* background: rgba(102, 101, 101, 0.623); */
+/* background: rgba(102, 101, 101, 0.623); */
 /* } */
 
 /* =========================================== */

@@ -65,7 +65,7 @@ const viewFunction = () => {
     viewButtons[j].onclick = function() {
       currentView = this.textContent.toLowerCase();
       chrome.storage.sync.set({ view: currentView }, function() {
-        console.log("Storage view set to", currentView);
+        // console.log("Storage view set to", currentView);
       });
       hideViews(views);
     };
@@ -81,20 +81,20 @@ const createToday = () => {
   let year = currentDate.getFullYear(),
     month = currentDate.getMonth() + 1,
     day = currentDate.getDate(),
-    date = `${month}/${day}/${year}`,
-    showdate = `${weekdays[currentDate.getDay()]}, ${
-      months[currentDate.getMonth()]
-    } ${currentDate.getDate()}, ${currentDate.getFullYear()}`; // might assign this straight to textContent later
+    date = `${month}/${day}/${year}`;
+  // showdate = `${weekdays[currentDate.getDay()]}, ${
+  // months[currentDate.getMonth()]
+  // } ${currentDate.getDate()}, ${currentDate.getFullYear()}`; // might assign this straight to textContent later
 
   let dayTitle = document.createElement("h5");
   dayTitle.setAttribute("class", "dayTitle");
-  dayTitle.textContent = showdate;
+  dayTitle.textContent = "Today";
 
   // note: turns out theres semantic html called details which pops open stuff which might be useful later on;
   let details = document.createElement("div");
   let detailsList = document.createElement("ul");
   details.appendChild(detailsList);
-  details.setAttribute("class", "dayDetails");
+  details.setAttribute("class", "details");
 
   chrome.storage.sync.get([`${date}`], function(result) {
     // console.log("Get storage");
@@ -110,6 +110,7 @@ const createToday = () => {
         entryDelete.textContent = "x";
         entryDelete.setAttribute("value", `${i}`);
         entryDelete.setAttribute("class", "delete");
+        // entryDelete.id = date;
 
         //   We can use a helper function here
         entryDelete.onclick = function() {
@@ -140,6 +141,7 @@ const createToday = () => {
   let btn = document.createElement("button");
   btn.setAttribute("class", "add");
   btn.textContent = "+";
+  btn.value = date;
 
   btn.onclick = function() {
     let entryListItem = document.createElement("li");
@@ -247,8 +249,9 @@ const createWeek = () => {
           //   1. Give the button the key of the entry index
           let entryDelete = document.createElement("button");
           entryDelete.textContent = "x";
-          entryDelete.setAttribute("value", `${i}`);
           entryDelete.setAttribute("class", "delete");
+          entryDelete.id = date
+          entryDelete.setAttribute("value", `${i}`);
 
           //   We can use a helper function here
           entryDelete.onclick = function() {
@@ -302,42 +305,7 @@ const createWeek = () => {
     let btn = document.createElement("button");
     btn.setAttribute("class", "add");
     btn.textContent = "+";
-
-    // This can go in the add function later on. For now, no clue how to include the date in a seperate function
-    btn.onclick = function() {
-      let entryListItem = document.createElement("li");
-      let entryInput = document.createElement("input");
-      entryInput.setAttribute("class", "newItem");
-      entryInput.setAttribute("autofocus", "true");
-
-      //   On enter key, we push the entryInput value to the date object for chrome storage
-      entryInput.onkeypress = function(e) {
-        if (!e) e = window.event;
-        let keyCode = e.keyCode || e.which;
-        if (keyCode === 13) {
-          // remove focus
-          this.blur();
-          //   Check input value
-          //   console.log(entryInput.value);
-          chrome.storage.sync.get([`${date}`], function(result) {
-            // Create a date object if it does not exist.
-            // console.log(date);
-            if (isEmpty(result)) {
-              let entries = [`${entryInput.value}`];
-              chrome.storage.sync.set({ [date]: entries }, function() {});
-            } else {
-              let dateEntries = result[`${date}`];
-              dateEntries.push(`${entryInput.value}`);
-              chrome.storage.sync.set({ [date]: dateEntries }, function() {
-                // console.log(dateEntries);
-              });
-            }
-          });
-        }
-      };
-      entryListItem.appendChild(entryInput);
-      detailsList.appendChild(entryListItem);
-    };
+    btn.value = date;
 
     details.appendChild(btn);
 
@@ -351,7 +319,7 @@ const createWeek = () => {
 
 const createMonth = () => {
   let currentDate = new Date(),
-    month = currentDate.getMonth(),
+    month = currentDate.getMonth() + 1,
     year = currentDate.getFullYear();
 
   // Create the element
@@ -372,7 +340,7 @@ const createMonth = () => {
     //   Now lets give each div a date object
     let dayDate = new Date(year, month, i + 1), // ex. 1/20/20
       day = dayDate.getDate(),
-      date = `${month + 1}/${day}/${year}`;
+      date = `${month}/${day}/${year}`;
     let dayDiv = document.createElement("div");
     dayDiv.setAttribute("class", "monthDay");
     dayDiv.textContent = `${day} ${weekdays[dayDate.getUTCDay()]}`;
@@ -390,6 +358,7 @@ const createMonth = () => {
           entryDelete.textContent = "x";
           entryDelete.setAttribute("value", `${j}`);
           entryDelete.setAttribute("class", "delete");
+          entryDelete.id = date
 
           //   We can use a helper function here
           entryDelete.onclick = function() {
@@ -418,42 +387,8 @@ const createMonth = () => {
     let btn = document.createElement("button");
     btn.textContent = "+";
     btn.setAttribute("class", "add");
+    btn.value = date;
 
-    // This can go in the add function later on. For now, no clue how to include the date in a seperate function
-    btn.onclick = function() {
-      let entryListItem = document.createElement("li");
-      let entryInput = document.createElement("input");
-      entryInput.setAttribute("class", "newItem");
-      entryInput.setAttribute("autofocus", "true");
-
-      //   On enter key, we push the entryInput value to the date object for chrome storage
-      entryInput.onkeypress = function(e) {
-        if (!e) e = window.event;
-        let keyCode = e.keyCode || e.which;
-        if (keyCode === 13) {
-          // remove focus
-          this.blur();
-          //   Check input value
-          //   console.log(entryInput.value);
-          chrome.storage.sync.get([`${date}`], function(result) {
-            // Create a date object if it does not exist.
-            // console.log(date);
-            if (isEmpty(result)) {
-              let entries = [`${entryInput.value}`];
-              chrome.storage.sync.set({ [date]: entries }, function() {});
-            } else {
-              let dateEntries = result[`${date}`];
-              dateEntries.push(`${entryInput.value}`);
-              chrome.storage.sync.set({ [date]: dateEntries }, function() {
-                // console.log(dateEntries);
-              });
-            }
-          });
-        }
-      };
-      entryListItem.appendChild(entryInput);
-      detailsList.appendChild(entryListItem);
-    };
     details.setAttribute("class", "details");
     details.appendChild(detailsList);
     dayDiv.appendChild(details);
@@ -514,7 +449,9 @@ const updateTime = () => {
   timeValue += hours >= 12 ? " pm" : " am"; // get AM/PM
 
   let clock = `${timeValue} `;
-  let date = `${month}/${day}/${year} `;
+  let date = `${
+    weekdays[currentDate.getUTCDay() - 1]
+  } ${month}/${day}/${year} `;
 
   // document.getElementById('date').textContent = date
   document.getElementById("clock").textContent = clock;
@@ -527,11 +464,61 @@ const updateTime = () => {
 // HELPER FUNCTIONS
 // ============================
 
-// Add function for buttons. Currently not working
 const addFunction = () => {
   let addButtons = document.getElementsByClassName("add");
+  console.log(addButtons)
   for (let i = 0; i < addButtons.length; i++) {
-    addButtons[i].onclick = function() {};
+    let date = addButtons[i].value;
+    addButtons[i].onclick = function() {
+      let entryListItem = document.createElement("li");
+      let entryInput = document.createElement("input");
+      entryInput.setAttribute("class", "newItem");
+      entryInput.setAttribute("autofocus", "true");
+      entryInput.onkeypress = function(e) {
+        if (!e) e = window.event;
+        let keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+          this.blur();
+          chrome.storage.sync.get([`${date}`], function(result) {
+            if (isEmpty(result)) {
+              let entries = [`${entryInput.value}`];
+              chrome.storage.sync.set({ [date]: entries }, function() {});
+            } else {
+              let dateEntries = result[`${date}`];
+              dateEntries.push(`${entryInput.value}`);
+              chrome.storage.sync.set({ [date]: dateEntries }, function() {});
+            }
+          });
+        }
+      };
+      entryListItem.appendChild(entryInput);
+      addButtons[i].previousElementSibling.append(entryListItem);
+    };
+  }
+};
+
+// Not working at the moment
+const deleteFunction = () => {
+  let deleteButtons = document.getElementsByClassName("delete");
+  console.log(deleteButtons)
+  for (let i = 0; i < deleteButtons.length; i++) {
+    let date = deleteButtons[i].id;
+    console.log(date)
+    deleteButtons[i].onclick = function() {
+      this.parentNode.style.display = "none";
+      chrome.storage.sync.get([`${date}`], function(result) {
+        let dateEntries = result[`${date}`];
+        let index = parseInt(entryDelete.value);
+        let newEntries = arrayRemove(dateEntries, index);
+
+        console.log(index);
+        console.log(newEntries);
+        chrome.storage.sync.set({ [date]: newEntries }, function() {
+          console.log(date);
+          console.log("Removed Entry");
+        });
+      });
+    };
   }
 };
 
@@ -562,13 +549,12 @@ const startApp = () => {
   createWeek();
   createMonth();
   // =================================================
-
   hideViews(views); // pass in views arr to hide different calendars depending on the stored view
   viewFunction(); // This function is to give the view buttons the ability to pick a view!
   updateTime(); // this updates the clock
+  // deleteFunction();
+  addFunction();
 
-  //   add function moved to each creation block
-  // addFunction(); // ability to include new items on a day
   let timer = setInterval(updateTime, 1000); // set a timer that executes the updateTime() function every second
 };
 
