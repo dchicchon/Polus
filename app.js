@@ -1,6 +1,10 @@
 // The first time the user adds the extension, we set initial storage
 chrome.runtime.onInstalled.addListener(function() {
-  chrome.storage.sync.set({ view: "today" }, function() {});
+  chrome.storage.sync.set({ view: "today" }, function() {
+    chrome.storage.sync.get(["view"], function(result) {
+      console.log("View set to:", result.view);
+    });
+  });
 });
 
 // MAIN VARIABLES
@@ -250,7 +254,7 @@ const createWeek = () => {
           let entryDelete = document.createElement("button");
           entryDelete.textContent = "x";
           entryDelete.setAttribute("class", "delete");
-          entryDelete.id = date
+          entryDelete.id = date;
           entryDelete.setAttribute("value", `${i}`);
 
           //   We can use a helper function here
@@ -322,17 +326,57 @@ const createMonth = () => {
     month = currentDate.getMonth(),
     year = currentDate.getFullYear();
 
-  // Create the element
+  console.log(currentDate);
+  console.log(month);
+  console.log(year);
+
+  // Create the elements
   let monthDiv = document.createElement("div");
+
+  // Row 1
+  // =============================================
+  // Month Nav
+  let monthNav = document.createElement("div");
+  // Prev Btn
+  let prevBtn = document.createElement("button");
+  // Next Btn
+  let nextBtn = document.createElement("button");
+  // Title
   let monthTitle = document.createElement("h4");
+  monthNav.appendChild(prevBtn);
+  monthNav.appendChild(monthTitle);
+  monthNav.appendChild(nextBtn);
+
   // Set attributes
   monthDiv.setAttribute("class", "month");
   monthTitle.setAttribute("class", "monthTitle");
+  monthNav.setAttribute("class", "monthNav");
+  prevBtn.textContent = "<-";
   monthTitle.textContent = months[month];
+  nextBtn.textContent = "->";
 
+  // Click to go to previous month
+  prevBtn.addEventListener("click", function() {
+    console.log("Previous month");
+    month -= 1;
+    console.log(month);
+  });
+
+  // Click to go to next month
+  nextBtn.addEventListener("click", function() {
+    console.log("Next month");
+    month += 1;
+    console.log(month);
+  });
+  // =============================================
+
+  // Make this into a function!
   // The number of days in this month
-  let daysInMonth = new Date(year, month, 0).getDate();
-  // console.log(daysInMonth);
+
+  let createDaysInMonth = (year, month) => {
+    
+  };
+  let daysInMonth = new Date(year, month + 1, 0).getDate();
 
   //   Lets create a dayDiv for however many days in the month there are
 
@@ -340,14 +384,21 @@ const createMonth = () => {
     //   Now lets give each div a date object
     let dayDate = new Date(year, month, i + 1), // ex. 1/20/20
       day = dayDate.getDate(),
-      date = `${month}/${day}/${year}`;
+      date = `${month + 1}/${day}/${year}`;
     let dayDiv = document.createElement("div");
     dayDiv.setAttribute("class", "monthDay");
     dayDiv.textContent = `${day} ${weekdays[dayDate.getUTCDay()]}`;
+
+    // console.log("Day of the week");
+    // console.log(dayDate)
+    // console.log(dayDate.getUTCDay());
+    // console.log(weekdays[dayDate.getUTCDay()]);
+
     let details = document.createElement("div");
     let detailsList = document.createElement("ul");
 
     // Gets storage items and creates an li element for each item
+    // console.log(date);
     chrome.storage.sync.get([`${date}`], function(result) {
       if (!isEmpty(result)) {
         let entriesArr = result[`${date}`];
@@ -359,7 +410,7 @@ const createMonth = () => {
           entryDelete.textContent = "x";
           entryDelete.setAttribute("value", `${j}`);
           entryDelete.setAttribute("class", "delete");
-          entryDelete.id = date
+          entryDelete.id = date;
 
           //   We can use a helper function here
           entryDelete.onclick = function() {
@@ -409,7 +460,13 @@ const createMonth = () => {
   //     }
   //     monthDiv.appendChild(rowDiv);
   //   }
-  monthView.appendChild(monthTitle);
+
+  // Get those in one row
+
+  // monthView.appendChild(prevBtn);
+  // monthView.appendChild(monthTitle);
+  // monthView.appendChild(nextBtn);
+  monthView.appendChild(monthNav);
   monthView.appendChild(monthDiv);
 };
 
@@ -449,10 +506,10 @@ const updateTime = () => {
   timeValue += seconds < 10 ? ":0" + seconds : ":" + seconds; // get seconds
   timeValue += hours >= 12 ? " pm" : " am"; // get AM/PM
 
-  let clock = `${timeValue} `;
-  let date = `${
-    weekdays[currentDate.getUTCDay() - 1]
-  } ${month}/${day}/${year} `;
+  let clock = `${timeValue}`;
+  // console.log(currentDate)
+  // console.log(currentDate.getUTCDay())
+  let date = `${weekdays[currentDate.getUTCDay()]} ${month}/${day}/${year} `;
 
   // document.getElementById('date').textContent = date
   document.getElementById("clock").textContent = clock;
@@ -465,25 +522,34 @@ const updateTime = () => {
 // HELPER FUNCTIONS
 // ============================
 
+// Add Function
 const addFunction = () => {
   let addButtons = document.getElementsByClassName("add");
-  console.log(addButtons)
+  // For each add button, do something
   for (let i = 0; i < addButtons.length; i++) {
     let date = addButtons[i].value;
+    // Lets add an onclick listener
     addButtons[i].onclick = function() {
+      // When clicked, we will create a couple of HTML elements with attributes
       let entryListItem = document.createElement("li");
       let entryInput = document.createElement("input");
       entryInput.setAttribute("class", "newItem");
       entryInput.setAttribute("autofocus", "true");
+
+      // Add a key press listener for the HTML input element (listen for the keycode for Enter (13))
       entryInput.onkeypress = function(e) {
         if (!e) e = window.event;
         let keyCode = e.keyCode || e.which;
         if (keyCode === 13) {
           this.blur();
+          // Check the storage for this date
           chrome.storage.sync.get([`${date}`], function(result) {
+            // If the date is empty, we will set the entry to it
             if (isEmpty(result)) {
               let entries = [`${entryInput.value}`];
               chrome.storage.sync.set({ [date]: entries }, function() {});
+
+              // If its not empty, we will append the entry to the others
             } else {
               let dateEntries = result[`${date}`];
               dateEntries.push(`${entryInput.value}`);
@@ -501,10 +567,10 @@ const addFunction = () => {
 // Not working at the moment
 const deleteFunction = () => {
   let deleteButtons = document.getElementsByClassName("delete");
-  console.log(deleteButtons)
+  console.log(deleteButtons);
   for (let i = 0; i < deleteButtons.length; i++) {
     let date = deleteButtons[i].id;
-    console.log(date)
+    console.log(date);
     deleteButtons[i].onclick = function() {
       this.parentNode.style.display = "none";
       chrome.storage.sync.get([`${date}`], function(result) {

@@ -20,7 +20,7 @@
   display: flex;
   justify-content: center;
   width: 15%;
-  margin: 0 auto;
+  margin: 0.5rem auto;
   font-weight: 100;
 }
 
@@ -202,8 +202,15 @@ section {
   flex-wrap: wrap;
 }
 
+.monthNav {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
 .monthTitle {
-  text-align: center;
+  margin: 0 1rem;
+  /* text-align: center; */
 }
 
 .monthDay {

@@ -154,7 +154,7 @@ button {
     transition: background 0.5s;
     padding: 0.5rem 1rem;
     color: white;
-    margin-bottom: 1rem;
+    /* margin-bottom: 1rem; */
 }
 
 button:hover {
