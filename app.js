@@ -44,6 +44,96 @@ let weekdays = [
   "Friday",
   "Saturday"
 ];
+// +++++++++++++++++++++++++++++++++++++++++
+
+// HELPER FUNCTIONS
+// ============================
+
+// Add Function
+const addFunction = () => {
+  let addButtons = document.getElementsByClassName("add");
+  // For each add button, do something
+  for (let i = 0; i < addButtons.length; i++) {
+    let date = addButtons[i].value;
+    // Lets add an onclick listener
+    addButtons[i].onclick = function() {
+      // When clicked, we will create a couple of HTML elements with attributes
+      let entryListItem = document.createElement("li");
+      let entryInput = document.createElement("input");
+      entryInput.setAttribute("class", "newItem");
+      entryInput.setAttribute("autofocus", "true");
+
+      // Add a key press listener for the HTML input element (listen for the keycode for Enter (13))
+      entryInput.onkeypress = function(e) {
+        if (!e) e = window.event;
+        let keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+          this.blur();
+          // Check the storage for this date
+          chrome.storage.sync.get([`${date}`], function(result) {
+            // If the date is empty, we will set the entry to it
+            if (isEmpty(result)) {
+              let entries = [`${entryInput.value}`];
+              chrome.storage.sync.set({ [date]: entries }, function() {});
+
+              // If its not empty, we will append the entry to the others
+            } else {
+              let dateEntries = result[`${date}`];
+              dateEntries.push(`${entryInput.value}`);
+              chrome.storage.sync.set({ [date]: dateEntries }, function() {});
+            }
+          });
+        }
+      };
+      entryListItem.appendChild(entryInput);
+      addButtons[i].previousElementSibling.append(entryListItem);
+    };
+  }
+};
+
+// Not working at the moment
+const deleteFunction = () => {
+  let deleteButtons = document.getElementsByClassName("delete");
+  console.log(deleteButtons);
+  for (let i = 0; i < deleteButtons.length; i++) {
+    let date = deleteButtons[i].id;
+    console.log(date);
+    deleteButtons[i].onclick = function() {
+      this.parentNode.style.display = "none";
+      chrome.storage.sync.get([`${date}`], function(result) {
+        let dateEntries = result[`${date}`];
+        let index = parseInt(entryDelete.value);
+        let newEntries = arrayRemove(dateEntries, index);
+
+        console.log(index);
+        console.log(newEntries);
+        chrome.storage.sync.set({ [date]: newEntries }, function() {
+          console.log(date);
+          console.log("Removed Entry");
+        });
+      });
+    };
+  }
+};
+
+// Check if object is empty
+function isEmpty(obj) {
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// Remove item in array at specific array index
+const arrayRemove = (arr, value) => {
+  return arr.filter(function(ele) {
+    return arr.indexOf(ele) != value;
+  });
+};
+
+// +++++++++++++++++++++++++++++++++++++++++
 
 // +++++++++++++++++++++++++++++++++++++++++
 
@@ -331,12 +421,13 @@ const createMonth = () => {
   console.log(year);
 
   // Create the elements
-  let monthDiv = document.createElement("div");
+  let monthDiv = document.createElement("div"); // parent container of the entire month
+  let monthNav = document.createElement("div"); // container of the nav
+  let monthDays = document.createElement("div"); // container for the month days
 
   // Row 1
   // =============================================
   // Month Nav
-  let monthNav = document.createElement("div");
   // Prev Btn
   let prevBtn = document.createElement("button");
   // Next Btn
@@ -355,11 +446,92 @@ const createMonth = () => {
   monthTitle.textContent = months[month];
   nextBtn.textContent = "->";
 
+  // =============================================
+
+  // This will generate all the days for a month and all the associated notes
+  let createDaysInMonth = (year, month) => {
+    let daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    //   Lets create a dayDiv for however many days in the month there are
+
+    for (let i = 0; i < daysInMonth; i++) {
+      //   Now lets give each div a date object
+      let dayDate = new Date(year, month, i + 1), // ex. 1/20/20
+        day = dayDate.getDate(),
+        date = `${month + 1}/${day}/${year}`;
+      let dayDiv = document.createElement("div");
+      dayDiv.setAttribute("class", "monthDay");
+      dayDiv.textContent = `${day} ${weekdays[dayDate.getUTCDay()]}`;
+
+      // console.log("Day of the week");
+      // console.log(dayDate)
+      // console.log(dayDate.getUTCDay());
+      // console.log(weekdays[dayDate.getUTCDay()]);
+
+      let details = document.createElement("div");
+      let detailsList = document.createElement("ul");
+
+      // Gets storage items and creates an li element for each item
+      // console.log(date);
+      chrome.storage.sync.get([`${date}`], function(result) {
+        if (!isEmpty(result)) {
+          let entriesArr = result[`${date}`];
+          for (let j = 0; j < entriesArr.length; j++) {
+            let entryListItem = document.createElement("li");
+            let entryInput = document.createElement("input");
+
+            let entryDelete = document.createElement("button");
+            entryDelete.textContent = "x";
+            entryDelete.setAttribute("value", `${j}`);
+            entryDelete.setAttribute("class", "delete");
+            entryDelete.id = date;
+
+            //   We can use a helper function here
+            entryDelete.onclick = function() {
+              this.parentNode.style.display = "none";
+              chrome.storage.sync.get([`${date}`], function(result) {
+                let dateEntries = result[`${date}`];
+                let index = parseInt(entryDelete.value);
+                let newEntries = arrayRemove(dateEntries, index);
+
+                chrome.storage.sync.set({ [date]: newEntries }, function() {
+                  // console.log(date);
+                  console.log("Removed Entry");
+                });
+              });
+            };
+
+            entryInput.setAttribute("class", "newItem");
+            entryInput.value = entriesArr[j];
+            entryListItem.appendChild(entryInput);
+            entryListItem.appendChild(entryDelete);
+            detailsList.appendChild(entryListItem);
+          }
+        }
+      });
+
+      let btn = document.createElement("button");
+      btn.textContent = "+";
+      btn.setAttribute("class", "add");
+      btn.value = date;
+
+      details.setAttribute("class", "details");
+      details.appendChild(detailsList);
+      dayDiv.appendChild(details);
+      details.appendChild(btn);
+
+      monthDays.appendChild(dayDiv);
+    }
+  };
   // Click to go to previous month
+
   prevBtn.addEventListener("click", function() {
     console.log("Previous month");
     month -= 1;
+    monthTitle.textContent = months[month];
     console.log(month);
+    monthDays.innerHTML = "";
+    createDaysInMonth(year, month);
   });
 
   // Click to go to next month
@@ -367,107 +539,21 @@ const createMonth = () => {
     console.log("Next month");
     month += 1;
     console.log(month);
+    monthDays.innerHTML = "";
+    monthTitle.textContent = months[month];
+    createDaysInMonth(year, month);
+    addFunction();
   });
   // =============================================
-
   // Make this into a function!
   // The number of days in this month
 
-  let createDaysInMonth = (year, month) => {
-    
-  };
-  let daysInMonth = new Date(year, month + 1, 0).getDate();
+  createDaysInMonth(year, month);
 
-  //   Lets create a dayDiv for however many days in the month there are
-
-  for (let i = 0; i < daysInMonth; i++) {
-    //   Now lets give each div a date object
-    let dayDate = new Date(year, month, i + 1), // ex. 1/20/20
-      day = dayDate.getDate(),
-      date = `${month + 1}/${day}/${year}`;
-    let dayDiv = document.createElement("div");
-    dayDiv.setAttribute("class", "monthDay");
-    dayDiv.textContent = `${day} ${weekdays[dayDate.getUTCDay()]}`;
-
-    // console.log("Day of the week");
-    // console.log(dayDate)
-    // console.log(dayDate.getUTCDay());
-    // console.log(weekdays[dayDate.getUTCDay()]);
-
-    let details = document.createElement("div");
-    let detailsList = document.createElement("ul");
-
-    // Gets storage items and creates an li element for each item
-    // console.log(date);
-    chrome.storage.sync.get([`${date}`], function(result) {
-      if (!isEmpty(result)) {
-        let entriesArr = result[`${date}`];
-        for (let j = 0; j < entriesArr.length; j++) {
-          let entryListItem = document.createElement("li");
-          let entryInput = document.createElement("input");
-
-          let entryDelete = document.createElement("button");
-          entryDelete.textContent = "x";
-          entryDelete.setAttribute("value", `${j}`);
-          entryDelete.setAttribute("class", "delete");
-          entryDelete.id = date;
-
-          //   We can use a helper function here
-          entryDelete.onclick = function() {
-            this.parentNode.style.display = "none";
-            chrome.storage.sync.get([`${date}`], function(result) {
-              let dateEntries = result[`${date}`];
-              let index = parseInt(entryDelete.value);
-              let newEntries = arrayRemove(dateEntries, index);
-
-              chrome.storage.sync.set({ [date]: newEntries }, function() {
-                // console.log(date);
-                console.log("Removed Entry");
-              });
-            });
-          };
-
-          entryInput.setAttribute("class", "newItem");
-          entryInput.value = entriesArr[j];
-          entryListItem.appendChild(entryInput);
-          entryListItem.appendChild(entryDelete);
-          detailsList.appendChild(entryListItem);
-        }
-      }
-    });
-
-    let btn = document.createElement("button");
-    btn.textContent = "+";
-    btn.setAttribute("class", "add");
-    btn.value = date;
-
-    details.setAttribute("class", "details");
-    details.appendChild(detailsList);
-    dayDiv.appendChild(details);
-    details.appendChild(btn);
-
-    monthDiv.appendChild(dayDiv);
-  }
-
-  //   for (let x = 1; x <= 5; x++) {
-  //     let rowDiv = document.createElement("div");
-  //     rowDiv.setAttribute("class", "row");
-  //     for (let y = 0; y <= 6; y++) {
-  //       let dayDiv = document.createElement("div");
-  //       dayDiv.setAttribute("class", "monthDay");
-  //       dayDiv.textContent = y + x;
-  //       rowDiv.appendChild(dayDiv);
-  //     }
-  //     monthDiv.appendChild(rowDiv);
-  //   }
-
-  // Get those in one row
-
-  // monthView.appendChild(prevBtn);
-  // monthView.appendChild(monthTitle);
-  // monthView.appendChild(nextBtn);
   monthView.appendChild(monthNav);
-  monthView.appendChild(monthDiv);
+  monthView.appendChild(monthDays);
+  addFunction();
+  // monthView.appendChild(monthDiv);
 };
 
 // +++++++++++++++++++++++++++++++++++++++++
@@ -517,96 +603,6 @@ const updateTime = () => {
 
   // Maybe we can use this function for other methods too?
 };
-// +++++++++++++++++++++++++++++++++++++++++
-
-// HELPER FUNCTIONS
-// ============================
-
-// Add Function
-const addFunction = () => {
-  let addButtons = document.getElementsByClassName("add");
-  // For each add button, do something
-  for (let i = 0; i < addButtons.length; i++) {
-    let date = addButtons[i].value;
-    // Lets add an onclick listener
-    addButtons[i].onclick = function() {
-      // When clicked, we will create a couple of HTML elements with attributes
-      let entryListItem = document.createElement("li");
-      let entryInput = document.createElement("input");
-      entryInput.setAttribute("class", "newItem");
-      entryInput.setAttribute("autofocus", "true");
-
-      // Add a key press listener for the HTML input element (listen for the keycode for Enter (13))
-      entryInput.onkeypress = function(e) {
-        if (!e) e = window.event;
-        let keyCode = e.keyCode || e.which;
-        if (keyCode === 13) {
-          this.blur();
-          // Check the storage for this date
-          chrome.storage.sync.get([`${date}`], function(result) {
-            // If the date is empty, we will set the entry to it
-            if (isEmpty(result)) {
-              let entries = [`${entryInput.value}`];
-              chrome.storage.sync.set({ [date]: entries }, function() {});
-
-              // If its not empty, we will append the entry to the others
-            } else {
-              let dateEntries = result[`${date}`];
-              dateEntries.push(`${entryInput.value}`);
-              chrome.storage.sync.set({ [date]: dateEntries }, function() {});
-            }
-          });
-        }
-      };
-      entryListItem.appendChild(entryInput);
-      addButtons[i].previousElementSibling.append(entryListItem);
-    };
-  }
-};
-
-// Not working at the moment
-const deleteFunction = () => {
-  let deleteButtons = document.getElementsByClassName("delete");
-  console.log(deleteButtons);
-  for (let i = 0; i < deleteButtons.length; i++) {
-    let date = deleteButtons[i].id;
-    console.log(date);
-    deleteButtons[i].onclick = function() {
-      this.parentNode.style.display = "none";
-      chrome.storage.sync.get([`${date}`], function(result) {
-        let dateEntries = result[`${date}`];
-        let index = parseInt(entryDelete.value);
-        let newEntries = arrayRemove(dateEntries, index);
-
-        console.log(index);
-        console.log(newEntries);
-        chrome.storage.sync.set({ [date]: newEntries }, function() {
-          console.log(date);
-          console.log("Removed Entry");
-        });
-      });
-    };
-  }
-};
-
-// Check if object is empty
-function isEmpty(obj) {
-  for (let key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-// Remove item in array at specific array index
-const arrayRemove = (arr, value) => {
-  return arr.filter(function(ele) {
-    return arr.indexOf(ele) != value;
-  });
-};
-
-// +++++++++++++++++++++++++++++++++++++++++
 
 // START APP
 const startApp = () => {
