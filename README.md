@@ -58,6 +58,10 @@ chrome.storage.sync.get(["view"], function(result) {
   });
 ```
 
+### Learning Points
+##### 2/17/2020
+- You cannot use the `require` method in front end js, only in nodejs. For this app I must use `import`. Read here https://stackoverflow.com/questions/19059580/client-on-node-uncaught-referenceerror-require-is-not-defined
+
 ### Future Builds
  - Add different backgrounds using Unsplash API
  - IOS and Android Stores

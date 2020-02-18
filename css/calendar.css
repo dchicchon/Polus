@@ -76,8 +76,8 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border: 0.5px solid rgba(32, 32, 32, 0.555);
-  border-radius: 25px 25px 10px 10px;
+  /* border: 0.5px solid rgba(32, 32, 32, 0.555); */
+  /* border-radius: 25px 25px 10px 10px; */
   width: 50%;
   padding: 1rem 2rem;
   margin: 0 auto;
@@ -88,6 +88,12 @@ section {
 
 .dayTitle {
   text-align: center;
+  margin: 0 1rem;
+}
+
+.dayNav {
+  display: flex;
+  justify-content: center;
 }
 
 /* =========================================== */
@@ -192,16 +198,6 @@ section {
   justify-content: center;
 }
 
-.month {
-  /* border: 0.5px solid rgba(32, 32, 32, 0.555); */
-  width: 95%;
-  background: rgba(0, 0, 0, 0);
-  /* border-radius: 25px 25px 10px 10px; */
-  /* display: flex; */
-  margin: 0 auto;
-  flex-wrap: wrap;
-}
-
 .monthNav {
   display: flex;
   justify-content: center;
@@ -211,6 +207,13 @@ section {
 .monthTitle {
   margin: 0 1rem;
   /* text-align: center; */
+}
+
+.monthDays {
+  width: 95%;
+  background: rgba(0, 0, 0, 0);
+  margin: 0 auto;
+  flex-wrap: wrap;
 }
 
 .monthDay {

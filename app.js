@@ -1,3 +1,8 @@
+// Bring in modules at the top
+// const helperMethods = require("./js/helper");
+
+// import helperMethods from "./js/helper";
+
 // The first time the user adds the extension, we set initial storage
 chrome.runtime.onInstalled.addListener(function() {
   chrome.storage.sync.set({ view: "today" }, function() {
@@ -46,8 +51,13 @@ let weekdays = [
 ];
 // +++++++++++++++++++++++++++++++++++++++++
 
-// HELPER FUNCTIONS
+// Helper Methods
 // ============================
+
+// let addFunction = helperMethods.addFunction;
+// let deleteFunction = helperMethods.deleteFunction;
+// let isEmpty = helperMethods.isEmpty;
+// let arrayRemove = helperMethods.arrayRemove;
 
 // Add Function
 const addFunction = () => {
@@ -127,13 +137,11 @@ function isEmpty(obj) {
 }
 
 // Remove item in array at specific array index
-const arrayRemove = (arr, value) => {
+const arrayRemove = (arr, val) => {
   return arr.filter(function(ele) {
-    return arr.indexOf(ele) != value;
+    return arr.indexOf(ele) != val;
   });
 };
-
-// +++++++++++++++++++++++++++++++++++++++++
 
 // +++++++++++++++++++++++++++++++++++++++++
 
@@ -180,126 +188,106 @@ const createToday = () => {
   // months[currentDate.getMonth()]
   // } ${currentDate.getDate()}, ${currentDate.getFullYear()}`; // might assign this straight to textContent later
 
+  // Nav
+  let dayNav = document.createElement("div");
+  // Day Details
+  let details = document.createElement("div");
+
+  // Prev Btn
+  let prevBtn = document.createElement("button");
+  // Next Btn
+  let nextBtn = document.createElement("button");
+  // Title
   let dayTitle = document.createElement("h5");
+  dayNav.appendChild(prevBtn);
+  dayNav.appendChild(dayTitle);
+  dayNav.appendChild(nextBtn);
+
+  dayNav.setAttribute("class", "dayNav");
   dayTitle.setAttribute("class", "dayTitle");
-  dayTitle.textContent = "Today";
+  prevBtn.textContent = "<-";
+  dayTitle.textContent = date;
+  nextBtn.textContent = "->";
 
   // note: turns out theres semantic html called details which pops open stuff which might be useful later on;
-  let details = document.createElement("div");
-  let detailsList = document.createElement("ul");
-  details.appendChild(detailsList);
-  details.setAttribute("class", "details");
 
-  chrome.storage.sync.get([`${date}`], function(result) {
-    // console.log("Get storage");
-    if (!isEmpty(result)) {
-      let entriesArr = result[`${date}`];
-      for (let i = 0; i < entriesArr.length; i++) {
-        let entryListItem = document.createElement("li");
-        let entryInput = document.createElement("input");
+  // Takes in a dateStamp as a parameter to return info
+  let dayInfo = dateStamp => {
+    let detailsList = document.createElement("ul");
+    details.appendChild(detailsList);
+    details.setAttribute("class", "details");
 
-        //   Delete. Should remove the entire note and delete the entry in storage.
-        //   1. Give the button the key of the entry index
-        let entryDelete = document.createElement("button");
-        entryDelete.textContent = "x";
-        entryDelete.setAttribute("value", `${i}`);
-        entryDelete.setAttribute("class", "delete");
-        // entryDelete.id = date;
+    chrome.storage.sync.get([`${dateStamp}`], function(result) {
+      // console.log("Get storage");
+      if (!isEmpty(result)) {
+        let entriesArr = result[`${date}`];
+        for (let i = 0; i < entriesArr.length; i++) {
+          let entryListItem = document.createElement("li");
+          let entryInput = document.createElement("input");
 
-        //   We can use a helper function here
-        entryDelete.onclick = function() {
-          this.parentNode.style.display = "none";
-          chrome.storage.sync.get([`${date}`], function(result) {
-            let dateEntries = result[`${date}`];
-            let index = parseInt(entryDelete.value);
-            let newEntries = arrayRemove(dateEntries, index);
+          //   Delete. Should remove the entire note and delete the entry in storage.
+          //   1. Give the button the key of the entry index
+          let entryDelete = document.createElement("button");
+          entryDelete.textContent = "x";
+          entryDelete.setAttribute("value", `${i}`);
+          entryDelete.setAttribute("class", "delete");
+          // entryDelete.id = date;
 
-            console.log(index);
-            console.log(newEntries);
-            chrome.storage.sync.set({ [date]: newEntries }, function() {
-              console.log(date);
-              console.log("Removed Entry");
+          //   We can use a helper function here
+          entryDelete.onclick = function() {
+            this.parentNode.style.display = "none";
+            chrome.storage.sync.get([`${date}`], function(result) {
+              let dateEntries = result[`${date}`];
+              let index = parseInt(entryDelete.value);
+              let newEntries = arrayRemove(dateEntries, index);
+
+              console.log(index);
+              console.log(newEntries);
+              chrome.storage.sync.set({ [date]: newEntries }, function() {
+                console.log(date);
+                console.log("Removed Entry");
+              });
             });
-          });
-        };
+          };
 
-        entryInput.setAttribute("class", "newItem");
-        entryInput.value = entriesArr[i];
-        entryListItem.appendChild(entryInput);
-        entryListItem.appendChild(entryDelete);
-        detailsList.appendChild(entryListItem);
+          entryInput.setAttribute("class", "newItem");
+          entryInput.value = entriesArr[i];
+          entryListItem.appendChild(entryInput);
+          entryListItem.appendChild(entryDelete);
+          detailsList.appendChild(entryListItem);
+        }
       }
-    }
-  });
+    });
 
-  let btn = document.createElement("button");
-  btn.setAttribute("class", "add");
-  btn.textContent = "+";
-  btn.value = date;
+    let btn = document.createElement("button");
+    btn.setAttribute("class", "add");
+    btn.textContent = "+";
+    btn.value = dateStamp;
 
-  btn.onclick = function() {
-    let entryListItem = document.createElement("li");
-    let entryInput = document.createElement("input");
-    entryInput.setAttribute("class", "newItem");
-    entryInput.setAttribute("autofocus", "true");
-
-    // THIS NOT WORKING AT THE MOMENT
-    // let entryDelete = document.createElement("button");
-    // entryDelete.textContent = "x";
-    // entryDelete.setAttribute("value", `${}`);
-    // entryDelete.setAttribute("class", "delete");
-
-    // //   We can use a helper function here
-    // entryDelete.onclick = function() {
-    //   this.parentNode.style.display = "none";
-    //   chrome.storage.sync.get([`${date}`], function(result) {
-    //     let dateEntries = result[`${date}`];
-    //     let index = parseInt(entryDelete.value);
-    //     let newEntries = arrayRemove(dateEntries, index);
-
-    //     chrome.storage.sync.set({ [date]: newEntries }, function() {
-    //       // console.log(date);
-    //       console.log("Removed Entry");
-    //     });
-    //   });
-    // };
-
-    //   On enter key, we push the entryInput value to the date object for chrome storage
-    entryInput.onkeypress = function(e) {
-      if (!e) e = window.event;
-      let keyCode = e.keyCode || e.which;
-      if (keyCode === 13) {
-        // remove focus
-        this.blur();
-        //   Check input value
-        //   console.log(entryInput.value);
-        chrome.storage.sync.get([`${date}`], function(result) {
-          // Create a date object if it does not exist.
-          // console.log(date);
-          if (isEmpty(result)) {
-            let entries = [`${entryInput.value}`];
-            chrome.storage.sync.set({ [date]: entries }, function() {});
-          } else {
-            let dateEntries = result[`${date}`];
-            dateEntries.push(`${entryInput.value}`);
-            chrome.storage.sync.set({ [date]: dateEntries }, function() {
-              // console.log(dateEntries);
-            });
-          }
-        });
-      }
-    };
-
-    entryListItem.appendChild(entryInput);
-    // entryListItem.appendChild(entryDelete);
-    detailsList.appendChild(entryListItem);
+    details.appendChild(btn);
   };
 
-  details.appendChild(btn);
+  dayInfo(date);
 
-  //   details.appendChild(ul);
-  // details.appendChild(addBtn);
-  dayView.appendChild(dayTitle);
+  // This is how we can change the day for the today calendar view. What I want to do is based off the currentDate object, I will be able to get the previous day timestamp
+  // This is a temporary fix
+  prevBtn.addEventListener("click", function() {
+    details.innerHTML = "";
+    day -= 1;
+    date = `${month}/${day}/${year}`;
+    dayTitle.textContent = date;
+    dayInfo(date);
+  });
+
+  nextBtn.addEventListener("click", function() {
+    details.innerHTML = "";
+    day += 1;
+    date = `${month}/${day}/${year}`;
+    dayTitle.textContent = date;
+    dayInfo(date);
+  });
+
+  dayView.appendChild(dayNav);
   dayView.appendChild(details);
 };
 
@@ -416,12 +404,7 @@ const createMonth = () => {
     month = currentDate.getMonth(),
     year = currentDate.getFullYear();
 
-  console.log(currentDate);
-  console.log(month);
-  console.log(year);
-
   // Create the elements
-  let monthDiv = document.createElement("div"); // parent container of the entire month
   let monthNav = document.createElement("div"); // container of the nav
   let monthDays = document.createElement("div"); // container for the month days
 
@@ -439,9 +422,9 @@ const createMonth = () => {
   monthNav.appendChild(nextBtn);
 
   // Set attributes
-  monthDiv.setAttribute("class", "month");
   monthTitle.setAttribute("class", "monthTitle");
   monthNav.setAttribute("class", "monthNav");
+  monthDays.setAttribute("class", "monthDays")
   prevBtn.textContent = "<-";
   monthTitle.textContent = months[month];
   nextBtn.textContent = "->";
