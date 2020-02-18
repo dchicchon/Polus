@@ -1,8 +1,4 @@
 // Bring in modules at the top
-// const helperMethods = require("./js/helper");
-
-// import helperMethods from "./js/helper";
-
 // The first time the user adds the extension, we set initial storage
 chrome.runtime.onInstalled.addListener(function() {
   chrome.storage.sync.set({ view: "today" }, function() {
@@ -40,6 +36,7 @@ let months = [
   "November",
   "December"
 ];
+
 let weekdays = [
   "Sunday",
   "Monday",
@@ -90,6 +87,7 @@ const addFunction = () => {
             } else {
               let dateEntries = result[`${date}`];
               dateEntries.push(`${entryInput.value}`);
+
               chrome.storage.sync.set({ [date]: dateEntries }, function() {});
             }
           });
@@ -208,7 +206,6 @@ const createToday = () => {
   prevBtn.textContent = "<-";
   dayTitle.textContent = date;
   nextBtn.textContent = "->";
-
   // note: turns out theres semantic html called details which pops open stuff which might be useful later on;
 
   // Takes in a dateStamp as a parameter to return info
@@ -424,7 +421,7 @@ const createMonth = () => {
   // Set attributes
   monthTitle.setAttribute("class", "monthTitle");
   monthNav.setAttribute("class", "monthNav");
-  monthDays.setAttribute("class", "monthDays")
+  monthDays.setAttribute("class", "monthDays");
   prevBtn.textContent = "<-";
   monthTitle.textContent = months[month];
   nextBtn.textContent = "->";
@@ -591,6 +588,14 @@ const updateTime = () => {
 const startApp = () => {
   // These will all be conditionally rendered eventually
   // =================================================
+  chrome.storage.sync.get(["background"], function(result) {
+    console.log(result.background);
+    let page = document.getElementsByTagName("body");
+    page[0].style.background = `rgba(0,0,0,0.5) url(${result.background}) no-repeat center center fixed`;
+    page[0].style.backgroundSize = `cover`
+    
+  });
+
   createToday();
   createWeek();
   createMonth();
