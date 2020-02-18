@@ -588,17 +588,19 @@ const updateTime = () => {
 const startApp = () => {
   // These will all be conditionally rendered eventually
   // =================================================
+  // This should happen everyday
   chrome.storage.sync.get(["background"], function(result) {
-    console.log(result.background);
     let page = document.getElementsByTagName("body");
     page[0].style.background = `rgba(0,0,0,0.5) url(${result.background}) no-repeat center center fixed`;
-    page[0].style.backgroundSize = `cover`
-    
+    page[0].style.backgroundSize = `cover`;
   });
 
+  // These create all the views
   createToday();
   createWeek();
   createMonth();
+
+  // Eventually I want to generate a view based of either the stored view/ or the view that was clicked on
   // =================================================
   hideViews(views); // pass in views arr to hide different calendars depending on the stored view
   viewFunction(); // This function is to give the view buttons the ability to pick a view!
@@ -609,6 +611,4 @@ const startApp = () => {
   let timer = setInterval(updateTime, 1000); // set a timer that executes the updateTime() function every second
 };
 
-// Unsplash API
-// let response = fetch('https://api.unsplash.com/photos/random')
 startApp();
