@@ -595,6 +595,19 @@ const startApp = () => {
     page[0].style.backgroundSize = `cover`;
   });
 
+  chrome.storage.sync.get(["topSites"], function(result) {
+    let ul = document.getElementsByClassName("topSites");
+    for (let i = 0; i < result.topSites.length - 1; i++) {
+      let li = document.createElement("li");
+      let link = document.createElement("a");
+      link.textContent = result.topSites[i].title;
+      li.setAttribute("class", "site");
+      link.setAttribute("href", result.topSites[i].link);
+      li.appendChild(link);
+      ul[0].appendChild(li);
+    }
+  });
+
   // These create all the views
   createToday();
   createWeek();

@@ -16,6 +16,16 @@
   padding-bottom: 0.5rem;
 }
 
+.topSites {
+  display:none;
+}
+
+a {
+  text-decoration: none;
+  font-size: 1rem;
+  color:white;
+}
+
 .view {
   display: flex;
   justify-content: center;

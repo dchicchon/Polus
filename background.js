@@ -17,6 +17,14 @@ fetch(url)
     });
   });
 
+// Not working at the moment. Err cannot find get of undefined
+
+chrome.topSites.get(function(arr) {
+  chrome.storage.sync.set({ topSites: arr }, function() {
+    console.log("Set top site");
+  });
+});
+
 // chrome.events
 // https://developer.chrome.com/extensions/events
 // I want to make an event where when the next day occurs, there is a new background image. Similar to the Momentum extension
