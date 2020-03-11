@@ -11,8 +11,13 @@ const getRandomPhoto = () => {
   let url =
     "https://api.unsplash.com/photos/random/?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&collections=8974511";
 
-  fetch(url) // In the future I should look at the fetch() method more closely
+    console.log("FETCH")
+  fetch(url, {
+    credentials: "include"
+  }) // In the future I should look at the fetch() method more closely
     .then(function(result) {
+      console.log("FETCH RETURN");
+      console.log(result);
       return result.json();
     })
     .then(function(photo) {
