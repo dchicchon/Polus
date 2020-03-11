@@ -1,125 +1,160 @@
 /* This style page is reserved for stylings that would apply to the entire */
 
+html {
+  max-width: 100vw;
+}
+
 body {
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    color: white;
-    background: rgba(90, 90, 90, 0.6);
-    margin: 0;
-    /* height: 100vh; */
-    /* background-size: cover; */
+  /* font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", */
+  /* "Lucida Sans", Arial, sans-serif; */
+  color: white;
+  margin: 0;
+  /* background: rgba(90, 90, 90, 0.6); */
+  /* max-width: 100vw; */
+  /* animation: fadeIn ease 0.5s; */
+  /* animation-iteration-count: 1; */
+  /* animation-fill-mode: forwards; */
+}
+
+ul {
+  padding-inline-start: 0;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 /* width */
 ::-webkit-scrollbar {
-    width: 5px;
+  width: 5px;
 }
-  
-  /* Track */
+
+/* Track */
 ::-webkit-scrollbar-track {
-    background: none;
+  background: none;
 }
-  
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #888;
+  background: #888;
 }
-  
+
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+  background: #555;
 }
 
-
-
 h1 {
-    font-size: 4rem;
+  font-size: 4rem;
 }
 
 h2 {
-    font-size: 3.5rem;
+  font-size: 3.5rem;
 }
 
 h3 {
-    font-size: 3rem;
+  font-size: 3rem;
 }
 
 h4 {
-    font-size: 2.5rem;
+  font-size: 2.5rem;
 }
 
 h5 {
-    font-size: 2rem;
+  font-size: 2rem;
 }
 
 h6 {
-    font-size: 1.5rem;
+  font-size: 1.5rem;
 }
 
-h1,h2,h3,h4,h5,h6 {
-    margin: 0.5rem 0;
-    font-weight: 100;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0.5rem 0;
+  font-weight: 100;
 }
+
+a {
+  text-decoration: none;
+  font-size: 1rem;
+  color: white;
+}
+
 /* ======================== */
-           /* NAV */
+/* NAV */
 /* ======================== */
 
-nav {
-    left: 0;
-    top: 0;
-    width: 100%;
-    font-size: 1.5rem;
+#nav {
+  list-style-type: none;
+  top: 0;
+  height: 3rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#nav li {
+  float: left;
+  display: block;
+  text-align: center;
+}
+
+/* Parent */
+#site-box {
+  padding: 0;
+  position: relative;
+  display: inline-block;
+}
+
+/* Title */
+.topSites-title {
+  transition: 0.5s background;
+  font-size: 1rem;
+  padding: 1rem;
+}
+
+.topSites-title:hover {
+  background: rgba(90, 90, 90, 0.329);
+}
+
+/* ul List */
+.topSites {
+  display: none;
+  position: absolute;
+  min-width: 160px;
+  overflow: auto;
+  right: 0;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+
+/* ul list items */
+.site {
+  transition: 0.5s background;
+  display: block;
+  /* z-index: 999; */
+}
+.site:hover {
+  background: rgba(90, 90, 90, 0.329);
 }
 
 .title {
-    text-emphasis: none;
-    text-decoration: none;
-    color: white;
-    font-weight: 200;
-    letter-spacing: 0.1rem;
-    font-size: 2rem;
-    margin-left:1rem;
-    transition: letter-spacing 0.5s;
-}
-
-.title:hover {
-    letter-spacing: 0.5rem;
-}
-
-
-nav ul {
-    float: right;
-    list-style-type: none;
-    margin: 0 1.5rem 0 0;
-    padding: 0;    
-
-}
-
-.nav-items {
-    margin: 0;
-    list-style-type: none;
-    padding: 0;
-    overflow: hidden;
-}
-
-.nav-item {
-    /* display: inline; */
-    float: left;
-}
-
-.nav-item a {
-    display: block;
-    padding: 11px 16px;
-    text-decoration: none;
-    color: white;
-    font-size: 1.15rem;
-    letter-spacing: 0.1rem;
-    transition: letter-spacing 0.5s;
-    /* transition: transform 0.25s */
-}
-
-.nav-item a:hover {
-    /* transform: translateY(-10%) */
-    letter-spacing: 0.25rem;
+  padding: 1rem;
+  text-emphasis: none;
+  text-decoration: none;
+  color: white;
+  font-weight: 200;
+  letter-spacing: 0.1rem;
+  font-size: 2rem;
 }
 
 /* ======================== */
@@ -127,41 +162,38 @@ nav ul {
 /* ======================== */
 
 main {
-    width: 100%;
-    margin: 1rem auto;
-    /* display: none; */
+  width: 100%;
+  margin: 1rem auto;
+  /* display: none; */
 }
 
 button {
-    outline: none;
-    border:none;
-    /* background: teal; */
-    /* background: rgb(24, 127, 187); */
-    background: rgba(90, 90, 90, 0.329);
-    transition: background 0.5s;
-    padding: 0.5rem 1rem;
-    color: white;
-    /* margin-bottom: 1rem; */
+  outline: none;
+  border: none;
+  /* background: teal; */
+  /* background: rgb(24, 127, 187); */
+  background: rgba(90, 90, 90, 0.329);
+  transition: background 0.5s;
+  padding: 0.5rem 1rem;
+  color: white;
+  /* margin-bottom: 1rem; */
 }
 
 button:hover {
-    /* background: rgb(1, 88, 88);\ */
-    /* background: rgb(21, 112, 165); */
-    background: rgba(90, 90, 90, 0.747);
-    /* padding: 0.75rem 1.25rem; */
-    cursor: pointer;
+  /* background: rgb(1, 88, 88);\ */
+  /* background: rgb(21, 112, 165); */
+  background: rgba(90, 90, 90, 0.747);
+  /* padding: 0.75rem 1.25rem; */
+  cursor: pointer;
 }
 
 .container {
-
 }
 
 .row {
-    display: flex;
-    width: 100%;
+  display: flex;
+  width: 100%;
 }
 
 .col {
-
 }
-

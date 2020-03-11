@@ -1,12 +1,5 @@
 // Bring in modules at the top
 // The first time the user adds the extension, we set initial storage
-chrome.runtime.onInstalled.addListener(function() {
-  chrome.storage.sync.set({ view: "today" }, function() {
-    chrome.storage.sync.get(["view"], function(result) {
-      console.log("View set to:", result.view);
-    });
-  });
-});
 
 // MAIN VARIABLES
 // =========================================
@@ -50,11 +43,24 @@ let weekdays = [
 // VIEWS
 // =========================================
 
-// This is a bit misleading somewhat. This function will hide all the other views that are not the result.
 const hideViews = viewsArr => {
   chrome.storage.sync.get(["view"], function(result) {
     for (let k = 0; k < viewsArr.length; k++) {
+      // If the view clicked on equals the result
       if (views[k].id === result["view"]) {
+        // console.log(result["view"]);
+        view = result["view"];
+        switch (view) {
+          case "today":
+            createToday();
+            break;
+          case "week":
+            createWeek();
+            break;
+          case "month":
+            createMonth();
+            break;
+        }
         views[k].setAttribute("style", "display:flex");
       } else {
         views[k].setAttribute("style", "display:none");
@@ -68,27 +74,113 @@ const viewFunction = () => {
   for (let j = 0; j < viewButtons.length; j++) {
     viewButtons[j].onclick = function() {
       currentView = this.textContent.toLowerCase();
-      chrome.storage.sync.set({ view: currentView }, function() {
-        // console.log("Storage view set to", currentView);
+      chrome.storage.sync.get(["view"], function(result) {
+        if (currentView !== result["view"]) {
+          chrome.storage.sync.set({ view: currentView }, function() {
+            hideViews(views);
+          });
+        }
       });
-      hideViews(views);
     };
   }
+};
+// +++++++++++++++++++++++++++++++++++++++++
+// Helper functions for calendar
+// Feature to add new entries
+let addFunction = () => {
+  let addButtons = document.getElementsByClassName("add");
+  // For each add button, do something
+  for (let i = 0; i < addButtons.length; i++) {
+    let date = addButtons[i].value;
+    // Lets add an onclick listener
+    addButtons[i].onclick = function() {
+      // When clicked, we will create a couple of HTML elements with attributes
+      let entryListItem = document.createElement("li");
+      let entryInput = document.createElement("input");
+      entryInput.setAttribute("class", "newItem");
+      entryInput.setAttribute("autofocus", "true");
+
+      // Add a key press listener for the HTML input element (listen for the keycode for Enter (13))
+      entryInput.onkeypress = function(e) {
+        if (!e) e = window.event;
+        let keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+          this.blur();
+          // Check the storage for this date
+          chrome.storage.sync.get([`${date}`], function(result) {
+            // If the date is empty, we will set the entry to it
+            if (isEmpty(result)) {
+              let entries = [`${entryInput.value}`];
+              chrome.storage.sync.set({ [date]: entries }, function() {});
+
+              // If its not empty, we will append the entry to the others
+            } else {
+              let dateEntries = result[`${date}`];
+              dateEntries.push(`${entryInput.value}`);
+              chrome.storage.sync.set({ [date]: dateEntries }, function() {});
+            }
+          });
+        }
+      };
+      entryListItem.appendChild(entryInput);
+      addButtons[i].previousElementSibling.append(entryListItem);
+    };
+  }
+};
+
+//   Delete entries: NOT WORKING AT THE MOMENT
+let deleteFunction = () => {
+  let deleteButtons = document.getElementsByClassName("delete");
+  console.log(deleteButtons);
+  for (let i = 0; i < deleteButtons.length; i++) {
+    let date = deleteButtons[i].id;
+    console.log(date);
+    deleteButtons[i].onclick = function() {
+      this.parentNode.style.display = "none";
+      chrome.storage.sync.get([`${date}`], function(result) {
+        let dateEntries = result[`${date}`];
+        let index = parseInt(entryDelete.value);
+        let newEntries = arrayRemove(dateEntries, index);
+
+        console.log(index);
+        console.log(newEntries);
+        chrome.storage.sync.set({ [date]: newEntries }, function() {
+          console.log(date);
+          console.log("Removed Entry");
+        });
+      });
+    };
+  }
+};
+
+//   Check if object is empty. Used to see if a day has any entries
+let isEmpty = obj => {
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      return false;
+    }
+  }
+  return true;
+};
+
+//   Removes a value from an array
+let arrayRemove = (arr, val) => {
+  return arr.filter(function(ele) {
+    return arr.indexOf(ele) != val;
+  });
 };
 // +++++++++++++++++++++++++++++++++++++++++
 
 // PLANNER BUILDS
 // ========================================
 const createToday = () => {
+  dayView.innerHTML = "";
   let currentDate = new Date();
 
   let year = currentDate.getFullYear(),
     month = currentDate.getMonth() + 1,
     day = currentDate.getDate(),
     date = `${month}/${day}/${year}`;
-  // showdate = `${weekdays[currentDate.getDay()]}, ${
-  // months[currentDate.getMonth()]
-  // } ${currentDate.getDate()}, ${currentDate.getFullYear()}`; // might assign this straight to textContent later
 
   // Nav
   let dayNav = document.createElement("div");
@@ -179,6 +271,7 @@ const createToday = () => {
     date = `${month}/${day}/${year}`;
     dayTitle.textContent = date;
     dayInfo(date);
+    addFunction();
   });
 
   nextBtn.addEventListener("click", function() {
@@ -187,13 +280,16 @@ const createToday = () => {
     date = `${month}/${day}/${year}`;
     dayTitle.textContent = date;
     dayInfo(date);
+    addFunction();
   });
 
   dayView.appendChild(dayNav);
   dayView.appendChild(details);
+  addFunction();
 };
 
 const createWeek = () => {
+  weekView.innerHTML = "";
   for (let i = 0; i <= 6; i++) {
     // Parent elm
     // Give a new date object to each element
@@ -299,9 +395,11 @@ const createWeek = () => {
 
     weekView.appendChild(weekday);
   }
+  addFunction();
 };
 
 const createMonth = () => {
+  monthView.innerHTML = "";
   let currentDate = new Date(),
     month = currentDate.getMonth(),
     year = currentDate.getFullYear();
@@ -412,19 +510,17 @@ const createMonth = () => {
   // Click to go to previous month
 
   prevBtn.addEventListener("click", function() {
-    console.log("Previous month");
     month -= 1;
+    if (month < 0) month = 11;
     monthTitle.textContent = months[month];
-    console.log(month);
     monthDays.innerHTML = "";
     createDaysInMonth(year, month);
   });
 
   // Click to go to next month
   nextBtn.addEventListener("click", function() {
-    console.log("Next month");
     month += 1;
-    console.log(month);
+    if (month > 11) month = 0;
     monthDays.innerHTML = "";
     monthTitle.textContent = months[month];
     createDaysInMonth(year, month);
@@ -479,9 +575,7 @@ const updateTime = () => {
   timeValue += hours >= 12 ? " pm" : " am"; // get AM/PM
 
   let clock = `${timeValue}`;
-  // console.log(currentDate)
-  // console.log(currentDate.getUTCDay())
-  let date = `${weekdays[currentDate.getUTCDay()]} ${month}/${day}/${year} `;
+  let date = `${weekdays[currentDate.getDay()]} ${month}/${day}/${year} `;
 
   // document.getElementById('date').textContent = date
   document.getElementById("clock").textContent = clock;
@@ -495,55 +589,43 @@ const startApp = () => {
   // These will all be conditionally rendered eventually
   // =================================================
   // This should happen everyday
-  chrome.storage.sync.get(["background"], function(result) {
+  chrome.storage.sync.get(["background", "topSites"], function(result) {
+    let ul = document.getElementsByClassName("topSites");
+    for (let i = 0; i < 6; i++) {
+      // Get rid of http://
+      // console.log(result.topSites[i].url);
+      let index = result.topSites[i].url.indexOf("://");
+      let url = result.topSites[i].url.substring(index + 3);
+      // console.log(url);
+      let link = document.createElement("a");
+      link.textContent = url;
+      link.setAttribute("class", "site");
+      link.setAttribute("href", result.topSites[i].url);
+      link.setAttribute("target", "_blank");
+      ul[0].appendChild(link);
+    }
+
+    let siteBox = document.getElementById("site-box");
+    siteBox.addEventListener("mouseenter", function() {
+      ul[0].setAttribute("style", "display:block");
+    });
+
+    siteBox.addEventListener("mouseleave", function() {
+      ul[0].setAttribute("style", "display:none");
+    });
+
     let page = document.getElementsByTagName("html");
     page[0].style.background = `rgba(0,0,0,0.9) url(${result.background}) no-repeat center center fixed`;
     page[0].style.backgroundSize = `cover`;
-    // These create all the views
-    createToday();
-    createWeek();
-    createMonth();
 
-    // Eventually I want to generate a view based of either the stored view/ or the view that was clicked on
-    // =================================================
+    // These create all the views
     hideViews(views); // pass in views arr to hide different calendars depending on the stored view
     viewFunction(); // This function is to give the view buttons the ability to pick a view!
     updateTime(); // this updates the clock
     // deleteFunction();
-    addFunction();
 
     let timer = setInterval(updateTime, 1000); // set a timer that executes the updateTime() function every second
   });
-
-  // let background = document.createElement("")
-
-  chrome.storage.sync.get(["topSites"], function(result) {
-    let ul = document.getElementsByClassName("topSites");
-    for (let i = 0; i < result.topSites.length - 1; i++) {
-      let li = document.createElement("li");
-      let link = document.createElement("a");
-      link.textContent = result.topSites[i].title;
-      li.setAttribute("class", "site");
-      link.setAttribute("href", result.topSites[i].link);
-      li.appendChild(link);
-      ul[0].appendChild(li);
-    }
-  });
-
-  // // These create all the views
-  // createToday();
-  // createWeek();
-  // createMonth();
-
-  // // Eventually I want to generate a view based of either the stored view/ or the view that was clicked on
-  // // =================================================
-  // hideViews(views); // pass in views arr to hide different calendars depending on the stored view
-  // viewFunction(); // This function is to give the view buttons the ability to pick a view!
-  // updateTime(); // this updates the clock
-  // // deleteFunction();
-  // addFunction();
-
-  // let timer = setInterval(updateTime, 1000); // set a timer that executes the updateTime() function every second
 };
 
 startApp();

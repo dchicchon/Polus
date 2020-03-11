@@ -82,3 +82,6 @@ let arrayRemove = (arr, val) => {
     return arr.indexOf(ele) != val;
   });
 };
+
+// addFunction()
+// deleteFunction()
