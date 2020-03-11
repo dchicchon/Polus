@@ -434,7 +434,6 @@ const createMonth = () => {
   // This will generate all the days for a month and all the associated notes
   let createDaysInMonth = (year, month) => {
     let daysInMonth = new Date(year, month + 1, 0).getDate();
-
     //   Lets create a dayDiv for however many days in the month there are
 
     for (let i = 0; i < daysInMonth; i++) {
@@ -511,7 +510,10 @@ const createMonth = () => {
 
   prevBtn.addEventListener("click", function() {
     month -= 1;
-    if (month < 0) month = 11;
+    if (month < 0) {
+      month = 11;
+      year -= 1;
+    }
     monthTitle.textContent = months[month];
     monthDays.innerHTML = "";
     createDaysInMonth(year, month);
@@ -520,7 +522,10 @@ const createMonth = () => {
   // Click to go to next month
   nextBtn.addEventListener("click", function() {
     month += 1;
-    if (month > 11) month = 0;
+    if (month > 11) {
+      month = 0;
+      year += 1;
+    }
     monthDays.innerHTML = "";
     monthTitle.textContent = months[month];
     createDaysInMonth(year, month);
