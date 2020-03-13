@@ -1,18 +1,24 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(function() {
   chrome.topSites.get(function(arr) {
-    chrome.storage.sync.set({ view: "today", topSites: arr }, function() {});
+    chrome.storage.sync.set({ view: "week", topSites: arr }, function() {});
   });
+
+  // Set cookies because cross origin request must be secure and recognized that it is a cors method
   chrome.cookies.set(
-    { url: "https://api.unsplash.com/", sameSite: "no_restriction", secure: true },
+    {
+      url: "https://api.unsplash.com/",
+      sameSite: "no_restriction",
+      secure: true
+    },
     function(cookie) {
-      console.log("Cookie settings have been set");
-      console.log(cookie);
+      // console.log("Cookie settings have been set");
+      // console.log(cookie);
     }
   );
 });
 
-// Get new photo from collection
+// Get new photo from collection https://unsplash.com/documentation
 const getRandomPhoto = () => {
   // This url hits an api endpoint to get a random photo of nature and saves it to user's chrome storage
   let url =
@@ -26,46 +32,47 @@ const getRandomPhoto = () => {
     })
     .then(response => response.json())
     .then(function(photo) {
-      // console.log(photo);
-      let photoImage = photo.urls.full;
-      chrome.storage.sync.set({ background: photoImage }, function(result) {});
+      console.log(photo);
+      let url = photo.urls.regular;
+      let location = `${photo.location.city}, ${photo.location.country}`;
+      let author = `${photo.user.name}`;
+      let authorLink = photo.user.links.html;
+      chrome.storage.sync.set(
+        {
+          background: { url, location, author, authorLink }
+        },
+        function(result) {}
+      );
     })
     .catch(err => console.log(`Fetch failed: ${err}`));
 };
 
 // Recalculate timestamp for next day
-
 const tick = () => {
-  console.log("RANDOM DATE");
-  let randomDate = new Date();
-  console.log(randomDate);
-  console.log("NEXT DATE");
   let next = new Date();
-  console.log(next);
-  randomDate.setDate(Date.now() + 1);
-  randomDate.setHours(6);
-  randomDate.setMinutes(0);
-  randomDate.setSeconds(0);
-  randomDate.setMilliseconds(0);
-  localStorage.savedTimestamp = randomDate.getTime();
+  next.setDate(next.getDate() + 1);
+  localStorage.savedTimestamp = next;
   getRandomPhoto();
 };
 
 const checkTimeStamp = () => {
-  console.log(localStorage.savedTimestamp);
   if (localStorage.savedTimestamp) {
-    let timestamp = parseInt(localStorage.savedTimestamp);
-    console.log(timestamp);
-    if (Date.now() >= timestamp) {
+    let timestamp = localStorage.savedTimestamp;
+    let currentDate = new Date();
+    if (currentDate >= timestamp) {
       tick();
     }
   } else {
     // first time running
-    console.log("FIRST TICK!");
     tick();
   }
 };
 
 // Check every minute to see if the day has changed
 // https://stackoverflow.com/questions/60591487/chrome-extensions-how-to-set-function-to-execute-when-day-has-changed/60592084#60592084
-checkTimeStamp();
+const startBackground = () => {
+  checkTimeStamp();
+  // getTopSites();
+};
+
+startBackground();

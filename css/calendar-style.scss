@@ -14,8 +14,6 @@ html {
 
 body {
   color: white;
-  background-repeat: no-repeat;
-  background-size: cover;
   margin: 0;
 }
 
@@ -25,7 +23,7 @@ body {
 
 /* width */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 3px;
 }
 
 /* Track */
@@ -98,10 +96,10 @@ button:hover {
     text-align: center;
   }
 
-  .title {
+  .app-title {
     padding: 1rem;
-    text-emphasis: none;
-    text-decoration: none;
+    // text-emphasis: none;
+    // text-decoration: none;
     color: white;
     font-weight: 200;
     letter-spacing: 0.1rem;
@@ -168,6 +166,31 @@ button:hover {
   width: 15%;
   margin: 0.5rem auto;
   font-weight: 100;
+}
+
+#background-info {
+  padding: 1rem;
+  display: grid;
+  #background-location {
+    grid-column: 1;
+    grid-row: 1;
+    opacity: 0.5;
+    font-size: 1rem;
+    transition: 0.5s opacity;
+  }
+  #background-source {
+    font-size: 1rem;
+    grid-column: 1;
+    grid-row: 1;
+    opacity: 0;
+    transition: 0.5s opacity;
+  }
+
+  #background-link {
+    position: relative;
+    text-decoration: none;
+    color: white;
+  }
 }
 
 // ====================
@@ -247,6 +270,12 @@ button:hover {
   margin: 0 1rem;
   text-align: center;
 }
+
+.nav {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
 // ====================
 
 /* DAY VIEW */
@@ -256,16 +285,11 @@ button:hover {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* border: 0.5px solid rgba(32, 32, 32, 0.555); */
-  /* border-radius: 25px 25px 10px 10px; */
+  border: 0.5px solid rgba(32, 32, 32, 0.555);
+  border-radius: 25px 25px 10px 10px;
   width: 50%;
   padding: 1rem 2rem;
   margin: 0 auto;
-
-  .dayNav {
-    display: flex;
-    justify-content: center;
-  }
 }
 
 /* =========================================== */
@@ -314,9 +338,6 @@ button:hover {
   flex-direction: column;
   justify-content: center;
   .monthNav {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 0.5rem;
   }
   .monthDays {
     width: 95%;

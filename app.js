@@ -169,6 +169,34 @@ let arrayRemove = (arr, val) => {
     return arr.indexOf(ele) != val;
   });
 };
+
+let addSites = mostVisitedURLs => {
+  let ul = document.getElementsByClassName("topSites");
+  for (let i = 0; i < mostVisitedURLs.length - 3; i++) {
+    let index = mostVisitedURLs[i].url.indexOf("://");
+    let url = mostVisitedURLs[i].url.substring(index + 3);
+    let link = document.createElement("a");
+    link.textContent = url;
+    link.setAttribute("class", "site");
+    link.setAttribute("href", mostVisitedURLs[i].url);
+    link.setAttribute("target", "_blank");
+    ul[0].appendChild(link);
+  }
+  let siteBox = document.getElementById("site-box");
+  siteBox.addEventListener("mouseenter", function() {
+    ul[0].setAttribute("style", "display:block");
+  });
+
+  siteBox.addEventListener("mouseleave", function() {
+    ul[0].setAttribute("style", "display:none");
+  });
+};
+
+// let setBackgroundInfo = result => {
+//   console.log("SET INFO");
+//   let background = document.getElementsByClassName("background-info")
+//   background[0].innerText = result.background.location;
+// };
 // +++++++++++++++++++++++++++++++++++++++++
 
 // PLANNER BUILDS
@@ -184,8 +212,7 @@ const createToday = () => {
 
   // Nav
   let dayNav = document.createElement("div");
-  // Day Details
-  let details = document.createElement("div");
+  let details = document.createElement("div"); // day details
 
   // Prev Btn
   let prevBtn = document.createElement("button");
@@ -197,7 +224,7 @@ const createToday = () => {
   dayNav.appendChild(dayTitle);
   dayNav.appendChild(nextBtn);
 
-  dayNav.setAttribute("class", "dayNav");
+  dayNav.setAttribute("class", "nav");
   dayTitle.setAttribute("class", "title");
   prevBtn.textContent = "<-";
   dayTitle.textContent = date;
@@ -261,13 +288,10 @@ const createToday = () => {
     addFunction();
   };
 
-  dayInfo(date);
-
   // This is how we can change the day for the daily calendar view. What I want to do is based off the currentDate object, I will be able to get the previous day timestamp
   // This is a temporary fix
   prevBtn.addEventListener("click", function() {
     details.innerHTML = "";
-    day -= 1;
     currentDate.setDate(currentDate.getDate() - 1);
     year = currentDate.getFullYear();
     month = currentDate.getMonth() + 1;
@@ -275,12 +299,11 @@ const createToday = () => {
     date = `${month}/${day}/${year}`;
     dayTitle.textContent = date;
     dayInfo(date);
-    addFunction();
+    // addFunction();
   });
 
   nextBtn.addEventListener("click", function() {
     details.innerHTML = "";
-    // day += 1;
     currentDate.setDate(currentDate.getDate() + 1);
     year = currentDate.getFullYear();
     month = currentDate.getMonth() + 1;
@@ -288,16 +311,19 @@ const createToday = () => {
     date = `${month}/${day}/${year}`;
     dayTitle.textContent = date;
     dayInfo(date);
-    addFunction();
+    // addFunction();
   });
 
   dayView.appendChild(dayNav);
   dayView.appendChild(details);
-  addFunction();
+  // dayView.appendChild(bottom);
+  dayInfo(date);
+  // addFunction();
 };
 
 const createWeek = () => {
   weekView.innerHTML = "";
+
   for (let i = 0; i <= 6; i++) {
     // Parent elm
     // Give a new date object to each element
@@ -416,7 +442,6 @@ const createMonth = () => {
   let monthNav = document.createElement("div"); // container of the nav
   let monthDays = document.createElement("div"); // container for the month days
 
-  // Row 1
   // =============================================
   // Month Nav
   // Prev Btn
@@ -431,7 +456,7 @@ const createMonth = () => {
 
   // Set attributes
   monthTitle.setAttribute("class", "title");
-  monthNav.setAttribute("class", "monthNav");
+  monthNav.setAttribute("class", "nav");
   monthDays.setAttribute("class", "monthDays");
   prevBtn.textContent = "<-";
   monthTitle.textContent = months[month] + ` ${year}`;
@@ -464,7 +489,7 @@ const createMonth = () => {
       // Gets storage items and creates an li element for each item
       // console.log(date);
       chrome.storage.sync.get([`${date}`], function(result) {
-        if (!isEmpty(result)) {
+        if (!isEmpty(result.date)) {
           let entriesArr = result[`${date}`];
           for (let j = 0; j < entriesArr.length; j++) {
             let entryListItem = document.createElement("li");
@@ -514,14 +539,12 @@ const createMonth = () => {
     }
     addFunction();
   };
-  // Click to go to previous month
 
+  // Click to go to previous month
   prevBtn.addEventListener("click", function() {
-    month -= 1;
-    if (month < 0) {
-      month = 11;
-      year -= 1;
-    }
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    month = currentDate.getMonth();
+    year = currentDate.getFullYear();
     monthTitle.textContent = months[month] + ` ${year}`;
     monthDays.innerHTML = "";
     createDaysInMonth(year, month);
@@ -529,27 +552,19 @@ const createMonth = () => {
 
   // Click to go to next month
   nextBtn.addEventListener("click", function() {
-    month += 1;
-    if (month > 11) {
-      month = 0;
-      year += 1;
-    }
-    monthDays.innerHTML = "";
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    month = currentDate.getMonth();
+    year = currentDate.getFullYear();
     monthTitle.textContent = months[month] + ` ${year}`;
-    // monthTitle.textContent = months[month];
+    monthDays.innerHTML = "";
     createDaysInMonth(year, month);
-    addFunction();
   });
   // =============================================
-  // Make this into a function!
-  // The number of days in this month
-
-  createDaysInMonth(year, month);
 
   monthView.appendChild(monthNav);
   monthView.appendChild(monthDays);
-  addFunction();
-  // monthView.appendChild(monthDiv);
+  // monthView.appendChild(bottom);
+  createDaysInMonth(year, month);
 };
 
 // +++++++++++++++++++++++++++++++++++++++++
@@ -600,42 +615,36 @@ const updateTime = () => {
 
 // START APP
 const startApp = () => {
-  // These will all be conditionally rendered eventually
-  // =================================================
-  // This should happen everyday
-  chrome.storage.sync.get(["background", "topSites"], function(result) {
-    let ul = document.getElementsByClassName("topSites");
-    for (let i = 0; i < 6; i++) {
-      // Get rid of http://
-      // console.log(result.topSites[i].url);
-      let index = result.topSites[i].url.indexOf("://");
-      let url = result.topSites[i].url.substring(index + 3);
-      // console.log(url);
-      let link = document.createElement("a");
-      link.textContent = url;
-      link.setAttribute("class", "site");
-      link.setAttribute("href", result.topSites[i].url);
-      link.setAttribute("target", "_blank");
-      ul[0].appendChild(link);
-    }
-
-    let siteBox = document.getElementById("site-box");
-    siteBox.addEventListener("mouseenter", function() {
-      ul[0].setAttribute("style", "display:block");
-    });
-
-    siteBox.addEventListener("mouseleave", function() {
-      ul[0].setAttribute("style", "display:none");
-    });
-
+  chrome.storage.sync.get(["background"], function(result) {
+    chrome.topSites.get(addSites); // add topsites
     let page = document.getElementsByTagName("html");
-    page[0].style.background = `rgba(0,0,0,0.9) url(${result.background}) no-repeat center center fixed`;
+    page[0].style.background = `rgba(0,0,0,0.9) url(${result.background.url}) no-repeat center center fixed`;
     page[0].style.backgroundSize = `cover`;
 
-    // These create all the views
+    let backgroundInfo = document.getElementById("background-info");
+    let backgroundLocation = document.getElementById("background-location");
+    let backgroundSource = document.getElementById("background-source");
+    let backgroundLink = document.getElementById("background-link");
+    backgroundLink.setAttribute("href", result.background.authorLink);
+    backgroundLocation.textContent = result.background.location;
+    backgroundLink.textContent = result.background.author;
+
+    backgroundInfo.addEventListener("mouseover", () => {
+      backgroundLocation.style.opacity = 0;
+      backgroundSource.style.opacity = 0.5;
+    });
+
+    backgroundInfo.addEventListener("mouseleave", () => {
+      backgroundLocation.style.opacity = 0.5;
+      backgroundSource.style.opacity = 0;
+    });
+
     hideViews(views); // pass in views arr to hide different calendars depending on the stored view
     viewFunction(); // This function is to give the view buttons the ability to pick a view!
     updateTime(); // this updates the clock
+    // console.log(backgroundInfo.item())
+    // console.log(result.background.location)
+    // backgroundInfo[0].textContent = 'hello'
     // deleteFunction();
 
     let timer = setInterval(updateTime, 1000); // set a timer that executes the updateTime() function every second

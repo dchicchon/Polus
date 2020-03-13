@@ -4,8 +4,6 @@ html {
 
 body {
   color: white;
-  background-repeat: no-repeat;
-  background-size: cover;
   margin: 0;
 }
 
@@ -19,7 +17,7 @@ body {
 
 /* width */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 3px;
 }
 
 /* Track */
@@ -110,11 +108,8 @@ button:hover {
   text-align: center;
 }
 
-#nav .title {
+#nav .app-title {
   padding: 1rem;
-  -webkit-text-emphasis: none;
-          text-emphasis: none;
-  text-decoration: none;
   color: white;
   font-weight: 200;
   letter-spacing: 0.1rem;
@@ -201,6 +196,40 @@ button:hover {
   font-weight: 100;
 }
 
+#background-info {
+  padding: 1rem;
+  display: -ms-grid;
+  display: grid;
+}
+
+#background-info #background-location {
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 1;
+  grid-row: 1;
+  opacity: 0.5;
+  font-size: 1rem;
+  -webkit-transition: 0.5s opacity;
+  transition: 0.5s opacity;
+}
+
+#background-info #background-source {
+  font-size: 1rem;
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 1;
+  grid-row: 1;
+  opacity: 0;
+  -webkit-transition: 0.5s opacity;
+  transition: 0.5s opacity;
+}
+
+#background-info #background-link {
+  position: relative;
+  text-decoration: none;
+  color: white;
+}
+
 .add {
   background: none;
   width: 1.5rem;
@@ -281,6 +310,16 @@ button:hover {
   text-align: center;
 }
 
+.nav {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin-bottom: 1rem;
+}
+
 /* DAY VIEW */
 /* =========================================== */
 #daily {
@@ -294,20 +333,11 @@ button:hover {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  /* border: 0.5px solid rgba(32, 32, 32, 0.555); */
-  /* border-radius: 25px 25px 10px 10px; */
+  border: 0.5px solid rgba(32, 32, 32, 0.555);
+  border-radius: 25px 25px 10px 10px;
   width: 50%;
   padding: 1rem 2rem;
   margin: 0 auto;
-}
-
-#daily .dayNav {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
 }
 
 /* =========================================== */
@@ -359,16 +389,6 @@ button:hover {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-}
-
-#month .monthNav {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  margin-bottom: 0.5rem;
 }
 
 #month .monthDays {
