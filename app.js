@@ -268,8 +268,10 @@ const createToday = () => {
   prevBtn.addEventListener("click", function() {
     details.innerHTML = "";
     day -= 1;
-    console.log(currentDate.getDate());
-    // currentDate.setDate();
+    currentDate.setDate(currentDate.getDate() - 1);
+    year = currentDate.getFullYear();
+    month = currentDate.getMonth() + 1;
+    day = currentDate.getDate();
     date = `${month}/${day}/${year}`;
     dayTitle.textContent = date;
     dayInfo(date);
@@ -278,7 +280,11 @@ const createToday = () => {
 
   nextBtn.addEventListener("click", function() {
     details.innerHTML = "";
-    day += 1;
+    // day += 1;
+    currentDate.setDate(currentDate.getDate() + 1);
+    year = currentDate.getFullYear();
+    month = currentDate.getMonth() + 1;
+    day = currentDate.getDate();
     date = `${month}/${day}/${year}`;
     dayTitle.textContent = date;
     dayInfo(date);
