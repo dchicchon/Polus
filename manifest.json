@@ -13,7 +13,9 @@
     "permissions": [
         "activeTab",
         "storage",
-        "topSites"
+        "topSites",
+        "cookies",
+        "*://*.unsplash.com/"
     ],
     "background": {
         "scripts": ["background.js"],

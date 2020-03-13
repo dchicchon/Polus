@@ -5,22 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Planner</title>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      media="screen"
-      href="./css/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      media="screen"
-      href="./css/calendar.css"
-    />
-  </head>
-
+    <link rel="stylesheet" type="text/css" media="screen" href="./css/calendar-style.css"/>
+  </head> 
   <body>
-
     <ul id="nav">
       <li><a class="title" href="#">Planner</a></li>
       <li id="site-box" style="float: right;">
@@ -32,13 +19,13 @@
     <main>
       <div id="date"></div>
       <div id="clock"></div>
-      <div class="view">
-        <button type="button" class="view-btn">Today</button>
+      <div id="view">
+        <button type="button" class="view-btn">Daily</button>
         <button type="button" class="view-btn">Week</button>
         <button type="button" class="view-btn">Month</button>
       </div>
 
-      <section id="today"></section>
+      <section id="daily"></section>
       <section id="week"></section>
       <section id="month"></section>
     </main>

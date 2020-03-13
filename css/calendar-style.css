@@ -1,0 +1,394 @@
+html {
+  max-width: 100vw;
+}
+
+body {
+  color: white;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 0;
+}
+
+::-moz-selection {
+  background: rgba(90, 90, 90, 0.329);
+}
+
+::selection {
+  background: rgba(90, 90, 90, 0.329);
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: none;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+main {
+  width: 100%;
+  margin: 1rem auto;
+}
+
+main section {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+  -webkit-animation-name: fadeIn;
+          animation-name: fadeIn;
+  -webkit-animation-duration: 0.5s;
+          animation-duration: 0.5s;
+  -webkit-animation-fill-mode: forwards;
+          animation-fill-mode: forwards;
+}
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+button {
+  outline: none;
+  border: none;
+  /* background: teal; */
+  /* background: rgb(24, 127, 187); */
+  background: rgba(90, 90, 90, 0.329);
+  -webkit-transition: background 0.5s;
+  transition: background 0.5s;
+  padding: 0.5rem 1rem;
+  color: white;
+  /* margin-bottom: 1rem; */
+}
+
+button:hover {
+  background: rgba(90, 90, 90, 0.747);
+  /* padding: 0.75rem 1.25rem; */
+  cursor: pointer;
+}
+
+#nav {
+  list-style-type: none;
+  top: 0;
+  height: 3rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#nav li {
+  float: left;
+  display: block;
+  text-align: center;
+}
+
+#nav .title {
+  padding: 1rem;
+  -webkit-text-emphasis: none;
+          text-emphasis: none;
+  text-decoration: none;
+  color: white;
+  font-weight: 200;
+  letter-spacing: 0.1rem;
+  font-size: 2rem;
+}
+
+#nav #site-box {
+  padding: 0;
+  position: relative;
+  display: inline-block;
+}
+
+#nav #site-box .topSites-title {
+  -webkit-transition: 0.5s background;
+  transition: 0.5s background;
+  font-size: 1rem;
+  padding: 1rem;
+}
+
+#nav #site-box .topSites-title:hover {
+  background: rgba(90, 90, 90, 0.329);
+}
+
+#nav #site-box .topSites {
+  display: none;
+  position: absolute;
+  min-width: 160px;
+  overflow: auto;
+  right: 0;
+  -webkit-box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+          box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+
+#nav #site-box .topSites .site {
+  -webkit-transition: 0.5s background;
+  transition: 0.5s background;
+  display: block;
+  text-decoration: none;
+  font-size: 1rem;
+  color: white;
+  /* z-index: 999; */
+}
+
+#nav #site-box .topSites .site:hover {
+  background: rgba(90, 90, 90, 0.329);
+}
+
+#date {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  color: white;
+  font-size: 2rem;
+  font-weight: 100;
+  padding-bottom: 0.5rem;
+}
+
+#clock {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  color: white;
+  font-size: 4.75rem;
+  font-weight: 100;
+  padding-bottom: 0.5rem;
+}
+
+#view {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 15%;
+  margin: 0.5rem auto;
+  font-weight: 100;
+}
+
+.add {
+  background: none;
+  width: 1.5rem;
+  font-size: 1.25rem;
+  border-radius: 100%;
+  margin-left: 10px;
+  -webkit-transition: background 0.5s;
+  transition: background 0.5s;
+  padding: 0 0.4rem;
+}
+
+.add:hover {
+  background: rgba(43, 129, 185, 0.76);
+}
+
+.delete {
+  background: none;
+  width: 1rem;
+  font-size: 0.9rem;
+  border-radius: 100%;
+  margin: 0;
+  -webkit-transition: background 0.5s;
+  transition: background 0.5s;
+  padding: 0 0.4rem;
+}
+
+.delete:hover {
+  background: rgba(43, 129, 185, 0.76);
+}
+
+.details {
+  overflow: auto;
+  height: 18rem;
+}
+
+.details ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.details ul li {
+  background: rgba(21, 115, 170, 0.63);
+  -webkit-transition: background 0.5s;
+  transition: background 0.5s;
+  color: white;
+  margin: 0.25rem;
+  padding: 0.5rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  height: 1rem;
+}
+
+.details ul li:hover {
+  background: rgba(24, 127, 187, 0.993);
+  cursor: pointer;
+}
+
+.newItem {
+  border: none;
+  width: 85%;
+  float: left;
+  background: none;
+  color: white;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.newItem:focus {
+  border: none;
+  outline: none;
+}
+
+.title {
+  font-size: 2rem;
+  width: 17.5rem;
+  font-weight: 100;
+  margin: 0 1rem;
+  text-align: center;
+}
+
+/* DAY VIEW */
+/* =========================================== */
+#daily {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  /* border: 0.5px solid rgba(32, 32, 32, 0.555); */
+  /* border-radius: 25px 25px 10px 10px; */
+  width: 50%;
+  padding: 1rem 2rem;
+  margin: 0 auto;
+}
+
+#daily .dayNav {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+/* =========================================== */
+/* WEEK VIEW */
+/* =========================================== */
+#week .weekday {
+  border: 1px solid rgba(32, 32, 32, 0.555);
+  height: 19rem;
+  width: 13rem;
+  background: rgba(0, 0, 0, 0);
+  border-radius: 25px 25px 10px 10px;
+  padding: 0.5rem 0rem;
+  -webkit-transition: -webkit-transform 0.5s;
+  transition: -webkit-transform 0.5s;
+  transition: transform 0.5s;
+  transition: transform 0.5s, -webkit-transform 0.5s;
+  -webkit-transform: translateZ(0);
+          transform: translateZ(0);
+}
+
+#week .weekday .weekDate {
+  color: white;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+#week .weekday .weekTitle {
+  padding: 0.25rem;
+  color: white;
+  text-align: center;
+  font-size: 1.5rem;
+  letter-spacing: 0.25rem;
+  font-weight: 100;
+  border-radius: 25px 25px 0 0;
+}
+
+#week .weekday:hover {
+  -webkit-transform: translateY(-1.5%);
+          transform: translateY(-1.5%);
+}
+
+/* MONTH VIEW */
+/* =========================================== */
+#month {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+#month .monthNav {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+#month .monthDays {
+  width: 95%;
+  background: rgba(0, 0, 0, 0);
+  margin: 0 auto;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+#month .monthDays .monthDay {
+  width: 9.5rem;
+  height: 15rem;
+  padding: 0.75rem;
+  border: 0.5px solid rgba(32, 32, 32, 0.555);
+  float: left;
+  background: rgba(0, 0, 0, 0);
+  -webkit-transition: background 0.5s;
+  transition: background 0.5s;
+}
+
+/* =========================================== */
+/*# sourceMappingURL=calendar-style.css.map */

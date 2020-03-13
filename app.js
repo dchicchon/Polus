@@ -4,7 +4,7 @@
 // MAIN VARIABLES
 // =========================================
 // Views
-let dayView = document.getElementById("today");
+let dayView = document.getElementById("daily");
 let weekView = document.getElementById("week");
 let monthView = document.getElementById("month");
 
@@ -51,7 +51,7 @@ const hideViews = viewsArr => {
         // console.log(result["view"]);
         view = result["view"];
         switch (view) {
-          case "today":
+          case "daily":
             createToday();
             break;
           case "week":
@@ -198,7 +198,7 @@ const createToday = () => {
   dayNav.appendChild(nextBtn);
 
   dayNav.setAttribute("class", "dayNav");
-  dayTitle.setAttribute("class", "dayTitle");
+  dayTitle.setAttribute("class", "title");
   prevBtn.textContent = "<-";
   dayTitle.textContent = date;
   nextBtn.textContent = "->";
@@ -263,11 +263,13 @@ const createToday = () => {
 
   dayInfo(date);
 
-  // This is how we can change the day for the today calendar view. What I want to do is based off the currentDate object, I will be able to get the previous day timestamp
+  // This is how we can change the day for the daily calendar view. What I want to do is based off the currentDate object, I will be able to get the previous day timestamp
   // This is a temporary fix
   prevBtn.addEventListener("click", function() {
     details.innerHTML = "";
     day -= 1;
+    console.log(currentDate.getDate());
+    // currentDate.setDate();
     date = `${month}/${day}/${year}`;
     dayTitle.textContent = date;
     dayInfo(date);
@@ -422,11 +424,11 @@ const createMonth = () => {
   monthNav.appendChild(nextBtn);
 
   // Set attributes
-  monthTitle.setAttribute("class", "monthTitle");
+  monthTitle.setAttribute("class", "title");
   monthNav.setAttribute("class", "monthNav");
   monthDays.setAttribute("class", "monthDays");
   prevBtn.textContent = "<-";
-  monthTitle.textContent = months[month];
+  monthTitle.textContent = months[month] + ` ${year}`;
   nextBtn.textContent = "->";
 
   // =============================================
@@ -514,7 +516,7 @@ const createMonth = () => {
       month = 11;
       year -= 1;
     }
-    monthTitle.textContent = months[month];
+    monthTitle.textContent = months[month] + ` ${year}`;
     monthDays.innerHTML = "";
     createDaysInMonth(year, month);
   });
@@ -527,7 +529,8 @@ const createMonth = () => {
       year += 1;
     }
     monthDays.innerHTML = "";
-    monthTitle.textContent = months[month];
+    monthTitle.textContent = months[month] + ` ${year}`;
+    // monthTitle.textContent = months[month];
     createDaysInMonth(year, month);
     addFunction();
   });
