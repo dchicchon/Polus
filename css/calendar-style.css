@@ -410,5 +410,32 @@ button:hover {
   transition: background 0.5s;
 }
 
+#month .monthDays .monthDay .monthDetails {
+  overflow: auto;
+  height: 14rem;
+}
+
+#month .monthDays .monthDay .monthDetails ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+#month .monthDays .monthDay .monthDetails ul li {
+  background: rgba(21, 115, 170, 0.63);
+  -webkit-transition: background 0.5s;
+  transition: background 0.5s;
+  color: white;
+  margin: 0.25rem;
+  padding: 0.5rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  height: 1rem;
+}
+
+#month .monthDays .monthDay .monthDetails ul li:hover {
+  background: rgba(24, 127, 187, 0.993);
+  cursor: pointer;
+}
+
 /* =========================================== */
 /*# sourceMappingURL=calendar-style.css.map */

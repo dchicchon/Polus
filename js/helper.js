@@ -83,5 +83,24 @@ let arrayRemove = (arr, val) => {
   });
 };
 
-// addFunction()
-// deleteFunction()
+let addSites = mostVisitedURLs => {
+  let ul = document.getElementsByClassName("topSites");
+  for (let i = 0; i < mostVisitedURLs.length - 3; i++) {
+    let index = mostVisitedURLs[i].url.indexOf("://");
+    let url = mostVisitedURLs[i].url.substring(index + 3);
+    let link = document.createElement("a");
+    link.textContent = url;
+    link.setAttribute("class", "site");
+    link.setAttribute("href", mostVisitedURLs[i].url);
+    link.setAttribute("target", "_blank");
+    ul[0].appendChild(link);
+  }
+  let siteBox = document.getElementById("site-box");
+  siteBox.addEventListener("mouseenter", function() {
+    ul[0].setAttribute("style", "display:block");
+  });
+
+  siteBox.addEventListener("mouseleave", function() {
+    ul[0].setAttribute("style", "display:none");
+  });
+};

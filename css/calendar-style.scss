@@ -337,8 +337,6 @@ button:hover {
 #month {
   flex-direction: column;
   justify-content: center;
-  .monthNav {
-  }
   .monthDays {
     width: 95%;
     background: rgba(0, 0, 0, 0);
@@ -353,6 +351,28 @@ button:hover {
       float: left;
       background: rgba(0, 0, 0, 0);
       transition: background 0.5s;
+      .monthDetails {
+        overflow: auto;
+        height: 14rem;
+        ul {
+          list-style-type: none;
+          padding: 0;
+          li {
+            background: rgba(21, 115, 170, 0.63);
+            transition: background 0.5s;
+            color: white;
+            margin: 0.25rem;
+            padding: 0.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            height: 1rem;
+          }
+          li:hover {
+            background: rgba(24, 127, 187, 0.993);
+            cursor: pointer;
+          }
+        }
+      }
     }
   }
 }
