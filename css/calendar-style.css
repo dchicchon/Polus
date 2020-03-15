@@ -251,9 +251,10 @@ button:hover {
   font-size: 0.9rem;
   border-radius: 100%;
   margin: 0;
-  -webkit-transition: background 0.5s;
-  transition: background 0.5s;
   padding: 0 0.4rem;
+  opacity: 0;
+  -webkit-transition: opacity 0.5s;
+  transition: opacity 0.5s;
 }
 
 .delete:hover {

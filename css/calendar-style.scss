@@ -216,8 +216,9 @@ button:hover {
   font-size: 0.9rem;
   border-radius: 100%;
   margin: 0;
-  transition: background 0.5s;
   padding: 0 0.4rem;
+  opacity: 0;
+  transition: opacity 0.5s;
 }
 
 .delete:hover {
@@ -246,6 +247,11 @@ button:hover {
       cursor: pointer;
     }
   }
+}
+
+.entry {
+  // opacity: 0;
+  // transition: opacity 0.5s;
 }
 
 .newItem {

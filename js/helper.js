@@ -11,7 +11,7 @@ let addFunction = () => {
       let entryListItem = document.createElement("li");
       let entryInput = document.createElement("input");
       entryInput.setAttribute("class", "newItem");
-      entryInput.setAttribute("autofocus", "true");
+      // entryInput.setAttribute("autofocus", "true");
 
       // Add a key press listener for the HTML input element (listen for the keycode for Enter (13))
       entryInput.onkeypress = function(e) {
@@ -35,8 +35,10 @@ let addFunction = () => {
           });
         }
       };
+
       entryListItem.appendChild(entryInput);
       addButtons[i].previousElementSibling.append(entryListItem);
+      entryInput.focus();
     };
   }
 };
@@ -103,4 +105,17 @@ let addSites = mostVisitedURLs => {
   siteBox.addEventListener("mouseleave", function() {
     ul[0].setAttribute("style", "display:none");
   });
+};
+
+// Set Event Listers for CSS
+let entryDeleteHover = () => {
+  let listItems = document.getElementsByClassName("entry");
+  for (let i = 0; i < listItems.length; i++) {
+    listItems[i].addEventListener("mouseenter", () => {
+      listItems[i].children[1].style.opacity = 1; // this points to the delete button which is the 2nd child
+    });
+    listItems[i].addEventListener("mouseleave", () => {
+      listItems[i].children[1].style.opacity = 0;
+    });
+  }
 };

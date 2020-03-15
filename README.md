@@ -11,6 +11,72 @@ In the past, I have found planning out my life difficult and could never get acc
 - Three different view buttons that change accordingly: Today, Weekly, and Monthly.
 - Persistent data storage so you can view your calendar wherever you go
 
+## Development Style
+
+#### Creating Each View
+
+Creating each view involved working with the following items in order
+
+1. Creating DOM Element
+2. Writing Text Content
+3. Setting Attributes
+4. Adding event listeners
+5. Appending
+
+There are also many containers within each other, such as the days within the month calendar. In order to separate concerns, I made sure to clearly separate hierarchy from the container levels.
+
+`ExampleMonth.js`
+
+```js
+// Example idea of creating a month
+// There are 3 different levels of hierarchy here, the monthView, monthContainer, and day
+
+// LEVEL 1
+// Create DOM Element
+let monthView = document.createElement("div");
+const createMonth = () => {
+  // LEVEL 2
+
+  // Create DOM Element
+  let monthContainer = document.createElement("div");
+
+  const createDays = () => {
+    for (let i = 0; i < 31; i++) {
+      // LEVEL 3
+
+      // Create DOM Element
+      let day = document.createElement("div");
+
+      // Text Content
+      day.textContent = i;
+
+      // Event Listeners
+      day.addEventLister("click", () => {
+        console.log("Clicked on a day!");
+      });
+
+      // Set Attributes
+      day.setAttribute("class", "day");
+
+      // Appending
+      monthContainer.append(day);
+    }
+  };
+  createDays();
+
+  // TextContent
+  // EventListeners
+  // Set Attributes
+  // Appending
+};
+
+// TextContent
+// EventListeners
+// Set Attributes
+// Appending
+monthView.append(monthContainer);
+```
+
 ## Using Chrome APIs
 
 There are several APIs that you can use when developing Chrome Extensions. One that I mainly use for this extension is the Chrome Storage API.
@@ -89,7 +155,7 @@ chrome.topSites.get(function(arr) {
 
 ### Chrome Cookies
 
-It's important to set cookies for chrome extensions when using CORS (Cross Origin Resource Sharing). In this case, I used the API to set the requests pre-flight to `secure: true` and `sameSite: 'no-restriction'`.  
+It's important to set cookies for chrome extensions when using CORS (Cross Origin Resource Sharing). In this case, I used the API to set the requests pre-flight to `secure: true` and `sameSite: 'no-restriction'`.
 
 ```javascript
 chrome.cookies.set(

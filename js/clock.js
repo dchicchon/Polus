@@ -1,5 +1,9 @@
 // THIS SCRIPT IS FOR EVERYTHING TIME RELATED
 
+let currentDate = new Date(),
+  month = currentDate.getMonth(),
+  year = currentDate.getFullYear();
+
 let weekdays = [
   "Sunday",
   "Monday",
@@ -10,19 +14,19 @@ let weekdays = [
   "Saturday"
 ];
 let months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ];
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+];
 
 const updateTime = () => {
   let currentDate = new Date(),
@@ -66,4 +70,3 @@ const updateTime = () => {
   // Maybe we can use this function for other methods too?
 };
 updateTime();
-
