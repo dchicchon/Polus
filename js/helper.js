@@ -11,7 +11,10 @@ let addFunction = () => {
       let entryListItem = document.createElement("li");
       let entryInput = document.createElement("input");
       entryInput.setAttribute("class", "newItem");
-      // entryInput.setAttribute("autofocus", "true");
+
+      entryListItem.style.animationName = "grow";
+      entryListItem.style.animationFillMode = "forwards";
+      entryListItem.style.animationDuration = "0.25s";
 
       // Add a key press listener for the HTML input element (listen for the keycode for Enter (13))
       entryInput.onkeypress = function(e) {

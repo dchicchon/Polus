@@ -63,7 +63,6 @@ const updateTime = () => {
   let clock = `${timeValue}`;
   let date = `${weekdays[currentDate.getDay()]} ${month}/${day}/${year} `;
 
-  // document.getElementById('date').textContent = date
   document.getElementById("clock").textContent = clock;
   document.getElementById("date").textContent = date;
 

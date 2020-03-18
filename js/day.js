@@ -106,11 +106,14 @@ const createToday = () => {
   });
 
   // Text Content
-  prevBtn.textContent = "<-";
+  prevBtn.innerHTML = "&larr;";
   dayTitle.textContent = date;
-  nextBtn.textContent = "->";
+  nextBtn.innerHTML = "&rarr;";
 
   // Set Attributes
+
+  prevBtn.setAttribute("class", "arrow");
+  nextBtn.setAttribute("class", "arrow");
   dayNav.setAttribute("class", "nav");
   dayTitle.setAttribute("class", "title");
 

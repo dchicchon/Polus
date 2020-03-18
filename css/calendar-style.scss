@@ -4,6 +4,7 @@ $title-fontsize: 2rem;
 $title-width: 17.5rem;
 $title-fontweight: 100;
 $border-color: rgba(32, 32, 32, 0.555);
+$day-background: rgba(0, 0, 0, 0.15);
 // ===================
 
 // HTML ELEMENT STYLING
@@ -15,6 +16,11 @@ html {
 body {
   color: white;
   margin: 0;
+}
+
+h3 {
+  margin: 0;
+  font-weight: 300;
 }
 
 ::selection {
@@ -41,6 +47,26 @@ body {
   background: #555;
 }
 
+// ANIMATIONS
+// ===============
+@keyframes grow {
+  from {
+    width: 10%;
+  }
+  to {
+    width: 85%;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+// ===============
+
 main {
   width: 100%;
   margin: 1rem auto;
@@ -65,18 +91,14 @@ main {
 button {
   outline: none;
   border: none;
-  /* background: teal; */
-  /* background: rgb(24, 127, 187); */
-  background: rgba(90, 90, 90, 0.329);
+  // background: rgba(90, 90, 90, 0.329);
   transition: background 0.5s;
   padding: 0.5rem 1rem;
   color: white;
-  /* margin-bottom: 1rem; */
 }
 
 button:hover {
   background: rgba(90, 90, 90, 0.747);
-  /* padding: 0.75rem 1.25rem; */
   cursor: pointer;
 }
 // ====================
@@ -149,6 +171,7 @@ button:hover {
   font-size: 2rem;
   font-weight: 100;
   padding-bottom: 0.5rem;
+  text-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
 }
 
 #clock {
@@ -158,6 +181,7 @@ button:hover {
   font-size: 4.75rem;
   font-weight: 100;
   padding-bottom: 0.5rem;
+  text-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
 }
 
 #view {
@@ -166,6 +190,14 @@ button:hover {
   width: 15%;
   margin: 0.5rem auto;
   font-weight: 100;
+  button {
+    outline: none;
+    border: none;
+    background: rgba(90, 90, 90, 0.329);
+    transition: background 0.5s;
+    padding: 0.5rem 1rem;
+    color: white;
+  }
 }
 
 #background-info {
@@ -199,10 +231,12 @@ button:hover {
 // ====================
 .add {
   background: none;
+  // position: relative;
+  // left: 40%;
   width: 1.5rem;
   font-size: 1.25rem;
   border-radius: 100%;
-  margin-left: 10px;
+  margin-left: 1rem;
   transition: background 0.5s;
   padding: 0 0.4rem;
 }
@@ -212,6 +246,7 @@ button:hover {
 
 .delete {
   background: none;
+  float: left;
   width: 1rem;
   font-size: 0.9rem;
   border-radius: 100%;
@@ -233,10 +268,11 @@ button:hover {
     list-style-type: none;
     padding: 0;
     li {
+      width: 85%;
       background: rgba(21, 115, 170, 0.63);
       transition: background 0.5s;
       color: white;
-      margin: 0.25rem;
+      margin: 0.25rem auto;
       padding: 0.5rem;
       border-radius: 25px;
       font-size: 0.9rem;
@@ -247,11 +283,6 @@ button:hover {
       cursor: pointer;
     }
   }
-}
-
-.entry {
-  // opacity: 0;
-  // transition: opacity 0.5s;
 }
 
 .newItem {
@@ -273,14 +304,22 @@ button:hover {
   font-size: $title-fontsize;
   width: $title-width;
   font-weight: $title-fontweight;
+  text-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+
   margin: 0 1rem;
   text-align: center;
+}
+
+.arrow {
+  font-size: 1.5rem;
+  background: none;
 }
 
 .nav {
   display: flex;
   justify-content: center;
   margin-bottom: 1rem;
+  text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
 }
 // ====================
 
@@ -311,13 +350,17 @@ button:hover {
     height: 19rem;
     width: 13rem;
     //   width: 11.75rem;
-    background: rgba(0, 0, 0, 0);
+    background: $day-background;
+    // background: rgba(0, 0, 0, 0.15);
     border-radius: 25px 25px 10px 10px;
     padding: 0.5rem 0rem;
     transition: transform 0.5s;
     transform: translateZ(0);
     .weekDate {
       color: white;
+      width: 5rem;
+      border-radius: 1rem;
+      margin: 0 auto;
       font-size: 1.5rem;
       text-align: center;
     }
@@ -344,19 +387,25 @@ button:hover {
   flex-direction: column;
   justify-content: center;
   .monthDays {
-    width: 95%;
+    // width: 95%;
     background: rgba(0, 0, 0, 0);
     margin: 0 auto;
     flex-wrap: wrap;
     .monthDay {
-      width: 9.5rem;
+      text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
+      width: 9.75rem;
       height: 15rem;
-      //   height: fit-content;
       padding: 0.75rem;
       border: 0.5px solid $border-color;
       float: left;
       background: rgba(0, 0, 0, 0);
       transition: background 0.5s;
+      .monthDayTitle{
+        font-weight: 0;
+        border-radius: 1rem;
+        width: 6rem;
+        text-align: center;
+      }
       .monthDetails {
         overflow: auto;
         height: 14rem;
@@ -364,6 +413,7 @@ button:hover {
           list-style-type: none;
           padding: 0;
           li {
+            width: 85%;
             background: rgba(21, 115, 170, 0.63);
             transition: background 0.5s;
             color: white;

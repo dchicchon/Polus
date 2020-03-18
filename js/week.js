@@ -2,11 +2,14 @@ const createWeek = () => {
   // LEVEL 1 Week View
   weekView.innerHTML = "";
 
-  // Week should always start with Monday or Sunday?
-  // Monday index = 1
+  // This will allow us to go back the days until we get Monday
+  let startDate = new Date();
+  while (startDate.getDay() !== 1) {
+    startDate.setDate(startDate.getDate() - 1);
+  }
 
   for (let i = 0; i <= 6; i++) {
-    let thisDate = new Date();
+    let thisDate = new Date(startDate);
     thisDate.setDate(thisDate.getDate() + i);
 
     let year = thisDate.getFullYear(),
@@ -22,6 +25,11 @@ const createWeek = () => {
     let details = document.createElement("div");
     let detailsList = document.createElement("ul");
     let btn = document.createElement("button");
+
+    // If week day is today
+    if (currentDate.getDay() === thisDate.getDay()) {
+      weekDate.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
+    }
 
     chrome.storage.sync.get([`${date}`], function(result) {
       if (!isEmpty(result)) {

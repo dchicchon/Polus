@@ -14,6 +14,8 @@ const createMonth = () => {
   // This will generate all the days for a month and all the associated notes
   let createDaysInMonth = (year, month) => {
     let daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // This is how we create each individual day. But we want to start with Monday!
     for (let i = 0; i < daysInMonth; i++) {
       let dayDate = new Date(year, month, i + 1), // ex. 1/20/20
         day = dayDate.getDate(),
@@ -21,9 +23,10 @@ const createMonth = () => {
 
       // LEVEL 2 DAY
       // Create DOM Elements
-      let dayDiv = document.createElement("div");
-      let details = document.createElement("div");
-      let detailsList = document.createElement("ul");
+      let monthDay = document.createElement("div");
+      let monthDayTitle = document.createElement("h3");
+      let monthDetails = document.createElement("div");
+      let monthDetailsList = document.createElement("ul");
       let btn = document.createElement("button");
 
       // Gets storage items and creates an li element for each item
@@ -68,42 +71,53 @@ const createMonth = () => {
             // Append
             entryListItem.appendChild(entryInput);
             entryListItem.appendChild(entryDelete);
-            detailsList.appendChild(entryListItem);
+            monthDetailsList.appendChild(entryListItem);
             entryDeleteHover();
           }
         }
       });
 
+      if (currentDate.getDate() === dayDate.getDate()) {
+        monthDayTitle.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
+      }
+
       // Set Attributes
-      details.setAttribute("class", "monthDetails");
-      dayDiv.setAttribute("class", "monthDay");
+      monthDetails.setAttribute("class", "monthDetails");
+      monthDay.setAttribute("class", "monthDay");
+      monthDayTitle.setAttribute("class", "monthDayTitle");
       btn.setAttribute("class", "add");
 
       // Text Content
-      dayDiv.textContent = `${day} ${weekdays[dayDate.getUTCDay()]}`;
+      // monthDay.textContent = `${day} ${weekdays[dayDate.getUTCDay()]}`;
+      monthDayTitle.textContent = `${day} ${weekdays[dayDate.getUTCDay()]}`;
       btn.textContent = "+";
 
       // Set Values
       btn.value = date;
 
       // Append
-      monthDays.appendChild(dayDiv);
-      details.appendChild(detailsList);
-      dayDiv.appendChild(details);
-      details.appendChild(btn);
+      monthDays.appendChild(monthDay);
+      monthDetails.appendChild(monthDetailsList);
+      monthDay.appendChild(monthDayTitle);
+      monthDay.appendChild(monthDetails);
+      monthDetails.appendChild(btn);
     }
     addFunction();
   };
 
   // Text Content
-  prevBtn.textContent = "<-";
+  prevBtn.innerHTML = "&larr;";
   monthTitle.textContent = months[month] + ` ${year}`;
-  nextBtn.textContent = "->";
+  nextBtn.innerHTML = "&rarr;";
 
   // Set attributes
+  prevBtn.setAttribute("class", "arrow");
+  nextBtn.setAttribute("class", "arrow");
   monthTitle.setAttribute("class", "title");
   monthNav.setAttribute("class", "nav");
   monthDays.setAttribute("class", "monthDays");
+  monthDays.style.width = "95%";
+  monthDays.style.margin = "0 auto";
 
   // Event Listeners
   prevBtn.addEventListener("click", function() {
@@ -124,10 +138,14 @@ const createMonth = () => {
   });
 
   // Append
+  // ===============================
+  // Nav
   monthNav.appendChild(prevBtn);
   monthNav.appendChild(monthTitle);
   monthNav.appendChild(nextBtn);
+  // View
   monthView.appendChild(monthNav);
   monthView.appendChild(monthDays);
   createDaysInMonth(year, month);
+  // ===============================
 };

@@ -174,6 +174,8 @@ chrome.cookies.set(
 
 ### Future Builds
 
+- Start weeks on Mondays
+- Separate Weeks on MonthView
 - Add different backgrounds using Unsplash API
 - IOS and Android Stores
 - A notes tab to add to each day which will keep a log of your notes for the day

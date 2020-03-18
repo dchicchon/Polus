@@ -27,13 +27,13 @@ const getRandomPhoto = () => {
   fetch(url, { mode: "cors", credentials: "omit" })
     .then(response => {
       if (!response.ok) throw response.statusText;
-      console.log(response);
+      // console.log(response);
       return response;
     })
     .then(response => response.json())
     .then(function(photo) {
       console.log(photo);
-      let url = photo.urls.regular;
+      let url = photo.urls.raw;
       let location = `${photo.location.city}, ${photo.location.country}`;
       let author = `${photo.user.name}`;
       let authorLink = photo.user.links.html;
@@ -57,9 +57,9 @@ const tick = () => {
 
 const checkTimeStamp = () => {
   if (localStorage.savedTimestamp) {
-    let timestamp = localStorage.savedTimestamp;
+    let timestamp = new Date(localStorage.savedTimestamp);
     let currentDate = new Date();
-    if (currentDate >= timestamp) {
+    if (currentDate.getTime() > timestamp.getTime()) {
       tick();
     }
   } else {
@@ -68,11 +68,8 @@ const checkTimeStamp = () => {
   }
 };
 
-// Check every minute to see if the day has changed
-// https://stackoverflow.com/questions/60591487/chrome-extensions-how-to-set-function-to-execute-when-day-has-changed/60592084#60592084
 const startBackground = () => {
-  checkTimeStamp();
-  // getTopSites();
+  setInterval(checkTimeStamp, 60000); // check every hour https://stackoverflow.com/questions/60591487/chrome-extensions-how-to-set-function-to-execute-when-day-has-changed/60592084#60592084
 };
 
 startBackground();
