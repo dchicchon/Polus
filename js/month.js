@@ -34,50 +34,60 @@ const createMonth = () => {
         if (!isEmpty(result)) {
           let entriesArr = result[`${date}`];
           for (let j = 0; j < entriesArr.length; j++) {
-            // LEVEL 3 Day Details
-            // Create DOM Elements
-            let entryListItem = document.createElement("li");
-            let entryInput = document.createElement("input");
-            let entryDelete = document.createElement("button");
+            if (entriesArr[j].length > 0) {
+              // LEVEL 3 Day Details
+              // Create DOM Elements
+              let entryListItem = document.createElement("li");
+              let entryInput = document.createElement("input");
+              let entryDelete = document.createElement("button");
 
-            // Text Content
-            entryDelete.textContent = "x";
+              // Text Content
+              entryDelete.textContent = "x";
+              // entryDelete.innerHTML = "&nabla;";
 
-            // Values
-            entryDelete.id = date;
-            entryInput.value = entriesArr[j];
+              // Values
+              entryDelete.id = date;
+              console.log(date);
+              console.log(entriesArr[j]);
+              // if (entriesArr[j] > 0) {
+              entryInput.value = entriesArr[j];
+              // }
+              // } else {
+              // continue
+              // }
 
-            // Event Listeners
-            entryDelete.onclick = function() {
-              this.parentNode.style.display = "none";
-              chrome.storage.sync.get([`${date}`], function(result) {
-                let dateEntries = result[`${date}`];
-                let index = parseInt(entryDelete.value);
-                let newEntries = arrayRemove(dateEntries, index);
+              // Event Listeners
+              entryDelete.onclick = function() {
+                this.parentNode.style.display = "none";
+                chrome.storage.sync.get([`${date}`], function(result) {
+                  let dateEntries = result[`${date}`];
+                  let index = parseInt(entryDelete.value);
+                  let newEntries = arrayRemove(dateEntries, index);
 
-                chrome.storage.sync.set({ [date]: newEntries }, function() {
-                  // console.log(date);
-                  console.log("Removed Entry");
+                  chrome.storage.sync.set({ [date]: newEntries }, function() {
+                    // console.log(date);
+                    console.log("Removed Entry");
+                  });
                 });
-              });
-            };
+              };
 
-            // Setting Attributes
-            entryListItem.setAttribute("class", "entry");
-            entryDelete.setAttribute("value", `${j}`);
-            entryDelete.setAttribute("class", "delete");
-            entryInput.setAttribute("class", "newItem");
+              // Setting Attributes
+              entryListItem.setAttribute("class", "entry");
+              entryDelete.setAttribute("value", `${j}`);
+              entryDelete.setAttribute("class", "delete");
+              entryInput.setAttribute("class", "newItem");
 
-            // Append
-            entryListItem.appendChild(entryInput);
-            entryListItem.appendChild(entryDelete);
-            monthDetailsList.appendChild(entryListItem);
-            entryDeleteHover();
+              // Append
+              entryListItem.appendChild(entryInput);
+              entryListItem.appendChild(entryDelete);
+              monthDetailsList.appendChild(entryListItem);
+              entryDeleteHover();
+            }
           }
         }
       });
 
-      if (currentDate.getDate() === dayDate.getDate()) {
+      if (date === globalDate) {
         monthDayTitle.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
       }
 

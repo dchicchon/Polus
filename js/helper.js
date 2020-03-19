@@ -39,6 +39,23 @@ let addFunction = () => {
         }
       };
 
+      entryInput.addEventListener("blur", () => {
+        console.log("This is working");
+        chrome.storage.sync.get([`${date}`], function(result) {
+          // If the date is empty, we will set the entry to it
+          if (isEmpty(result)) {
+            let entries = [`${entryInput.value}`];
+            chrome.storage.sync.set({ [date]: entries }, function() {});
+
+            // If its not empty, we will append the entry to the others
+          } else {
+            let dateEntries = result[`${date}`];
+            dateEntries.push(`${entryInput.value}`);
+            chrome.storage.sync.set({ [date]: dateEntries }, function() {});
+          }
+        });
+      });
+
       entryListItem.appendChild(entryInput);
       addButtons[i].previousElementSibling.append(entryListItem);
       entryInput.focus();
@@ -92,13 +109,21 @@ let addSites = mostVisitedURLs => {
   let ul = document.getElementsByClassName("topSites");
   for (let i = 0; i < mostVisitedURLs.length - 3; i++) {
     let index = mostVisitedURLs[i].url.indexOf("://");
-    let url = mostVisitedURLs[i].url.substring(index + 3);
-    let link = document.createElement("a");
-    link.textContent = url;
-    link.setAttribute("class", "site");
-    link.setAttribute("href", mostVisitedURLs[i].url);
-    link.setAttribute("target", "_blank");
-    ul[0].appendChild(link);
+    let lastIndex = mostVisitedURLs[i].url.indexOf(".com");
+    if (lastIndex !== -1) {
+      let url = mostVisitedURLs[i].url.substring(index + 3, lastIndex);
+      let newIndex = url.indexOf("www.");
+      if (newIndex !== -1) {
+        url = url.substring(newIndex + 4);
+      }
+      url = url[0].toUpperCase() + url.slice(1);
+      let link = document.createElement("a");
+      link.textContent = url;
+      link.setAttribute("class", "site");
+      link.setAttribute("href", mostVisitedURLs[i].url);
+      link.setAttribute("target", "_blank");
+      ul[0].appendChild(link);
+    }
   }
   let siteBox = document.getElementById("site-box");
   siteBox.addEventListener("mouseenter", function() {

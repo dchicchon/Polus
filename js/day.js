@@ -25,41 +25,43 @@ const createToday = () => {
       if (!isEmpty(result)) {
         let entriesArr = result[`${date}`];
         for (let i = 0; i < entriesArr.length; i++) {
-          // LEVEL 3 Day Details
-          // Create DOM Elements
-          let entryListItem = document.createElement("li");
-          let entryInput = document.createElement("input");
-          let entryDelete = document.createElement("button");
-
-          // Event Listeners
-          entryDelete.onclick = function() {
-            this.parentNode.style.display = "none";
-            chrome.storage.sync.get([`${date}`], function(result) {
-              let dateEntries = result[`${date}`];
-              let index = parseInt(entryDelete.value);
-              let newEntries = arrayRemove(dateEntries, index);
-              chrome.storage.sync.set({ [date]: newEntries }, function() {});
-            });
-          };
-
-          // Text Content
-          entryDelete.textContent = "x";
-
-          // Set Attributes
-          entryListItem.setAttribute("class", "entry");
-          entryInput.setAttribute("class", "newItem");
-          entryDelete.setAttribute("value", `${i}`);
-          entryDelete.setAttribute("class", "delete");
-
-          // Set Values
-          entryInput.value = entriesArr[i];
-
-          // Append
-
-          entryListItem.appendChild(entryInput);
-          entryListItem.appendChild(entryDelete);
-          detailsList.appendChild(entryListItem);
-          entryDeleteHover();
+          if (entriesArr[i].length > 0) {
+            // LEVEL 3 Day Details
+            // Create DOM Elements
+            let entryListItem = document.createElement("li");
+            let entryInput = document.createElement("input");
+            let entryDelete = document.createElement("button");
+  
+            // Event Listeners
+            entryDelete.onclick = function() {
+              this.parentNode.style.display = "none";
+              chrome.storage.sync.get([`${date}`], function(result) {
+                let dateEntries = result[`${date}`];
+                let index = parseInt(entryDelete.value);
+                let newEntries = arrayRemove(dateEntries, index);
+                chrome.storage.sync.set({ [date]: newEntries }, function() {});
+              });
+            };
+  
+            // Text Content
+            entryDelete.textContent = "x";
+  
+            // Set Attributes
+            entryListItem.setAttribute("class", "entry");
+            entryInput.setAttribute("class", "newItem");
+            entryDelete.setAttribute("value", `${i}`);
+            entryDelete.setAttribute("class", "delete");
+  
+            // Set Values
+            entryInput.value = entriesArr[i];
+  
+            // Append
+  
+            entryListItem.appendChild(entryInput);
+            entryListItem.appendChild(entryDelete);
+            detailsList.appendChild(entryListItem);
+            entryDeleteHover();
+          }
         }
       }
     });

@@ -35,70 +35,75 @@ const createWeek = () => {
       if (!isEmpty(result)) {
         let entriesArr = result[`${date}`];
         for (let i = 0; i < entriesArr.length; i++) {
-          // LEVEL 3
-          // Create DOM Element
-          let entryListItem = document.createElement("li");
-          let entryInput = document.createElement("input");
-          let entryDelete = document.createElement("button");
+          if (entriesArr[i].length > 0) {
+            // LEVEL 3
+            // Create DOM Element
+            let entryListItem = document.createElement("li");
+            let entryInput = document.createElement("input");
+            let entryDelete = document.createElement("button");
 
-          // Add Event Listeners
-          entryDelete.onclick = function() {
-            // DELETE ENTRY
-            this.parentNode.style.display = "none";
-            chrome.storage.sync.get([`${date}`], function(result) {
-              let dateEntries = result[`${date}`];
-              let index = parseInt(entryDelete.value);
-              let newEntries = arrayRemove(dateEntries, index);
-
-              console.log(index);
-              console.log(newEntries);
-              chrome.storage.sync.set({ [date]: newEntries }, function() {
-                console.log(date);
-                console.log("Removed Entry");
-              });
-            });
-          };
-
-          entryInput.onkeypress = function(e) {
-            // EDIT ENTRY
-            if (!e) e = window.event;
-            let keyCode = e.keyCode || e.which;
-            if (keyCode === 13) {
-              // remove focus
-              this.blur();
+            // Add Event Listeners
+            entryDelete.onclick = function() {
+              // DELETE ENTRY
+              this.parentNode.style.display = "none";
               chrome.storage.sync.get([`${date}`], function(result) {
                 let dateEntries = result[`${date}`];
+                let index = parseInt(entryDelete.value);
+                let newEntries = arrayRemove(dateEntries, index);
 
-                // Get the index of the current Entry
-                let index = dateEntries.indexOf(dateEntries[i]);
-                if (index !== -1) {
-                  // Find and replace the element at the index with the new value
-                  dateEntries[index] = entryInput.value;
-                }
-
-                chrome.storage.sync.set({ [date]: dateEntries }, function() {});
+                console.log(index);
+                console.log(newEntries);
+                chrome.storage.sync.set({ [date]: newEntries }, function() {
+                  console.log(date);
+                  console.log("Removed Entry");
+                });
               });
-            }
-          };
+            };
 
-          // Text Content
-          entryDelete.textContent = "x";
+            entryInput.onkeypress = function(e) {
+              // EDIT ENTRY
+              if (!e) e = window.event;
+              let keyCode = e.keyCode || e.which;
+              if (keyCode === 13) {
+                // remove focus
+                this.blur();
+                chrome.storage.sync.get([`${date}`], function(result) {
+                  let dateEntries = result[`${date}`];
 
-          // Set Attributes
-          entryInput.setAttribute("class", "newItem");
-          entryListItem.setAttribute("class", "entry");
-          entryDelete.setAttribute("value", `${i}`);
-          entryDelete.setAttribute("class", "delete");
+                  // Get the index of the current Entry
+                  let index = dateEntries.indexOf(dateEntries[i]);
+                  if (index !== -1) {
+                    // Find and replace the element at the index with the new value
+                    dateEntries[index] = entryInput.value;
+                  }
 
-          // Set Values
-          entryInput.value = entriesArr[i];
-          entryDelete.id = date;
+                  chrome.storage.sync.set(
+                    { [date]: dateEntries },
+                    function() {}
+                  );
+                });
+              }
+            };
 
-          // Append
-          entryListItem.appendChild(entryInput);
-          entryListItem.appendChild(entryDelete);
-          detailsList.appendChild(entryListItem);
-          entryDeleteHover();
+            // Text Content
+            entryDelete.textContent = "x";
+
+            // Set Attributes
+            entryInput.setAttribute("class", "newItem");
+            entryListItem.setAttribute("class", "entry");
+            entryDelete.setAttribute("value", `${i}`);
+            entryDelete.setAttribute("class", "delete");
+
+            // Set Values
+            entryInput.value = entriesArr[i];
+            entryDelete.id = date;
+
+            // Append
+            entryListItem.appendChild(entryInput);
+            entryListItem.appendChild(entryDelete);
+            detailsList.appendChild(entryListItem);
+            entryDeleteHover();
+          }
         }
       }
     });
