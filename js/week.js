@@ -34,134 +34,60 @@ const createWeek = () => {
     chrome.storage.sync.get([`${date}`], function(result) {
       if (!isEmpty(result)) {
         let entriesArr = result[`${date}`];
-        for (let i = 0; i < entriesArr.length; i++) {
+        for (let j = 0; j < entriesArr.length; j++) {
           // LEVEL 3
           // Create DOM Element
           let entryListItem = document.createElement("li");
-          let entryInput = document.createElement("input");
-          let entryEdit = document.createElement("button");
-          let entryCheck = document.createElement("button");
-          let entryDelete = document.createElement("button");
-
-          // Variables
-          let active = false; // This is to check the entry click function. If false, we will turn it true. Will only go back to false if we edit or check
+          // let entryEdit = document.createElement("button");
 
           // Add Event Listeners
           // ==================================
           // EDIT ENTRY
-          entryInput.onkeypress = function(e) {
-            if (!e) e = window.event;
-            let keyCode = e.keyCode || e.which;
-            if (keyCode === 13) {
-              // remove focus
-              this.blur();
-              chrome.storage.sync.get([`${date}`], function(result) {
-                let dateEntries = result[`${date}`];
+          // entryInput.onkeypress = function(e) {
+          //   if (!e) e = window.event;
+          //   let keyCode = e.keyCode || e.which;
+          //   if (keyCode === 13) {
+          //     // remove focus
+          //     this.blur();
+          //     chrome.storage.sync.get([`${date}`], function(result) {
+          //       let dateEntries = result[`${date}`];
 
-                // Get the index of the current Entry
-                let index = dateEntries.indexOf(dateEntries[i]);
-                if (index !== -1) {
-                  // Find and replace the element at the index with the new value
-                  dateEntries[index] = entryInput.value;
-                }
+          //       // Get the index of the current Entry
+          //       let index = dateEntries.indexOf(dateEntries[j]);
+          //       if (index !== -1) {
+          //         // Find and replace the element at the index with the new value
+          //         dateEntries[index] = entryInput.value;
+          //       }
 
-                chrome.storage.sync.set({ [date]: dateEntries }, function() {});
-              });
-            }
-          };
-
-          // Check
-          entryCheck.onclick = function() {
-            if (entryCheck.value === "false") {
-              entryListItem.style.textDecoration = "line-through";
-              entryCheck.value = true;
-              // update in storage
-              entriesArr[i]["complete"] = true;
-              chrome.storage.sync.set({ [date]: entriesArr });
-              // active = true;
-            } else {
-              entryListItem.style.textDecoration = "none";
-              entryCheck.value = false;
-              entriesArr[i]["complete"] = false;
-              chrome.storage.sync.set({ [date]: entriesArr });
-              // active = true;
-            }
-          };
-
-          // DELETE ENTRY
-          entryDelete.onclick = function() {
-            this.parentNode.style.display = "none";
-            console.log(entriesArr);
-            chrome.storage.sync.get([`${date}`], function(result) {
-              let dateEntries = result[`${date}`];
-              let index = parseInt(entryDelete.value);
-              let newEntries = arrayRemove(dateEntries, index);
-
-              console.log(index);
-              console.log(newEntries);
-              chrome.storage.sync.set({ [date]: newEntries }, function() {
-                console.log(date);
-                console.log("Removed Entry");
-              });
-            });
-          };
+          //       chrome.storage.sync.set({ [date]: dateEntries }, function() {});
+          //     });
+          //   }
+          // };
 
           // ==================================
 
           // Text Content
-          entryEdit.textContent = "#";
-          entryCheck.textContent = "%";
-          entryDelete.textContent = "x";
+          // entryEdit.textContent = "#";
+          entryListItem.textContent = entriesArr[j]["text"];
 
           // Set Attributes
-          entryInput.setAttribute("class", "newItem");
           entryListItem.setAttribute("class", "entry");
-          entryDelete.setAttribute("value", `${i}`);
-          entryEdit.setAttribute("class", "edit");
-          entryCheck.setAttribute("class", "check");
-          entryDelete.setAttribute("class", "delete");
+          // entryInput.setAttribute("class", "newItem");
+          // entryEdit.setAttribute("class", "edit");
 
           // Set Values
-          entryListItem.textContent = entriesArr[i]["text"];
-          entryListItem.style.textDecoration = entriesArr[i]["complete"]
+          entryListItem.style.textDecoration = entriesArr[j]["complete"]
             ? "line-through"
             : "none";
-          entryListItem.value = 0;
-          entryDelete.id = date;
-          entryCheck.value = entriesArr[i]["complete"]; // check if it is complete
-
-          // When entry is clicked
-          entryListItem.addEventListener("click", function(event) {
-            if (!active) {
-              active = true
-              entryListItem.style.textOverflow = "none";
-              entryListItem.style.height = "fit-content";
-              entryListItem.style.whiteSpace = "normal";
-              entryListItem.style.overflow = "visible";
-              entryListItem.append(entryEdit);
-              entryListItem.append(entryCheck);
-              entryListItem.append(entryDelete);
-            } else {
-              if (event.target.className === "entry" && active) {
-                active = false
-                entryListItem.style.height = "1rem";
-                entryListItem.style.textOverflow = "ellipsis";
-                entryListItem.style.whiteSpace = "nowrap";
-                entryListItem.style.overflow = "hidden";
-                entryListItem.removeChild(entryEdit);
-                entryListItem.removeChild(entryCheck);
-                entryListItem.removeChild(entryDelete);
-              }
-            }
-          });
-
-          // entryListItem.addEventListener
+          entryListItem.value = entriesArr[j]["complete"];
 
           // Append
-          // entryListItem.appendChild(entryInput);
-          // entryListItem.appendChild(entryDelete);
           detailsList.appendChild(entryListItem);
-          // entryDeleteHover();
+
+          // Last Item in the array
+          if (j === entriesArr.length - 1) {
+            entryFunctions(detailsList, date, entriesArr);
+          }
         }
       }
     });
@@ -189,6 +115,5 @@ const createWeek = () => {
     weekday.appendChild(details);
     weekView.appendChild(weekday);
   }
-
   addFunction();
 };

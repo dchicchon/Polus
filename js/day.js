@@ -24,45 +24,26 @@ const createToday = () => {
       if (!isEmpty(result)) {
         let entriesArr = result[`${date}`];
         for (let i = 0; i < entriesArr.length; i++) {
-          if (entriesArr[i].length > 0) {
-            // LEVEL 3 Day Details
-            // Create DOM Elements
-            let entryListItem = document.createElement("li");
-            
-            // let entryInput = document.createElement("input");
-            // let entryText = document.createElement("p");
-            // let entryDelete = document.createElement("button");
+          // LEVEL 3 Day Details
+          // Create DOM Elements
+          let entryListItem = document.createElement("li");
 
-            // // Event Listeners
-            // entryDelete.onclick = function() {
-            //   this.parentNode.style.display = "none";
-            //   chrome.storage.sync.get([`${date}`], function(result) {
-            //     let dateEntries = result[`${date}`];
-            //     let index = parseInt(entryDelete.value);
-            //     let newEntries = arrayRemove(dateEntries, index);
-            //     chrome.storage.sync.set({ [date]: newEntries }, function() {});
-            //   });
-            // };
+          // Text Content
+          entryListItem.textContent = entriesArr[i].text;
 
-            // Text Content
-            // entryDelete.textContent = "x";
+          // Set Attributes
+          entryListItem.setAttribute("class", "entry");
 
-            // Set Attributes
-            entryListItem.setAttribute("class", "entry");
-            // entryInput.setAttribute("class", "newItem");
-            // entryDelete.setAttribute("value", `${i}`);
-            // entryDelete.setAttribute("class", "delete");
+          // Set Values
+          entryListItem.style.textDecoration = entriesArr[i]["complete"]
+            ? "line-through"
+            : "none";
+          entryListItem.value = entriesArr[i]["complete"];
 
-            // Set Values
-            // entryInput.value = entriesArr[i];
-            entryListItem.textContent = entriesArr[i]
-
-            // Append
-
-            // entryListItem.appendChild(entryInput);
-            // entryListItem.appendChild(entryDelete);
-            detailsList.appendChild(entryListItem);
-            // entryDeleteHover();
+          // Append
+          detailsList.appendChild(entryListItem);
+          if (i === entriesArr.length - 1) {
+            entryFunctions(detailsList, date, entriesArr);
           }
         }
       }
