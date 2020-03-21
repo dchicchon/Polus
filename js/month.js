@@ -31,14 +31,13 @@ const createMonth = () => {
 
       // Gets storage items and creates an li element for each item
       chrome.storage.sync.get([`${date}`], function(result) {
+        console.log(result)
         if (!isEmpty(result)) {
           let entriesArr = result[`${date}`];
           for (let j = 0; j < entriesArr.length; j++) {
             // LEVEL 3 Day Details
             // Create DOM Elements
             let entryListItem = document.createElement("li");
-            // let entryInput = document.createElement("input");
-            // let entryDelete = document.createElement("button");
 
             // Text Content
             entryListItem.textContent = entriesArr[j].text;
@@ -48,9 +47,6 @@ const createMonth = () => {
               ? "line-through"
               : "none";
             entryListItem.value = entriesArr[j]["complete"];
-            // entryDelete.id = date;
-
-            // Event Listeners
 
             // Setting Attributes
             entryListItem.setAttribute("class", "entry");

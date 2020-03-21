@@ -26,37 +26,8 @@ let addFunction = function() {
         if (keyCode === 13) {
           this.blur();
           let parent = this.parentNode;
-          console.log("This is happening");
-
-          // Check the storage for this date
-          chrome.storage.sync.get([`${date}`], function(result) {
-            // If the date is empty, we will set the entry to it
-            let text = entryInput.value.toString();
-            parent.textContent = text; // when this is done, the input element is removed
-            if (text.length > 0) {
-              let alpha = "abcdefghijklmnopqrstuvwxyz";
-              let key = `${
-                alpha[Math.floor(Math.random() * 25) - 1]
-              }${Math.floor(Math.random() * 98) + 1}`;
-              let entry = {
-                key,
-                text,
-                complete: false
-              };
-              console.log(entry);
-
-              if (isEmpty(result)) {
-                let entries = [entry];
-                chrome.storage.sync.set({ [date]: entries }, function() {});
-
-                // If its not empty, we will append the entry to the others
-              } else {
-                let dateEntries = result[`${date}`];
-                dateEntries.push(entry);
-                chrome.storage.sync.set({ [date]: dateEntries }, function() {});
-              }
-            }
-          });
+          let text = entryInput.value.toString();
+          addToStorage(parent, date, text);
         }
       };
 
@@ -64,30 +35,8 @@ let addFunction = function() {
         entryInput.addEventListener("blur", function() {
           chrome.storage.sync.get([`${date}`], result => {
             let parent = this.parentNode;
-
-            // If the date is empty, we will set the entry to it
             let text = entryInput.value.toString();
-            parent.textContent = text; // when this is done, the input element is removed
-            if (text.length > 0) {
-              let alpha = "abcdefghijklmnopqrstuvwxyz";
-              let key = `${
-                alpha[Math.floor(Math.random() * 25) - 1]
-              }${Math.floor(Math.random() * 100)}`;
-              let entry = {
-                key,
-                text,
-                complete: false
-              };
-              if (isEmpty(result)) {
-                let entries = [entry];
-                chrome.storage.sync.set({ [date]: entries }, function() {});
-                // If its not empty, we will append the entry to the others
-              } else {
-                let dateEntries = result[`${date}`];
-                dateEntries.push(entry);
-                chrome.storage.sync.set({ [date]: dateEntries }, function() {});
-              }
-            }
+            addToStorage(parent, date, text);
           });
         });
       }
@@ -99,6 +48,35 @@ let addFunction = function() {
   }
 };
 
+let addToStorage = function(parent, date, text) {
+  chrome.storage.sync.get([`${date}`], function(result) {
+    // If the date is empty, we will set the entry to it
+    parent.textContent = text; // when this is done, the input element is removed
+    if (text.length > 0) {
+      let alpha = "abcdefghijklmnopqrstuvwxyz";
+      let key = `${alpha[Math.floor(Math.random() * 25) - 1]}${Math.floor(
+        Math.random() * 98
+      ) + 1}`;
+      let entry = {
+        key,
+        text,
+        complete: false
+      };
+
+      if (isEmpty(result)) {
+        let entries = [entry];
+        chrome.storage.sync.set({ [date]: entries }, function() {});
+
+        // If its not empty, we will append the entry to the others
+      } else {
+        let dateEntries = result[`${date}`];
+        dateEntries.push(entry);
+        chrome.storage.sync.set({ [date]: dateEntries }, function() {});
+      }
+    }
+  });
+};
+
 //   Check if object is empty. Used to see if a day has any entries
 let isEmpty = obj => {
   for (let key in obj) {
@@ -108,13 +86,6 @@ let isEmpty = obj => {
   }
   return true;
 };
-
-//   Removes a value from an array
-// let arrayRemove = (arr, val) => {
-//   return arr.filter(function(ele) {
-//     return arr.indexOf(ele) != val;
-//   });
-// };
 
 let addSites = mostVisitedURLs => {
   let ul = document.getElementsByClassName("topSites");
@@ -224,16 +195,3 @@ let entryFunctions = function(elmList, date, arr) {
 };
 
 // ====================
-
-// Set Event Listers for CSS
-// let entryDeleteHover = () => {
-//   let listItems = document.getElementsByClassName("entry");
-//   for (let i = 0; i < listItems.length; i++) {
-//     listItems[i].addEventListener("mouseenter", () => {
-//       listItems[i].children[0].style.opacity = 1; // this points to the delete button which is the 2nd child
-//     });
-//     listItems[i].addEventListener("mouseleave", () => {
-//       listItems[i].children[0].style.opacity = 0;
-//     });
-//   }
-// };
