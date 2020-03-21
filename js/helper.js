@@ -50,11 +50,11 @@ let addFunction = () => {
         chrome.storage.sync.get([`${date}`], function(result) {
           // If the date is empty, we will set the entry to it
           let text = entryInput.value.toString();
-          let entry = {
-            text,
-            complete: false
-          };
           if (text.length > 0) {
+            let entry = {
+              text,
+              complete: false
+            };
             if (isEmpty(result)) {
               let entries = [entry];
               chrome.storage.sync.set({ [date]: entries }, function() {});
@@ -62,7 +62,7 @@ let addFunction = () => {
               // If its not empty, we will append the entry to the others
             } else {
               let dateEntries = result[`${date}`];
-              dateEntries.push(`${entry}`);
+              dateEntries.push(entry);
               chrome.storage.sync.set({ [date]: dateEntries }, function() {});
             }
           }

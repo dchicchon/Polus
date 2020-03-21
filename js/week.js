@@ -9,9 +9,9 @@ const createWeek = () => {
   }
 
   for (let i = 0; i <= 6; i++) {
+    // Entry Variables
     let thisDate = new Date(startDate);
     thisDate.setDate(thisDate.getDate() + i);
-
     let year = thisDate.getFullYear(),
       month = thisDate.getMonth() + 1,
       day = thisDate.getDate(),
@@ -38,32 +38,18 @@ const createWeek = () => {
           // LEVEL 3
           // Create DOM Element
           let entryListItem = document.createElement("li");
-
           let entryInput = document.createElement("input");
           let entryEdit = document.createElement("button");
           let entryCheck = document.createElement("button");
           let entryDelete = document.createElement("button");
 
+          // Variables
+          let active = false; // This is to check the entry click function. If false, we will turn it true. Will only go back to false if we edit or check
+
           // Add Event Listeners
-          entryDelete.onclick = function() {
-            // DELETE ENTRY
-            this.parentNode.style.display = "none";
-            chrome.storage.sync.get([`${date}`], function(result) {
-              let dateEntries = result[`${date}`];
-              let index = parseInt(entryDelete.value);
-              let newEntries = arrayRemove(dateEntries, index);
-
-              console.log(index);
-              console.log(newEntries);
-              chrome.storage.sync.set({ [date]: newEntries }, function() {
-                console.log(date);
-                console.log("Removed Entry");
-              });
-            });
-          };
-
+          // ==================================
+          // EDIT ENTRY
           entryInput.onkeypress = function(e) {
-            // EDIT ENTRY
             if (!e) e = window.event;
             let keyCode = e.keyCode || e.which;
             if (keyCode === 13) {
@@ -83,6 +69,44 @@ const createWeek = () => {
               });
             }
           };
+
+          // Check
+          entryCheck.onclick = function() {
+            if (entryCheck.value === "false") {
+              entryListItem.style.textDecoration = "line-through";
+              entryCheck.value = true;
+              // update in storage
+              entriesArr[i]["complete"] = true;
+              chrome.storage.sync.set({ [date]: entriesArr });
+              // active = true;
+            } else {
+              entryListItem.style.textDecoration = "none";
+              entryCheck.value = false;
+              entriesArr[i]["complete"] = false;
+              chrome.storage.sync.set({ [date]: entriesArr });
+              // active = true;
+            }
+          };
+
+          // DELETE ENTRY
+          entryDelete.onclick = function() {
+            this.parentNode.style.display = "none";
+            console.log(entriesArr);
+            chrome.storage.sync.get([`${date}`], function(result) {
+              let dateEntries = result[`${date}`];
+              let index = parseInt(entryDelete.value);
+              let newEntries = arrayRemove(dateEntries, index);
+
+              console.log(index);
+              console.log(newEntries);
+              chrome.storage.sync.set({ [date]: newEntries }, function() {
+                console.log(date);
+                console.log("Removed Entry");
+              });
+            });
+          };
+
+          // ==================================
 
           // Text Content
           entryEdit.textContent = "#";
@@ -104,48 +128,30 @@ const createWeek = () => {
             : "none";
           entryListItem.value = 0;
           entryDelete.id = date;
+          entryCheck.value = entriesArr[i]["complete"]; // check if it is complete
 
-          // Should be based on the entry object 'complete' key
-          entryCheck.value = entriesArr[i]["complete"];
-
-          // Should be able to edit, check, or delete entry
-          // Lets have an onclick listener for entryListItem
-          // Check
-          entryCheck.addEventListener("click", () => {
-            if (entryCheck.value === "false") {
-              entryListItem.style.textDecoration = "line-through";
-              entryCheck.value = true;
-              // update in storage
-              entriesArr[i]["complete"] = true;
-              chrome.storage.sync.set({ [date]: entriesArr });
-            } else {
-              entryListItem.style.textDecoration = "none";
-              entryCheck.value = false;
-              entriesArr[i]["complete"] = false;
-              chrome.storage.sync.set({ [date]: entriesArr });
-            }
-          });
-
-          entryListItem.addEventListener("click", event => {
-            if (entryListItem.value === 0) {
-              entryListItem.value = 1;
+          // When entry is clicked
+          entryListItem.addEventListener("click", function(event) {
+            if (!active) {
+              active = true
               entryListItem.style.textOverflow = "none";
               entryListItem.style.height = "fit-content";
               entryListItem.style.whiteSpace = "normal";
               entryListItem.style.overflow = "visible";
-
               entryListItem.append(entryEdit);
               entryListItem.append(entryCheck);
               entryListItem.append(entryDelete);
             } else {
-              entryListItem.value = 0;
-              entryListItem.style.height = "1rem";
-              entryListItem.style.textOverflow = "ellipsis";
-              entryListItem.style.whiteSpace = "nowrap";
-              entryListItem.style.overflow = "hidden";
-              entryListItem.removeChild(entryEdit);
-              entryListItem.removeChild(entryCheck);
-              entryListItem.removeChild(entryDelete);
+              if (event.target.className === "entry" && active) {
+                active = false
+                entryListItem.style.height = "1rem";
+                entryListItem.style.textOverflow = "ellipsis";
+                entryListItem.style.whiteSpace = "nowrap";
+                entryListItem.style.overflow = "hidden";
+                entryListItem.removeChild(entryEdit);
+                entryListItem.removeChild(entryCheck);
+                entryListItem.removeChild(entryDelete);
+              }
             }
           });
 
