@@ -21,7 +21,6 @@ const createToday = () => {
     let btn = document.createElement("button");
 
     chrome.storage.sync.get([`${dateStamp}`], function(result) {
-      // console.log("Get storage");
       if (!isEmpty(result)) {
         let entriesArr = result[`${date}`];
         for (let i = 0; i < entriesArr.length; i++) {
@@ -29,38 +28,41 @@ const createToday = () => {
             // LEVEL 3 Day Details
             // Create DOM Elements
             let entryListItem = document.createElement("li");
-            let entryInput = document.createElement("input");
-            let entryDelete = document.createElement("button");
-  
-            // Event Listeners
-            entryDelete.onclick = function() {
-              this.parentNode.style.display = "none";
-              chrome.storage.sync.get([`${date}`], function(result) {
-                let dateEntries = result[`${date}`];
-                let index = parseInt(entryDelete.value);
-                let newEntries = arrayRemove(dateEntries, index);
-                chrome.storage.sync.set({ [date]: newEntries }, function() {});
-              });
-            };
-  
+            
+            // let entryInput = document.createElement("input");
+            // let entryText = document.createElement("p");
+            // let entryDelete = document.createElement("button");
+
+            // // Event Listeners
+            // entryDelete.onclick = function() {
+            //   this.parentNode.style.display = "none";
+            //   chrome.storage.sync.get([`${date}`], function(result) {
+            //     let dateEntries = result[`${date}`];
+            //     let index = parseInt(entryDelete.value);
+            //     let newEntries = arrayRemove(dateEntries, index);
+            //     chrome.storage.sync.set({ [date]: newEntries }, function() {});
+            //   });
+            // };
+
             // Text Content
-            entryDelete.textContent = "x";
-  
+            // entryDelete.textContent = "x";
+
             // Set Attributes
             entryListItem.setAttribute("class", "entry");
-            entryInput.setAttribute("class", "newItem");
-            entryDelete.setAttribute("value", `${i}`);
-            entryDelete.setAttribute("class", "delete");
-  
+            // entryInput.setAttribute("class", "newItem");
+            // entryDelete.setAttribute("value", `${i}`);
+            // entryDelete.setAttribute("class", "delete");
+
             // Set Values
-            entryInput.value = entriesArr[i];
-  
+            // entryInput.value = entriesArr[i];
+            entryListItem.textContent = entriesArr[i]
+
             // Append
-  
-            entryListItem.appendChild(entryInput);
-            entryListItem.appendChild(entryDelete);
+
+            // entryListItem.appendChild(entryInput);
+            // entryListItem.appendChild(entryDelete);
             detailsList.appendChild(entryListItem);
-            entryDeleteHover();
+            // entryDeleteHover();
           }
         }
       }

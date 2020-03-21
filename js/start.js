@@ -13,18 +13,11 @@ const startApp = () => {
     let backgroundLocation = document.getElementById("background-location");
     let backgroundSource = document.getElementById("background-source");
     let backgroundLink = document.getElementById("background-link");
-    backgroundLink.setAttribute("href", result.background.authorLink);
-    if (result.background.location) {
-      backgroundLocation.textContent = result.background.location;
-    } else {
-      backgroundLocation.textContent = "Unknown";
-    }
 
-    if (result.background.author) {
-      backgroundLink.textContent = result.background.author;
-    } else {
-      backgroundLocation.textContent = "Unknown Author";
-    }
+    backgroundLink.setAttribute("href", result.background.authorLink);
+
+    backgroundLocation.textContent = result.background.location;
+    backgroundLink.textContent = result.background.author;
 
     backgroundInfo.addEventListener("mouseover", () => {
       backgroundLocation.style.opacity = 0;

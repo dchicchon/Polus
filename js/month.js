@@ -38,7 +38,7 @@ const createMonth = () => {
               // LEVEL 3 Day Details
               // Create DOM Elements
               let entryListItem = document.createElement("li");
-              let entryInput = document.createElement("input");
+              // let entryInput = document.createElement("input");
               let entryDelete = document.createElement("button");
 
               // Text Content
@@ -47,14 +47,7 @@ const createMonth = () => {
 
               // Values
               entryDelete.id = date;
-              console.log(date);
-              console.log(entriesArr[j]);
-              // if (entriesArr[j] > 0) {
-              entryInput.value = entriesArr[j];
-              // }
-              // } else {
-              // continue
-              // }
+              entryListItem.textContent = entriesArr[j];
 
               // Event Listeners
               entryDelete.onclick = function() {
@@ -75,13 +68,13 @@ const createMonth = () => {
               entryListItem.setAttribute("class", "entry");
               entryDelete.setAttribute("value", `${j}`);
               entryDelete.setAttribute("class", "delete");
-              entryInput.setAttribute("class", "newItem");
+              // entryInput.setAttribute("class", "newItem");
 
               // Append
-              entryListItem.appendChild(entryInput);
-              entryListItem.appendChild(entryDelete);
+              // entryListItem.appendChild(entryInput);
+              // entryListItem.appendChild(entryDelete);
               monthDetailsList.appendChild(entryListItem);
-              entryDeleteHover();
+              // entryDeleteHover();
             }
           }
         }
@@ -126,7 +119,7 @@ const createMonth = () => {
   monthTitle.setAttribute("class", "title");
   monthNav.setAttribute("class", "nav");
   monthDays.setAttribute("class", "monthDays");
-  monthDays.style.width = "95%";
+  monthDays.style.width = "98%";
   monthDays.style.margin = "0 auto";
 
   // Event Listeners

@@ -109,14 +109,11 @@ main section {
 button {
   outline: none;
   border: none;
-  -webkit-transition: background 0.5s;
-  transition: background 0.5s;
   padding: 0.5rem 1rem;
   color: white;
 }
 
 button:hover {
-  background: rgba(90, 90, 90, 0.747);
   cursor: pointer;
 }
 
@@ -136,7 +133,7 @@ button:hover {
 }
 
 #nav .app-title {
-  padding: 1rem;
+  padding: 0 1rem;
   color: white;
   font-weight: 200;
   letter-spacing: 0.1rem;
@@ -225,14 +222,14 @@ button:hover {
   font-weight: 100;
 }
 
-#view button {
-  outline: none;
-  border: none;
+#view .view-btn {
   background: rgba(90, 90, 90, 0.329);
   -webkit-transition: background 0.5s;
   transition: background 0.5s;
-  padding: 0.5rem 1rem;
-  color: white;
+}
+
+#view .view-btn:hover {
+  background: rgba(43, 42, 42, 0.329);
 }
 
 #background-info {
@@ -284,21 +281,45 @@ button:hover {
   background: rgba(43, 129, 185, 0.76);
 }
 
+.add:focus {
+  background: rgba(43, 129, 185, 0.76);
+}
+
+.edit {
+  background: none;
+  -webkit-transition: background 0.5s;
+  transition: background 0.5s;
+}
+
+.edit:hover {
+  background: rgba(38, 96, 134, 0.76);
+}
+
 .delete {
   background: none;
-  float: left;
-  width: 1rem;
+  text-align: center;
+  width: 25px;
+  height: 20px;
   font-size: 0.9rem;
   border-radius: 100%;
-  margin: 0;
-  padding: 0 0.4rem;
-  opacity: 0;
-  -webkit-transition: opacity 0.5s;
-  transition: opacity 0.5s;
+  margin-left: 5px;
+  padding: 0 0.5rem;
+  -webkit-transition: background 0.5s;
+  transition: background 0.5s;
 }
 
 .delete:hover {
-  background: rgba(43, 129, 185, 0.76);
+  background: rgba(38, 96, 134, 0.76);
+}
+
+.check {
+  background: none;
+  -webkit-transition: background 0.5s;
+  transition: background 0.5s;
+}
+
+.check:hover {
+  background: rgba(38, 96, 134, 0.76);
 }
 
 .details {
@@ -312,10 +333,16 @@ button:hover {
 }
 
 .details ul li {
-  width: 85%;
+  width: 90%;
+  text-align: center;
+  white-space: nowrap;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: none;
   background: rgba(21, 115, 170, 0.63);
-  -webkit-transition: background 0.5s;
-  transition: background 0.5s;
+  -webkit-transition: background 0.5s, height 0.25s;
+  transition: background 0.5s, height 0.25s;
   color: white;
   margin: 0.25rem auto;
   padding: 0.5rem;
@@ -355,7 +382,13 @@ button:hover {
 
 .arrow {
   font-size: 1.5rem;
-  background: none;
+  background: rgba(43, 42, 42, 0.329);
+  -webkit-transition: background 0.5s;
+  transition: background 0.5s;
+}
+
+.arrow:hover {
+  background: rgba(90, 90, 90, 0.329);
 }
 
 .nav {
@@ -384,6 +417,7 @@ button:hover {
           justify-content: center;
   border: 0.5px solid rgba(32, 32, 32, 0.555);
   border-radius: 25px 25px 10px 10px;
+  background: rgba(0, 0, 0, 0.15);
   width: 50%;
   padding: 1rem 2rem;
   margin: 0 auto;
@@ -395,16 +429,16 @@ button:hover {
 #week .weekday {
   border: 1px solid rgba(32, 32, 32, 0.555);
   height: 19rem;
-  width: 13rem;
+  width: 14%;
   background: rgba(0, 0, 0, 0.15);
   border-radius: 25px 25px 10px 10px;
   padding: 0.5rem 0rem;
+  -webkit-transform: translateZ(0);
+          transform: translateZ(0);
   -webkit-transition: -webkit-transform 0.5s;
   transition: -webkit-transform 0.5s;
   transition: transform 0.5s;
   transition: transform 0.5s, -webkit-transform 0.5s;
-  -webkit-transform: translateZ(0);
-          transform: translateZ(0);
 }
 
 #week .weekday .weekDate {
@@ -452,12 +486,12 @@ button:hover {
 
 #month .monthDays .monthDay {
   text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
-  width: 9.75rem;
+  width: 10.25rem;
   height: 15rem;
   padding: 0.75rem;
   border: 0.5px solid rgba(32, 32, 32, 0.555);
   float: left;
-  background: rgba(0, 0, 0, 0);
+  background: rgba(0, 0, 0, 0.15);
   -webkit-transition: background 0.5s;
   transition: background 0.5s;
 }
@@ -465,6 +499,7 @@ button:hover {
 #month .monthDays .monthDay .monthDayTitle {
   font-weight: 0;
   border-radius: 1rem;
+  margin-bottom: 0.25rem;
   width: 6rem;
   text-align: center;
 }
@@ -481,6 +516,12 @@ button:hover {
 
 #month .monthDays .monthDay .monthDetails ul li {
   width: 85%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  text-overflow: ellipsis;
+  border: none;
   background: rgba(21, 115, 170, 0.63);
   -webkit-transition: background 0.5s;
   transition: background 0.5s;

@@ -25,33 +25,46 @@ let addFunction = () => {
           // Check the storage for this date
           chrome.storage.sync.get([`${date}`], function(result) {
             // If the date is empty, we will set the entry to it
-            if (isEmpty(result)) {
-              let entries = [`${entryInput.value}`];
-              chrome.storage.sync.set({ [date]: entries }, function() {});
+            let text = entryInput.value.toString();
+            if (text.length > 0) {
+              let entry = {
+                text,
+                complete: false
+              };
+              if (isEmpty(result)) {
+                let entries = [entry];
+                chrome.storage.sync.set({ [date]: entries }, function() {});
 
-              // If its not empty, we will append the entry to the others
-            } else {
-              let dateEntries = result[`${date}`];
-              dateEntries.push(`${entryInput.value}`);
-              chrome.storage.sync.set({ [date]: dateEntries }, function() {});
+                // If its not empty, we will append the entry to the others
+              } else {
+                let dateEntries = result[`${date}`];
+                dateEntries.push(entry);
+                chrome.storage.sync.set({ [date]: dateEntries }, function() {});
+              }
             }
           });
         }
       };
 
       entryInput.addEventListener("blur", () => {
-        console.log("This is working");
         chrome.storage.sync.get([`${date}`], function(result) {
           // If the date is empty, we will set the entry to it
-          if (isEmpty(result)) {
-            let entries = [`${entryInput.value}`];
-            chrome.storage.sync.set({ [date]: entries }, function() {});
+          let text = entryInput.value.toString();
+          let entry = {
+            text,
+            complete: false
+          };
+          if (text.length > 0) {
+            if (isEmpty(result)) {
+              let entries = [entry];
+              chrome.storage.sync.set({ [date]: entries }, function() {});
 
-            // If its not empty, we will append the entry to the others
-          } else {
-            let dateEntries = result[`${date}`];
-            dateEntries.push(`${entryInput.value}`);
-            chrome.storage.sync.set({ [date]: dateEntries }, function() {});
+              // If its not empty, we will append the entry to the others
+            } else {
+              let dateEntries = result[`${date}`];
+              dateEntries.push(`${entry}`);
+              chrome.storage.sync.set({ [date]: dateEntries }, function() {});
+            }
           }
         });
       });
@@ -140,10 +153,10 @@ let entryDeleteHover = () => {
   let listItems = document.getElementsByClassName("entry");
   for (let i = 0; i < listItems.length; i++) {
     listItems[i].addEventListener("mouseenter", () => {
-      listItems[i].children[1].style.opacity = 1; // this points to the delete button which is the 2nd child
+      listItems[i].children[0].style.opacity = 1; // this points to the delete button which is the 2nd child
     });
     listItems[i].addEventListener("mouseleave", () => {
-      listItems[i].children[1].style.opacity = 0;
+      listItems[i].children[0].style.opacity = 0;
     });
   }
 };

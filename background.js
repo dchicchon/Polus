@@ -2,6 +2,7 @@
 chrome.runtime.onInstalled.addListener(function() {
   chrome.topSites.get(function(arr) {
     chrome.storage.sync.set({ view: "week", topSites: arr }, function() {});
+    checkTimeStamp();
   });
 
   // Set cookies because cross origin request must be secure and recognized that it is a cors method
@@ -34,8 +35,11 @@ const getRandomPhoto = () => {
     .then(function(photo) {
       console.log(photo);
       let url = photo.urls.raw;
-      let location = `${photo.location.city}, ${photo.location.country}`;
-      let author = `${photo.user.name}`;
+      let location = photo.location.city
+        ? `${photo.location.city}, ${photo.location.country}`
+        : "Unknown";
+      console.log(location);
+      let author = photo.user.name ? `${photo.user.name}` : "Unkown";
       let authorLink = photo.user.links.html;
       chrome.storage.sync.set(
         {
