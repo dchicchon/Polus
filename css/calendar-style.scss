@@ -172,7 +172,7 @@ button:hover {
   color: white;
   font-size: 2rem;
   font-weight: 100;
-  padding-bottom: 0.5rem;
+  // padding-bottom: 0.5rem;
   text-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
 }
 
@@ -182,7 +182,7 @@ button:hover {
   color: white;
   font-size: 4.75rem;
   font-weight: 100;
-  padding-bottom: 0.5rem;
+  // padding-bottom: 0.5rem;
   text-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
 }
 
@@ -261,7 +261,7 @@ button:hover {
   // float: left;
   text-align: center;
   width: 25px;
-  height: 20px;
+  height: 25px;
   font-size: 0.9rem;
   border-radius: 100%;
   margin-left: 5px;
@@ -275,6 +275,13 @@ button:hover {
 }
 
 .check {
+  text-align: center;
+  width: 27px;
+  height: 25px;
+  font-size: 0.9rem;
+  border-radius: 100%;
+  margin-left: 5px;
+  padding: 0 0.5rem;
   background: none;
   transition: background 0.5s;
 }

@@ -34,47 +34,31 @@ const createMonth = () => {
         if (!isEmpty(result)) {
           let entriesArr = result[`${date}`];
           for (let j = 0; j < entriesArr.length; j++) {
-            if (entriesArr[j].length > 0) {
-              // LEVEL 3 Day Details
-              // Create DOM Elements
-              let entryListItem = document.createElement("li");
-              // let entryInput = document.createElement("input");
-              let entryDelete = document.createElement("button");
+            // LEVEL 3 Day Details
+            // Create DOM Elements
+            let entryListItem = document.createElement("li");
+            // let entryInput = document.createElement("input");
+            // let entryDelete = document.createElement("button");
 
-              // Text Content
-              entryDelete.textContent = "x";
-              // entryDelete.innerHTML = "&nabla;";
+            // Text Content
+            entryListItem.textContent = entriesArr[j].text;
 
-              // Values
-              entryDelete.id = date;
-              entryListItem.textContent = entriesArr[j];
+            // Values
+            entryListItem.style.textDecoration = entriesArr[j]["complete"]
+              ? "line-through"
+              : "none";
+            entryListItem.value = entriesArr[j]["complete"];
+            // entryDelete.id = date;
 
-              // Event Listeners
-              entryDelete.onclick = function() {
-                this.parentNode.style.display = "none";
-                chrome.storage.sync.get([`${date}`], function(result) {
-                  let dateEntries = result[`${date}`];
-                  let index = parseInt(entryDelete.value);
-                  let newEntries = arrayRemove(dateEntries, index);
+            // Event Listeners
 
-                  chrome.storage.sync.set({ [date]: newEntries }, function() {
-                    // console.log(date);
-                    console.log("Removed Entry");
-                  });
-                });
-              };
+            // Setting Attributes
+            entryListItem.setAttribute("class", "entry");
 
-              // Setting Attributes
-              entryListItem.setAttribute("class", "entry");
-              entryDelete.setAttribute("value", `${j}`);
-              entryDelete.setAttribute("class", "delete");
-              // entryInput.setAttribute("class", "newItem");
-
-              // Append
-              // entryListItem.appendChild(entryInput);
-              // entryListItem.appendChild(entryDelete);
-              monthDetailsList.appendChild(entryListItem);
-              // entryDeleteHover();
+            // Append
+            monthDetailsList.appendChild(entryListItem);
+            if (j === entriesArr.length - 1) {
+              entryFunctions(monthDetailsList, date, entriesArr);
             }
           }
         }

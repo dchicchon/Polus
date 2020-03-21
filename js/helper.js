@@ -99,31 +99,6 @@ let addFunction = function() {
   }
 };
 
-//   Delete entries: NOT WORKING AT THE MOMENT
-let deleteFunction = () => {
-  let deleteButtons = document.getElementsByClassName("delete");
-  console.log(deleteButtons);
-  for (let i = 0; i < deleteButtons.length; i++) {
-    let date = deleteButtons[i].id;
-    console.log(date);
-    deleteButtons[i].onclick = function() {
-      this.parentNode.style.display = "none";
-      chrome.storage.sync.get([`${date}`], function(result) {
-        let dateEntries = result[`${date}`];
-        let index = parseInt(entryDelete.value);
-        let newEntries = arrayRemove(dateEntries, index);
-
-        console.log(index);
-        console.log(newEntries);
-        chrome.storage.sync.set({ [date]: newEntries }, function() {
-          console.log(date);
-          console.log("Removed Entry");
-        });
-      });
-    };
-  }
-};
-
 //   Check if object is empty. Used to see if a day has any entries
 let isEmpty = obj => {
   for (let key in obj) {
@@ -135,11 +110,11 @@ let isEmpty = obj => {
 };
 
 //   Removes a value from an array
-let arrayRemove = (arr, val) => {
-  return arr.filter(function(ele) {
-    return arr.indexOf(ele) != val;
-  });
-};
+// let arrayRemove = (arr, val) => {
+//   return arr.filter(function(ele) {
+//     return arr.indexOf(ele) != val;
+//   });
+// };
 
 let addSites = mostVisitedURLs => {
   let ul = document.getElementsByClassName("topSites");
@@ -175,7 +150,6 @@ let addSites = mostVisitedURLs => {
 // ====================
 let entryFunctions = function(elmList, date, arr) {
   let entriesArr = elmList.getElementsByClassName("entry");
-
   for (let i = 0; i < entriesArr.length; i++) {
     // console.log(entriesArr[i]);
     let entry = entriesArr[i];
