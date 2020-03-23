@@ -264,6 +264,11 @@ button:hover {
   color: white;
 }
 
+.entry:hover {
+  background: rgba(24, 127, 187, 0.993);
+  cursor: pointer;
+}
+
 .add {
   background: none;
   width: 1.5rem;
@@ -345,6 +350,12 @@ button:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   border: none;
+  -ms-touch-action: none;
+      touch-action: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
   background: rgba(21, 115, 170, 0.63);
   -webkit-transition: background 0.5s, height 0.25s;
   transition: background 0.5s, height 0.25s;
@@ -354,11 +365,6 @@ button:hover {
   border-radius: 25px;
   font-size: 0.9rem;
   height: 1rem;
-}
-
-.details ul li:hover {
-  background: rgba(24, 127, 187, 0.993);
-  cursor: pointer;
 }
 
 .newItem {

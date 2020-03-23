@@ -11,9 +11,9 @@ In the past, I have found planning out my life difficult and could never get acc
 - Three different view buttons that change accordingly: Today, Weekly, and Monthly.
 - Persistent data storage so you can view your calendar wherever you go
 
-## Development Style
+## Development
 
-#### Creating Each View
+### Creating Each View
 
 Creating each view involved working with the following items in order
 
@@ -77,13 +77,13 @@ const createMonth = () => {
 monthView.append(monthContainer);
 ```
 
-## Using Chrome APIs
+### Using Chrome APIs
 
 There are several APIs that you can use when developing Chrome Extensions. One that I mainly use for this extension is the Chrome Storage API.
 
 Using the Chrome Storage API, you can store items in Chrome Storage Sync that will persist your storage items in the cloud. This is how I am able to store items for each day in the calendar. Read more about this [here](https://developer.chrome.com/apps/storage)
 
-### Chrome Runtime
+#### Chrome Runtime
 
 I use this to set initial values for the Chrome Storage API for when a user first installs the extension. In this example, I set the view to "today" for when the user first installs.
 
@@ -99,7 +99,11 @@ chrome.runtime.onInstalled.addListener(function() {
 
 [Link to Documentation](https://developer.chrome.com/extensions/runtime)
 
-### Chrome Storage
+#### Chrome Storage
+
+I used Chrome Storage Sync for the extension so I would be able to sync entries with the google account so it could be used across multiple devices with the same chrome account.
+
+It is important to note, that there is a storage limit of 100kb and 8kb limit for each item. In future builds, I will implement localStorage to help alleviate some storage weight from storage.sync.
 
 To set chrome storage items, you must use the method
 
@@ -141,7 +145,7 @@ chrome.storage.sync.get(["view"], function(result) {
 
 [Link to Documentation](https://developer.chrome.com/extensions/storage)
 
-### Chrome TopSites
+#### Chrome TopSites
 
 This returns back an array of sites. Each site is an object that includes the url and title
 
@@ -153,7 +157,7 @@ chrome.topSites.get(function(arr) {
 
 [Link to Documentation](https://developer.chrome.com/extensions/topSites)
 
-### Chrome Cookies
+#### Chrome Cookies
 
 It's important to set cookies for chrome extensions when using CORS (Cross Origin Resource Sharing). In this case, I used the API to set the requests pre-flight to `secure: true` and `sameSite: 'no-restriction'`.
 
@@ -172,10 +176,17 @@ chrome.cookies.set(
 
 [Link to Documentation](https://developer.chrome.com/extensions/cookies)
 
+
+### DOM JS
+#### Dragging Entries
+[Here](https://developer.mozilla.org/en-US/docs/Web/API/Document/drag_event) is a reference for how I was able to drag entries in and between lists.
 ### Future Builds
 
-- Start weeks on Mondays
+<!-- - Start weeks on Mondays -->
+<!-- - Add different backgrounds using Unsplash API -->
+
 - Separate Weeks on MonthView
-- Add different backgrounds using Unsplash API
+- Draggable list items to other days
+- Using Chrome LocalStorage in future as not to throttle chrome.storage.sync
 - IOS and Android Stores
 - A notes tab to add to each day which will keep a log of your notes for the day

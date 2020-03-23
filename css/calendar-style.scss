@@ -230,6 +230,33 @@ button:hover {
 
 // Main Classes
 // ====================
+
+// .entry {
+//   width: 85%;
+//   // Update v1.0.0.9
+//   text-align: center;
+//   white-space: nowrap;
+//   display: block;
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+//   border: none;
+//   touch-action: none;
+//   user-select: none;
+//   //
+//   background: rgba(21, 115, 170, 0.63);
+//   transition: background 0.5s, height 0.25s;
+//   color: white;
+//   margin: 0.25rem auto;
+//   padding: 0.5rem;
+//   border-radius: 25px;
+//   font-size: 0.9rem;
+//   height: 1rem;
+// }
+.entry:hover {
+  background: rgba(24, 127, 187, 0.993);
+  cursor: pointer;
+}
+
 .add {
   background: none;
   // position: relative;
@@ -302,7 +329,6 @@ button:hover {
     padding: 0;
     li {
       width: 85%;
-
       // Update v1.0.0.9
       text-align: center;
       white-space: nowrap;
@@ -310,7 +336,8 @@ button:hover {
       overflow: hidden;
       text-overflow: ellipsis;
       border: none;
-
+      touch-action: none;
+      user-select: none;
       //
       background: rgba(21, 115, 170, 0.63);
       transition: background 0.5s, height 0.25s;
@@ -320,10 +347,6 @@ button:hover {
       border-radius: 25px;
       font-size: 0.9rem;
       height: 1rem;
-    }
-    li:hover {
-      background: rgba(24, 127, 187, 0.993);
-      cursor: pointer;
     }
   }
 }

@@ -118,7 +118,6 @@ let addSites = mostVisitedURLs => {
 };
 
 // ENTRY FUNCTIONS
-// ====================
 let entryFunctions = function(elmList, date, arr) {
   let entriesArr = elmList.getElementsByClassName("entry");
   for (let i = 0; i < entriesArr.length; i++) {
@@ -163,6 +162,8 @@ let entryFunctions = function(elmList, date, arr) {
       }
     });
 
+    // DRAGGING ITEMS
+
     // Edit Entry
     // entryEdit.addEventListener('click',() => {
 
@@ -185,7 +186,6 @@ let entryFunctions = function(elmList, date, arr) {
 
     // Delete Entry
     entryDelete.addEventListener("click", () => {
-      console.log("DELETE");
       // Filter by the delete btn val. Set this filtered arr to the existing variable of arr
       arr = arr.filter(elm => elm.key !== entryDelete.value);
       entry.style.display = "none";
@@ -194,4 +194,64 @@ let entryFunctions = function(elmList, date, arr) {
   }
 };
 
-// ====================
+// ENTRY DRAG
+let dragFunctions = function() {
+  let dragged;
+  document.addEventListener("drag", function(event) {}, false);
+  document.addEventListener(
+    "dragstart",
+    function(event) {
+      if ((event.target.className = "entry")) {
+        dragged = event.target;
+        event.target.style.opacity = 0.5;
+      }
+    },
+    false
+  );
+  document.addEventListener(
+    "dragend",
+    function(event) {
+      event.target.style.opacity = "";
+    },
+    false
+  );
+  document.addEventListener(
+    "dragover",
+    function(event) {
+      event.preventDefault();
+    },
+    false
+  );
+  document.addEventListener(
+    "dragenter",
+    function(event) {
+      if (event.target.className === "details") {
+        event.target.style.background = "rgba(90, 90, 90, 0.329)";
+      }
+    },
+    false
+  );
+
+  document.addEventListener(
+    "dragleave",
+    function(event) {
+      if (event.target.className === "details") {
+        event.target.style.background = "initial";
+      }
+    },
+    false
+  );
+
+  document.addEventListener(
+    "drop",
+    function(event) {
+      event.preventDefault();
+      if (event.target.className === "details") {
+        event.target.style.background = "initial";
+        dragged.parentNode.removeChild(dragged);
+        event.target.children[0].appendChild(dragged);
+      }
+    },
+    false
+  );
+};

@@ -64,7 +64,7 @@ const createWeek = () => {
           //   }
           // };
 
-          // ==================================
+          // DRAGGING
 
           // Text Content
           // entryEdit.textContent = "#";
@@ -72,6 +72,8 @@ const createWeek = () => {
 
           // Set Attributes
           entryListItem.setAttribute("class", "entry");
+          entryListItem.setAttribute("draggable", "true");
+          entryListItem.ondragstart="event.dataTransfer.setdata('text/plain',null)"
           // entryInput.setAttribute("class", "newItem");
           // entryEdit.setAttribute("class", "edit");
 

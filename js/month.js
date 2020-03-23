@@ -31,7 +31,6 @@ const createMonth = () => {
 
       // Gets storage items and creates an li element for each item
       chrome.storage.sync.get([`${date}`], function(result) {
-        console.log(result)
         if (!isEmpty(result)) {
           let entriesArr = result[`${date}`];
           for (let j = 0; j < entriesArr.length; j++) {
