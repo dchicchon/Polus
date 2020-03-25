@@ -1,5 +1,9 @@
 // Helper functions for calendar
 // Feature to add new entries
+
+// GLOBAL VARIABLES
+// date = current Date
+
 let addFunction = function() {
   let addButtons = document.getElementsByClassName("add");
   // console.log(addButtons)
@@ -12,6 +16,8 @@ let addFunction = function() {
       let entryListItem = document.createElement("li");
       let entryInput = document.createElement("input");
       entryInput.setAttribute("class", "newItem");
+      entryListItem.setAttribute("class", "entry");
+      entryListItem.id = date;
 
       entryListItem.style.animationName = "grow";
       entryListItem.style.animationFillMode = "forwards";
@@ -20,26 +26,36 @@ let addFunction = function() {
 
       // Add a key press listener for the HTML input element (listen for the keycode for Enter (13))
       entryInput.onkeypress = function(e) {
-        done = true;
-        if (!e) e = window.event;
         let keyCode = e.keyCode || e.which;
+        if (!e) e = window.event;
         if (keyCode === 13) {
-          this.blur();
-          let parent = this.parentNode;
+          done = true;
           let text = entryInput.value.toString();
-          addToStorage(parent, date, text);
+          let parent = this.parentNode;
+          parent.textContent = text; // when this is done, the input element is removed
+          let list = parent.parentNode;
+          if (text.length > 0) {
+            addToStorage(list, date, text);
+          } else {
+            entryListItem.remove();
+          }
         }
       };
 
-      if (!done) {
-        entryInput.addEventListener("blur", function() {
-          chrome.storage.sync.get([`${date}`], result => {
-            let parent = this.parentNode;
-            let text = entryInput.value.toString();
-            addToStorage(parent, date, text);
-          });
-        });
-      }
+      entryInput.addEventListener("blur", function() {
+        if (!done) {
+          let text = entryInput.value.toString();
+          let parent = this.parentNode;
+          parent.textContent = text; // when this is done, the input element is removed
+          let list = parent.parentNode;
+          if (text.length > 0) {
+            addToStorage(list, date, text);
+          } else {
+            entryListItem.remove();
+          }
+        }
+      });
+      // });
 
       entryListItem.appendChild(entryInput);
       addButtons[i].previousElementSibling.append(entryListItem);
@@ -48,31 +64,30 @@ let addFunction = function() {
   }
 };
 
-let addToStorage = function(parent, date, text) {
+let addToStorage = function(listElm, date, text) {
   chrome.storage.sync.get([`${date}`], function(result) {
     // If the date is empty, we will set the entry to it
-    parent.textContent = text; // when this is done, the input element is removed
-    if (text.length > 0) {
-      let alpha = "abcdefghijklmnopqrstuvwxyz";
-      let key = `${alpha[Math.floor(Math.random() * 25) - 1]}${Math.floor(
-        Math.random() * 98
-      ) + 1}`;
-      let entry = {
-        key,
-        text,
-        complete: false
-      };
+    let alpha = "abcdefghijklmnopqrstuvwxyz";
+    let key = `${alpha[Math.floor(Math.random() * 25) - 1]}${Math.floor(
+      Math.random() * 98
+    ) + 1}`;
+    let entry = {
+      key,
+      text,
+      complete: false
+    };
 
-      if (isEmpty(result)) {
-        let entries = [entry];
-        chrome.storage.sync.set({ [date]: entries }, function() {});
+    if (isEmpty(result)) {
+      let entries = [entry];
+      entryFunctions(listElm, date, entries);
+      chrome.storage.sync.set({ [date]: entries }, function() {});
 
-        // If its not empty, we will append the entry to the others
-      } else {
-        let dateEntries = result[`${date}`];
-        dateEntries.push(entry);
-        chrome.storage.sync.set({ [date]: dateEntries }, function() {});
-      }
+      // If its not empty, we will append the entry to the others
+    } else {
+      let dateEntries = result[`${date}`];
+      dateEntries.push(entry);
+      entryFunctions(listElm, date, dateEntries);
+      chrome.storage.sync.set({ [date]: dateEntries }, function() {});
     }
   });
 };
@@ -87,39 +102,40 @@ let isEmpty = obj => {
   return true;
 };
 
-let addSites = mostVisitedURLs => {
-  let ul = document.getElementsByClassName("topSites");
-  for (let i = 0; i < mostVisitedURLs.length - 3; i++) {
-    let index = mostVisitedURLs[i].url.indexOf("://");
-    let lastIndex = mostVisitedURLs[i].url.indexOf(".com");
-    if (lastIndex !== -1) {
-      let url = mostVisitedURLs[i].url.substring(index + 3, lastIndex);
-      let newIndex = url.indexOf("www.");
-      if (newIndex !== -1) {
-        url = url.substring(newIndex + 4);
-      }
-      url = url[0].toUpperCase() + url.slice(1);
-      let link = document.createElement("a");
-      link.textContent = url;
-      link.setAttribute("class", "site");
-      link.setAttribute("href", mostVisitedURLs[i].url);
-      link.setAttribute("target", "_blank");
-      ul[0].appendChild(link);
-    }
-  }
-  let siteBox = document.getElementById("site-box");
-  siteBox.addEventListener("mouseenter", function() {
-    ul[0].setAttribute("style", "display:block");
-  });
+// let addSites = mostVisitedURLs => {
+//   let ul = document.getElementsByClassName("topSites");
+//   for (let i = 0; i < mostVisitedURLs.length - 3; i++) {
+//     let index = mostVisitedURLs[i].url.indexOf("://");
+//     let lastIndex = mostVisitedURLs[i].url.indexOf(".com");
+//     if (lastIndex !== -1) {
+//       let url = mostVisitedURLs[i].url.substring(index + 3, lastIndex);
+//       let newIndex = url.indexOf("www.");
+//       if (newIndex !== -1) {
+//         url = url.substring(newIndex + 4);
+//       }
+//       url = url[0].toUpperCase() + url.slice(1);
+//       let link = document.createElement("a");
+//       link.textContent = url;
+//       link.setAttribute("class", "site");
+//       link.setAttribute("href", mostVisitedURLs[i].url);
+//       link.setAttribute("target", "_blank");
+//       ul[0].appendChild(link);
+//     }
+//   }
+//   let siteBox = document.getElementById("site-box");
+//   siteBox.addEventListener("mouseenter", function() {
+//     ul[0].setAttribute("style", "display:block");
+//   });
 
-  siteBox.addEventListener("mouseleave", function() {
-    ul[0].setAttribute("style", "display:none");
-  });
-};
+//   siteBox.addEventListener("mouseleave", function() {
+//     ul[0].setAttribute("style", "display:none");
+//   });
+// };
 
 // ENTRY FUNCTIONS
 let entryFunctions = function(elmList, date, arr) {
   let entriesArr = elmList.getElementsByClassName("entry");
+  console.log(entriesArr);
   for (let i = 0; i < entriesArr.length; i++) {
     // console.log(entriesArr[i]);
     let entry = entriesArr[i];
@@ -201,7 +217,7 @@ let dragFunctions = function() {
   document.addEventListener(
     "dragstart",
     function(event) {
-      if ((event.target.className = "entry")) {
+      if (event.target.className === "entry") {
         dragged = event.target;
         event.target.style.opacity = 0.5;
       }
@@ -225,7 +241,11 @@ let dragFunctions = function() {
   document.addEventListener(
     "dragenter",
     function(event) {
-      if (event.target.className === "details") {
+      if (
+        event.target.className === "details" ||
+        event.target.className === "monthDetails" // ||
+        // event.target.className === "detailsList"
+      ) {
         event.target.style.background = "rgba(90, 90, 90, 0.329)";
       }
     },
@@ -235,7 +255,11 @@ let dragFunctions = function() {
   document.addEventListener(
     "dragleave",
     function(event) {
-      if (event.target.className === "details") {
+      if (
+        event.target.className === "details" ||
+        event.target.className === "monthDetails" // ||
+        // event.target.className === "detailsList"
+      ) {
         event.target.style.background = "initial";
       }
     },
@@ -246,10 +270,29 @@ let dragFunctions = function() {
     "drop",
     function(event) {
       event.preventDefault();
-      if (event.target.className === "details") {
+      // console.log(event.dataTransfer.getData("text"));
+      if (
+        event.target.className === "details" ||
+        event.target.className === "monthDetails"
+      ) {
         event.target.style.background = "initial";
         dragged.parentNode.removeChild(dragged);
-        event.target.children[0].appendChild(dragged);
+        if (event.target.className === "details" || "monthDetails") {
+          let date = event.target.id;
+          let prevDate = dragged.id;
+          event.target.children[0].appendChild(dragged);
+          chrome.storage.sync.get([`${prevDate}`], function(result) {
+            let entriesArr = result[`${prevDate}`];
+            console.log(entriesArr);
+            entriesArr = entriesArr.filter(
+              elm => elm.text !== dragged.textContent
+            );
+            chrome.storage.sync.set({ [prevDate]: entriesArr });
+          });
+          addToStorage(date, dragged.textContent);
+        } // else if (event.target.className === "detailsList") {
+        // event.target.parentNode.appendChild(dragged);
+        // }
       }
     },
     false

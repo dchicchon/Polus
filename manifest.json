@@ -13,7 +13,6 @@
   "permissions": [
     "activeTab",
     "storage",
-    "topSites",
     "cookies",
     "*://*.unsplash.com/"
   ],

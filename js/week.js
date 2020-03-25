@@ -71,9 +71,11 @@ const createWeek = () => {
           entryListItem.textContent = entriesArr[j]["text"];
 
           // Set Attributes
+          entryListItem.id = date;
           entryListItem.setAttribute("class", "entry");
           entryListItem.setAttribute("draggable", "true");
-          entryListItem.ondragstart="event.dataTransfer.setdata('text/plain',null)"
+          entryListItem.ondragstart =
+            "event.dataTransfer.setdata('text/plain',ev.target.id)";
           // entryInput.setAttribute("class", "newItem");
           // entryEdit.setAttribute("class", "edit");
 
@@ -104,6 +106,8 @@ const createWeek = () => {
     weekDate.setAttribute("class", "weekDate");
     weekTitle.setAttribute("class", "weekTitle");
     details.setAttribute("class", "details");
+    details.id = date;
+    detailsList.setAttribute("class", "detailsList");
     btn.setAttribute("class", "add");
 
     // Set Values

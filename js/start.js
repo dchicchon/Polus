@@ -1,6 +1,6 @@
 const startApp = () => {
   chrome.storage.sync.get(["background"], function(result) {
-    chrome.topSites.get(addSites); // add topsites
+    // chrome.topSites.get(addSites); // add topsites
     let page = document.getElementsByTagName("html");
     // &auto=format
     // &w=1500&dpi=1
@@ -28,8 +28,6 @@ const startApp = () => {
       backgroundLocation.style.opacity = 0.5;
       backgroundSource.style.opacity = 0;
     });
-
-    
 
     dragFunctions();
     hideViews(views); // pass in views arr to hide different calendars depending on the stored view
