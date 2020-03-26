@@ -1,5 +1,8 @@
 const createMonth = () => {
   monthView.innerHTML = "";
+  let monthDate = new Date();
+  let monthYear = monthDate.getFullYear();
+  let monthMonth = monthDate.getMonth();
 
   // LEVEL 1 Month View
   // Create DOM Elements
@@ -108,20 +111,20 @@ const createMonth = () => {
 
   // Event Listeners
   prevBtn.addEventListener("click", function() {
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    month = currentDate.getMonth();
-    year = currentDate.getFullYear();
-    monthTitle.textContent = months[month] + ` ${year}`;
+    monthDate.setMonth(monthDate.getMonth() - 1);
+    monthMonth = monthDate.getMonth();
+    monthYear = monthDate.getFullYear();
+    monthTitle.textContent = months[monthMonth] + ` ${monthYear}`;
     monthDays.innerHTML = "";
-    createDaysInMonth(year, month);
+    createDaysInMonth(monthYear, monthMonth);
   });
   nextBtn.addEventListener("click", function() {
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    month = currentDate.getMonth();
-    year = currentDate.getFullYear();
-    monthTitle.textContent = months[month] + ` ${year}`;
+    monthDate.setMonth(monthDate.getMonth() + 1);
+    monthMonth = monthDate.getMonth();
+    monthYear = monthDate.getFullYear();
+    monthTitle.textContent = months[monthMonth] + ` ${monthYear}`;
     monthDays.innerHTML = "";
-    createDaysInMonth(year, month);
+    createDaysInMonth(monthYear, monthMonth);
   });
 
   // Append
@@ -133,6 +136,6 @@ const createMonth = () => {
   // View
   monthView.appendChild(monthNav);
   monthView.appendChild(monthDays);
-  createDaysInMonth(year, month);
+  createDaysInMonth(monthYear, monthMonth);
   // ===============================
 };

@@ -8,6 +8,7 @@ let views = [dayView, weekView, monthView];
 let viewButtons = document.getElementsByClassName("view-btn");
 let currentView;
 
+// Click on view buttons to allow selective viewing
 const viewFunction = () => {
   for (let j = 0; j < viewButtons.length; j++) {
     viewButtons[j].onclick = function() {
@@ -23,12 +24,12 @@ const viewFunction = () => {
   }
 };
 
+// Sort views to show the one selected
 const hideViews = viewsArr => {
   chrome.storage.sync.get(["view"], function(result) {
     for (let k = 0; k < viewsArr.length; k++) {
       // If the view clicked on equals the result
       if (views[k].id === result["view"]) {
-        // console.log(result["view"]);
         view = result["view"];
         switch (view) {
           case "daily":
@@ -47,5 +48,37 @@ const hideViews = viewsArr => {
         views[k].setAttribute("style", "display:none");
       }
     }
+  });
+};
+
+// Get the background image and set stylings
+const backgroundImage = () => {
+  chrome.storage.sync.get(["background"], function(result) {
+    // chrome.topSites.get(addSites); // add topsites
+    let page = document.getElementsByTagName("html");
+    page[0].style.background = `rgba(0,0,0,0.9) url(${result.background.url +
+      `&w=${window.innerWidth}&dpi=2`}) no-repeat center center fixed`;
+    page[0].style.backgroundSize = `cover`;
+    let backgroundInfo = document.getElementById("background-info");
+    let backgroundLocation = document.getElementById("background-location");
+    let backgroundSource = document.getElementById("background-source");
+    let backgroundLink = document.getElementById("background-link");
+    backgroundLink.setAttribute("href", result.background.authorLink);
+
+    backgroundLocation.textContent = result.background.location;
+    backgroundLink.textContent = result.background.author;
+
+    backgroundInfo.addEventListener("mouseover", () => {
+      backgroundLocation.style.opacity = 0;
+      backgroundSource.style.opacity = 0.5;
+    });
+
+    backgroundInfo.addEventListener("mouseleave", () => {
+      backgroundLocation.style.opacity = 0.5;
+      backgroundSource.style.opacity = 0;
+    });
+    // &auto=format
+    // &w=1500&dpi=1
+    // console.log(result.background.url);
   });
 };

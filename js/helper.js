@@ -135,7 +135,6 @@ let isEmpty = obj => {
 // ENTRY FUNCTIONS
 let entryFunctions = function(elmList, date, arr) {
   let entriesArr = elmList.getElementsByClassName("entry");
-  console.log(entriesArr);
   for (let i = 0; i < entriesArr.length; i++) {
     // console.log(entriesArr[i]);
     let entry = entriesArr[i];
@@ -283,13 +282,12 @@ let dragFunctions = function() {
           event.target.children[0].appendChild(dragged);
           chrome.storage.sync.get([`${prevDate}`], function(result) {
             let entriesArr = result[`${prevDate}`];
-            console.log(entriesArr);
             entriesArr = entriesArr.filter(
               elm => elm.text !== dragged.textContent
             );
             chrome.storage.sync.set({ [prevDate]: entriesArr });
           });
-          addToStorage(date, dragged.textContent);
+          addToStorage(event.target.children[0], date, dragged.textContent);
         } // else if (event.target.className === "detailsList") {
         // event.target.parentNode.appendChild(dragged);
         // }

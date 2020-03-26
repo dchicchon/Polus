@@ -3,7 +3,8 @@
 let currentDate = new Date(),
   month = currentDate.getMonth(),
   year = currentDate.getFullYear();
-globalDate = `${currentDate.getMonth()+1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
+globalDate = `${currentDate.getMonth() +
+  1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
 
 let weekdays = [
   "Sunday",
