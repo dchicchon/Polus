@@ -39,7 +39,7 @@ const updateTime = () => {
     minute = currentDate.getMinutes(),
     second = currentDate.getSeconds();
 
-  let time = `${hour}: ${minute}: ${second}`; // your input
+  let time = `${hour}: ${minute}: ${second}`;
   time = time.split(":"); // convert to array
 
   // fetch2
@@ -67,7 +67,5 @@ const updateTime = () => {
 
   document.getElementById("clock").textContent = clock;
   document.getElementById("date").textContent = date;
-
-  // Maybe we can use this function for other methods too?
 };
 updateTime();

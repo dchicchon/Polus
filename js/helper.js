@@ -15,9 +15,12 @@ let addFunction = function() {
       // When clicked, we will create a couple of HTML elements with attributes
       let entryListItem = document.createElement("li");
       let entryInput = document.createElement("input");
+      let key = getKey();
+
       entryInput.setAttribute("class", "newItem");
-      entryListItem.setAttribute("class", "entry");
-      entryListItem.id = date;
+      entryListItem.classList.add("entry", `${date}`, "new");
+      entryListItem.id = key;
+      entryListItem.setAttribute("draggable", "true");
 
       entryListItem.style.animationName = "grow";
       entryListItem.style.animationFillMode = "forwards";
@@ -35,7 +38,7 @@ let addFunction = function() {
           parent.textContent = text; // when this is done, the input element is removed
           let list = parent.parentNode;
           if (text.length > 0) {
-            addToStorage(list, date, text);
+            addToStorage(list, date, text, key);
           } else {
             entryListItem.remove();
           }
@@ -49,7 +52,7 @@ let addFunction = function() {
           parent.textContent = text; // when this is done, the input element is removed
           let list = parent.parentNode;
           if (text.length > 0) {
-            addToStorage(list, date, text);
+            addToStorage(list, date, text, key);
           } else {
             entryListItem.remove();
           }
@@ -60,33 +63,53 @@ let addFunction = function() {
       entryListItem.appendChild(entryInput);
       addButtons[i].previousElementSibling.append(entryListItem);
       entryInput.focus();
+      dragFunctions();
     };
   }
 };
 
-let addToStorage = function(listElm, date, text) {
+let getKey = () => {
+  let alpha = "abcdefghijklmnopqrstuvwxyz";
+  let key = `${alpha[Math.floor(Math.random() * 25)]}${Math.floor(
+    Math.random() * 98
+  ) + 1}`;
+  return key;
+};
+
+// Takes a list, date, text, and key
+let addToStorage = function(listElm, date, text, key) {
+  // console.log(listElm);
+  // console.log(date);
+  // console.log(text);
+  // console.log(key);
+
+  // Get the Date Object from Storage to add the entry
   chrome.storage.sync.get([`${date}`], function(result) {
-    // If the date is empty, we will set the entry to it
-    let alpha = "abcdefghijklmnopqrstuvwxyz";
-    let key = `${alpha[Math.floor(Math.random() * 25) - 1]}${Math.floor(
-      Math.random() * 98
-    ) + 1}`;
+    // Entry
     let entry = {
       key,
       text,
       complete: false
     };
 
+    // If date object is empty
     if (isEmpty(result)) {
       let entries = [entry];
-      entryFunctions(listElm, date, entries);
-      chrome.storage.sync.set({ [date]: entries }, function() {});
+      // console.log("Empty");
+      // console.log(entries);
 
-      // If its not empty, we will append the entry to the others
+      // Initiate entry functions once the date object is set
+      chrome.storage.sync.set({ [date]: entries }, function() {
+        entryFunctions(listElm, date, entries, true);
+      });
+
+      // If its not empty, we will append the entry to the current array
     } else {
       let dateEntries = result[`${date}`];
       dateEntries.push(entry);
-      entryFunctions(listElm, date, dateEntries);
+      // console.log("Not Empty");
+      // console.log(dateEntries);
+      entryFunctions(listElm, date, dateEntries, true);
       chrome.storage.sync.set({ [date]: dateEntries }, function() {});
     }
   });
@@ -133,79 +156,100 @@ let isEmpty = obj => {
 // };
 
 // ENTRY FUNCTIONS
-let entryFunctions = function(elmList, date, arr) {
+let entryFunctions = function(elmList, date, arr, bool = false) {
   let entriesArr = elmList.getElementsByClassName("entry");
   for (let i = 0; i < entriesArr.length; i++) {
-    // console.log(entriesArr[i]);
     let entry = entriesArr[i];
-    let active = false; // This is to check the entry click function. If false, we will turn it true. Will only go back to false if we edit or check
 
-    // let entryEdit = document.createElement("button");
-    let entryCheck = document.createElement("button");
-    let entryDelete = document.createElement("button");
+    // Filter by the delete btn val. Set this filtered arr to the existing variable of arr
+    let deleteEntry = function() {
+      let entryDate = entry.classList.item(1);
+      chrome.storage.sync.get([`${entryDate}`], result => {
+        let oldArr = result[`${entryDate}`];
+        oldArr = oldArr.filter(elm => elm.key !== entry.id);
+        entry.style.display = "none";
+        entry.remove();
+        chrome.storage.sync.set({ [entryDate]: oldArr });
+      });
+    };
 
-    // entryEdit.setAttribute("class", "edit");
-    entryCheck.setAttribute("class", "check");
-    entryDelete.setAttribute("class", "delete");
-
-    // Text Content
-    // entryEdit.textContent = "#";
-    entryCheck.textContent = "%";
-    entryDelete.textContent = "x";
-
-    // Values
-    entryDelete.value = arr[i].key;
-
-    // Entry Click
-    entry.addEventListener("click", event => {
-      if (!active) {
-        active = true;
-        entry.style.textOverflow = "none";
-        entry.style.height = "fit-content";
-        entry.style.whiteSpace = "normal";
-        entry.style.overflow = "visible";
-        entry.append(entryCheck);
-        entry.append(entryDelete);
-      } else if (event.target.className === "entry" && active) {
-        active = false;
-        entry.style.height = "1rem";
-        entry.style.textOverflow = "ellipsis";
-        entry.style.whiteSpace = "nowrap";
-        entry.style.overflow = "hidden";
-        entry.removeChild(entryCheck);
-        entry.removeChild(entryDelete);
-      }
-    });
-
-    // DRAGGING ITEMS
-
-    // Edit Entry
-    // entryEdit.addEventListener('click',() => {
-
-    // })
-
-    // Check Entry
-    entryCheck.addEventListener("click", () => {
-      if (entry.value === 0) {
+    let checkEntry = function() {
+      let checked = parseInt(entry.value);
+      let entryDate = entry.classList.item(1);
+      if (checked === 0) {
         entry.style.textDecoration = "line-through";
         entry.value = true;
         arr[i]["complete"] = true;
-        chrome.storage.sync.set({ [date]: arr });
+        chrome.storage.sync.set({ [entryDate]: arr });
       } else {
         entry.style.textDecoration = "none";
         entry.value = false;
         arr[i]["complete"] = false;
-        chrome.storage.sync.set({ [date]: arr });
+        chrome.storage.sync.set({ [entryDate]: arr });
       }
-    });
+    };
 
-    // Delete Entry
-    entryDelete.addEventListener("click", () => {
-      // Filter by the delete btn val. Set this filtered arr to the existing variable of arr
-      arr = arr.filter(elm => elm.key !== entryDelete.value);
-      entry.style.display = "none";
-      chrome.storage.sync.set({ [date]: arr });
-    });
+    // If there is no listeners yet
+    if (entry.getAttribute("listener") !== "true") {
+      entry.setAttribute("listener", true);
+      let active = false; // This is to check the entry click function. If false, we will turn it true. Will only go back to false if we edit or check
+      // let entryEdit = document.createElement("button");
+      let entryCheck = document.createElement("button");
+      let entryDelete = document.createElement("button");
+
+      // entryEdit.setAttribute("class", "edit");
+      entryCheck.setAttribute("class", "check");
+      entryDelete.setAttribute("class", "delete");
+
+      // Text Content
+      // entryEdit.textContent = "#";
+      entryCheck.textContent = "%";
+      entryDelete.textContent = "x";
+
+      // Values
+
+      entryDelete.value = entriesArr[i].id;
+      // Entry Click
+      entry.addEventListener("click", event => {
+        if (!active) {
+          active = true;
+          entry.style.textOverflow = "none";
+          entry.style.height = "fit-content";
+          entry.style.whiteSpace = "normal";
+          entry.style.overflow = "visible";
+          entry.append(entryCheck);
+          entry.append(entryDelete);
+        } else if (event.target.classList.contains("entry") && active) {
+          active = false;
+          entry.style.height = "1rem";
+          entry.style.textOverflow = "ellipsis";
+          entry.style.whiteSpace = "nowrap";
+          entry.style.overflow = "hidden";
+          entry.removeChild(entryCheck);
+          entry.removeChild(entryDelete);
+        }
+      });
+
+      // DRAGGING ITEMS
+
+      // Edit Entry
+      // entryEdit.addEventListener('click',() => {
+
+      // })
+
+      // Check Entry
+      entryCheck.addEventListener("click", checkEntry);
+
+      // Delete Entry
+      entryDelete.addEventListener("click", deleteEntry);
+    } else {
+      // This means that it already has a listener, but we should update it
+      // console.log(entry);
+    }
+
+    // if (entry.classList.contains("new")) {
+    // entry.classList.remove("new");
+    // }
   }
 };
 
@@ -216,8 +260,9 @@ let dragFunctions = function() {
   document.addEventListener(
     "dragstart",
     function(event) {
-      if (event.target.className === "entry") {
+      if (event.target.classList.contains("entry")) {
         dragged = event.target;
+        event.dataTransfer.setData("text/plain", dragged.id);
         event.target.style.opacity = 0.5;
       }
     },
@@ -265,30 +310,47 @@ let dragFunctions = function() {
     false
   );
 
+  // DROP
   document.addEventListener(
     "drop",
     function(event) {
       event.preventDefault();
+      // console.log(event.dataTransfer);
       // console.log(event.dataTransfer.getData("text"));
+      let date = event.target.id;
+      let prevDate = dragged.classList.item(1);
+      // console.log("New Date:", date);
+      // console.log("Prev Date:", prevDate);
       if (
         event.target.className === "details" ||
         event.target.className === "monthDetails"
       ) {
         event.target.style.background = "initial";
-        dragged.parentNode.removeChild(dragged);
-        if (event.target.className === "details" || "monthDetails") {
-          let date = event.target.id;
-          let prevDate = dragged.id;
-          event.target.children[0].appendChild(dragged);
+        dragged.parentNode.removeChild(dragged); // remove from initial DOM placement
+        event.target.children[0].appendChild(dragged); // append to new location
+
+        if (date !== prevDate) {
+          dragged.classList.remove(prevDate); // remove previous date from classList
+          dragged.classList.remove("new");
+          dragged.classList.add(event.target.id, "new"); // add the new date to classList
+          // Filter from previous Date object
           chrome.storage.sync.get([`${prevDate}`], function(result) {
             let entriesArr = result[`${prevDate}`];
-            entriesArr = entriesArr.filter(
-              elm => elm.text !== dragged.textContent
-            );
+            entriesArr = entriesArr.filter(elm => elm.key !== dragged.id);
             chrome.storage.sync.set({ [prevDate]: entriesArr });
           });
-          addToStorage(event.target.children[0], date, dragged.textContent);
-        } // else if (event.target.className === "detailsList") {
+
+          // Add to new date object
+          // console.log("Add to storage from drop");
+          addToStorage(
+            event.target.children[0],
+            date,
+            dragged.textContent,
+            dragged.id
+          );
+        }
+
+        // Add to new Date Object
         // event.target.parentNode.appendChild(dragged);
         // }
       }

@@ -51,11 +51,10 @@ const createMonth = () => {
             entryListItem.value = entriesArr[j]["complete"];
 
             // Setting Attributes
-            entryListItem.id = date;
-            entryListItem.setAttribute("class", "entry");
+            entryListItem.id = entriesArr[j]["key"];
+            entryListItem.classList.add("entry", `${date}`);
+            // entryListItem.setAttribute("class", "entry");
             entryListItem.setAttribute("draggable", "true");
-            entryListItem.ondragstart =
-              "event.dataTransfer.setdata('text/plain',ev.target.id)";
 
             // Append
             monthDetailsList.appendChild(entryListItem);

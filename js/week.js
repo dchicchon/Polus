@@ -71,12 +71,10 @@ const createWeek = () => {
           entryListItem.textContent = entriesArr[j]["text"];
 
           // Set Attributes
-          entryListItem.id = date;
-          entryListItem.setAttribute("class", "entry");
+          entryListItem.id = entriesArr[j]["key"];
+          entryListItem.classList.add("entry", `${date}`);
+
           entryListItem.setAttribute("draggable", "true");
-          entryListItem.ondragstart =
-            "event.dataTransfer.setdata('text/plain',ev.target.id)";
-          // entryInput.setAttribute("class", "newItem");
           // entryEdit.setAttribute("class", "edit");
 
           // Set Values

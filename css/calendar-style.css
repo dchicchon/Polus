@@ -12,6 +12,10 @@ h3 {
   font-weight: 300;
 }
 
+a {
+  color: white;
+}
+
 ::-moz-selection {
   background: rgba(90, 90, 90, 0.329);
 }
@@ -367,6 +371,12 @@ button:hover {
   height: 1rem;
 }
 
+@media (max-width: 760px) {
+  .details ul li {
+    width: 80%;
+  }
+}
+
 .newItem {
   border: none;
   width: 85%;
@@ -469,6 +479,12 @@ button:hover {
   letter-spacing: 0.25rem;
   font-weight: 100;
   border-radius: 25px 25px 0 0;
+}
+
+@media (max-width: 760px) {
+  #week .weekday .weekTitle {
+    font-size: 0.75rem;
+  }
 }
 
 #week .weekday:hover {

@@ -56,17 +56,21 @@ const backgroundImage = () => {
   chrome.storage.sync.get(["background"], function(result) {
     // chrome.topSites.get(addSites); // add topsites
     let page = document.getElementsByTagName("html");
-    page[0].style.background = `rgba(0,0,0,0.9) url(${result.background.url +
-      `&w=${window.innerWidth}&dpi=2`}) no-repeat center center fixed`;
-    page[0].style.backgroundSize = `cover`;
     let backgroundInfo = document.getElementById("background-info");
     let backgroundLocation = document.getElementById("background-location");
     let backgroundSource = document.getElementById("background-source");
-    let backgroundLink = document.getElementById("background-link");
-    backgroundLink.setAttribute("href", result.background.authorLink);
+
+    // let photoLink = document.createElement("a");
+    let photoLink = document.getElementById("photo-link");
+    // photoLink.textContent = result.background.author;
+    photoLink.textContent = result.background.author;
+    photoLink.href = result.background.photoLink;
+
+    page[0].style.background = `rgba(0,0,0,0.9) url(${result.background.url +
+      `&w=${window.innerWidth}&dpi=2`}) no-repeat center center fixed`;
+    page[0].style.backgroundSize = `cover`;
 
     backgroundLocation.textContent = result.background.location;
-    backgroundLink.textContent = result.background.author;
 
     backgroundInfo.addEventListener("mouseover", () => {
       backgroundLocation.style.opacity = 0;

@@ -1,9 +1,7 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(function() {
-  chrome.topSites.get(function(arr) {
-    chrome.storage.sync.set({ view: "week", topSites: arr }, function() {});
-    checkTimeStamp();
-  });
+  chrome.storage.sync.set({ view: "week" }, function() {});
+  checkTimeStamp();
 
   // Set cookies because cross origin request must be secure and recognized that it is a cors method
   chrome.cookies.set(
@@ -38,12 +36,11 @@ const getRandomPhoto = () => {
       let location = photo.location.city
         ? `${photo.location.city}, ${photo.location.country}`
         : "Unknown";
-      console.log(location);
-      let author = photo.user.name ? `${photo.user.name}` : "Unkown";
-      let authorLink = photo.user.links.html;
+      let author = photo.user.name ? `${photo.user.name}` : "Unknown";
+      let photoLink = photo.links.html;
       chrome.storage.sync.set(
         {
-          background: { url, location, author, authorLink }
+          background: { url, location, author, photoLink }
         },
         function(result) {}
       );
@@ -54,7 +51,11 @@ const getRandomPhoto = () => {
 // Recalculate timestamp for next day
 const tick = () => {
   let next = new Date();
+  // next.setMinutes(next.getMinutes());
+  // next.setMinutes(next.getMinutes);
   next.setDate(next.getDate() + 1);
+  next.setHours(5, 0, 0);
+  console.log(next);
   localStorage.savedTimestamp = next;
   getRandomPhoto();
 };
@@ -63,6 +64,21 @@ const checkTimeStamp = () => {
   if (localStorage.savedTimestamp) {
     let timestamp = new Date(localStorage.savedTimestamp);
     let currentDate = new Date();
+    console.log("Saved Time");
+    console.log(
+      timestamp.getHours(),
+      timestamp.getMinutes(),
+      timestamp.getSeconds()
+    );
+
+    console.log("Current Time");
+    console.log(
+      currentDate.getHours(),
+      currentDate.getMinutes(),
+      currentDate.getSeconds()
+    );
+    console.log("Difference");
+    console.log(timestamp.getTime() - currentDate.getTime());
     if (currentDate.getTime() > timestamp.getTime()) {
       tick();
     }
@@ -73,7 +89,8 @@ const checkTimeStamp = () => {
 };
 
 const startBackground = () => {
-  setInterval(checkTimeStamp, 60000); // check every hour https://stackoverflow.com/questions/60591487/chrome-extensions-how-to-set-function-to-execute-when-day-has-changed/60592084#60592084
+  checkTimeStamp();
+  setInterval(checkTimeStamp, 30000); // check every minute https://stackoverflow.com/questions/60591487/chrome-extensions-how-to-set-function-to-execute-when-day-has-changed/60592084#60592084
 };
 
 startBackground();

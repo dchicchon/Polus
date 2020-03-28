@@ -22,7 +22,7 @@ const createToday = () => {
 
     chrome.storage.sync.get([`${dateStamp}`], function(result) {
       if (!isEmpty(result)) {
-        let entriesArr = result[`${date}`];
+        let entriesArr = result[`${dateStamp}`];
         for (let i = 0; i < entriesArr.length; i++) {
           // LEVEL 3 Day Details
           // Create DOM Elements
@@ -32,7 +32,8 @@ const createToday = () => {
           entryListItem.textContent = entriesArr[i].text;
 
           // Set Attributes
-          entryListItem.setAttribute("class", "entry");
+          entryListItem.classList.add("entry", `${dateStamp}`);
+          entryListItem.id = entriesArr[i]["key"];
 
           // Set Values
           entryListItem.style.textDecoration = entriesArr[i]["complete"]
@@ -43,7 +44,7 @@ const createToday = () => {
           // Append
           detailsList.appendChild(entryListItem);
           if (i === entriesArr.length - 1) {
-            entryFunctions(detailsList, date, entriesArr);
+            entryFunctions(detailsList, dateStamp, entriesArr);
           }
         }
       }
