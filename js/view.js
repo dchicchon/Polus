@@ -74,11 +74,11 @@ const backgroundImage = () => {
 
     backgroundInfo.addEventListener("mouseover", () => {
       backgroundLocation.style.opacity = 0;
-      backgroundSource.style.opacity = 0.5;
+      backgroundSource.style.opacity = 0.75;
     });
 
     backgroundInfo.addEventListener("mouseleave", () => {
-      backgroundLocation.style.opacity = 0.5;
+      backgroundLocation.style.opacity = 0.75;
       backgroundSource.style.opacity = 0;
     });
     // &auto=format

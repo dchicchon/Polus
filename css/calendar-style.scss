@@ -26,7 +26,7 @@ h3 {
 }
 
 a {
-  color: white
+  color: white;
 }
 
 ::selection {
@@ -211,7 +211,7 @@ button:hover {
   #background-location {
     grid-column: 1;
     grid-row: 1;
-    opacity: 0.5;
+    opacity: 0.75;
     font-size: 1rem;
     transition: 0.5s opacity;
   }

@@ -48,13 +48,11 @@ const getRandomPhoto = () => {
     .catch(err => console.log(`Fetch failed: ${err}`));
 };
 
-// Recalculate timestamp for next day
+// Recalculate timestamp for 11:59:59 PM
 const tick = () => {
   let next = new Date();
-  // next.setMinutes(next.getMinutes());
-  // next.setMinutes(next.getMinutes);
-  next.setDate(next.getDate() + 1);
-  next.setHours(5, 0, 0);
+  next.setHours(23, 50, 50);
+  // next.setDate(next.getDate() + 1);
   console.log(next);
   localStorage.savedTimestamp = next;
   getRandomPhoto();
@@ -65,6 +63,7 @@ const checkTimeStamp = () => {
     let timestamp = new Date(localStorage.savedTimestamp);
     let currentDate = new Date();
     console.log("Saved Time");
+    console.log(timestamp);
     console.log(
       timestamp.getHours(),
       timestamp.getMinutes(),
@@ -72,6 +71,7 @@ const checkTimeStamp = () => {
     );
 
     console.log("Current Time");
+    console.log(currentDate);
     console.log(
       currentDate.getHours(),
       currentDate.getMinutes(),
