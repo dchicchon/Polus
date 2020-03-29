@@ -392,11 +392,12 @@ button:hover {
   outline: none;
 }
 
-.title {
+.dayTitle {
   font-size: 2rem;
   width: 17.5rem;
   font-weight: 100;
   text-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  border-radius: 75px;
   margin: 0 1rem;
   text-align: center;
 }

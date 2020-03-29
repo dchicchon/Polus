@@ -53,7 +53,7 @@ const tick = () => {
   let next = new Date();
   next.setHours(23, 50, 50);
   // next.setDate(next.getDate() + 1);
-  console.log(next);
+  // console.log(next);
   localStorage.savedTimestamp = next;
   getRandomPhoto();
 };
@@ -62,23 +62,23 @@ const checkTimeStamp = () => {
   if (localStorage.savedTimestamp) {
     let timestamp = new Date(localStorage.savedTimestamp);
     let currentDate = new Date();
-    console.log("Saved Time");
-    console.log(timestamp);
-    console.log(
-      timestamp.getHours(),
-      timestamp.getMinutes(),
-      timestamp.getSeconds()
-    );
+    // console.log("Saved Time");
+    // console.log(timestamp);
+    // console.log(
+    //   timestamp.getHours(),
+    //   timestamp.getMinutes(),
+    //   timestamp.getSeconds()
+    // );
 
-    console.log("Current Time");
-    console.log(currentDate);
-    console.log(
-      currentDate.getHours(),
-      currentDate.getMinutes(),
-      currentDate.getSeconds()
-    );
-    console.log("Difference");
-    console.log(timestamp.getTime() - currentDate.getTime());
+    // console.log("Current Time");
+    // console.log(currentDate);
+    // console.log(
+    //   currentDate.getHours(),
+    //   currentDate.getMinutes(),
+    //   currentDate.getSeconds()
+    // );
+    // console.log("Difference");
+    // console.log(timestamp.getTime() - currentDate.getTime());
     if (currentDate.getTime() > timestamp.getTime()) {
       tick();
     }

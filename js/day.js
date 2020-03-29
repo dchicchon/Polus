@@ -64,6 +64,19 @@ const createToday = () => {
     details.appendChild(detailsList);
     details.appendChild(btn);
     addFunction();
+
+    // console.log("Global:", globalDate);
+    // console.log("Day Date", date);
+
+    // console.log(typeof globalDate);
+    // console.log(typeof date);
+    // if (currentDate.getDate() === ) {
+    // console.log("happening");
+    // dayTitle.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
+    // } else {
+    // console.log("not happening");
+    // dayTitle.style.backgroundColor = "none";
+    // }
   };
 
   // Event Listeners
@@ -93,6 +106,7 @@ const createToday = () => {
 
   // Text Content
   prevBtn.innerHTML = "&larr;";
+
   dayTitle.textContent = date;
   nextBtn.innerHTML = "&rarr;";
 
@@ -101,7 +115,7 @@ const createToday = () => {
   prevBtn.setAttribute("class", "arrow");
   nextBtn.setAttribute("class", "arrow");
   dayNav.setAttribute("class", "nav");
-  dayTitle.setAttribute("class", "title");
+  dayTitle.setAttribute("class", "dayTitle");
 
   // Append
   dayNav.appendChild(prevBtn);
