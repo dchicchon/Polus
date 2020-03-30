@@ -60,11 +60,10 @@ const backgroundImage = () => {
     let backgroundLocation = document.getElementById("background-location");
     let backgroundSource = document.getElementById("background-source");
 
-    // let photoLink = document.createElement("a");
     let photoLink = document.getElementById("photo-link");
-    // photoLink.textContent = result.background.author;
     photoLink.textContent = result.background.author;
-    photoLink.href = result.background.photoLink;
+    photoLink.href =
+      result.background.photoLink + "?utm_source=Planner&utm_medium=referral";
 
     page[0].style.background = `rgba(0,0,0,0.9) url(${result.background.url +
       `&w=${window.innerWidth}&dpi=2`}) no-repeat center center fixed`;

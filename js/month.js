@@ -36,36 +36,7 @@ const createMonth = () => {
       let btn = document.createElement("button");
 
       // Gets storage items and creates an li element for each item
-      chrome.storage.sync.get([`${date}`], function(result) {
-        if (!isEmpty(result)) {
-          let entriesArr = result[`${date}`];
-          for (let j = 0; j < entriesArr.length; j++) {
-            // LEVEL 3 Day Details
-            // Create DOM Elements
-            let entryListItem = document.createElement("li");
-
-            // Text Content
-            entryListItem.textContent = entriesArr[j].text;
-
-            // Values
-            entryListItem.style.textDecoration = entriesArr[j]["complete"]
-              ? "line-through"
-              : "none";
-            entryListItem.value = entriesArr[j]["complete"];
-
-            // Setting Attributes
-            entryListItem.id = entriesArr[j]["key"];
-            entryListItem.classList.add("entry", `${date}`);
-            entryListItem.setAttribute("draggable", "true");
-
-            // Append
-            monthDetailsList.appendChild(entryListItem);
-            if (j === entriesArr.length - 1) {
-              entryFunctions(monthDetailsList, date, entriesArr);
-            }
-          }
-        }
-      });
+      setEntries(date, monthDetailsList);
 
       if (date === globalDate) {
         monthDayTitle.style.backgroundColor = "rgba(5, 80, 123, 0.992)";

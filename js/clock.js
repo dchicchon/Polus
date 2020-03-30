@@ -1,10 +1,10 @@
 // THIS SCRIPT IS FOR EVERYTHING TIME RELATED
 
-let currentDate = new Date(),
-  month = currentDate.getMonth(),
-  year = currentDate.getFullYear();
-globalDate = `${currentDate.getMonth() +
-  1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
+let currentDate;
+let globalDate;
+//new Date(),
+//   month = currentDate.getMonth(),
+//   year = currentDate.getFullYear();
 
 let weekdays = [
   "Sunday",
@@ -31,13 +31,15 @@ let months = [
 ];
 
 const updateTime = () => {
-  let currentDate = new Date(),
-    year = currentDate.getFullYear(),
-    month = currentDate.getMonth() + 1,
-    day = currentDate.getDate(),
-    hour = currentDate.getHours(),
-    minute = currentDate.getMinutes(),
-    second = currentDate.getSeconds();
+  currentDate = new Date();
+  year = currentDate.getFullYear();
+  month = currentDate.getMonth() + 1;
+  day = currentDate.getDate();
+  globalDate = `${month}/${day}/${year}`;
+
+  hour = currentDate.getHours();
+  minute = currentDate.getMinutes();
+  second = currentDate.getSeconds();
 
   let time = `${hour}: ${minute}: ${second}`;
   time = time.split(":"); // convert to array

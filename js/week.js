@@ -31,68 +31,7 @@ const createWeek = () => {
       weekDate.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
     }
 
-    chrome.storage.sync.get([`${date}`], function(result) {
-      if (!isEmpty(result)) {
-        let entriesArr = result[`${date}`];
-        for (let j = 0; j < entriesArr.length; j++) {
-          // LEVEL 3
-          // Create DOM Element
-          let entryListItem = document.createElement("li");
-          // let entryEdit = document.createElement("button");
-
-          // Add Event Listeners
-          // ==================================
-          // EDIT ENTRY
-          // entryInput.onkeypress = function(e) {
-          //   if (!e) e = window.event;
-          //   let keyCode = e.keyCode || e.which;
-          //   if (keyCode === 13) {
-          //     // remove focus
-          //     this.blur();
-          //     chrome.storage.sync.get([`${date}`], function(result) {
-          //       let dateEntries = result[`${date}`];
-
-          //       // Get the index of the current Entry
-          //       let index = dateEntries.indexOf(dateEntries[j]);
-          //       if (index !== -1) {
-          //         // Find and replace the element at the index with the new value
-          //         dateEntries[index] = entryInput.value;
-          //       }
-
-          //       chrome.storage.sync.set({ [date]: dateEntries }, function() {});
-          //     });
-          //   }
-          // };
-
-          // DRAGGING
-
-          // Text Content
-          // entryEdit.textContent = "#";
-          entryListItem.textContent = entriesArr[j]["text"];
-
-          // Set Attributes
-          entryListItem.id = entriesArr[j]["key"];
-          entryListItem.classList.add("entry", `${date}`);
-
-          entryListItem.setAttribute("draggable", "true");
-          // entryEdit.setAttribute("class", "edit");
-
-          // Set Values
-          entryListItem.style.textDecoration = entriesArr[j]["complete"]
-            ? "line-through"
-            : "none";
-          entryListItem.value = entriesArr[j]["complete"];
-
-          // Append
-          detailsList.appendChild(entryListItem);
-
-          // Last Item in the array
-          if (j === entriesArr.length - 1) {
-            entryFunctions(detailsList, date, entriesArr);
-          }
-        }
-      }
-    });
+    setEntries(date, detailsList);
 
     // Text Content
     weekDate.textContent = `${day}`;

@@ -19,8 +19,7 @@ const createToday = () => {
     // LEVEL 2 Day
     // Create DOM Elements
     let detailsList = document.createElement("ul");
-    details.innerHTML = "";
-    dayTitle.textContent = dayDate;
+    let btn = document.createElement("button");
 
     if (dayDate === globalDate) {
       dayTitle.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
@@ -28,47 +27,21 @@ const createToday = () => {
       dayTitle.style.backgroundColor = "initial";
     }
 
-    chrome.storage.sync.get([`${dateStamp}`], function(result) {
-      let btn = document.createElement("button");
-      if (!isEmpty(result)) {
-        let entriesArr = result[`${dateStamp}`];
-        for (let i = 0; i < entriesArr.length; i++) {
-          // LEVEL 3 Day Details
-          // Create DOM Elements
-          let entryListItem = document.createElement("li");
+    setEntries(dateStamp, detailsList);
+    // Text Content
+    details.innerHTML = "";
+    btn.textContent = "+";
+    dayTitle.textContent = dayDate;
 
-          // Text Content
-          entryListItem.textContent = entriesArr[i].text;
-
-          // Set Attributes
-          entryListItem.classList.add("entry", `${dateStamp}`);
-          entryListItem.id = entriesArr[i]["key"];
-
-          // Set Values
-          entryListItem.style.textDecoration = entriesArr[i]["complete"]
-            ? "line-through"
-            : "none";
-          entryListItem.value = entriesArr[i]["complete"];
-
-          // Append
-          detailsList.appendChild(entryListItem);
-          if (i === entriesArr.length - 1) {
-            entryFunctions(detailsList, dateStamp, entriesArr);
-          }
-        }
-      }
-      // Text Content
-      btn.textContent = "+";
-      // Set Attributes
-      btn.setAttribute("class", "add");
-      details.setAttribute("class", "details");
-      // Set Values
-      btn.value = dateStamp;
-      // Append
-      details.appendChild(detailsList);
-      details.appendChild(btn);
-      addFunction();
-    });
+    // Set Attributes
+    btn.setAttribute("class", "add");
+    details.setAttribute("class", "details");
+    // Set Values
+    btn.value = dateStamp;
+    // Append
+    details.appendChild(detailsList);
+    details.appendChild(btn);
+    addFunction();
   };
 
   // Event Listeners

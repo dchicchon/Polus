@@ -91,14 +91,14 @@ let addToStorage = function(listElm, date, text, key) {
 
       // Initiate entry functions once the date object is set
       chrome.storage.sync.set({ [date]: entries }, function() {
-        entryFunctions(listElm, date, entries, true);
+        entryFunctions(listElm, entries);
       });
 
       // If its not empty, we will append the entry to the current array
     } else {
       let dateEntries = result[`${date}`];
       dateEntries.push(entry);
-      entryFunctions(listElm, date, dateEntries, true);
+      entryFunctions(listElm, dateEntries);
       chrome.storage.sync.set({ [date]: dateEntries }, function() {});
     }
   });
@@ -144,11 +144,69 @@ let isEmpty = obj => {
 //   });
 // };
 
+// SET ENTRIES
+let setEntries = function(date, list) {
+  chrome.storage.sync.get([`${date}`], function(result) {
+    if (!isEmpty(result)) {
+      let entriesArr = result[`${date}`];
+      for (let j = 0; j < entriesArr.length; j++) {
+        // LEVEL 3 Day Details
+        // Create DOM Elements
+        let entryListItem = document.createElement("li");
+
+        // Text Content
+        entryListItem.textContent = entriesArr[j].text;
+
+        // Values
+        entryListItem.style.textDecoration = entriesArr[j]["complete"]
+          ? "line-through"
+          : "none";
+        entryListItem.value = entriesArr[j]["complete"];
+
+        // Setting Attributes
+        entryListItem.id = entriesArr[j]["key"];
+        entryListItem.classList.add("entry", `${date}`);
+        entryListItem.setAttribute("draggable", "true");
+
+        // Append
+        list.appendChild(entryListItem);
+        if (j === entriesArr.length - 1) {
+          entryFunctions(list, entriesArr);
+          // entryFunctions(monthDetailsList, date, entriesArr);
+        }
+      }
+    }
+  });
+};
+
 // ENTRY FUNCTIONS
-let entryFunctions = function(elmList, date, arr, bool = false) {
+let entryFunctions = function(elmList, arr) {
   let entriesArr = elmList.getElementsByClassName("entry");
   for (let i = 0; i < entriesArr.length; i++) {
     let entry = entriesArr[i];
+
+    // EDIT ENTRY
+    // let editDentry = function() {};
+    // entryInput.onkeypress = function(e) {
+    //   if (!e) e = window.event;
+    //   let keyCode = e.keyCode || e.which;
+    //   if (keyCode === 13) {
+    //     // remove focus
+    //     this.blur();
+    //     chrome.storage.sync.get([`${date}`], function(result) {
+    //       let dateEntries = result[`${date}`];
+
+    //       // Get the index of the current Entry
+    //       let index = dateEntries.indexOf(dateEntries[j]);
+    //       if (index !== -1) {
+    //         // Find and replace the element at the index with the new value
+    //         dateEntries[index] = entryInput.value;
+    //       }
+
+    //       chrome.storage.sync.set({ [date]: dateEntries }, function() {});
+    //     });
+    //   }
+    // };
 
     // Filter by the delete btn val. Set this filtered arr to the existing variable of arr
     let deleteEntry = function() {
