@@ -37,7 +37,6 @@ const hideViews = viewsArr => {
             break;
           case "week":
             createWeek();
-
             break;
           case "month":
             createMonth();
