@@ -10,10 +10,7 @@ chrome.runtime.onInstalled.addListener(function() {
       sameSite: "no_restriction",
       secure: true
     },
-    function(cookie) {
-      // console.log("Cookie settings have been set");
-      // console.log(cookie);
-    }
+    function(cookie) {}
   );
 });
 
@@ -62,23 +59,6 @@ const checkTimeStamp = () => {
   if (localStorage.savedTimestamp) {
     let timestamp = new Date(localStorage.savedTimestamp);
     let currentDate = new Date();
-    // console.log("Saved Time");
-    // console.log(timestamp);
-    // console.log(
-    //   timestamp.getHours(),
-    //   timestamp.getMinutes(),
-    //   timestamp.getSeconds()
-    // );
-
-    // console.log("Current Time");
-    // console.log(currentDate);
-    // console.log(
-    //   currentDate.getHours(),
-    //   currentDate.getMinutes(),
-    //   currentDate.getSeconds()
-    // );
-    // console.log("Difference");
-    // console.log(timestamp.getTime() - currentDate.getTime());
     if (currentDate.getTime() > timestamp.getTime()) {
       tick();
     }

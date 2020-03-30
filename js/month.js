@@ -16,6 +16,9 @@ const createMonth = () => {
 
   // This will generate all the days for a month and all the associated notes
   let createDaysInMonth = (year, month) => {
+    monthDays.innerHTML = "";
+    monthTitle.textContent = months[month] + ` ${year}`;
+
     let daysInMonth = new Date(year, month + 1, 0).getDate();
 
     // This is how we create each individual day. But we want to start with Monday!
@@ -53,7 +56,6 @@ const createMonth = () => {
             // Setting Attributes
             entryListItem.id = entriesArr[j]["key"];
             entryListItem.classList.add("entry", `${date}`);
-            // entryListItem.setAttribute("class", "entry");
             entryListItem.setAttribute("draggable", "true");
 
             // Append
@@ -113,16 +115,12 @@ const createMonth = () => {
     monthDate.setMonth(monthDate.getMonth() - 1);
     monthMonth = monthDate.getMonth();
     monthYear = monthDate.getFullYear();
-    monthTitle.textContent = months[monthMonth] + ` ${monthYear}`;
-    monthDays.innerHTML = "";
     createDaysInMonth(monthYear, monthMonth);
   });
   nextBtn.addEventListener("click", function() {
     monthDate.setMonth(monthDate.getMonth() + 1);
     monthMonth = monthDate.getMonth();
     monthYear = monthDate.getFullYear();
-    monthTitle.textContent = months[monthMonth] + ` ${monthYear}`;
-    monthDays.innerHTML = "";
     createDaysInMonth(monthYear, monthMonth);
   });
 

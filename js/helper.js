@@ -6,7 +6,6 @@
 
 let addFunction = function() {
   let addButtons = document.getElementsByClassName("add");
-  // console.log(addButtons)
   // For each add button, do something
   for (let i = 0; i < addButtons.length; i++) {
     let date = addButtons[i].value;
@@ -58,7 +57,6 @@ let addFunction = function() {
           }
         }
       });
-      // });
 
       entryListItem.appendChild(entryInput);
       addButtons[i].previousElementSibling.append(entryListItem);
@@ -76,13 +74,8 @@ let getKey = () => {
   return key;
 };
 
-// Takes a list, date, text, and key
+// Takes a list, date, text, and key and add item to chrome.storage.sync
 let addToStorage = function(listElm, date, text, key) {
-  // console.log(listElm);
-  // console.log(date);
-  // console.log(text);
-  // console.log(key);
-
   // Get the Date Object from Storage to add the entry
   chrome.storage.sync.get([`${date}`], function(result) {
     // Entry
@@ -95,8 +88,6 @@ let addToStorage = function(listElm, date, text, key) {
     // If date object is empty
     if (isEmpty(result)) {
       let entries = [entry];
-      // console.log("Empty");
-      // console.log(entries);
 
       // Initiate entry functions once the date object is set
       chrome.storage.sync.set({ [date]: entries }, function() {
@@ -107,8 +98,6 @@ let addToStorage = function(listElm, date, text, key) {
     } else {
       let dateEntries = result[`${date}`];
       dateEntries.push(entry);
-      // console.log("Not Empty");
-      // console.log(dateEntries);
       entryFunctions(listElm, date, dateEntries, true);
       chrome.storage.sync.set({ [date]: dateEntries }, function() {});
     }
@@ -163,7 +152,7 @@ let entryFunctions = function(elmList, date, arr, bool = false) {
 
     // Filter by the delete btn val. Set this filtered arr to the existing variable of arr
     let deleteEntry = function() {
-      let entryDate = entry.classList.item(1);
+      let entryDate = entry.classList.item(1); // check the classList for new dates
       chrome.storage.sync.get([`${entryDate}`], result => {
         let oldArr = result[`${entryDate}`];
         oldArr = oldArr.filter(elm => elm.key !== entry.id);
@@ -174,8 +163,8 @@ let entryFunctions = function(elmList, date, arr, bool = false) {
     };
 
     let checkEntry = function() {
+      let entryDate = entry.classList.item(1); // check the classList for new dates
       let checked = parseInt(entry.value);
-      let entryDate = entry.classList.item(1);
       if (checked === 0) {
         entry.style.textDecoration = "line-through";
         entry.value = true;
@@ -211,6 +200,7 @@ let entryFunctions = function(elmList, date, arr, bool = false) {
       entryDelete.value = entriesArr[i].id;
       // Entry Click
       entry.addEventListener("click", event => {
+        // If entry is not active
         if (!active) {
           active = true;
           entry.style.textOverflow = "none";
@@ -219,7 +209,9 @@ let entryFunctions = function(elmList, date, arr, bool = false) {
           entry.style.overflow = "visible";
           entry.append(entryCheck);
           entry.append(entryDelete);
-        } else if (event.target.classList.contains("entry") && active) {
+        }
+        // If entry is not active
+        else if (event.target.classList.contains("entry") && active) {
           active = false;
           entry.style.height = "1rem";
           entry.style.textOverflow = "ellipsis";
@@ -237,19 +229,11 @@ let entryFunctions = function(elmList, date, arr, bool = false) {
 
       // })
 
-      // Check Entry
-      entryCheck.addEventListener("click", checkEntry);
+      entryCheck.addEventListener("click", checkEntry); // Check Entry
 
-      // Delete Entry
-      entryDelete.addEventListener("click", deleteEntry);
+      entryDelete.addEventListener("click", deleteEntry); // Delete entry
     } else {
-      // This means that it already has a listener, but we should update it
-      // console.log(entry);
     }
-
-    // if (entry.classList.contains("new")) {
-    // entry.classList.remove("new");
-    // }
   }
 };
 
@@ -287,8 +271,7 @@ let dragFunctions = function() {
     function(event) {
       if (
         event.target.className === "details" ||
-        event.target.className === "monthDetails" // ||
-        // event.target.className === "detailsList"
+        event.target.className === "monthDetails"
       ) {
         event.target.style.background = "rgba(90, 90, 90, 0.329)";
       }
@@ -301,8 +284,7 @@ let dragFunctions = function() {
     function(event) {
       if (
         event.target.className === "details" ||
-        event.target.className === "monthDetails" // ||
-        // event.target.className === "detailsList"
+        event.target.className === "monthDetails"
       ) {
         event.target.style.background = "initial";
       }
@@ -315,12 +297,9 @@ let dragFunctions = function() {
     "drop",
     function(event) {
       event.preventDefault();
-      // console.log(event.dataTransfer);
-      // console.log(event.dataTransfer.getData("text"));
+      // console.log(event.dataTransfer.getData("text"));  Might be useful later on to get data from the dragged item
       let date = event.target.id;
       let prevDate = dragged.classList.item(1);
-      // console.log("New Date:", date);
-      // console.log("Prev Date:", prevDate);
       if (
         event.target.className === "details" ||
         event.target.className === "monthDetails"
@@ -341,7 +320,6 @@ let dragFunctions = function() {
           });
 
           // Add to new date object
-          // console.log("Add to storage from drop");
           addToStorage(
             event.target.children[0],
             date,

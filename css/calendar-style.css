@@ -101,15 +101,6 @@ main section {
           animation-fill-mode: forwards;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 button {
   outline: none;
   border: none;
@@ -390,6 +381,15 @@ button:hover {
 .newItem:focus {
   border: none;
   outline: none;
+}
+
+.title {
+  font-size: 2rem;
+  width: 17.5rem;
+  font-weight: 100;
+  text-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  margin: 0 1rem;
+  text-align: center;
 }
 
 .dayTitle {
