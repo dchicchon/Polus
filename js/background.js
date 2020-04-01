@@ -6,8 +6,7 @@ chrome.runtime.onInstalled.addListener(function() {
   // When creating the alarm, find out when midnight is
 
   let date = new Date();
-  let midnight = new Date();
-  midnight.setHours(23, 59, 59);
+  let midnight = new Date().setHours(23, 59, 59);
   let ms = midnight.getTime() - date.getTime();
   chrome.alarms.create("changeBackground", {
     when: Date.now() + ms,
@@ -49,12 +48,9 @@ const getPhoto = () => {
         : "Unknown";
       let author = photo.user.name ? `${photo.user.name}` : "Unknown";
       let photoLink = photo.links.html;
-      chrome.storage.sync.set(
-        {
-          background: { url, location, author, photoLink }
-        },
-        function(result) {}
-      );
+      chrome.storage.sync.set({
+        background: { url, location, author, photoLink }
+      });
     })
     .catch(err => console.log(`Fetch failed: ${err}`));
 };
