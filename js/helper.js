@@ -114,35 +114,7 @@ let isEmpty = obj => {
   return true;
 };
 
-// let addSites = mostVisitedURLs => {
-//   let ul = document.getElementsByClassName("topSites");
-//   for (let i = 0; i < mostVisitedURLs.length - 3; i++) {
-//     let index = mostVisitedURLs[i].url.indexOf("://");
-//     let lastIndex = mostVisitedURLs[i].url.indexOf(".com");
-//     if (lastIndex !== -1) {
-//       let url = mostVisitedURLs[i].url.substring(index + 3, lastIndex);
-//       let newIndex = url.indexOf("www.");
-//       if (newIndex !== -1) {
-//         url = url.substring(newIndex + 4);
-//       }
-//       url = url[0].toUpperCase() + url.slice(1);
-//       let link = document.createElement("a");
-//       link.textContent = url;
-//       link.setAttribute("class", "site");
-//       link.setAttribute("href", mostVisitedURLs[i].url);
-//       link.setAttribute("target", "_blank");
-//       ul[0].appendChild(link);
-//     }
-//   }
-//   let siteBox = document.getElementById("site-box");
-//   siteBox.addEventListener("mouseenter", function() {
-//     ul[0].setAttribute("style", "display:block");
-//   });
 
-//   siteBox.addEventListener("mouseleave", function() {
-//     ul[0].setAttribute("style", "display:none");
-//   });
-// };
 
 // SET ENTRIES
 let setEntries = function(date, list) {
