@@ -1,73 +1,29 @@
 // THIS SCRIPT IS FOR EVERYTHING TIME RELATED
 
+// Global Variables
 let currentDate;
 let globalDate;
-//new Date(),
-//   month = currentDate.getMonth(),
-//   year = currentDate.getFullYear();
-
-let weekdays = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday"
-];
-let months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December"
-];
 
 const updateTime = () => {
+  // the format will chnage depending on the locale using the extension
+  // British English uses day-month-year order
+  // Korean uses year-month-day order
   currentDate = new Date();
-  year = currentDate.getFullYear();
-  month = currentDate.getMonth() + 1;
-  day = currentDate.getDate();
-  globalDate = `${month}/${day}/${year}`;
+  globalDate = currentDate.toLocaleDateString();
 
-  hour = currentDate.getHours();
-  minute = currentDate.getMinutes();
-  second = currentDate.getSeconds();
+  // Format Options
+  let options = {
+    weekday: "long",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric"
+  };
 
-  let time = `${hour}: ${minute}: ${second}`;
-  time = time.split(":"); // convert to array
-
-  // fetch2
-  let hours = Number(time[0]),
-    minutes = Number(time[1]),
-    seconds = Number(time[2]);
-
-  // calculate
-  let timeValue;
-
-  if (hours > 0 && hours <= 12) {
-    timeValue = "" + hours;
-  } else if (hours > 12) {
-    timeValue = "" + (hours - 12);
-  } else if (hours == 0) {
-    timeValue = "12";
-  }
-
-  timeValue += minutes < 10 ? ":0" + minutes : ":" + minutes; // get minutes
-  timeValue += seconds < 10 ? ":0" + seconds : ":" + seconds; // get seconds
-  timeValue += hours >= 12 ? " pm" : " am"; // get AM/PM
-
-  let clock = `${timeValue}`;
-  let date = `${weekdays[currentDate.getDay()]} ${month}/${day}/${year} `;
+  let clock = `${currentDate.toLocaleTimeString()}`;
+  let date = `${currentDate.toLocaleDateString(undefined, options)}`;
 
   document.getElementById("clock").textContent = clock;
   document.getElementById("date").textContent = date;
 };
+
 updateTime();

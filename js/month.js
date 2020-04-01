@@ -1,8 +1,6 @@
 const createMonth = () => {
   monthView.innerHTML = "";
   let monthDate = new Date();
-  let monthYear = monthDate.getFullYear();
-  let monthMonth = monthDate.getMonth();
 
   // LEVEL 1 Month View
   // Create DOM Elements
@@ -15,17 +13,23 @@ const createMonth = () => {
   // =============================================
 
   // This will generate all the days for a month and all the associated notes
-  let createDaysInMonth = (year, month) => {
+  let createDaysInMonth = dateObj => {
+    let options = { month: "long", year: "numeric" };
+    let title = dateObj.toLocaleDateString(undefined, options);
     monthDays.innerHTML = "";
-    monthTitle.textContent = months[month] + ` ${year}`;
+    monthTitle.textContent = title;
 
-    let daysInMonth = new Date(year, month + 1, 0).getDate();
+    let daysInMonth = new Date(
+      dateObj.getFullYear(),
+      dateObj.getMonth() + 1,
+      0
+    ).getDate();
 
     // This is how we create each individual day. But we want to start with Monday!
     for (let i = 0; i < daysInMonth; i++) {
-      let dayDate = new Date(year, month, i + 1), // ex. 1/20/20
-        day = dayDate.getDate(),
-        date = `${month + 1}/${day}/${year}`;
+      let dayDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), i + 1), // ex. 1/20/20
+        date = dayDate.toLocaleDateString();
+      // day = dayDate.getDate(),
 
       // LEVEL 2 DAY
       // Create DOM Elements
@@ -51,7 +55,12 @@ const createMonth = () => {
 
       // Text Content
       // monthDay.textContent = `${day} ${weekdays[dayDate.getUTCDay()]}`;
-      monthDayTitle.textContent = `${day} ${weekdays[dayDate.getUTCDay()]}`;
+      let dayOptions = { day: "numeric", weekday: "long" };
+      monthDayTitle.textContent = dayDate.toLocaleDateString(
+        undefined,
+        dayOptions
+      );
+
       btn.textContent = "+";
 
       // Set Values
@@ -69,7 +78,6 @@ const createMonth = () => {
 
   // Text Content
   prevBtn.innerHTML = "&larr;";
-  monthTitle.textContent = months[month] + ` ${year}`;
   nextBtn.innerHTML = "&rarr;";
 
   // Set attributes
@@ -82,17 +90,17 @@ const createMonth = () => {
   monthDays.style.margin = "0 auto";
 
   // Event Listeners
+
+  // Previous Month
   prevBtn.addEventListener("click", function() {
     monthDate.setMonth(monthDate.getMonth() - 1);
-    monthMonth = monthDate.getMonth();
-    monthYear = monthDate.getFullYear();
-    createDaysInMonth(monthYear, monthMonth);
+    createDaysInMonth(monthDate);
   });
+
+  // Next Month
   nextBtn.addEventListener("click", function() {
     monthDate.setMonth(monthDate.getMonth() + 1);
-    monthMonth = monthDate.getMonth();
-    monthYear = monthDate.getFullYear();
-    createDaysInMonth(monthYear, monthMonth);
+    createDaysInMonth(monthDate);
   });
 
   // Append
@@ -104,6 +112,6 @@ const createMonth = () => {
   // View
   monthView.appendChild(monthNav);
   monthView.appendChild(monthDays);
-  createDaysInMonth(monthYear, monthMonth);
+  createDaysInMonth(monthDate);
   // ===============================
 };

@@ -12,10 +12,7 @@ const createWeek = () => {
     // Entry Variables
     let thisDate = new Date(startDate);
     thisDate.setDate(thisDate.getDate() + i);
-    let year = thisDate.getFullYear(),
-      month = thisDate.getMonth() + 1,
-      day = thisDate.getDate(),
-      date = `${month}/${day}/${year}`;
+    let date = thisDate.toLocaleDateString(); // ex: 2/20/2020 in U.S.
 
     // LEVEL 2 Week Day
     // Create DOM Elements
@@ -27,15 +24,17 @@ const createWeek = () => {
     let btn = document.createElement("button");
 
     // If week day is today
-    if (currentDate.getDay() === thisDate.getDay()) {
+    if (globalDate === date) {
       weekDate.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
     }
 
     setEntries(date, detailsList);
 
     // Text Content
-    weekDate.textContent = `${day}`;
-    weekTitle.textContent = `${weekdays[thisDate.getDay()]}`;
+    weekDate.textContent = `${thisDate.getDate()}`;
+    weekTitle.textContent = `${thisDate.toLocaleDateString(undefined, {
+      weekday: "long"
+    })}`;
     btn.textContent = "+";
 
     // Set Attributes

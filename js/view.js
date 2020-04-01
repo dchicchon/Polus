@@ -6,16 +6,15 @@ let monthView = document.getElementById("month");
 let views = [dayView, weekView, monthView];
 
 let viewButtons = document.getElementsByClassName("view-btn");
-let currentView;
 
 // Click on view buttons to allow selective viewing
 const viewFunction = () => {
   for (let j = 0; j < viewButtons.length; j++) {
     viewButtons[j].onclick = function() {
-      currentView = this.textContent.toLowerCase();
+      let clickedView = this.textContent.toLowerCase();
       chrome.storage.sync.get(["view"], function(result) {
-        if (currentView !== result["view"]) {
-          chrome.storage.sync.set({ view: currentView }, function() {
+        if (clickedView !== result["view"]) {
+          chrome.storage.sync.set({ view: clickedView }, function() {
             hideViews(views);
           });
         }
@@ -58,7 +57,6 @@ const backgroundImage = () => {
     let backgroundInfo = document.getElementById("background-info");
     let backgroundLocation = document.getElementById("background-location");
     let backgroundSource = document.getElementById("background-source");
-
     let photoLink = document.getElementById("photo-link");
     photoLink.textContent = result.background.author;
     photoLink.href =

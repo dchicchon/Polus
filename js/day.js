@@ -1,9 +1,7 @@
 const createToday = () => {
   let todayDate = new Date();
-  let dayYear = todayDate.getFullYear();
-  let dayMonth = todayDate.getMonth() + 1;
-  let dayDay = todayDate.getDate();
-  let dayDate = `${dayMonth}/${dayDay}/${dayYear}`;
+  let dayDate = todayDate.toLocaleDateString();
+
   dayView.innerHTML = "";
   // LEVEL 1 Day View
   // Create DOM Elements
@@ -12,8 +10,6 @@ const createToday = () => {
   let prevBtn = document.createElement("button");
   let nextBtn = document.createElement("button");
   let dayTitle = document.createElement("h5");
-
-  // let currentDate = new Date();
 
   let dayInfo = dateStamp => {
     // LEVEL 2 Day
@@ -27,7 +23,9 @@ const createToday = () => {
       dayTitle.style.backgroundColor = "initial";
     }
 
+    // Get the entries to fill list
     setEntries(dateStamp, detailsList);
+
     // Text Content
     details.innerHTML = "";
     btn.textContent = "+";
@@ -47,19 +45,13 @@ const createToday = () => {
   // Event Listeners
   prevBtn.addEventListener("click", function() {
     todayDate.setDate(todayDate.getDate() - 1);
-    dayYear = todayDate.getFullYear();
-    dayMonth = todayDate.getMonth() + 1;
-    dayDay = todayDate.getDate();
-    dayDate = `${dayMonth}/${dayDay}/${dayYear}`;
+    dayDate = todayDate.toLocaleDateString();
     dayInfo(dayDate);
   });
 
   nextBtn.addEventListener("click", function() {
     todayDate.setDate(todayDate.getDate() + 1);
-    dayYear = todayDate.getFullYear();
-    dayMonth = todayDate.getMonth() + 1;
-    dayDay = todayDate.getDate();
-    dayDate = `${dayMonth}/${dayDay}/${dayYear}`;
+    dayDate = todayDate.toLocaleDateString();
     dayInfo(dayDate);
   });
 
