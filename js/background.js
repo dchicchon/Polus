@@ -1,22 +1,36 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(function() {
   chrome.storage.sync.set({ view: "week" }, function() {});
-  checkTimeStamp();
+  getPhoto();
+
+  // When creating the alarm, find out when midnight is
+
+  let date = new Date();
+  let midnight = new Date();
+  midnight.setHours(23, 59, 59);
+  let ms = midnight.getTime() - date.getTime();
+  chrome.alarms.create("changeBackground", {
+    when: Date.now() + ms,
+    periodInMinutes: 60 * 24
+  });
 
   // Set cookies because cross origin request must be secure and recognized that it is a cors method
-  chrome.cookies.set(
-    {
-      url: "https://api.unsplash.com/",
-      sameSite: "no_restriction",
-      secure: true
-    },
-    function(cookie) {}
-  );
+  chrome.cookies.set({
+    url: "https://api.unsplash.com/",
+    sameSite: "no_restriction",
+    secure: true
+  });
+});
+
+chrome.alarms.onAlarm.addListener(alarm => {
+  if (alarm.name === "changeBackground") {
+    getPhoto();
+  }
 });
 
 // Get new photo from collection https://unsplash.com/documentation
-const getRandomPhoto = () => {
-  // This url hits an api endpoint to get a random photo of nature and saves it to user's chrome storage
+const getPhoto = () => {
+  // This url hits an api endpoint to get a random photo and saves it to user's chrome storage
   let url =
     "https://api.unsplash.com/photos/random/?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&collections=8974511";
 
@@ -44,33 +58,3 @@ const getRandomPhoto = () => {
     })
     .catch(err => console.log(`Fetch failed: ${err}`));
 };
-
-// Recalculate timestamp for 11:59:59 PM
-const tick = () => {
-  let next = new Date();
-  next.setHours(23, 50, 50);
-  // next.setDate(next.getDate() + 1);
-  // console.log(next);
-  localStorage.savedTimestamp = next;
-  getRandomPhoto();
-};
-
-const checkTimeStamp = () => {
-  if (localStorage.savedTimestamp) {
-    let timestamp = new Date(localStorage.savedTimestamp);
-    let currentDate = new Date();
-    if (currentDate.getTime() > timestamp.getTime()) {
-      tick();
-    }
-  } else {
-    // first time running
-    tick();
-  }
-};
-
-const startBackground = () => {
-  checkTimeStamp();
-  setInterval(checkTimeStamp, 30000); // check every minute https://stackoverflow.com/questions/60591487/chrome-extensions-how-to-set-function-to-execute-when-day-has-changed/60592084#60592084
-};
-
-startBackground();
