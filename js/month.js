@@ -17,6 +17,13 @@ const createMonth = () => {
     let options = { month: "long", year: "numeric" };
     let title = dateObj.toLocaleDateString(undefined, options);
     monthDays.innerHTML = "";
+
+    if (dateObj.getMonth() === currentDate.getMonth()) {
+      monthTitle.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
+      monthTitle.style.borderRadius = '75px'
+    } else {
+      monthTitle.style.backgroundColor = "initial";
+    }
     monthTitle.textContent = title;
 
     let daysInMonth = new Date(
