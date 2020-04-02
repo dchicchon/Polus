@@ -1,6 +1,6 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(function() {
-  chrome.storage.sync.set({ view: "week" }, function() {});
+  chrome.storage.sync.set({ view: "week" });
   getPhoto();
 
   // When creating the alarm, find out when midnight is

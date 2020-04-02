@@ -115,7 +115,6 @@ let isEmpty = obj => {
 };
 
 
-
 // SET ENTRIES
 let setEntries = function(date, list) {
   chrome.storage.sync.get([`${date}`], function(result) {
