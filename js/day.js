@@ -11,6 +11,7 @@ const createToday = () => {
   let nextBtn = document.createElement("button");
   let dayTitle = document.createElement("h5");
 
+  // Input dateStamp to get relevant info
   let dayInfo = dateStamp => {
     // LEVEL 2 Day
     // Create DOM Elements
@@ -43,17 +44,21 @@ const createToday = () => {
   };
 
   // Event Listeners
+  // ==============================
+  // Previous Day
   prevBtn.addEventListener("click", function() {
     todayDate.setDate(todayDate.getDate() - 1);
     dayDate = todayDate.toLocaleDateString();
     dayInfo(dayDate);
   });
 
+  // Next Day
   nextBtn.addEventListener("click", function() {
     todayDate.setDate(todayDate.getDate() + 1);
     dayDate = todayDate.toLocaleDateString();
     dayInfo(dayDate);
   });
+  // ==============================
 
   // Text Content
   prevBtn.innerHTML = "&larr;";

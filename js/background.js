@@ -3,16 +3,6 @@ chrome.runtime.onInstalled.addListener(function() {
   chrome.storage.sync.set({ view: "week" });
   getPhoto();
 
-  // When creating the alarm, find out when midnight is
-
-  let date = new Date();
-  let midnight = new Date().setHours(23, 59, 59);
-  let ms = midnight.getTime() - date.getTime();
-  chrome.alarms.create("changeBackground", {
-    when: Date.now() + ms,
-    periodInMinutes: 60 * 24
-  });
-
   // Set cookies because cross origin request must be secure and recognized that it is a cors method
   chrome.cookies.set({
     url: "https://api.unsplash.com/",
@@ -21,6 +11,24 @@ chrome.runtime.onInstalled.addListener(function() {
   });
 });
 
+// When creating the alarm, find out when midnight is
+let date = new Date();
+let midnight = new Date();
+midnight.setHours(23, 59, 59);
+let ms = midnight.getTime() - date.getTime();
+
+// Create Alarm. If there is an alarm with the same name, it will be replaced
+chrome.alarms.create("changeBackground", {
+  when: Date.now() + ms,
+  periodInMinutes: 60 * 24
+});
+
+// Check Alarm
+chrome.alarms.get("changeBackground", alarm => {
+  console.log(alarm);
+});
+
+// Alarm to execute getPhoto()
 chrome.alarms.onAlarm.addListener(alarm => {
   if (alarm.name === "changeBackground") {
     getPhoto();

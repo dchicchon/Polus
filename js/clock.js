@@ -4,6 +4,7 @@
 let currentDate;
 let globalDate;
 
+// Update Clock
 const updateTime = () => {
   // the format will chnage depending on the locale using the extension
   // British English uses day-month-year order
