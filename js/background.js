@@ -11,21 +11,21 @@ chrome.runtime.onInstalled.addListener(function() {
   });
 });
 
-// When creating the alarm, find out when midnight is
-let date = new Date();
-let midnight = new Date();
-midnight.setHours(23, 59, 59);
-let ms = midnight.getTime() - date.getTime();
-
-// Create Alarm. If there is an alarm with the same name, it will be replaced
-chrome.alarms.create("changeBackground", {
-  when: Date.now() + ms,
-  periodInMinutes: 60 * 24
-});
-
 // Check Alarm
 chrome.alarms.get("changeBackground", alarm => {
-  console.log(alarm);
+  if (alarm) {
+    console.log(alarm);
+  } else {
+    // If no alarm, create one that executes at midnight
+    let date = new Date();
+    let midnight = new Date();
+    midnight.setHours(23, 59, 59);
+    let ms = midnight.getTime() - date.getTime();
+    chrome.alarms.create("changeBackground", {
+      when: Date.now() + ms,
+      periodInMinutes: 60 * 24
+    });
+  }
 });
 
 // Alarm to execute getPhoto()
