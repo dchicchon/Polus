@@ -1,10 +1,14 @@
 const createMonth = () => {
   monthView.innerHTML = "";
   let monthDate = new Date();
+  console.log("MONTH DATE");
+  console.log(monthDate);
 
   // LEVEL 1 Month View
   // Create DOM Elements
   let monthNav = document.createElement("div"); // container of the nav
+  let monthCalendar = document.createElement("div"); // calendar
+  let dayTitles = document.createElement("div"); // Weekday names
   let monthDays = document.createElement("div"); // container for the month days
   let prevBtn = document.createElement("button"); // previous button
   let nextBtn = document.createElement("button"); // next button
@@ -12,12 +16,35 @@ const createMonth = () => {
 
   // =============================================
 
+  // temporary for now, will adjust for worldview later
+  let weekdays = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  for (let k = 0; k < 7; k++) {
+    let weekdayTitle = document.createElement("h1");
+    weekdayTitle.style.width = "10.25rem";
+    weekdayTitle.style.padding = "0.75rem";
+    weekdayTitle.style.margin = "0";
+    weekdayTitle.textContent = weekdays[k];
+    dayTitles.append(weekdayTitle);
+  }
+
+  dayTitles.style.display = "flex";
+
   // This will generate all the days for a month and all the associated notes
-  let createDaysInMonth = dateObj => {
+  let createDaysInMonth = (dateObj) => {
     let options = { month: "long", year: "numeric" };
     let title = dateObj.toLocaleDateString(undefined, options);
     monthDays.innerHTML = "";
 
+    // Highlight todays date on calendar
     if (dateObj.getMonth() === currentDate.getMonth()) {
       monthTitle.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
       monthTitle.style.borderRadius = "75px";
@@ -26,17 +53,23 @@ const createMonth = () => {
     }
     monthTitle.textContent = title;
 
-    let daysInMonth = new Date(
-      dateObj.getFullYear(),
-      dateObj.getMonth() + 1,
-      0
-    ).getDate();
+    // start of calendar variable
+    dateObj.setDate(1);
+    if (dateObj.getDay() !== 0) {
+      while (dateObj.getDay() !== 0) {
+        dateObj.setDate(dateObj.getDate() - 1);
+      }
+    }
+    // console.log(dateObj);
 
     // This is how we create each individual day. But we want to start with Monday!
-    for (let i = 0; i < daysInMonth; i++) {
-      let dayDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), i + 1), // ex. 1/20/20
+    for (let i = 0; i < 35; i++) {
+      let dayDate = new Date(
+          dateObj.getFullYear(),
+          dateObj.getMonth(),
+          dateObj.getDate() + i
+        ), // ex. 1/20/20
         date = dayDate.toLocaleDateString();
-      // day = dayDate.getDate(),
 
       // LEVEL 2 DAY
       // Create DOM Elements
@@ -60,9 +93,17 @@ const createMonth = () => {
       monthDayTitle.setAttribute("class", "monthDayTitle");
       btn.setAttribute("class", "add");
 
+      monthDay.addEventListener("mouseenter", () => {
+        btn.style.opacity = "1";
+      });
+      monthDay.addEventListener("mouseleave", () => {
+        btn.style.opacity = "0";
+      });
+
       // Text Content
       // monthDay.textContent = `${day} ${weekdays[dayDate.getUTCDay()]}`;
-      let dayOptions = { day: "numeric", weekday: "long" };
+      let dayOptions = { day: "numeric" };
+      // let dayOptions = { day: "numeric", weekday: "long" };
       monthDayTitle.textContent = dayDate.toLocaleDateString(
         undefined,
         dayOptions
@@ -80,6 +121,14 @@ const createMonth = () => {
       monthDay.appendChild(monthDetails);
       monthDetails.appendChild(btn);
     }
+
+    // let monthNum = dateObj.getMonth(); // 2/27/2020
+
+    // if (dateObj.getDate()) {
+    //   dateObj.setMonth(dateObj.getMonth() + 1);
+    // }
+    // console.log(dateObj);
+    dateObj.setDate(dateObj.getDate() + 7);
     addFunction();
   };
 
@@ -93,20 +142,24 @@ const createMonth = () => {
   monthTitle.setAttribute("class", "title");
   monthNav.setAttribute("class", "nav");
   monthDays.setAttribute("class", "monthDays");
-  monthDays.style.width = "98%";
-  monthDays.style.margin = "0 auto";
+  monthCalendar.style.width = "98%";
+  monthCalendar.style.margin = "0 auto";
+  // monthDays.style.width = "98%";
+  // monthDays.style.margin = "0 auto";
 
   // Event Listeners
 
   // Previous Month
-  prevBtn.addEventListener("click", function() {
+  prevBtn.addEventListener("click", function () {
     monthDate.setMonth(monthDate.getMonth() - 1);
+    console.log(monthDate);
     createDaysInMonth(monthDate);
   });
 
   // Next Month
-  nextBtn.addEventListener("click", function() {
+  nextBtn.addEventListener("click", function () {
     monthDate.setMonth(monthDate.getMonth() + 1);
+    console.log(monthDate);
     createDaysInMonth(monthDate);
   });
 
@@ -116,9 +169,16 @@ const createMonth = () => {
   monthNav.appendChild(prevBtn);
   monthNav.appendChild(monthTitle);
   monthNav.appendChild(nextBtn);
+
+  // Calendar
+  monthCalendar.appendChild(dayTitles);
+  monthCalendar.appendChild(monthDays);
+
   // View
   monthView.appendChild(monthNav);
-  monthView.appendChild(monthDays);
+  monthView.appendChild(monthCalendar);
+
+  // monthView.appendChild(monthDays);
   createDaysInMonth(monthDate);
   // ===============================
 };

@@ -20,6 +20,11 @@ body {
   margin: 0;
 }
 
+h1 {
+  margin: 0;
+  font-weight: 300;
+}
+
 h3 {
   margin: 0;
   font-weight: 300;
@@ -260,8 +265,9 @@ button:hover {
   width: 1.5rem;
   font-size: 1.25rem;
   border-radius: 100%;
-  margin-left: 1rem;
-  transition: background 0.5s;
+  opacity: 0;
+  // margin-left: 1rem;
+  transition: background 0.5s, opacity 0.5s;
   padding: 0 0.4rem;
 }
 .add:hover {
@@ -433,13 +439,14 @@ button:hover {
   .weekday {
     border: 1px solid $border-color;
     //   border: 0.5px solid rgba(32, 32, 32, 0.555);
+    padding: 0.75rem;
     height: 19rem;
     width: 14%;
     //   width: 11.75rem;
     background: $day-background;
     // background: rgba(0, 0, 0, 0.15);
     border-radius: 25px 25px 10px 10px;
-    padding: 0.5rem 0rem;
+    // padding: 0.5rem 0rem;
     transform: translateZ(0);
     transition: transform 0.5s;
 
@@ -487,7 +494,7 @@ button:hover {
     .monthDay {
       text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
       width: 10.25rem;
-      height: 15rem;
+      height: 14rem;
       padding: 0.75rem;
       border: 0.5px solid $border-color;
       float: left;
@@ -497,14 +504,16 @@ button:hover {
       transition: background 0.5s;
       .monthDayTitle {
         font-weight: 0;
-        border-radius: 1rem;
-        margin-bottom: 0.25rem;
-        width: 6rem;
-        text-align: center;
+        border-radius: 50%;
+        margin-bottom: 0.75rem;
+        width: 0.75rem;
+        padding: 0 0.4rem;  
+        // font-size: 1.25rem;
+        // text-align: center;
       }
       .monthDetails {
         overflow: auto;
-        height: 14rem;
+        height: 13rem;
         ul {
           list-style-type: none;
           padding: 0;

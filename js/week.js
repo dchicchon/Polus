@@ -46,6 +46,14 @@ const createWeek = () => {
     detailsList.setAttribute("class", "detailsList");
     btn.setAttribute("class", "add");
 
+    weekday.addEventListener("mouseenter", () => {
+      btn.style.opacity = "1";
+    });
+    weekday.addEventListener("mouseleave", () => {
+      btn.style.opacity = "0";
+    });
+
+
     // Set Values
     btn.value = date;
 

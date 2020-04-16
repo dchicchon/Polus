@@ -12,7 +12,7 @@ const createToday = () => {
   let dayTitle = document.createElement("h5");
 
   // Input dateStamp to get relevant info
-  let dayInfo = dateStamp => {
+  let dayInfo = (dateStamp) => {
     // LEVEL 2 Day
     // Create DOM Elements
     let detailsList = document.createElement("ul");
@@ -34,6 +34,13 @@ const createToday = () => {
 
     // Set Attributes
     btn.setAttribute("class", "add");
+    details.addEventListener("mouseenter", () => {
+      btn.style.opacity = "1";
+    });
+    details.addEventListener("mouseleave", () => {
+      btn.style.opacity = "0";
+    });
+
     details.setAttribute("class", "details");
     // Set Values
     btn.value = dateStamp;
@@ -46,14 +53,14 @@ const createToday = () => {
   // Event Listeners
   // ==============================
   // Previous Day
-  prevBtn.addEventListener("click", function() {
+  prevBtn.addEventListener("click", function () {
     todayDate.setDate(todayDate.getDate() - 1);
     dayDate = todayDate.toLocaleDateString();
     dayInfo(dayDate);
   });
 
   // Next Day
-  nextBtn.addEventListener("click", function() {
+  nextBtn.addEventListener("click", function () {
     todayDate.setDate(todayDate.getDate() + 1);
     dayDate = todayDate.toLocaleDateString();
     dayInfo(dayDate);
