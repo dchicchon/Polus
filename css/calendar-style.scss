@@ -374,6 +374,7 @@ button:hover {
 }
 
 .title {
+  // background:rgba(21, 115, 170, 0.63);
   font-size: $title-fontsize;
   width: $title-width;
   font-weight: $title-fontweight;
@@ -494,7 +495,7 @@ button:hover {
     .monthDay {
       text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
       width: 10.25rem;
-      height: 14rem;
+      height: 13rem;
       padding: 0.75rem;
       border: 0.5px solid $border-color;
       float: left;
@@ -505,7 +506,7 @@ button:hover {
       .monthDayTitle {
         font-weight: 0;
         border-radius: 50%;
-        margin-bottom: 0.75rem;
+        // margin-bottom: 0.25rem;
         width: 0.75rem;
         padding: 0 0.4rem;  
         // font-size: 1.25rem;
@@ -513,7 +514,7 @@ button:hover {
       }
       .monthDetails {
         overflow: auto;
-        height: 13rem;
+        height: 12rem;
         ul {
           list-style-type: none;
           padding: 0;
@@ -532,7 +533,7 @@ button:hover {
             background: rgba(21, 115, 170, 0.63);
             transition: background 0.5s;
             color: white;
-            margin: 0.25rem;
+            margin-bottom: 0.25rem;
             padding: 0.5rem;
             border-radius: 25px;
             font-size: 0.9rem;

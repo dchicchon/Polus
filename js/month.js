@@ -33,6 +33,7 @@ const createMonth = () => {
     weekdayTitle.style.padding = "0.75rem";
     weekdayTitle.style.margin = "0";
     weekdayTitle.textContent = weekdays[k];
+    weekdayTitle.style.textAlign='center'
     dayTitles.append(weekdayTitle);
   }
 
@@ -46,7 +47,7 @@ const createMonth = () => {
 
     // Highlight todays date on calendar
     if (dateObj.getMonth() === currentDate.getMonth()) {
-      monthTitle.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
+      monthTitle.style.background = "rgba(5, 80, 123, 0.992)";
       monthTitle.style.borderRadius = "75px";
     } else {
       monthTitle.style.backgroundColor = "initial";
