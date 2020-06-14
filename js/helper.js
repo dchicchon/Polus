@@ -4,13 +4,13 @@
 // GLOBAL VARIABLES
 // date = current Date
 
-let addFunction = function() {
+let addFunction = function () {
   let addButtons = document.getElementsByClassName("add");
   // For each add button, do something
   for (let i = 0; i < addButtons.length; i++) {
     let date = addButtons[i].value;
     // Lets add an onclick listener
-    addButtons[i].onclick = function() {
+    addButtons[i].onclick = function () {
       // When clicked, we will create a couple of HTML elements with attributes
       let entryListItem = document.createElement("li");
       let entryInput = document.createElement("input");
@@ -27,7 +27,7 @@ let addFunction = function() {
       let done = false; // so that blur and enter arent done together
 
       // Add a key press listener for the HTML input element (listen for the keycode for Enter (13))
-      entryInput.onkeypress = function(e) {
+      entryInput.onkeypress = function (e) {
         let keyCode = e.keyCode || e.which;
         if (!e) e = window.event;
         if (keyCode === 13) {
@@ -44,7 +44,7 @@ let addFunction = function() {
         }
       };
 
-      entryInput.addEventListener("blur", function() {
+      entryInput.addEventListener("blur", function () {
         if (!done) {
           let text = entryInput.value.toString();
           let parent = this.parentNode;
@@ -68,21 +68,21 @@ let addFunction = function() {
 
 let getKey = () => {
   let alpha = "abcdefghijklmnopqrstuvwxyz";
-  let key = `${alpha[Math.floor(Math.random() * 25)]}${Math.floor(
-    Math.random() * 98
-  ) + 1}`;
+  let key = `${alpha[Math.floor(Math.random() * 25)]}${
+    Math.floor(Math.random() * 98) + 1
+  }`;
   return key;
 };
 
 // Takes a list, date, text, and key and add item to chrome.storage.sync
-let addToStorage = function(listElm, date, text, key) {
+let addToStorage = function (listElm, date, text, key) {
   // Get the Date Object from Storage to add the entry
-  chrome.storage.sync.get([`${date}`], function(result) {
+  chrome.storage.sync.get([`${date}`], function (result) {
     // Entry
     let entry = {
       key,
       text,
-      complete: false
+      complete: false,
     };
 
     // If date object is empty
@@ -90,7 +90,7 @@ let addToStorage = function(listElm, date, text, key) {
       let entries = [entry];
 
       // Initiate entry functions once the date object is set
-      chrome.storage.sync.set({ [date]: entries }, function() {
+      chrome.storage.sync.set({ [date]: entries }, function () {
         entryFunctions(listElm, entries);
       });
 
@@ -99,13 +99,13 @@ let addToStorage = function(listElm, date, text, key) {
       let dateEntries = result[`${date}`];
       dateEntries.push(entry);
       entryFunctions(listElm, dateEntries);
-      chrome.storage.sync.set({ [date]: dateEntries }, function() {});
+      chrome.storage.sync.set({ [date]: dateEntries }, function () {});
     }
   });
 };
 
 //   Check if object is empty. Used to see if a day has any entries
-let isEmpty = obj => {
+let isEmpty = (obj) => {
   for (let key in obj) {
     if (obj.hasOwnProperty(key)) {
       return false;
@@ -114,10 +114,9 @@ let isEmpty = obj => {
   return true;
 };
 
-
 // SET ENTRIES
-let setEntries = function(date, list) {
-  chrome.storage.sync.get([`${date}`], function(result) {
+let setEntries = function (date, list) {
+  chrome.storage.sync.get([`${date}`], function (result) {
     if (!isEmpty(result)) {
       let entriesArr = result[`${date}`];
       for (let j = 0; j < entriesArr.length; j++) {
@@ -151,7 +150,7 @@ let setEntries = function(date, list) {
 };
 
 // ENTRY FUNCTIONS
-let entryFunctions = function(elmList, arr) {
+let entryFunctions = function (elmList, arr) {
   let entriesArr = elmList.getElementsByClassName("entry");
   for (let i = 0; i < entriesArr.length; i++) {
     let entry = entriesArr[i];
@@ -180,18 +179,18 @@ let entryFunctions = function(elmList, arr) {
     // };
 
     // Filter by the delete btn val. Set this filtered arr to the existing variable of arr
-    let deleteEntry = function() {
+    let deleteEntry = function () {
       let entryDate = entry.classList.item(1); // check the classList for new dates
-      chrome.storage.sync.get([`${entryDate}`], result => {
+      chrome.storage.sync.get([`${entryDate}`], (result) => {
         let oldArr = result[`${entryDate}`];
-        oldArr = oldArr.filter(elm => elm.key !== entry.id);
+        oldArr = oldArr.filter((elm) => elm.key !== entry.id);
         entry.style.display = "none";
         entry.remove();
         chrome.storage.sync.set({ [entryDate]: oldArr });
       });
     };
 
-    let checkEntry = function() {
+    let checkEntry = function () {
       let entryDate = entry.classList.item(1); // check the classList for new dates
       let checked = parseInt(entry.value);
       if (checked === 0) {
@@ -221,14 +220,14 @@ let entryFunctions = function(elmList, arr) {
 
       // Text Content
       // entryEdit.textContent = "#";
-      entryCheck.textContent = "%";
+      entryCheck.innerHTML = "&#10003;";
       entryDelete.textContent = "x";
 
       // Values
 
       entryDelete.value = entriesArr[i].id;
       // Entry Click
-      entry.addEventListener("click", event => {
+      entry.addEventListener("click", (event) => {
         // If entry is not active
         if (!active) {
           active = true;
@@ -267,12 +266,12 @@ let entryFunctions = function(elmList, arr) {
 };
 
 // ENTRY DRAG
-let dragFunctions = function() {
+let dragFunctions = function () {
   let dragged;
-  document.addEventListener("drag", function(event) {}, false);
+  document.addEventListener("drag", function (event) {}, false);
   document.addEventListener(
     "dragstart",
-    function(event) {
+    function (event) {
       if (event.target.classList.contains("entry")) {
         dragged = event.target;
         event.dataTransfer.setData("text/plain", dragged.id);
@@ -283,21 +282,21 @@ let dragFunctions = function() {
   );
   document.addEventListener(
     "dragend",
-    function(event) {
+    function (event) {
       event.target.style.opacity = "";
     },
     false
   );
   document.addEventListener(
     "dragover",
-    function(event) {
+    function (event) {
       event.preventDefault();
     },
     false
   );
   document.addEventListener(
     "dragenter",
-    function(event) {
+    function (event) {
       if (
         event.target.className === "details" ||
         event.target.className === "monthDetails"
@@ -310,7 +309,7 @@ let dragFunctions = function() {
 
   document.addEventListener(
     "dragleave",
-    function(event) {
+    function (event) {
       if (
         event.target.className === "details" ||
         event.target.className === "monthDetails"
@@ -324,7 +323,7 @@ let dragFunctions = function() {
   // DROP
   document.addEventListener(
     "drop",
-    function(event) {
+    function (event) {
       event.preventDefault();
       // console.log(event.dataTransfer.getData("text"));  Might be useful later on to get data from the dragged item
       let date = event.target.id;
@@ -342,9 +341,9 @@ let dragFunctions = function() {
           dragged.classList.remove("new");
           dragged.classList.add(event.target.id, "new"); // add the new date to classList
           // Filter from previous Date object
-          chrome.storage.sync.get([`${prevDate}`], function(result) {
+          chrome.storage.sync.get([`${prevDate}`], function (result) {
             let entriesArr = result[`${prevDate}`];
-            entriesArr = entriesArr.filter(elm => elm.key !== dragged.id);
+            entriesArr = entriesArr.filter((elm) => elm.key !== dragged.id);
             chrome.storage.sync.set({ [prevDate]: entriesArr });
           });
 

@@ -5,8 +5,9 @@ $title-width: 17.5rem;
 $title-fontweight: 100;
 $border-color: rgba(32, 32, 32, 0.555);
 $day-background: rgba(0, 0, 0, 0.15);
-
 $tool-hover: rgba(38, 96, 134, 0.76);
+
+$breakpoint-macbookpro: 1330px;
 // ===================
 
 // HTML ELEMENT STYLING
@@ -442,7 +443,7 @@ button:hover {
     //   border: 0.5px solid rgba(32, 32, 32, 0.555);
     padding: 0.75rem;
     height: 19rem;
-    width: 14%;
+    width: 12%;
     //   width: 11.75rem;
     background: $day-background;
     // background: rgba(0, 0, 0, 0.15);
@@ -487,14 +488,20 @@ button:hover {
 #month {
   flex-direction: column;
   justify-content: center;
-  .monthDays {
-    // width: 95%;
-    background: rgba(0, 0, 0, 0);
+  .weekdayNames {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(50px, 1fr));
+    width: 98%;
     margin: 0 auto;
-    flex-wrap: wrap;
+  }
+  .monthDays {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(50px, 1fr));
+    width: 98%;
+    margin: 0 auto;
+
     .monthDay {
       text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
-      width: 10.25rem;
       height: 13rem;
       padding: 0.75rem;
       border: 0.5px solid $border-color;
@@ -508,7 +515,7 @@ button:hover {
         border-radius: 50%;
         // margin-bottom: 0.25rem;
         width: 0.75rem;
-        padding: 0 0.4rem;  
+        padding: 0 0.4rem;
         // font-size: 1.25rem;
         // text-align: center;
       }

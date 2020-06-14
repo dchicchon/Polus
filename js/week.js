@@ -4,7 +4,7 @@ const createWeek = () => {
 
   // This will allow us to go back the days until we get Monday
   let startDate = new Date();
-  while (startDate.getDay() !== 1) {
+  while (startDate.getDay() !== 0) {
     startDate.setDate(startDate.getDate() - 1);
   }
 

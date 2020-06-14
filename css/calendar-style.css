@@ -457,7 +457,7 @@ button:hover {
   border: 1px solid rgba(32, 32, 32, 0.555);
   padding: 0.75rem;
   height: 19rem;
-  width: 14%;
+  width: 12%;
   background: rgba(0, 0, 0, 0.15);
   border-radius: 25px 25px 10px 10px;
   -webkit-transform: translateZ(0);
@@ -510,16 +510,26 @@ button:hover {
           justify-content: center;
 }
 
-#month .monthDays {
-  background: rgba(0, 0, 0, 0);
+#month .weekdayNames {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (minmax(50px, 1fr))[7];
+      grid-template-columns: repeat(7, minmax(50px, 1fr));
+  width: 98%;
   margin: 0 auto;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+}
+
+#month .monthDays {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (minmax(50px, 1fr))[7];
+      grid-template-columns: repeat(7, minmax(50px, 1fr));
+  width: 98%;
+  margin: 0 auto;
 }
 
 #month .monthDays .monthDay {
   text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
-  width: 10.25rem;
   height: 13rem;
   padding: 0.75rem;
   border: 0.5px solid rgba(32, 32, 32, 0.555);

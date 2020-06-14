@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Polus",
-  "version": "1.0.1.3",
+  "version": "1.0.1.4",
   
   "short_name": "Polus",
   "description": "An online planner to help make you more effecient!",
@@ -20,9 +20,8 @@
   "permissions": [
     "activeTab",
     "alarms",
-    "storage",
-    "cookies",
-    "*://*.unsplash.com/"
+    "storage"
+
   ],
   "background": {
     "scripts": ["./js/background.js"],

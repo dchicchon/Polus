@@ -1,19 +1,16 @@
 const createMonth = () => {
   monthView.innerHTML = "";
   let monthDate = new Date();
-  console.log("MONTH DATE");
-  console.log(monthDate);
 
   // LEVEL 1 Month View
   // Create DOM Elements
   let monthNav = document.createElement("div"); // container of the nav
-  let monthCalendar = document.createElement("div"); // calendar
-  let dayTitles = document.createElement("div"); // Weekday names
   let monthDays = document.createElement("div"); // container for the month days
   let prevBtn = document.createElement("button"); // previous button
   let nextBtn = document.createElement("button"); // next button
   let monthTitle = document.createElement("h4"); // title
 
+  let weekdayNames = document.createElement("div"); // weekday titles
   // =============================================
 
   // temporary for now, will adjust for worldview later
@@ -29,15 +26,11 @@ const createMonth = () => {
 
   for (let k = 0; k < 7; k++) {
     let weekdayTitle = document.createElement("h1");
-    weekdayTitle.style.width = "10.25rem";
     weekdayTitle.style.padding = "0.75rem";
-    weekdayTitle.style.margin = "0";
     weekdayTitle.textContent = weekdays[k];
-    weekdayTitle.style.textAlign='center'
-    dayTitles.append(weekdayTitle);
+    weekdayTitle.style.textAlign = "center";
+    weekdayNames.append(weekdayTitle);
   }
-
-  dayTitles.style.display = "flex";
 
   // This will generate all the days for a month and all the associated notes
   let createDaysInMonth = (dateObj) => {
@@ -61,9 +54,8 @@ const createMonth = () => {
         dateObj.setDate(dateObj.getDate() - 1);
       }
     }
-    // console.log(dateObj);
 
-    // This is how we create each individual day. But we want to start with Monday!
+    // This is how we create each individual day. But we want to start with Sunday
     for (let i = 0; i < 35; i++) {
       let dayDate = new Date(
           dateObj.getFullYear(),
@@ -89,10 +81,10 @@ const createMonth = () => {
 
       // Set Attributes
       monthDetails.setAttribute("class", "monthDetails");
-      monthDetails.id = date;
       monthDay.setAttribute("class", "monthDay");
       monthDayTitle.setAttribute("class", "monthDayTitle");
       btn.setAttribute("class", "add");
+      monthDetails.id = date;
 
       monthDay.addEventListener("mouseenter", () => {
         btn.style.opacity = "1";
@@ -143,8 +135,9 @@ const createMonth = () => {
   monthTitle.setAttribute("class", "title");
   monthNav.setAttribute("class", "nav");
   monthDays.setAttribute("class", "monthDays");
-  monthCalendar.style.width = "98%";
-  monthCalendar.style.margin = "0 auto";
+  weekdayNames.setAttribute("class", "weekdayNames");
+  // monthCalendar.style.width = "98%";
+  // monthCalendar.style.margin = "0 auto";
   // monthDays.style.width = "98%";
   // monthDays.style.margin = "0 auto";
 
@@ -172,12 +165,14 @@ const createMonth = () => {
   monthNav.appendChild(nextBtn);
 
   // Calendar
-  monthCalendar.appendChild(dayTitles);
-  monthCalendar.appendChild(monthDays);
+  // monthCalendar.appendChild(dayTitles);
+  // monthCalendar.appendChild(monthDays);
 
   // View
   monthView.appendChild(monthNav);
-  monthView.appendChild(monthCalendar);
+  // monthView.appendChild(monthCalendar);
+  monthView.appendChild(weekdayNames);
+  monthView.appendChild(monthDays);
 
   // monthView.appendChild(monthDays);
   createDaysInMonth(monthDate);
