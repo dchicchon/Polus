@@ -25,8 +25,8 @@ const createMonth = () => {
   ];
 
   for (let k = 0; k < 7; k++) {
-    let weekdayTitle = document.createElement("h1");
-    weekdayTitle.style.padding = "0.75rem";
+    let weekdayTitle = document.createElement("h2");
+    weekdayTitle.style.padding = "0 0 0.5rem";
     weekdayTitle.textContent = weekdays[k];
     weekdayTitle.style.textAlign = "center";
     weekdayNames.append(weekdayTitle);
