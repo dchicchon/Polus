@@ -28,7 +28,7 @@ h1 {
 
 h2 {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 100;
   text-shadow: 0 0 25px rgba(0, 0, 0, 0.75);
   letter-spacing: 0.15rem;
@@ -138,6 +138,7 @@ button:hover {
     font-weight: 200;
     letter-spacing: 0.1rem;
     font-size: 2rem;
+    text-shadow: 0 0 15px rgba(0, 0, 0, 1);
   }
   #site-box {
     padding: 0;
@@ -469,7 +470,7 @@ button:hover {
       text-align: center;
     }
     .weekTitle {
-      padding: 0.25rem;
+      padding: 0 0.25rem;
       color: white;
       text-align: center;
       font-size: 1.5rem;

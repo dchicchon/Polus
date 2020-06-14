@@ -13,21 +13,19 @@ const createMonth = () => {
   let weekdayNames = document.createElement("div"); // weekday titles
   // =============================================
 
-  // temporary for now, will adjust for worldview later
-  let weekdays = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
+  let startDate = new Date();
+  while (startDate.getDay() !== 0) {
+    startDate.setDate(startDate.getDate() - 1);
+  }
 
   for (let k = 0; k < 7; k++) {
     let weekdayTitle = document.createElement("h2");
+    let thisDate = new Date(startDate);
+    thisDate.setDate(thisDate.getDate() + k);
+    weekdayTitle.textContent = `${thisDate.toLocaleDateString(undefined, {
+      weekday: "long",
+    })}`;
     weekdayTitle.style.padding = "0 0 0.5rem";
-    weekdayTitle.textContent = weekdays[k];
     weekdayTitle.style.textAlign = "center";
     weekdayNames.append(weekdayTitle);
   }
