@@ -8,7 +8,7 @@ const createMonth = () => {
   let monthDays = document.createElement("div"); // container for the month days
   let prevBtn = document.createElement("button"); // previous button
   let nextBtn = document.createElement("button"); // next button
-  let monthTitle = document.createElement("h4"); // title
+  let monthTitle = document.createElement("div"); // title
 
   let weekdayNames = document.createElement("div"); // weekday titles
   // =============================================

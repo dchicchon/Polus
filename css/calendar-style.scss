@@ -7,13 +7,13 @@ $border-color: rgba(32, 32, 32, 0.555);
 $day-background: rgba(0, 0, 0, 0.15);
 $tool-hover: rgba(38, 96, 134, 0.76);
 
-$breakpoint-macbookpro: 1330px;
 // ===================
 
 // HTML ELEMENT STYLING
 // ===================
 html {
-  max-width: 100vw;
+  overflow-y: scroll;
+  // max-width: 100vw;
 }
 
 body {
@@ -127,52 +127,78 @@ button:hover {
   li {
     float: left;
     display: block;
-    text-align: center;
   }
+}
 
-  .app-title {
-    padding: 0 1rem;
-    // text-emphasis: none;
-    // text-decoration: none;
-    color: white;
-    font-weight: 200;
-    letter-spacing: 0.1rem;
-    font-size: 2rem;
-    text-shadow: 0 0 15px rgba(0, 0, 0, 1);
-  }
-  #site-box {
-    padding: 0;
-    position: relative;
+#app-info {
+  padding: 0.5rem 1rem 0;
+  display: grid;
+  font-size: 1.5rem;
+  #app-title {
+    grid-column: 1;
+    grid-row: 1;
     display: inline-block;
-    .topSites-title {
-      transition: 0.5s background;
-      font-size: 1rem;
-      padding: 1rem;
+    animation-name: fadeIn;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
+    color: white;
+    .app-icon {
+      width: 35px;
+      height: 35px;
     }
+    .app-sub {
+      display: inline-block;
+      font-weight: 200;
+      letter-spacing: 0.1rem;
+      text-shadow: 0 0 15px rgba(0, 0, 0, 1);
+      transform: translateY(-25%);
+    }
+  }
 
-    .topSites-title:hover {
-      background: rgba(90, 90, 90, 0.329);
+  #app-items {
+    display: none;
+    grid-column: 1;
+    grid-row: 1;
+    animation-name: fadeIn;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
+    div {
+      transition: background 0.25s;
+      font-size: 60%;
+      padding: 0.5rem;
+      cursor: pointer;
+      display: inline-block;
+      &:hover {
+        background-color: rgba($color: white, $alpha: 0.1);
+      }
     }
+  }
+}
 
-    .topSites {
-      display: none;
-      position: absolute;
-      min-width: 160px;
-      overflow: auto;
-      right: 0;
-      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-      .site {
-        transition: 0.5s background;
-        display: block;
-        text-decoration: none;
-        font-size: 1rem;
-        color: white;
-        /* z-index: 999; */
-      }
-      .site:hover {
-        background: rgba(90, 90, 90, 0.329);
-      }
-    }
+#background-info {
+  padding: 1rem;
+  display: grid;
+  text-align: center;
+
+  #background-location {
+    grid-column: 1;
+    grid-row: 1;
+    opacity: 0.75;
+    font-size: 1rem;
+    transition: opacity 0.25s;
+  }
+  #background-source {
+    font-size: 1rem;
+    grid-column: 1;
+    grid-row: 1;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  #background-link {
+    position: relative;
+    text-decoration: none;
+    color: white;
   }
 }
 
@@ -191,6 +217,7 @@ button:hover {
   display: flex;
   justify-content: center;
   color: white;
+  // font-family: monospace;
   font-size: 4.75rem;
   font-weight: 100;
   // padding-bottom: 0.5rem;
@@ -212,57 +239,10 @@ button:hover {
   }
 }
 
-#background-info {
-  padding: 1rem;
-  display: grid;
-  #background-location {
-    grid-column: 1;
-    grid-row: 1;
-    opacity: 0.75;
-    font-size: 1rem;
-    transition: 0.5s opacity;
-  }
-  #background-source {
-    font-size: 1rem;
-    grid-column: 1;
-    grid-row: 1;
-    opacity: 0;
-    transition: 0.5s opacity;
-  }
-
-  #background-link {
-    position: relative;
-    text-decoration: none;
-    color: white;
-  }
-}
-
 // ====================
 
 // Main Classes
 // ====================
-
-// .entry {
-//   width: 85%;
-//   // Update v1.0.0.9
-//   text-align: center;
-//   white-space: nowrap;
-//   display: block;
-//   overflow: hidden;
-//   text-overflow: ellipsis;
-//   border: none;
-//   touch-action: none;
-//   user-select: none;
-//   //
-//   background: rgba(21, 115, 170, 0.63);
-//   transition: background 0.5s, height 0.25s;
-//   color: white;
-//   margin: 0.25rem auto;
-//   padding: 0.5rem;
-//   border-radius: 25px;
-//   font-size: 0.9rem;
-//   height: 1rem;
-// }
 .entry:hover {
   background: rgba(24, 127, 187, 0.993);
   cursor: pointer;
@@ -270,13 +250,10 @@ button:hover {
 
 .add {
   background: none;
-  // position: relative;
-  // left: 40%;
   width: 1.5rem;
   font-size: 1.25rem;
   border-radius: 100%;
   opacity: 0;
-  // margin-left: 1rem;
   transition: background 0.5s, opacity 0.5s;
   padding: 0 0.4rem;
 }
@@ -297,7 +274,6 @@ button:hover {
 
 .delete {
   background: none;
-  // float: left;
   text-align: center;
   width: 25px;
   height: 25px;
@@ -305,7 +281,6 @@ button:hover {
   border-radius: 100%;
   margin-left: 5px;
   padding: 0 0.5rem;
-  // opacity: 0;
   transition: background 0.5s;
 }
 
@@ -333,15 +308,13 @@ button:hover {
 
 .details {
   overflow: auto;
-  height: 15rem;
-  // text-decoration: line-through\;
+  height: 14rem;
 
   ul {
     list-style-type: none;
     padding: 0;
     li {
       width: 85%;
-      // Update v1.0.0.9
       text-align: center;
       white-space: nowrap;
       display: block;
@@ -384,7 +357,6 @@ button:hover {
 }
 
 .title {
-  // background:rgba(21, 115, 170, 0.63);
   font-size: $title-fontsize;
   width: $title-width;
   font-weight: $title-fontweight;
@@ -423,6 +395,21 @@ button:hover {
   text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
 }
 
+.gear {
+  position: fixed;
+  cursor: pointer;
+  transition: transform 0.25s;
+  font-size: 30px;
+  margin-right: 1rem;
+  bottom: 0;
+  right: 0;
+  transform: translateY(0);
+
+  &:hover {
+    transform: translateY(-5%);
+  }
+}
+
 // ====================
 
 /* DAY VIEW */
@@ -451,7 +438,7 @@ button:hover {
     border: 1px solid $border-color;
     //   border: 0.5px solid rgba(32, 32, 32, 0.555);
     padding: 0.75rem;
-    height: 19rem;
+    height: 18rem;
     width: 12%;
     //   width: 11.75rem;
     background: $day-background;
@@ -470,7 +457,7 @@ button:hover {
       text-align: center;
     }
     .weekTitle {
-      padding: 0 0.25rem;
+      padding: 0 0.25rem 0.25rem;
       color: white;
       text-align: center;
       font-size: 1.5rem;
@@ -521,12 +508,13 @@ button:hover {
       transition: background 0.5s;
       .monthDayTitle {
         font-weight: 0;
-        border-radius: 50%;
-        // margin-bottom: 0.25rem;
-        width: 0.75rem;
-        padding: 0 0.4rem;
-        // font-size: 1.25rem;
-        // text-align: center;
+        border-radius: 12px;
+        margin-bottom: 0.25rem;
+        width: 20px;
+        height: 20px;
+        min-width: 16px;
+        // padding: 4px 3px 0 3px;
+        text-align: center;
       }
       .monthDetails {
         overflow: auto;

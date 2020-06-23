@@ -1,5 +1,5 @@
 html {
-  max-width: 100vw;
+  overflow-y: scroll;
 }
 
 body {
@@ -137,57 +137,104 @@ button:hover {
 #nav li {
   float: left;
   display: block;
-  text-align: center;
 }
 
-#nav .app-title {
-  padding: 0 1rem;
+#app-info {
+  padding: 0.5rem 1rem 0;
+  display: -ms-grid;
+  display: grid;
+  font-size: 1.5rem;
+}
+
+#app-info #app-title {
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 1;
+  grid-row: 1;
+  display: inline-block;
+  -webkit-animation-name: fadeIn;
+          animation-name: fadeIn;
+  -webkit-animation-duration: 0.75s;
+          animation-duration: 0.75s;
+  -webkit-animation-fill-mode: forwards;
+          animation-fill-mode: forwards;
   color: white;
+}
+
+#app-info #app-title .app-icon {
+  width: 35px;
+  height: 35px;
+}
+
+#app-info #app-title .app-sub {
+  display: inline-block;
   font-weight: 200;
   letter-spacing: 0.1rem;
-  font-size: 2rem;
   text-shadow: 0 0 15px black;
+  -webkit-transform: translateY(-25%);
+          transform: translateY(-25%);
 }
 
-#nav #site-box {
-  padding: 0;
-  position: relative;
+#app-info #app-items {
+  display: none;
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 1;
+  grid-row: 1;
+  -webkit-animation-name: fadeIn;
+          animation-name: fadeIn;
+  -webkit-animation-duration: 0.75s;
+          animation-duration: 0.75s;
+  -webkit-animation-fill-mode: forwards;
+          animation-fill-mode: forwards;
+}
+
+#app-info #app-items div {
+  -webkit-transition: background 0.25s;
+  transition: background 0.25s;
+  font-size: 60%;
+  padding: 0.5rem;
+  cursor: pointer;
   display: inline-block;
 }
 
-#nav #site-box .topSites-title {
-  -webkit-transition: 0.5s background;
-  transition: 0.5s background;
-  font-size: 1rem;
+#app-info #app-items div:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#background-info {
   padding: 1rem;
+  display: -ms-grid;
+  display: grid;
+  text-align: center;
 }
 
-#nav #site-box .topSites-title:hover {
-  background: rgba(90, 90, 90, 0.329);
-}
-
-#nav #site-box .topSites {
-  display: none;
-  position: absolute;
-  min-width: 160px;
-  overflow: auto;
-  right: 0;
-  -webkit-box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-          box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-}
-
-#nav #site-box .topSites .site {
-  -webkit-transition: 0.5s background;
-  transition: 0.5s background;
-  display: block;
-  text-decoration: none;
+#background-info #background-location {
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 1;
+  grid-row: 1;
+  opacity: 0.75;
   font-size: 1rem;
-  color: white;
-  /* z-index: 999; */
+  -webkit-transition: opacity 0.25s;
+  transition: opacity 0.25s;
 }
 
-#nav #site-box .topSites .site:hover {
-  background: rgba(90, 90, 90, 0.329);
+#background-info #background-source {
+  font-size: 1rem;
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 1;
+  grid-row: 1;
+  opacity: 0;
+  -webkit-transition: opacity 0.25s;
+  transition: opacity 0.25s;
+}
+
+#background-info #background-link {
+  position: relative;
+  text-decoration: none;
+  color: white;
 }
 
 #date {
@@ -237,40 +284,6 @@ button:hover {
 
 #view .view-btn:hover {
   background: rgba(43, 42, 42, 0.329);
-}
-
-#background-info {
-  padding: 1rem;
-  display: -ms-grid;
-  display: grid;
-}
-
-#background-info #background-location {
-  -ms-grid-column: 1;
-  grid-column: 1;
-  -ms-grid-row: 1;
-  grid-row: 1;
-  opacity: 0.75;
-  font-size: 1rem;
-  -webkit-transition: 0.5s opacity;
-  transition: 0.5s opacity;
-}
-
-#background-info #background-source {
-  font-size: 1rem;
-  -ms-grid-column: 1;
-  grid-column: 1;
-  -ms-grid-row: 1;
-  grid-row: 1;
-  opacity: 0;
-  -webkit-transition: 0.5s opacity;
-  transition: 0.5s opacity;
-}
-
-#background-info #background-link {
-  position: relative;
-  text-decoration: none;
-  color: white;
 }
 
 .entry:hover {
@@ -343,7 +356,7 @@ button:hover {
 
 .details {
   overflow: auto;
-  height: 15rem;
+  height: 14rem;
 }
 
 .details ul {
@@ -438,6 +451,26 @@ button:hover {
   text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
 }
 
+.gear {
+  position: fixed;
+  cursor: pointer;
+  -webkit-transition: -webkit-transform 0.25s;
+  transition: -webkit-transform 0.25s;
+  transition: transform 0.25s;
+  transition: transform 0.25s, -webkit-transform 0.25s;
+  font-size: 30px;
+  margin-right: 1rem;
+  bottom: 0;
+  right: 0;
+  -webkit-transform: translateY(0);
+          transform: translateY(0);
+}
+
+.gear:hover {
+  -webkit-transform: translateY(-5%);
+          transform: translateY(-5%);
+}
+
 /* DAY VIEW */
 /* =========================================== */
 #daily {
@@ -465,7 +498,7 @@ button:hover {
 #week .weekday {
   border: 1px solid rgba(32, 32, 32, 0.555);
   padding: 0.75rem;
-  height: 19rem;
+  height: 18rem;
   width: 12%;
   background: rgba(0, 0, 0, 0.15);
   border-radius: 25px 25px 10px 10px;
@@ -487,7 +520,7 @@ button:hover {
 }
 
 #week .weekday .weekTitle {
-  padding: 0 0.25rem;
+  padding: 0 0.25rem 0.25rem;
   color: white;
   text-align: center;
   font-size: 1.5rem;
@@ -550,9 +583,12 @@ button:hover {
 
 #month .monthDays .monthDay .monthDayTitle {
   font-weight: 0;
-  border-radius: 50%;
-  width: 0.75rem;
-  padding: 0 0.4rem;
+  border-radius: 12px;
+  margin-bottom: 0.25rem;
+  width: 20px;
+  height: 20px;
+  min-width: 16px;
+  text-align: center;
 }
 
 #month .monthDays .monthDay .monthDetails {

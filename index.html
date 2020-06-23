@@ -1,22 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <title>Polus</title>
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Polus</title>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      media="screen"
-      href="./css/calendar-style.css"
-    />
+    <link rel="shortcut icon" type='image/png' href="images/polus_tab_icon.png"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="./css/calendar-style.css"/>
   </head>
   <body>
     <ul id="nav">
-      <li><div class="app-title">Polus</div></li>
-      <li id="background-info-box" style="float:right">
-        <div id="background-info">  
+      <li id="app-info-box">
+        <div id="app-info">
+          <div id="app-title">
+            <img class='app-icon' src="./images/polus_icon.png">
+          </img> <span class='app-sub'>Polus</span></div>
+          <div id="app-items">
+            <!-- <div id="settings">Settings</div> -->
+            <div id="site"><a target="_blank" rel ="noopener noreferrer" href='https://danielchicchon.io/code/polus'>Site</a></div>
+            <div id="contact">
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://docs.google.com/forms/d/e/1FAIpQLSdHcPhbcAWeWFvEFqF6qzmPUD0UtNn9e7pn_eLUukGLudMy1A/viewform"
+              >
+                Feedback</a
+              >
+            </div>
+          </div>
+        </div>
+      </li>
+      <li id="background-info-box" style="float: right;">
+        <div id="background-info">
           <span id="background-location"></span>
           <span id="background-source"
             >Photo by

@@ -33,7 +33,7 @@ const createWeek = () => {
     // Text Content
     weekDate.textContent = `${thisDate.getDate()}`;
     weekTitle.textContent = `${thisDate.toLocaleDateString(undefined, {
-      weekday: "long"
+      weekday: "long",
     })}`;
     btn.textContent = "+";
 
@@ -52,7 +52,6 @@ const createWeek = () => {
     weekday.addEventListener("mouseleave", () => {
       btn.style.opacity = "0";
     });
-
 
     // Set Values
     btn.value = date;

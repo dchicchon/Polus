@@ -1,8 +1,7 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.set({ view: "week" });
-  chrome.storage.local.set({ changeNum: 1 });
-
+  // chrome.storage.local.set({ changeNum: 1 });
   getPhoto();
 
   // Set cookies because cross origin request must be secure and recognized that it is a cors method
@@ -21,7 +20,7 @@ chrome.alarms.get("changeBackground", (alarm) => {
     // If no alarm, create one that executes at midnight
     let date = new Date();
     let midnight = new Date();
-    midnight.setHours(23, 59, 59);  
+    midnight.setHours(23, 59, 59);
     let ms = midnight.getTime() - date.getTime();
     chrome.alarms.create("changeBackground", {
       when: Date.now() + ms,
