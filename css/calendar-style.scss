@@ -218,7 +218,8 @@ button:hover {
   justify-content: center;
   color: white;
   // font-family: monospace;
-  font-size: 4.75rem;
+  font-size: 4rem;
+  // font-size: 4.75rem;
   font-weight: 100;
   // padding-bottom: 0.5rem;
   text-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
@@ -433,41 +434,74 @@ button:hover {
 /* =========================================== */
 #week {
   //   backface-visibility: hidden;
-
+  flex-direction: column;
+  justify-content: center;
+  .weekdayNames {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(50px, 1fr));
+    width: 98%;
+    margin: 0 auto;
+  }
+  .weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(50px, 1fr));
+    width: 98%;
+    margin: 0 auto;
+  }
   .weekday {
-    border: 1px solid $border-color;
-    //   border: 0.5px solid rgba(32, 32, 32, 0.555);
+    text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
+    min-height: 15rem;
     padding: 0.75rem;
-    height: 18rem;
-    width: 12%;
-    //   width: 11.75rem;
+    border: 1px solid $border-color;
     background: $day-background;
-    // background: rgba(0, 0, 0, 0.15);
-    border-radius: 25px 25px 10px 10px;
-    // padding: 0.5rem 0rem;
     transform: translateZ(0);
     transition: transform 0.5s;
+    .weekDetails {
+      overflow: auto;
+      height: auto;
+      ul {
+        list-style-type: none;
+        padding: 0;
+        li {
+          width: 85%;
+          // V 1.0.0.9
+          text-align: center;
+          white-space: nowrap;
+          overflow: hidden;
+          display: block;
+          text-overflow: ellipsis;
+          border: none;
+          // float: left;
 
-    .weekDate {
-      color: white;
-      width: 5rem;
-      border-radius: 1rem;
-      margin: 0 auto;
-      font-size: 1.5rem;
-      text-align: center;
+          //
+          background: rgba(21, 115, 170, 0.63);
+          transition: background 0.5s;
+          color: white;
+          margin-bottom: 0.25rem;
+          padding: 0.5rem;
+          border-radius: 25px;
+          font-size: 0.9rem;
+          height: 1rem;
+        }
+        li:hover {
+          background: rgba(24, 127, 187, 0.993);
+          cursor: pointer;
+        }
+      }
     }
-    .weekTitle {
-      padding: 0 0.25rem 0.25rem;
-      color: white;
+    .weekDate {
+      font-weight: 0;
+      border-radius: 12px;
+      margin-bottom: 0.25rem;
+      width: 20px;
+      height: 20px;
+      min-width: 16px;
+      // padding: 4px 3px 0 3px;
       text-align: center;
-      font-size: 1.5rem;
-      letter-spacing: 0.15rem;
-      font-weight: 100;
-      border-radius: 25px 25px 0 0;
     }
 
     @media (max-width: 760px) {
-      .weekTitle {
+      .weekdayNames {
         font-size: 0.75rem;
       }
     }

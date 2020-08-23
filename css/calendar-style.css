@@ -259,7 +259,7 @@ button:hover {
       -ms-flex-pack: center;
           justify-content: center;
   color: white;
-  font-size: 4.75rem;
+  font-size: 4rem;
   font-weight: 100;
   text-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
 }
@@ -495,13 +495,40 @@ button:hover {
 /* =========================================== */
 /* WEEK VIEW */
 /* =========================================== */
+#week {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+#week .weekdayNames {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (minmax(50px, 1fr))[7];
+      grid-template-columns: repeat(7, minmax(50px, 1fr));
+  width: 98%;
+  margin: 0 auto;
+}
+
+#week .weekdays {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (minmax(50px, 1fr))[7];
+      grid-template-columns: repeat(7, minmax(50px, 1fr));
+  width: 98%;
+  margin: 0 auto;
+}
+
 #week .weekday {
-  border: 1px solid rgba(32, 32, 32, 0.555);
+  text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
+  min-height: 15rem;
   padding: 0.75rem;
-  height: 18rem;
-  width: 12%;
+  border: 1px solid rgba(32, 32, 32, 0.555);
   background: rgba(0, 0, 0, 0.15);
-  border-radius: 25px 25px 10px 10px;
   -webkit-transform: translateZ(0);
           transform: translateZ(0);
   -webkit-transition: -webkit-transform 0.5s;
@@ -510,27 +537,52 @@ button:hover {
   transition: transform 0.5s, -webkit-transform 0.5s;
 }
 
-#week .weekday .weekDate {
-  color: white;
-  width: 5rem;
-  border-radius: 1rem;
-  margin: 0 auto;
-  font-size: 1.5rem;
-  text-align: center;
+#week .weekday .weekDetails {
+  overflow: auto;
+  height: auto;
 }
 
-#week .weekday .weekTitle {
-  padding: 0 0.25rem 0.25rem;
-  color: white;
+#week .weekday .weekDetails ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+#week .weekday .weekDetails ul li {
+  width: 85%;
   text-align: center;
-  font-size: 1.5rem;
-  letter-spacing: 0.15rem;
-  font-weight: 100;
-  border-radius: 25px 25px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  text-overflow: ellipsis;
+  border: none;
+  background: rgba(21, 115, 170, 0.63);
+  -webkit-transition: background 0.5s;
+  transition: background 0.5s;
+  color: white;
+  margin-bottom: 0.25rem;
+  padding: 0.5rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  height: 1rem;
+}
+
+#week .weekday .weekDetails ul li:hover {
+  background: rgba(24, 127, 187, 0.993);
+  cursor: pointer;
+}
+
+#week .weekday .weekDate {
+  font-weight: 0;
+  border-radius: 12px;
+  margin-bottom: 0.25rem;
+  width: 20px;
+  height: 20px;
+  min-width: 16px;
+  text-align: center;
 }
 
 @media (max-width: 760px) {
-  #week .weekday .weekTitle {
+  #week .weekday .weekdayNames {
     font-size: 0.75rem;
   }
 }

@@ -9,7 +9,6 @@ const createMonth = () => {
   let prevBtn = document.createElement("button"); // previous button
   let nextBtn = document.createElement("button"); // next button
   let monthTitle = document.createElement("div"); // title
-
   let weekdayNames = document.createElement("div"); // weekday titles
   // =============================================
 
@@ -31,6 +30,45 @@ const createMonth = () => {
   }
 
   // This will generate all the days for a month and all the associated notes
+
+  // Text Content
+  prevBtn.innerHTML = "&larr;";
+  nextBtn.innerHTML = "&rarr;";
+
+  // Set attributes
+  prevBtn.setAttribute("class", "arrow");
+  nextBtn.setAttribute("class", "arrow");
+  monthTitle.setAttribute("class", "title");
+  monthNav.setAttribute("class", "nav");
+  monthDays.setAttribute("class", "monthDays");
+  weekdayNames.setAttribute("class", "weekdayNames");
+
+  // Previous Month
+  prevBtn.addEventListener("click", function () {
+    monthDate.setMonth(monthDate.getMonth() - 1);
+    console.log(monthDate);
+    createDaysInMonth(monthDate);
+  });
+
+  // Next Month
+  nextBtn.addEventListener("click", function () {
+    monthDate.setMonth(monthDate.getMonth() + 1);
+    console.log(monthDate);
+    createDaysInMonth(monthDate);
+  });
+
+  // Append
+  // ===============================
+  // Nav
+  monthNav.appendChild(prevBtn);
+  monthNav.appendChild(monthTitle);
+  monthNav.appendChild(nextBtn);
+
+  // View
+  monthView.appendChild(monthNav);
+  monthView.appendChild(weekdayNames);
+  monthView.appendChild(monthDays);
+
   let createDaysInMonth = (dateObj) => {
     let options = { month: "long", year: "numeric" };
     let title = dateObj.toLocaleDateString(undefined, options);
@@ -123,56 +161,6 @@ const createMonth = () => {
     addFunction();
   };
 
-  // Text Content
-  prevBtn.innerHTML = "&larr;";
-  nextBtn.innerHTML = "&rarr;";
-
-  // Set attributes
-  prevBtn.setAttribute("class", "arrow");
-  nextBtn.setAttribute("class", "arrow");
-  monthTitle.setAttribute("class", "title");
-  monthNav.setAttribute("class", "nav");
-  monthDays.setAttribute("class", "monthDays");
-  weekdayNames.setAttribute("class", "weekdayNames");
-  // monthCalendar.style.width = "98%";
-  // monthCalendar.style.margin = "0 auto";
-  // monthDays.style.width = "98%";
-  // monthDays.style.margin = "0 auto";
-
-  // Event Listeners
-
-  // Previous Month
-  prevBtn.addEventListener("click", function () {
-    monthDate.setMonth(monthDate.getMonth() - 1);
-    console.log(monthDate);
-    createDaysInMonth(monthDate);
-  });
-
-  // Next Month
-  nextBtn.addEventListener("click", function () {
-    monthDate.setMonth(monthDate.getMonth() + 1);
-    console.log(monthDate);
-    createDaysInMonth(monthDate);
-  });
-
-  // Append
-  // ===============================
-  // Nav
-  monthNav.appendChild(prevBtn);
-  monthNav.appendChild(monthTitle);
-  monthNav.appendChild(nextBtn);
-
-  // Calendar
-  // monthCalendar.appendChild(dayTitles);
-  // monthCalendar.appendChild(monthDays);
-
-  // View
-  monthView.appendChild(monthNav);
-  // monthView.appendChild(monthCalendar);
-  monthView.appendChild(weekdayNames);
-  monthView.appendChild(monthDays);
-
-  // monthView.appendChild(monthDays);
   createDaysInMonth(monthDate);
   // ===============================
 };

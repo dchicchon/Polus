@@ -7,62 +7,129 @@ const createWeek = () => {
   while (startDate.getDay() !== 0) {
     startDate.setDate(startDate.getDate() - 1);
   }
+  console.log("Start Date");
+  console.log(startDate);
 
-  for (let i = 0; i <= 6; i++) {
-    // Entry Variables
+  // Weekdays
+  let weekDays = document.createElement("div"); // container of weekdays
+  let weekdayNames = document.createElement("div"); // weekday titles
+  weekDays.setAttribute("class", "weekdays");
+  weekdayNames.setAttribute("class", "weekdayNames");
+
+  // Weekday Names
+  for (let k = 0; k < 7; k++) {
+    let weekdayTitle = document.createElement("h2");
     let thisDate = new Date(startDate);
-    thisDate.setDate(thisDate.getDate() + i);
-    let date = thisDate.toLocaleDateString(); // ex: 2/20/2020 in U.S.
-
-    // LEVEL 2 Week Day
-    // Create DOM Elements
-    let weekday = document.createElement("div");
-    let weekDate = document.createElement("div");
-    let weekTitle = document.createElement("div");
-    let details = document.createElement("div");
-    let detailsList = document.createElement("ul");
-    let btn = document.createElement("button");
-
-    // If week day is today
-    if (globalDate === date) {
-      weekDate.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
-    }
-
-    setEntries(date, detailsList);
-
-    // Text Content
-    weekDate.textContent = `${thisDate.getDate()}`;
-    weekTitle.textContent = `${thisDate.toLocaleDateString(undefined, {
+    thisDate.setDate(thisDate.getDate() + k);
+    weekdayTitle.textContent = `${thisDate.toLocaleDateString(undefined, {
       weekday: "long",
     })}`;
-    btn.textContent = "+";
-
-    // Set Attributes
-    weekday.setAttribute("class", "weekday");
-    weekDate.setAttribute("class", "weekDate");
-    weekTitle.setAttribute("class", "weekTitle");
-    details.setAttribute("class", "details");
-    details.id = date;
-    detailsList.setAttribute("class", "detailsList");
-    btn.setAttribute("class", "add");
-
-    weekday.addEventListener("mouseenter", () => {
-      btn.style.opacity = "1";
-    });
-    weekday.addEventListener("mouseleave", () => {
-      btn.style.opacity = "0";
-    });
-
-    // Set Values
-    btn.value = date;
-
-    // Append
-    details.appendChild(detailsList);
-    details.appendChild(btn);
-    weekday.appendChild(weekDate);
-    weekday.appendChild(weekTitle);
-    weekday.appendChild(details);
-    weekView.appendChild(weekday);
+    weekdayTitle.style.padding = "0 0 0.5rem";
+    weekdayTitle.style.textAlign = "center";
+    weekdayNames.append(weekdayTitle);
   }
-  addFunction();
+
+  // Nav
+  let weekNav = document.createElement("div");
+  let prevBtn = document.createElement("button"); // previous button
+  let nextBtn = document.createElement("button"); // next button
+  let weekTitle = document.createElement("div"); // title
+
+  prevBtn.innerHTML = "&larr;";
+  nextBtn.innerHTML = "&rarr;";
+  prevBtn.setAttribute("class", "arrow");
+  nextBtn.setAttribute("class", "arrow");
+  weekNav.setAttribute("class", "nav");
+
+  // Previous Week
+  prevBtn.addEventListener("click", function () {
+    console.log(startDate);
+    startDate.setDate(startDate.getDate() - 7);
+    console.log(startDate);
+    createDaysInWeek(startDate);
+  });
+
+  // Next Week
+  nextBtn.addEventListener("click", function () {
+    console.log(startDate);
+    startDate.setDate(startDate.getDate() + 7);
+    console.log(startDate);
+    createDaysInWeek(startDate);
+  });
+
+  // Nav
+  weekTitle.setAttribute("class", "title");
+  weekTitle.style.width = "auto";
+  weekNav.appendChild(prevBtn);
+  weekNav.appendChild(weekTitle);
+  weekNav.appendChild(nextBtn);
+
+  // View
+  weekView.appendChild(weekNav);
+  weekView.appendChild(weekdayNames);
+  weekView.appendChild(weekDays);
+
+  let createDaysInWeek = (dateObj) => {
+    weekDays.innerHTML = "";
+    let titleDate = new Date(dateObj);
+    startingDate = titleDate.toLocaleDateString();
+    titleDate.setDate(titleDate.getDate() + 6);
+    endingDate = titleDate.toLocaleDateString();
+    weekTitle.textContent = `${startingDate} - ${endingDate}`;
+
+    for (let i = 0; i <= 6; i++) {
+      // Entry Variables
+      let thisDate = new Date(dateObj);
+      thisDate.setDate(thisDate.getDate() + i);
+      console.log(thisDate);
+      let date = thisDate.toLocaleDateString(); // ex: 2/20/2020 in U.S.
+
+      // LEVEL 2 Week Day
+      // Create DOM Elements
+      let weekday = document.createElement("div");
+      let weekDate = document.createElement("div");
+      let details = document.createElement("div");
+      let detailsList = document.createElement("ul");
+      let btn = document.createElement("button");
+
+      // If week day is today
+      if (globalDate === date) {
+        weekDate.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
+      }
+
+      setEntries(date, detailsList);
+
+      // Text Content
+      weekDate.textContent = `${thisDate.getDate()}`;
+      btn.textContent = "+";
+
+      // Set Attributes
+      weekday.setAttribute("class", "weekday");
+      weekDate.setAttribute("class", "weekDate");
+      details.setAttribute("class", "weekDetails");
+      details.id = date;
+      btn.setAttribute("class", "add");
+
+      weekday.addEventListener("mouseenter", () => {
+        btn.style.opacity = "1";
+      });
+      weekday.addEventListener("mouseleave", () => {
+        btn.style.opacity = "0";
+      });
+
+      // Set Values
+      btn.value = date;
+
+      // Append
+      details.appendChild(detailsList);
+      details.appendChild(btn);
+      weekday.appendChild(weekDate);
+      weekday.appendChild(details);
+      weekDays.appendChild(weekday);
+    }
+
+    addFunction();
+  };
+
+  createDaysInWeek(startDate);
 };
