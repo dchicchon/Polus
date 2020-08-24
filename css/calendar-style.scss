@@ -420,12 +420,14 @@ button:hover {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border: 0.5px solid rgba(32, 32, 32, 0.555);
-  border-radius: 25px 25px 10px 10px;
-  background: $day-background;
   width: 50%;
-  padding: 1rem 2rem;
   margin: 0 auto;
+  .dayDiv {
+    padding: 1rem 2rem;
+    border: 0.5px solid rgba(32, 32, 32, 0.555);
+    border-radius: 25px 25px 10px 10px;
+    background: $day-background;
+  }
 }
 
 /* =========================================== */
@@ -450,7 +452,9 @@ button:hover {
   }
   .weekday {
     text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
-    min-height: 15rem;
+    // min-height: 15rem;
+    // max-height: 16rem;
+    height: 15rem;
     padding: 0.75rem;
     border: 1px solid $border-color;
     background: $day-background;
@@ -458,7 +462,9 @@ button:hover {
     transition: transform 0.5s;
     .weekDetails {
       overflow: auto;
-      height: auto;
+      height: 14rem;
+      // min-height: 14rem;
+      // max-height: 15rem;
       ul {
         list-style-type: none;
         padding: 0;
@@ -471,9 +477,6 @@ button:hover {
           display: block;
           text-overflow: ellipsis;
           border: none;
-          // float: left;
-
-          //
           background: rgba(21, 115, 170, 0.63);
           transition: background 0.5s;
           color: white;
@@ -537,8 +540,6 @@ button:hover {
       border: 0.5px solid $border-color;
       float: left;
       background: $day-background;
-
-      // background: rgba(0, 0, 0, 0);
       transition: background 0.5s;
       .monthDayTitle {
         font-weight: 0;
@@ -565,9 +566,6 @@ button:hover {
             display: block;
             text-overflow: ellipsis;
             border: none;
-            // float: left;
-
-            //
             background: rgba(21, 115, 170, 0.63);
             transition: background 0.5s;
             color: white;

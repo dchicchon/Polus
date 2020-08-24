@@ -298,7 +298,7 @@ let dragFunctions = function () {
     "dragenter",
     function (event) {
       if (
-        event.target.className === "details" ||
+        event.target.className === "weekDetails" ||
         event.target.className === "monthDetails"
       ) {
         event.target.style.background = "rgba(90, 90, 90, 0.329)";
@@ -311,7 +311,7 @@ let dragFunctions = function () {
     "dragleave",
     function (event) {
       if (
-        event.target.className === "details" ||
+        event.target.className === "weekDetails" ||
         event.target.className === "monthDetails"
       ) {
         event.target.style.background = "initial";
@@ -329,7 +329,7 @@ let dragFunctions = function () {
       let date = event.target.id;
       let prevDate = dragged.classList.item(1);
       if (
-        event.target.className === "details" ||
+        event.target.className === "weekDetails" ||
         event.target.className === "monthDetails"
       ) {
         event.target.style.background = "initial";

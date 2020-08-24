@@ -57,8 +57,6 @@ const createMonth = () => {
     createDaysInMonth(monthDate);
   });
 
-  // Append
-  // ===============================
   // Nav
   monthNav.appendChild(prevBtn);
   monthNav.appendChild(monthTitle);
@@ -70,9 +68,9 @@ const createMonth = () => {
   monthView.appendChild(monthDays);
 
   let createDaysInMonth = (dateObj) => {
+    monthDays.innerHTML = "";
     let options = { month: "long", year: "numeric" };
     let title = dateObj.toLocaleDateString(undefined, options);
-    monthDays.innerHTML = "";
 
     // Highlight todays date on calendar
     if (dateObj.getMonth() === currentDate.getMonth()) {

@@ -1,10 +1,12 @@
 const createToday = () => {
   let todayDate = new Date();
+  let dayOptions = { weekday: "short" };
   let dayDate = todayDate.toLocaleDateString();
 
   dayView.innerHTML = "";
   // LEVEL 1 Day View
-  // Create DOM Elements
+  // Create DOM Elements\
+  let dayDiv = document.createElement("div");
   let dayNav = document.createElement("div");
   let details = document.createElement("div"); // day details
   let prevBtn = document.createElement("button");
@@ -30,7 +32,8 @@ const createToday = () => {
     // Text Content
     details.innerHTML = "";
     btn.textContent = "+";
-    dayTitle.textContent = dayDate;
+    let dayOfWeek = todayDate.toLocaleDateString(undefined, dayOptions);
+    dayTitle.textContent = `${dayOfWeek} ${dayDate}`;
 
     // Set Attributes
     btn.setAttribute("class", "add");
@@ -69,7 +72,6 @@ const createToday = () => {
 
   // Text Content
   prevBtn.innerHTML = "&larr;";
-
   dayTitle.textContent = dayDate;
   nextBtn.innerHTML = "&rarr;";
 
@@ -78,14 +80,17 @@ const createToday = () => {
   prevBtn.setAttribute("class", "arrow");
   nextBtn.setAttribute("class", "arrow");
   dayNav.setAttribute("class", "nav");
+  dayDiv.setAttribute("class", "dayDiv");
   dayTitle.setAttribute("class", "dayTitle");
 
   // Append
   dayNav.appendChild(prevBtn);
   dayNav.appendChild(dayTitle);
   dayNav.appendChild(nextBtn);
+
+  dayDiv.appendChild(details);
   dayView.appendChild(dayNav);
-  dayView.appendChild(details);
+  dayView.appendChild(dayDiv);
 
   dayInfo(dayDate);
 };

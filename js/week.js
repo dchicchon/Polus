@@ -2,19 +2,23 @@ const createWeek = () => {
   // LEVEL 1 Week View
   weekView.innerHTML = "";
 
+  // Create DOM Elements
+  let weekDays = document.createElement("div"); // container of weekdays
+  let weekdayNames = document.createElement("div"); // weekday titles
+  let weekNav = document.createElement("div");
+  let prevBtn = document.createElement("button"); // previous button
+  let nextBtn = document.createElement("button"); // next button
+  let weekTitle = document.createElement("div"); // title
+
   // This will allow us to go back the days until we get Monday
+  let initialDate = new Date();
+  while (initialDate.getDay() !== 0) {
+    initialDate.setDate(initialDate.getDate() - 1);
+  }
   let startDate = new Date();
   while (startDate.getDay() !== 0) {
     startDate.setDate(startDate.getDate() - 1);
   }
-  console.log("Start Date");
-  console.log(startDate);
-
-  // Weekdays
-  let weekDays = document.createElement("div"); // container of weekdays
-  let weekdayNames = document.createElement("div"); // weekday titles
-  weekDays.setAttribute("class", "weekdays");
-  weekdayNames.setAttribute("class", "weekdayNames");
 
   // Weekday Names
   for (let k = 0; k < 7; k++) {
@@ -29,37 +33,34 @@ const createWeek = () => {
     weekdayNames.append(weekdayTitle);
   }
 
-  // Nav
-  let weekNav = document.createElement("div");
-  let prevBtn = document.createElement("button"); // previous button
-  let nextBtn = document.createElement("button"); // next button
-  let weekTitle = document.createElement("div"); // title
-
+  // Text Content
   prevBtn.innerHTML = "&larr;";
   nextBtn.innerHTML = "&rarr;";
+
+  // Set Attributes
   prevBtn.setAttribute("class", "arrow");
   nextBtn.setAttribute("class", "arrow");
+  weekTitle.setAttribute("class", "title");
   weekNav.setAttribute("class", "nav");
+  weekDays.setAttribute("class", "weekdays");
+  weekdayNames.setAttribute("class", "weekdayNames");
+
+  // Set Styles
+  weekTitle.style.width = "22rem";
 
   // Previous Week
   prevBtn.addEventListener("click", function () {
-    console.log(startDate);
     startDate.setDate(startDate.getDate() - 7);
-    console.log(startDate);
     createDaysInWeek(startDate);
   });
 
   // Next Week
   nextBtn.addEventListener("click", function () {
-    console.log(startDate);
     startDate.setDate(startDate.getDate() + 7);
-    console.log(startDate);
     createDaysInWeek(startDate);
   });
 
   // Nav
-  weekTitle.setAttribute("class", "title");
-  weekTitle.style.width = "auto";
   weekNav.appendChild(prevBtn);
   weekNav.appendChild(weekTitle);
   weekNav.appendChild(nextBtn);
@@ -73,6 +74,13 @@ const createWeek = () => {
     weekDays.innerHTML = "";
     let titleDate = new Date(dateObj);
     startingDate = titleDate.toLocaleDateString();
+
+    if (titleDate.getDate() === initialDate.getDate()) {
+      weekTitle.style.background = "rgba(5, 80, 123, 0.992)";
+      weekTitle.style.borderRadius = "75px";
+    } else {
+      weekTitle.style.backgroundColor = "initial";
+    }
     titleDate.setDate(titleDate.getDate() + 6);
     endingDate = titleDate.toLocaleDateString();
     weekTitle.textContent = `${startingDate} - ${endingDate}`;
@@ -81,7 +89,6 @@ const createWeek = () => {
       // Entry Variables
       let thisDate = new Date(dateObj);
       thisDate.setDate(thisDate.getDate() + i);
-      console.log(thisDate);
       let date = thisDate.toLocaleDateString(); // ex: 2/20/2020 in U.S.
 
       // LEVEL 2 Week Day
