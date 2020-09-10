@@ -7,6 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="shortcut icon" type='image/png' href="images/polus_tab_icon.png"/>
     <link rel="stylesheet" type="text/css" media="screen" href="./css/calendar-style.css"/>
+
+    <script type="text/javascript" src="./js/analytics.js"></script>
+
   </head>
   <body>
     <ul id="nav">
@@ -27,6 +30,7 @@
                 Feedback</a
               >
             </div>
+            <div><a id='pmode' target="_blank" rel="noopener noreferrer">Photo Mode</a></div>
           </div>
         </div>
       </li>
@@ -41,9 +45,10 @@
               target="_blank"
               rel="noopener noreferrer"
               href="https://unsplash.com/?utm_source=Planner&utm_medium=referral"
-              >Unsplash</a
-            ></span
-          >
+              >Unsplash
+            </a>
+            <!-- <a id='download'>&#8681;</a> -->
+          </span>
         </div>
       </li>
     </ul>
@@ -52,22 +57,24 @@
       <div id="date"></div>
       <div id="clock"></div>
       <div id="view">
-        <button type="button" class="view-btn">Daily</button>
-        <button type="button" class="view-btn">Week</button>
-        <button type="button" class="view-btn">Month</button>
+        <button type='button' class="view-btn">Daily</button>
+        <button type='button' class="view-btn">Week</button>
+        <button type='button' class="view-btn">Month</button>
       </div>
 
       <section id="daily"></section>
       <section id="week"></section>
       <section id="month"></section>
     </main>
-
+    
     <script type="text/javascript" src="./js/view.js"></script>
     <script type="text/javascript" src="./js/clock.js"></script>
     <script type="text/javascript" src="./js/helper.js"></script>
     <script type="text/javascript" src="./js/day.js"></script>
     <script type="text/javascript" src="./js/week.js"></script>
     <script type="text/javascript" src="./js/month.js"></script>
+    <script type='text/javascript' src='./js/options.js'></script>
     <script type="text/javascript" src="./js/start.js"></script>
+
   </body>
 </html>

@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
   "name": "Polus",
-  "version": "1.0.1.6",
+  "version": "1.0.1.7",
   
-  "short_name": "Polus",
+  "default_locale":"en",
   "description": "An online planner to help make you more effecient!",
   "icons": {
     "16": "images/polus_tab_icon.png",
@@ -11,25 +11,26 @@
     "128":"images/polus_icon128.png"
   },
 
-  "author": "dchicchon",
-  "incognito": "split",
-
   "browser_action": {
     "default_title":"Polus",
     "default_icon":"images/polus_tab_icon.png"
   },
-
+  
+  "author": "dchicchon",
+  "background": {
+    "scripts": ["./js/background.js"],
+    "persistent": false
+  },
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
+  "incognito": "not_allowed",
+  "offline_enabled":true,
   "permissions": [
     "activeTab",
     "alarms",
     "storage"
-
   ],
-  "background": {
-    "scripts": ["./js/background.js"],
-    "persistent": false
-  }
+  "short_name": "Polus"
 }

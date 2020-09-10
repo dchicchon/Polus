@@ -5,10 +5,9 @@ let weekView = document.getElementById("week");
 let monthView = document.getElementById("month");
 let views = [dayView, weekView, monthView];
 
-let viewButtons = document.getElementsByClassName("view-btn");
-
 // Click on view buttons to allow selective viewing
 const viewFunction = () => {
+  let viewButtons = document.getElementsByClassName("view-btn");
   for (let j = 0; j < viewButtons.length; j++) {
     viewButtons[j].onclick = function () {
       let clickedView = this.textContent.toLowerCase();
@@ -58,6 +57,7 @@ const backgroundImage = () => {
     let backgroundLocation = document.getElementById("background-location");
     let backgroundSource = document.getElementById("background-source");
     let photoLink = document.getElementById("photo-link");
+    let download = document.getElementById("download");
 
     let appInfo = document.getElementById("app-info");
     let appTitle = document.getElementById("app-title");
@@ -76,7 +76,7 @@ const backgroundImage = () => {
     photoLink.textContent = result.background.author;
     photoLink.href =
       result.background.photoLink + "?utm_source=Planner&utm_medium=referral";
-
+    // download.href = result.background.downloadLink;
     page[0].style.background = `rgba(0,0,0,0.9) url(${
       result.background.url + `&w=${window.innerWidth}&dpi=2`
     }) no-repeat center center fixed`;

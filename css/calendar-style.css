@@ -231,6 +231,11 @@ button:hover {
   transition: opacity 0.25s;
 }
 
+#background-info #background-source #download {
+  margin-left: 0.5rem;
+  color: white;
+}
+
 #background-info #background-link {
   position: relative;
   text-decoration: none;

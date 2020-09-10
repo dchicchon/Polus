@@ -1,6 +1,7 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.set({ view: "week" });
+  chrome.storage.local.set({ pmode: frue });
   // chrome.storage.local.set({ changeNum: 1 });
   getPhoto();
 
@@ -11,6 +12,11 @@ chrome.runtime.onInstalled.addListener(() => {
   //   secure: true,
   // });
 });
+
+chrome.runtime.setUninstallURL(
+  "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit",
+  () => {}
+);
 
 // Check Alarm
 chrome.alarms.get("changeBackground", (alarm) => {
@@ -33,14 +39,6 @@ chrome.alarms.get("changeBackground", (alarm) => {
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "changeBackground") {
     getPhoto();
-    chrome.storage.local.get(["changeNum"], (result) => {
-      if (result) {
-        result += 1;
-        chrome.storage.local.set({ changeNum: result });
-      } else {
-        chrome.storage.local.set({ changeNum: 1 });
-      }
-    });
   }
 });
 
@@ -64,8 +62,9 @@ const getPhoto = () => {
         : "Unknown";
       let author = photo.user.name ? `${photo.user.name}` : "Unknown";
       let photoLink = photo.links.html;
+      let downloadLink = photo.links.download_location;
       chrome.storage.sync.set({
-        background: { url, location, author, photoLink },
+        background: { url, location, author, photoLink, downloadLink },
       });
     })
     .catch((err) => console.log(`Fetch failed: ${err}`));

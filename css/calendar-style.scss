@@ -193,6 +193,10 @@ button:hover {
     grid-row: 1;
     opacity: 0;
     transition: opacity 0.25s;
+    #download {
+      margin-left:0.5rem;
+      color:white;
+    }
   }
 
   #background-link {
