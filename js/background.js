@@ -1,7 +1,7 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.set({ view: "week" });
-  chrome.storage.local.set({ pmode: frue });
+  chrome.storage.local.set({ pmode: false });
   // chrome.storage.local.set({ changeNum: 1 });
   getPhoto();
 
