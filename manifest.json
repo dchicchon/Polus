@@ -3,7 +3,6 @@
   "name": "Polus",
   "version": "1.0.1.8",
   
-  "default_locale":"en",
   "description": "An online planner to help make you more effecient!",
   "icons": {
     "16": "images/polus_tab_icon.png",
