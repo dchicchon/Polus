@@ -76,14 +76,15 @@ const backgroundImage = () => {
     photoLink.textContent = result.background.author;
     photoLink.href =
       result.background.photoLink + "?utm_source=Planner&utm_medium=referral";
-    console.log(result);
+    // console.log  (result);
     if (result.background.downloadLink) {
       download.href = result.background.downloadLink;
     }
+
     page[0].style.background = `rgba(0,0,0,0.9) url(${
-      result.background.url + `&w=${window.innerWidth}&dpi=2`
-    }) no-repeat center center fixed`;
-    page[0].style.backgroundSize = `cover`;
+      result.background.url + `&w=${window.innerWidth}`
+    }) no-repeat fixed`;
+
     backgroundLocation.textContent = result.background.location;
 
     backgroundInfo.addEventListener("mouseover", () => {
@@ -95,8 +96,5 @@ const backgroundImage = () => {
       backgroundLocation.style.opacity = 0.75;
       backgroundSource.style.opacity = 0;
     });
-    // &auto=format
-    // &w=1500&dpi=1
-    // console.log(result.background.url);
   });
 };
