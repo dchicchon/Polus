@@ -1,5 +1,7 @@
 html {
   overflow-y: scroll;
+  -webkit-backdrop-filter: brightness(90%);
+          backdrop-filter: brightness(90%);
 }
 
 body {
@@ -230,6 +232,14 @@ button:hover {
   opacity: 0;
   -webkit-transition: opacity 0.25s;
   transition: opacity 0.25s;
+}
+
+#background-info #background-source a {
+  text-decoration: none;
+}
+
+#background-info #background-source a:hover {
+  text-decoration: underline;
 }
 
 #background-info #background-source #download {
@@ -497,7 +507,7 @@ button:hover {
 #daily .dayDiv {
   padding: 1rem 2rem;
   border: 0.5px solid rgba(32, 32, 32, 0.555);
-  border-radius: 25px 25px 10px 10px;
+  border-radius: 25px;
   background: rgba(0, 0, 0, 0.15);
 }
 
@@ -538,12 +548,6 @@ button:hover {
   padding: 0.75rem;
   border: 1px solid rgba(32, 32, 32, 0.555);
   background: rgba(0, 0, 0, 0.15);
-  -webkit-transform: translateZ(0);
-          transform: translateZ(0);
-  -webkit-transition: -webkit-transform 0.5s;
-  transition: -webkit-transform 0.5s;
-  transition: transform 0.5s;
-  transition: transform 0.5s, -webkit-transform 0.5s;
 }
 
 #week .weekday .weekDetails {
@@ -594,11 +598,6 @@ button:hover {
   #week .weekday .weekdayNames {
     font-size: 0.75rem;
   }
-}
-
-#week .weekday:hover {
-  -webkit-transform: translateY(-1.5%);
-          transform: translateY(-1.5%);
 }
 
 /* MONTH VIEW */

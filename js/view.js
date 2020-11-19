@@ -51,7 +51,6 @@ const hideViews = (viewsArr) => {
 // Get the background image and set stylings
 const backgroundImage = () => {
   chrome.storage.sync.get(["background"], function (result) {
-    // chrome.topSites.get(addSites); // add topsites
     let page = document.getElementsByTagName("html");
     let backgroundInfo = document.getElementById("background-info");
     let backgroundLocation = document.getElementById("background-location");
@@ -84,8 +83,13 @@ const backgroundImage = () => {
     page[0].style.background = `rgba(0,0,0,0.9) url(${
       result.background.url + `&w=${window.innerWidth}`
     }) no-repeat fixed`;
+    // page[0].style = 'brightness(90%)'
 
-    backgroundLocation.textContent = result.background.location;
+    if (result.background.location) {
+      backgroundLocation.textContent = result.background.location;
+    } else {
+      backgroundLocation.textContent = "Unknown";
+    }
 
     backgroundInfo.addEventListener("mouseover", () => {
       backgroundLocation.style.opacity = 0;

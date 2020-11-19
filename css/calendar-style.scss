@@ -13,6 +13,7 @@ $tool-hover: rgba(38, 96, 134, 0.76);
 // ===================
 html {
   overflow-y: scroll;
+  backdrop-filter: brightness(90%);
   // max-width: 100vw;
 }
 
@@ -88,7 +89,7 @@ a {
 // ===============
 
 main {
-  display:none;
+  display: none;
   width: 100%;
   margin: 1rem auto;
   section {
@@ -194,9 +195,15 @@ button:hover {
     grid-row: 1;
     opacity: 0;
     transition: opacity 0.25s;
+    a {
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
     #download {
-      margin-left:0.5rem;
-      color:white;
+      margin-left: 0.5rem;
+      color: white;
     }
   }
 
@@ -222,11 +229,8 @@ button:hover {
   display: flex;
   justify-content: center;
   color: white;
-  // font-family: monospace;
   font-size: 4rem;
-  // font-size: 4.75rem;
   font-weight: 100;
-  // padding-bottom: 0.5rem;
   text-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
 }
 
@@ -390,8 +394,6 @@ button:hover {
 
 .arrow:hover {
   background: rgba(90, 90, 90, 0.329);
-
-  // background: rgba(29, 28, 28, 0.555);
 }
 
 .nav {
@@ -430,7 +432,7 @@ button:hover {
   .dayDiv {
     padding: 1rem 2rem;
     border: 0.5px solid rgba(32, 32, 32, 0.555);
-    border-radius: 25px 25px 10px 10px;
+    border-radius: 25px;
     background: $day-background;
   }
 }
@@ -463,8 +465,8 @@ button:hover {
     padding: 0.75rem;
     border: 1px solid $border-color;
     background: $day-background;
-    transform: translateZ(0);
-    transition: transform 0.5s;
+    // transform: translateZ(0);
+    // transition: transform 0.5s;
     .weekDetails {
       overflow: auto;
       height: 14rem;
@@ -516,7 +518,7 @@ button:hover {
   }
 
   .weekday:hover {
-    transform: translateY(-1.5%);
+    // transform: translateY(-1.5%);
   }
 }
 

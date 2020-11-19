@@ -7,17 +7,17 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="shortcut icon" type='image/png' href="images/polus_tab_icon.png"/>
     <link rel="stylesheet" type="text/css" media="screen" href="./css/calendar-style.css"/>
-
-    <script type="text/javascript" src="./js/analytics.js"></script>
-
+    <script src="js/ga.js"></script>
+   
   </head>
   <body>
     <ul id="nav">
       <li id="app-info-box">
         <div id="app-info">
           <div id="app-title">
-            <img class='app-icon' src="./images/polus_icon.png">
-          </img> <span class='app-sub'>Polus</span></div>
+            <img class='app-icon' src="./images/polus_icon.png"></img> 
+            <!-- <span class='app-sub'>Polus</span> -->
+          </div>
           <div id="app-items">
             <!-- <div id="settings">Settings</div> -->
             <div id="site"><a target="_blank" rel ="noopener noreferrer" href='https://danielchicchon.io/code/polus'>Site</a></div>
@@ -31,6 +31,9 @@
               >
             </div>
             <div><a id='pmode' target="_blank" rel="noopener noreferrer">Photo Mode</a></div>
+            <!-- If user not signed in -->
+            <div><a id='auth' target="_blank" rel="noopener noreferrer"></a></div>
+
           </div>
         </div>
       </li>
@@ -60,14 +63,15 @@
         <button type='button' class="view-btn">Daily</button>
         <button type='button' class="view-btn">Week</button>
         <button type='button' class="view-btn">Month</button>
-        <!-- <button type='button' id='change'></button> -->
       </div>
 
       <section id="daily"></section>
       <section id="week"></section>
       <section id="month"></section>
     </main>
-    
+    <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-auth.js"></script>
+    <script type="text/javascript" src="./js/auth.js"></script>
     <script type="text/javascript" src="./js/view.js"></script>
     <script type="text/javascript" src="./js/clock.js"></script>
     <script type="text/javascript" src="./js/helper.js"></script>

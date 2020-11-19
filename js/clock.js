@@ -7,7 +7,7 @@ let globalDate;
 // Update Clock
 const updateTime = () => {
   // the format will chnage depending on the locale using the extension
-  // British English uses day-month-year order
+  // British En glish uses day-month-year order
   // Korean uses year-month-day order
   currentDate = new Date();
   globalDate = currentDate.toLocaleDateString();
@@ -17,7 +17,7 @@ const updateTime = () => {
     weekday: "long",
     year: "numeric",
     month: "numeric",
-    day: "numeric"
+    day: "numeric",
   };
 
   let clock = `${currentDate.toLocaleTimeString()}`;

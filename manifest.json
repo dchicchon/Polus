@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Polus",
-  "version": "1.0.1.9",
+  "version": "1.0.2.0",
   
   "description": "An online planner to help make you more effecient!",
   "icons": {
@@ -23,12 +23,21 @@
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
-  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
+  "content_security_policy":"script-src 'self' https://www.gstatic.com/ https://www.google-analytics.com https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",
+  "oauth2": {
+    "client_id": "274422794820-d2pa5hrn4fo04q1ktjtetktg4ee4560h.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
+    ]
+  },
+  "key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1P+QOirmBclf+iOMc9u6\nSleY1HhFKEdtIPz+bu/zgJWtkDRGhUW4icEaNdOHimTtBLKnuW49p12t6clD38cP\n8eptmrjOd209NZWkbYD4o6CX1atch6v4yFHOCQKvkgQya4OqiQuFYl8QdwQFzL68\ndbnBKid4LG59RdcGa7gtBIvhOeoEdtAXFil39eCy5mkUngEazcB5Aycba71AJGJL\nab8DBCowbfalh6xYv3KaKvqEQIwXl6XncN1XUkrvXUuv2MJDp70266ReN3Arrzed\nAYAoZHBlWI/xwxtHaEa1uoSO9isp3wErYJmlmvdAd7MXqeh9nsNhQtB6B4x4tXax\nOwIDAQAB\n-----END PUBLIC KEY-----",
   "incognito": "not_allowed",
   "offline_enabled":true,
   "permissions": [
     "activeTab",
     "alarms",
+    "identity",
     "storage"
   ],
   "short_name": "Polus"

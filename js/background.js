@@ -2,15 +2,7 @@
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.set({ view: "week" });
   chrome.storage.local.set({ pmode: false });
-  // chrome.storage.local.set({ changeNum: 1 });
   getPhoto();
-
-  // Set cookies because cross origin request must be secure and recognized that it is a cors method
-  // chrome.cookies.set({
-  //   url: "https://api.unsplash.com",
-  //   sameSite: "no_restriction",
-  //   secure: true,
-  // });
 });
 
 chrome.runtime.setUninstallURL(
@@ -55,11 +47,9 @@ const getPhoto = () => {
     })
     .then((response) => response.json())
     .then(function (photo) {
-      console.log(photo);
+      // console.log(photo);
       let url = photo.urls.raw;
-      let location = photo.location.city
-        ? `${photo.location.city}, ${photo.location.country}`
-        : "Unknown";
+      let location = photo.location.name ? `${photo.location.name}` : "Unknown";
       let author = photo.user.name ? `${photo.user.name}` : "Unknown";
       let photoLink = photo.links.html;
       let downloadLink = `https://unsplash.com/photos/${photo.id}/download?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&force=true`;

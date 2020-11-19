@@ -11,10 +11,12 @@ chrome.storage.onChanged.addListener(function (result, storageArea) {
   // console.log(result);
   // console.log(storageArea);
   let mainView = document.getElementsByTagName("main");
-  if (result["pmode"]['newValue']) {
-    mainView[0].style.display = "none";
-  } else {
-    mainView[0].style.display = "block";
+  if (result["pmode"]) {
+    if (result["pmode"].newValue === true) {
+      mainView[0].style.display = "none";
+    } else {
+      mainView[0].style.display = "block";
+    }
   }
 });
 
