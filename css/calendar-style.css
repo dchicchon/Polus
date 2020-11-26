@@ -142,6 +142,10 @@ button:hover {
   display: block;
 }
 
+#nav li a {
+  text-decoration: none;
+}
+
 #app-info {
   padding: 0.5rem 1rem 0;
   display: -ms-grid;

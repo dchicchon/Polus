@@ -12,7 +12,8 @@
 
   "browser_action": {
     "default_title":"Polus",
-    "default_icon":"images/polus_tab_icon.png"
+    "default_icon":"images/polus_tab_icon.png",
+    "default_popup":"html/options.html"
   },
   
   "author": "dchicchon",
@@ -21,7 +22,7 @@
     "persistent": false
   },
   "chrome_url_overrides": {
-    "newtab": "index.html"
+    "newtab": "html/index.html"
   },
   "content_security_policy":"script-src 'self' https://www.gstatic.com/ https://www.google-analytics.com https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",
   "oauth2": {
