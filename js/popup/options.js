@@ -31,4 +31,5 @@ for (let toggle of toggles) {
     }
 }
 
+document.getElementById("submitPhoto").onclick = func
  
