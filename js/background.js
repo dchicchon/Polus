@@ -1,13 +1,13 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.set({ view: "week" });
-  chrome.storage.local.set({ pmode: false });
+  chrome.storage.local.set({ pmode: false, clock: true, date: true, changePhoto: true });
   getPhoto();
 });
 
 chrome.runtime.setUninstallURL(
   "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit",
-  () => {}
+  () => { }
 );
 
 // Check Alarm
@@ -29,9 +29,12 @@ chrome.alarms.get("changeBackground", (alarm) => {
 
 // Alarm to execute getPhoto()
 chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === "changeBackground") {
-    getPhoto();
-  }
+  chrome.storage.local.get(['changePhoto'], result => {
+    if (result['changePhoto'] && alarm.name === 'changeBackground') {
+      getPhoto();
+    }
+  })
+
 });
 
 // Get new photo from collection https://unsplash.com/documentation
