@@ -162,6 +162,9 @@ button:hover {
 
   #app-items {
     display: none;
+    // mix-blend-mode: difference;
+    // background:grey;
+    background-blend-mode: screen;
     grid-column: 1;
     grid-row: 1;
     animation-name: fadeIn;
@@ -184,6 +187,9 @@ button:hover {
   padding: 1rem;
   display: grid;
   text-align: center;
+  background-blend-mode: screen;
+  background:none;
+  color:white;
 
   #background-location {
     grid-column: 1;

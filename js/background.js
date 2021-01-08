@@ -1,7 +1,7 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.sync.set({ view: "week" });
-  chrome.storage.local.set({ pmode: false, clock: true, date: true, changePhoto: true });
+  chrome.storage.sync.set({ view: "week", pmode: false, clock: true, date: true, changePhoto: true, newTab: true });
+
   getPhoto();
 });
 
@@ -27,9 +27,29 @@ chrome.alarms.get("changeBackground", (alarm) => {
   }
 });
 
+
+// CONTEXT MENUS
+chrome.contextMenus.create({
+  title: "Open",
+  contexts: ['browser_action'],
+  id: 'open-sesame',
+
+})
+// onclick: function () {
+//     // tab opened
+//   })
+// }
+chrome.contextMenus.onClicked.addListener(function (result) {
+  if (result['menuItemId'] === 'open-sesame') {
+    chrome.tabs.create({ 'url': chrome.extension.getURL("index.html") }, function (tab) {
+    })
+  }
+})
+
+
 // Alarm to execute getPhoto()
 chrome.alarms.onAlarm.addListener((alarm) => {
-  chrome.storage.local.get(['changePhoto'], result => {
+  chrome.storage.sync.get(['changePhoto'], result => {
     if (result['changePhoto'] && alarm.name === 'changeBackground') {
       getPhoto();
     }

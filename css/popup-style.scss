@@ -15,6 +15,12 @@ body {
 
 // Options
 /* The switch - the box around the slider */
+
+#photoURL {
+  width: 95%;
+  outline:none
+}
+
 .switch {
   position: relative;
   display: inline-block;
@@ -79,7 +85,7 @@ input:checked + .slider:before {
 
 // OPTIONS END
 
-
+// AUTH BEGIN
 .signup-text {
   font-weight: 200;
 }

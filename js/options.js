@@ -2,8 +2,8 @@ let atag = document.getElementById("pmode");
 atag.onclick = () => pmode();
 
 function pmode() {
-  chrome.storage.local.get(["pmode"], function (result) {
-    chrome.storage.local.set({ pmode: !result["pmode"] });
+  chrome.storage.sync.get(["pmode"], function (result) {
+    chrome.storage.sync.set({ pmode: !result["pmode"] });
   });
 }
 

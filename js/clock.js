@@ -21,7 +21,7 @@ const updateTime = () => {
     day: "numeric",
   };
 
-  chrome.storage.local.get(['clock', 'date'], result => {
+  chrome.storage.sync.get(['clock', 'date'], result => {
     if (result['clock']) {
       let clock = `${currentDate.toLocaleTimeString()}`;
       document.getElementById("clock").textContent = clock;

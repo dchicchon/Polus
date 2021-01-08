@@ -6,9 +6,9 @@ let toggles = document.getElementsByClassName("toggle")
 for (let toggle of toggles) {
     let key = toggle.id
     console.log(key)
-    chrome.storage.local.get(key, result => {
+    chrome.storage.sync.get(key, result => {
         if (Object.keys(result).length === 0 && result.constructor === Object) {
-            chrome.storage.local.set({ key: true })
+            chrome.storage.sync.set({ key: true })
         }
         if (result[key]) {
             toggle.checked = true
@@ -21,12 +21,12 @@ for (let toggle of toggles) {
         if (this.checked) {
             console.log("ON ")
             console.log(this.checked)
-            chrome.storage.local.set({ [toggle.id]: true })
+            chrome.storage.sync.set({ [toggle.id]: true })
         }
         else {
             console.log("OFF")
             console.log(this.checked)
-            chrome.storage.local.set({ [toggle.id]: false })
+            chrome.storage.sync.set({ [toggle.id]: false })
         }
     }
 }
@@ -60,6 +60,10 @@ document.getElementById("submitPhoto").onclick = function () {
         .catch((err) => console.log(`Fetch failed: ${err}`));
 }
 
+// Changing new tab
 chrome.storage.onChanged.addListener(function (result) {
     console.log(result)
+    // if (result['newTab'] === false) {
+    //     chrome.tabs.update({ url: "chrome-search://local-ntp/local-ntp.html" })
+    // }
 })

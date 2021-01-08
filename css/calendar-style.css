@@ -184,6 +184,7 @@ button:hover {
 
 #app-info #app-items {
   display: none;
+  background-blend-mode: screen;
   -ms-grid-column: 1;
   grid-column: 1;
   -ms-grid-row: 1;
@@ -214,6 +215,9 @@ button:hover {
   display: -ms-grid;
   display: grid;
   text-align: center;
+  background-blend-mode: screen;
+  background: none;
+  color: white;
 }
 
 #background-info #background-location {
