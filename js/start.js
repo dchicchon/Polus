@@ -1,9 +1,9 @@
 const startApp = () => {
   chrome.storage.sync.get("newTab", function (result) {
-    if (result['newTab'] === false) {
-      chrome.tabs.update({ url: "chrome-search://local-ntp/local-ntp.html" })
+    if (result["newTab"] === false) {
+      chrome.tabs.update({ url: "chrome-search://local-ntp/local-ntp.html" });
     }
-  })
+  });
 
   function startAuth() {
     var config = {

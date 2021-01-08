@@ -1,13 +1,19 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.sync.set({ view: "week", pmode: false, clock: true, date: true, changePhoto: true, newTab: true });
-
+  chrome.storage.sync.set({
+    view: "week",
+    pmode: false,
+    clock: true,
+    date: true,
+    changePhoto: true,
+    newTab: true,
+  });
   getPhoto();
 });
 
 chrome.runtime.setUninstallURL(
   "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit",
-  () => { }
+  () => {}
 );
 
 // Check Alarm
@@ -27,34 +33,38 @@ chrome.alarms.get("changeBackground", (alarm) => {
   }
 });
 
-
 // CONTEXT MENUS
 chrome.contextMenus.create({
   title: "Open",
-  contexts: ['browser_action'],
-  id: 'open-sesame',
-
-})
+  contexts: ["browser_action"],
+  id: "open-sesame",
+});
 // onclick: function () {
 //     // tab opened
 //   })
 // }
 chrome.contextMenus.onClicked.addListener(function (result) {
-  if (result['menuItemId'] === 'open-sesame') {
-    chrome.tabs.create({ 'url': chrome.extension.getURL("index.html") }, function (tab) {
-    })
+  if (result["menuItemId"] === "open-sesame") {
+    let newURL = chrome.extension.getURL("/html/index.html");
+    // console.log(newURL);
+    chrome.tabs.create(
+      {
+        url: newURL,
+      },
+      function (tab) {
+        // console.log(tab);
+      }
+    );
   }
-})
-
+});
 
 // Alarm to execute getPhoto()
 chrome.alarms.onAlarm.addListener((alarm) => {
-  chrome.storage.sync.get(['changePhoto'], result => {
-    if (result['changePhoto'] && alarm.name === 'changeBackground') {
+  chrome.storage.sync.get(["changePhoto"], (result) => {
+    if (result["changePhoto"] && alarm.name === "changeBackground") {
       getPhoto();
     }
-  })
-
+  });
 });
 
 // Get new photo from collection https://unsplash.com/documentation
