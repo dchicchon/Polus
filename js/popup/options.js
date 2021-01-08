@@ -31,5 +31,9 @@ for (let toggle of toggles) {
     }
 }
 
-document.getElementById("submitPhoto").onclick = func
- 
+document.getElementById("submitPhoto").onclick = function () {
+    let url = document.getElementById("photoURL").value
+    console.log("Submitted photo!")
+    console.log(url)
+}
+
