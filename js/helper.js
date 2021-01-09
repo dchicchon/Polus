@@ -68,9 +68,8 @@ let addFunction = function () {
 
 let getKey = () => {
   let alpha = "abcdefghijklmnopqrstuvwxyz";
-  let key = `${alpha[Math.floor(Math.random() * 25)]}${
-    Math.floor(Math.random() * 98) + 1
-  }`;
+  let key = `${alpha[Math.floor(Math.random() * 25)]}${Math.floor(Math.random() * 98) + 1
+    }`;
   return key;
 };
 
@@ -99,7 +98,7 @@ let addToStorage = function (listElm, date, text, key) {
       let dateEntries = result[`${date}`];
       dateEntries.push(entry);
       entryFunctions(listElm, dateEntries);
-      chrome.storage.sync.set({ [date]: dateEntries }, function () {});
+      chrome.storage.sync.set({ [date]: dateEntries }, function () { });
     }
   });
 };
@@ -115,7 +114,7 @@ let isEmpty = (obj) => {
 };
 
 // SET ENTRIES
-let setEntries = function (date, list) {
+let setEntries = function (date, elmList) {
   chrome.storage.sync.get([`${date}`], function (result) {
     if (!isEmpty(result)) {
       let entriesArr = result[`${date}`];
@@ -128,9 +127,7 @@ let setEntries = function (date, list) {
         entryListItem.textContent = entriesArr[j].text;
 
         // Values
-        entryListItem.style.textDecoration = entriesArr[j]["complete"]
-          ? "line-through"
-          : "none";
+        entryListItem.style.textDecoration = entriesArr[j]["complete"] ? "line-through" : "none";
         entryListItem.value = entriesArr[j]["complete"];
 
         // Setting Attributes
@@ -139,10 +136,9 @@ let setEntries = function (date, list) {
         entryListItem.setAttribute("draggable", "true");
 
         // Append
-        list.appendChild(entryListItem);
+        elmList.appendChild(entryListItem);
         if (j === entriesArr.length - 1) {
-          entryFunctions(list, entriesArr);
-          // entryFunctions(monthDetailsList, date, entriesArr);
+          entryFunctions(elmList, entriesArr);
         }
       }
     }
@@ -179,6 +175,7 @@ let entryFunctions = function (elmList, arr) {
     // };
 
     // Filter by the delete btn val. Set this filtered arr to the existing variable of arr
+
     let deleteEntry = function () {
       let entryDate = entry.classList.item(1); // check the classList for new dates
       chrome.storage.sync.get([`${entryDate}`], (result) => {
@@ -211,40 +208,61 @@ let entryFunctions = function (elmList, arr) {
       entry.setAttribute("listener", true);
       let active = false; // This is to check the entry click function. If false, we will turn it true. Will only go back to false if we edit or check
       // let entryEdit = document.createElement("button");
-      let entryCheck = document.createElement("button");
-      let entryDelete = document.createElement("button");
 
-      // entryEdit.setAttribute("class", "edit");
-      entryCheck.setAttribute("class", "check");
-      entryDelete.setAttribute("class", "delete");
+      function createCheckAndDelete(id) {
+        let entryCheck = document.createElement("button");
+        let entryDelete = document.createElement("button");
 
-      // Text Content
-      // entryEdit.textContent = "#";
-      entryCheck.innerHTML = "&#10003;";
-      entryDelete.textContent = "x";
+        // entryEdit.setAttribute("class", "edit");
+        entryCheck.setAttribute("class", "check");
+        entryDelete.setAttribute("class", "delete");
 
-      // Values
+        // Text Content
+        // entryEdit.textContent = "#";
+        entryCheck.innerHTML = "&#10003;";
+        entryDelete.textContent = "x";
+        entryDelete.value = id
+        return { entryCheck, entryDelete }
+      }
 
-      entryDelete.value = entriesArr[i].id;
-      // Entry Click
+      let { entryCheck, entryDelete } = createCheckAndDelete(entriesArr[i].id)
+
       entry.addEventListener("click", (event) => {
         // If entry is not active
         if (!active) {
           active = true;
-          entry.style.textOverflow = "none";
-          entry.style.height = "fit-content";
-          entry.style.whiteSpace = "normal";
-          entry.style.overflow = "visible";
-          entry.append(entryCheck);
-          entry.append(entryDelete);
+          let rect = entry.getBoundingClientRect()
+          console.log(rect)
+          let newStyle = {
+            // width: '300px',
+            // height: '100px',
+            textOverflow: 'none',
+            // position: 'relative',
+            // position:'absolute',
+            // 'margin-bottom':'100px',
+            // 'z-index': '100',
+            background: 'rgba(24, 127, 187, 0.993)',
+
+            height: 'fit-content',
+            whiteSpace: 'normal',
+            overflow: 'visible'
+          }
+          Object.assign(entry.style, newStyle) // style
+          entry.append(entryCheck, entryDelete);
         }
-        // If entry is not active
+        // If entry is active
         else if (event.target.classList.contains("entry") && active) {
           active = false;
-          entry.style.height = "1rem";
-          entry.style.textOverflow = "ellipsis";
-          entry.style.whiteSpace = "nowrap";
-          entry.style.overflow = "hidden";
+          let newStyle = {
+            // height: 'initial',
+            // width: 'initial',
+            // position: 'static',
+            background: 'rgba(24, 127, 187, 0.63)',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden'
+          }
+          Object.assign(entry.style, newStyle) // style
           entry.removeChild(entryCheck);
           entry.removeChild(entryDelete);
         }
@@ -258,7 +276,6 @@ let entryFunctions = function (elmList, arr) {
       // })
 
       entryCheck.addEventListener("click", checkEntry); // Check Entry
-
       entryDelete.addEventListener("click", deleteEntry); // Delete entry
     } else {
     }
@@ -268,7 +285,7 @@ let entryFunctions = function (elmList, arr) {
 // ENTRY DRAG
 let dragFunctions = function () {
   let dragged;
-  document.addEventListener("drag", function (event) {}, false);
+  document.addEventListener("drag", function (event) { }, false);
   document.addEventListener(
     "dragstart",
     function (event) {

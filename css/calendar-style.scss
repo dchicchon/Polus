@@ -333,7 +333,7 @@ button:hover {
     list-style-type: none;
     padding: 0;
     li {
-      width: 85%;
+      width: 98%;
       text-align: center;
       white-space: nowrap;
       display: block;
@@ -350,7 +350,7 @@ button:hover {
       padding: 0.5rem;
       border-radius: 25px;
       font-size: 0.9rem;
-      height: 1rem;
+      // height: 1rem;
     }
     @media (max-width: 760px) {
       li {
@@ -468,25 +468,26 @@ button:hover {
   }
   .weekday {
     text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
-    // min-height: 15rem;
-    // max-height: 16rem;
     height: 15rem;
     padding: 0.75rem;
     border: 1px solid $border-color;
     background: $day-background;
-    // transform: translateZ(0);
-    // transition: transform 0.5s;
+    position: relative;
+    z-index: 1;
     .weekDetails {
       overflow: auto;
       height: 14rem;
-      // min-height: 14rem;
-      // max-height: 15rem;
+      position: relative;
+      z-index: 1;
       ul {
         list-style-type: none;
         padding: 0;
+        position: relative;
+        z-index: 1;
         li {
-          width: 85%;
-          // V 1.0.0.9
+          position: relative;
+          z-index: 100;
+          width: 92%;
           text-align: center;
           white-space: nowrap;
           overflow: hidden;
@@ -500,7 +501,6 @@ button:hover {
           padding: 0.5rem;
           border-radius: 25px;
           font-size: 0.9rem;
-          height: 1rem;
         }
         li:hover {
           background: rgba(24, 127, 187, 0.993);
@@ -589,7 +589,7 @@ button:hover {
             padding: 0.5rem;
             border-radius: 25px;
             font-size: 0.9rem;
-            height: 1rem;
+            // height: 1rem;
           }
           li:hover {
             background: rgba(24, 127, 187, 0.993);
