@@ -234,15 +234,13 @@ let entryFunctions = function (elmList, arr) {
           let rect = entry.getBoundingClientRect()
           console.log(rect)
           let newStyle = {
-            // width: '300px',
+            width: '500px',
             // height: '100px',
             textOverflow: 'none',
             // position: 'relative',
-            // position:'absolute',
-            // 'margin-bottom':'100px',
-            // 'z-index': '100',
+            position: 'absolute',
+            'z-index': '100',
             background: 'rgba(24, 127, 187, 0.993)',
-
             height: 'fit-content',
             whiteSpace: 'normal',
             overflow: 'visible'
@@ -255,8 +253,8 @@ let entryFunctions = function (elmList, arr) {
           active = false;
           let newStyle = {
             // height: 'initial',
-            // width: 'initial',
-            // position: 'static',
+            width: 'initial',
+            position: 'relative',
             background: 'rgba(24, 127, 187, 0.63)',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',

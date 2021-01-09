@@ -473,19 +473,16 @@ button:hover {
     border: 1px solid $border-color;
     background: $day-background;
     position: relative;
-    z-index: 1;
     .weekDetails {
       overflow: auto;
       height: 14rem;
       position: relative;
-      z-index: 1;
-      ul {
-        list-style-type: none;
-        padding: 0;
-        position: relative;
-        z-index: 1;
+      list-style-type: none;
+      padding: 0;
+      position: relative;
+      
         li {
-          position: relative;
+          position: relative;  
           z-index: 100;
           width: 92%;
           text-align: center;
@@ -506,7 +503,6 @@ button:hover {
           background: rgba(24, 127, 187, 0.993);
           cursor: pointer;
         }
-      }
     }
     .weekDate {
       font-weight: 0;
@@ -515,7 +511,6 @@ button:hover {
       width: 20px;
       height: 20px;
       min-width: 16px;
-      // padding: 4px 3px 0 3px;
       text-align: center;
     }
 
@@ -526,9 +521,6 @@ button:hover {
     }
   }
 
-  .weekday:hover {
-    // transform: translateY(-1.5%);
-  }
 }
 
 /* MONTH VIEW */

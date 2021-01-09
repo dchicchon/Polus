@@ -556,24 +556,18 @@ button:hover {
   border: 1px solid rgba(32, 32, 32, 0.555);
   background: rgba(0, 0, 0, 0.15);
   position: relative;
-  z-index: 1;
 }
 
 #week .weekday .weekDetails {
   overflow: auto;
   height: 14rem;
   position: relative;
-  z-index: 1;
-}
-
-#week .weekday .weekDetails ul {
   list-style-type: none;
   padding: 0;
   position: relative;
-  z-index: 1;
 }
 
-#week .weekday .weekDetails ul li {
+#week .weekday .weekDetails li {
   position: relative;
   z-index: 100;
   width: 92%;
@@ -593,7 +587,7 @@ button:hover {
   font-size: 0.9rem;
 }
 
-#week .weekday .weekDetails ul li:hover {
+#week .weekday .weekDetails li:hover {
   background: rgba(24, 127, 187, 0.993);
   cursor: pointer;
 }

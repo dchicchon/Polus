@@ -61,14 +61,10 @@ const createWeek = () => {
   });
 
   // Nav
-  weekNav.appendChild(prevBtn);
-  weekNav.appendChild(weekTitle);
-  weekNav.appendChild(nextBtn);
+  weekNav.append(prevBtn, weekTitle, nextBtn)
 
   // View
-  weekView.appendChild(weekNav);
-  weekView.appendChild(weekdayNames);
-  weekView.appendChild(weekDays);
+  weekView.append(weekNav, weekdayNames, weekDays)
 
   let createDaysInWeek = (dateObj) => {
     weekDays.innerHTML = "";
@@ -95,8 +91,10 @@ const createWeek = () => {
       // Create DOM Elements
       let weekday = document.createElement("div");
       let weekDate = document.createElement("div");
+
       let details = document.createElement("div");
       let detailsList = document.createElement("ul");
+
       let btn = document.createElement("button");
 
       // If week day is today
@@ -113,8 +111,10 @@ const createWeek = () => {
       // Set Attributes
       weekday.setAttribute("class", "weekday");
       weekDate.setAttribute("class", "weekDate");
-      details.setAttribute("class", "weekDetails");
-      details.id = date;
+      detailsList.setAttribute('class', 'weekDetails')
+      detailsList.id = date
+      // details.setAttribute("class", "weekDetails");
+      // details.id = date;
       btn.setAttribute("class", "add");
 
       weekday.addEventListener("mouseenter", () => {
@@ -128,10 +128,8 @@ const createWeek = () => {
       btn.value = date;
 
       // Append
-      details.appendChild(detailsList);
-      details.appendChild(btn);
-      weekday.appendChild(weekDate);
-      weekday.appendChild(details);
+      // details.append(detailsList, btn)
+      weekday.append(weekDate, detailsList,btn)
       weekDays.appendChild(weekday);
     }
 
