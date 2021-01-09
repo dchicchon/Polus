@@ -54,7 +54,4 @@ document.getElementById("submitPhoto").onclick = function () {
 // Changing new tab
 chrome.storage.onChanged.addListener(function (result) {
   console.log(result);
-  // if (result['newTab'] === false) {
-  //     chrome.tabs.update({ url: "chrome-search://local-ntp/local-ntp.html" })
-  // }
 });

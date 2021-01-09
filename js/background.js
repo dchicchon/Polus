@@ -7,13 +7,14 @@ chrome.runtime.onInstalled.addListener(() => {
     date: true,
     changePhoto: true,
     newTab: true,
+    indexOpen: false
   });
   getPhoto();
 });
 
 chrome.runtime.setUninstallURL(
   "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit",
-  () => {}
+  () => { }
 );
 
 // Check Alarm
@@ -39,22 +40,17 @@ chrome.contextMenus.create({
   contexts: ["browser_action"],
   id: "open-sesame",
 });
-// onclick: function () {
-//     // tab opened
-//   })
-// }
+
+// 1. User toggles off new tab
+// 2. Clicks on 'Open'
+// 3. Opens index.html
+
 chrome.contextMenus.onClicked.addListener(function (result) {
   if (result["menuItemId"] === "open-sesame") {
     let newURL = chrome.extension.getURL("/html/index.html");
-    // console.log(newURL);
-    chrome.tabs.create(
-      {
-        url: newURL,
-      },
-      function (tab) {
-        // console.log(tab);
-      }
-    );
+
+    chrome.storage.sync.set({ indexOpen: true })
+    chrome.tabs.create({ url: newURL })
   }
 });
 
