@@ -111,10 +111,8 @@ const createWeek = () => {
       // Set Attributes
       weekday.setAttribute("class", "weekday");
       weekDate.setAttribute("class", "weekDate");
-      detailsList.setAttribute('class', 'weekDetails')
-      detailsList.id = date
-      // details.setAttribute("class", "weekDetails");
-      // details.id = date;
+      details.setAttribute("class", "weekDetails");
+      details.id = date;
       btn.setAttribute("class", "add");
 
       weekday.addEventListener("mouseenter", () => {
@@ -128,8 +126,8 @@ const createWeek = () => {
       btn.value = date;
 
       // Append
-      // details.append(detailsList, btn)
-      weekday.append(weekDate, detailsList,btn)
+      details.append(detailsList, btn)
+      weekday.append(weekDate, details)
       weekDays.appendChild(weekday);
     }
 

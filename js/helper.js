@@ -229,23 +229,47 @@ let entryFunctions = function (elmList, arr) {
 
       entry.addEventListener("click", (event) => {
         // If entry is not active
+
+
+
         if (!active) {
           active = true;
-          let rect = entry.getBoundingClientRect()
-          console.log(rect)
+
+          let ghostElm = document.createElement('li')
+          ghostElm.id = 'ghostie'
+
+
+          console.log(ghostElm)
+
+          let nextSib = entry.nextSibling
+
+          entry.parentNode.insertBefore(ghostElm, nextSib)
+
           let newStyle = {
-            width: '500px',
             // height: '100px',
             textOverflow: 'none',
             // position: 'relative',
-            position: 'absolute',
-            'z-index': '100',
-            background: 'rgba(24, 127, 187, 0.993)',
             height: 'fit-content',
             whiteSpace: 'normal',
-            overflow: 'visible'
+            overflow: 'visible',
+
+            // NEW
+            background: 'rgba(24, 127, 187, 0.993)',
+            width: '300px',
+            height: '100px',
+            position: 'absolute',
+            'z-index': '100',
+
           }
+
+
+
+
           Object.assign(entry.style, newStyle) // style
+
+          let rect = entry.getBoundingClientRect()
+
+          // Prepend li where entry was to fill in space
           entry.append(entryCheck, entryDelete);
         }
         // If entry is active
@@ -253,14 +277,19 @@ let entryFunctions = function (elmList, arr) {
           active = false;
           let newStyle = {
             // height: 'initial',
-            width: 'initial',
-            position: 'relative',
+
             background: 'rgba(24, 127, 187, 0.63)',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
-            overflow: 'hidden'
+            overflow: 'hidden',
+
+            // NEW
+            height: 'initial',
+            width: 'initial',
+            position: 'relative',
           }
           Object.assign(entry.style, newStyle) // style
+          document.getElementById('ghostie').remove()
           entry.removeChild(entryCheck);
           entry.removeChild(entryDelete);
         }
