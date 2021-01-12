@@ -64,7 +64,7 @@ a {
     width: 10%;
   }
   to {
-    width: 85%;
+    width: 92%;
   }
 }
 
@@ -73,7 +73,7 @@ a {
     width: 10%;
   }
   to {
-    width: 85%;
+    width: 92%;
   }
 }
 
@@ -334,17 +334,17 @@ button:hover {
   background: rgba(43, 129, 185, 0.76);
 }
 
-.edit {
+.entry-container .edit {
   background: none;
   -webkit-transition: background 0.5s;
   transition: background 0.5s;
 }
 
-.edit:hover {
+.entry-container .edit:hover {
   background: rgba(38, 96, 134, 0.76);
 }
 
-.delete {
+.entry-container .delete {
   background: none;
   text-align: center;
   width: 25px;
@@ -357,11 +357,11 @@ button:hover {
   transition: background 0.5s;
 }
 
-.delete:hover {
+.entry-container .delete:hover {
   background: rgba(38, 96, 134, 0.76);
 }
 
-.check {
+.entry-container .check {
   text-align: center;
   width: 27px;
   height: 25px;
@@ -374,7 +374,7 @@ button:hover {
   transition: background 0.5s;
 }
 
-.check:hover {
+.entry-container .check:hover {
   background: rgba(38, 96, 134, 0.76);
 }
 
@@ -578,7 +578,6 @@ button:hover {
 
 #week .weekday .weekDetails ul li {
   position: relative;
-  z-index: 100;
   width: 92%;
   text-align: center;
   white-space: nowrap;

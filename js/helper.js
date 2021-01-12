@@ -24,6 +24,7 @@ let addFunction = function () {
       entryListItem.style.animationName = "grow";
       entryListItem.style.animationFillMode = "forwards";
       entryListItem.style.animationDuration = "0.25s";
+
       let done = false; // so that blur and enter arent done together
 
       // Add a key press listener for the HTML input element (listen for the keycode for Enter (13))
@@ -116,18 +117,26 @@ let isEmpty = (obj) => {
 // SET ENTRIES
 let setEntries = function (date, elmList) {
   chrome.storage.sync.get([`${date}`], function (result) {
+
+    // If the date has entries
     if (!isEmpty(result)) {
-      let entriesArr = result[`${date}`];
+      let entriesArr = result[`${date}`]; // entries arr
+
+      // For each entry
       for (let j = 0; j < entriesArr.length; j++) {
-        // LEVEL 3 Day Details
-        // Create DOM Elements
+
         let entryListItem = document.createElement("li");
 
         // Text Content
         entryListItem.textContent = entriesArr[j].text;
 
+        let setEntryStyle = {
+          textDecoration: entriesArr[j]['complete'] ? 'line-through' : 'none',
+          background: entriesArr[j]['color'] ? entriesArr[j]['color'] : 'rgba(21, 115, 170, 0.63)'
+        }
         // Values
-        entryListItem.style.textDecoration = entriesArr[j]["complete"] ? "line-through" : "none";
+        Object.assign(entryListItem.style, setEntryStyle)
+        // entryListItem.style.textDecoration = entriesArr[j]["complete"] ? "line-through" : "none";
         entryListItem.value = entriesArr[j]["complete"];
 
         // Setting Attributes
@@ -150,31 +159,67 @@ let entryFunctions = function (elmList, arr) {
   let entriesArr = elmList.getElementsByClassName("entry");
   for (let i = 0; i < entriesArr.length; i++) {
     let entry = entriesArr[i];
+    let date = entry.classList[1]
 
-    // EDIT ENTRY
-    // let editDentry = function() {};
-    // entryInput.onkeypress = function(e) {
-    //   if (!e) e = window.event;
-    //   let keyCode = e.keyCode || e.which;
-    //   if (keyCode === 13) {
-    //     // remove focus
-    //     this.blur();
-    //     chrome.storage.sync.get([`${date}`], function(result) {
-    //       let dateEntries = result[`${date}`];
+    let editEntry = function () {
 
-    //       // Get the index of the current Entry
-    //       let index = dateEntries.indexOf(dateEntries[j]);
-    //       if (index !== -1) {
-    //         // Find and replace the element at the index with the new value
-    //         dateEntries[index] = entryInput.value;
-    //       }
+      let editButton = this // declare 'this' for less confusion and consistency in all functions
+      // create input
+      let input = document.createElement("input")
+      input.className = 'newItem'
+      input.value = editButton.previousElementSibling.textContent
 
-    //       chrome.storage.sync.set({ [date]: dateEntries }, function() {});
-    //     });
-    //   }
-    // };
 
-    // Filter by the delete btn val. Set this filtered arr to the existing variable of arr
+      editButton.parentNode.insertBefore(input, editButton.previousElementSibling)
+      editButton.previousElementSibling.remove()
+      input.focus()
+      editButton.textContent = 'Submit'
+
+      editButton.removeEventListener('click', editEntry)
+      editButton.addEventListener('click', submitText)
+
+      function submitText() {
+
+        //  Get new text value
+        let newText = input.value
+
+        // Create new text Node
+        let textNode = document.createElement("p")
+        textNode.className = 'text'
+        textNode.textContent = newText
+
+        // Insert and remove input node
+        console.log(editButton)
+        console.log(editButton.parentNode)
+
+        input.blur()
+        editButton.parentNode.removeChild(input)
+
+        editButton.parentNode.insertBefore(textNode, editButton)
+
+
+        editButton.textContent = "Edit"
+
+        // add text to storage to update
+        chrome.storage.sync.get([`${date}`], function (result) {
+          let dateEntries = result[`${date}`]; // [{complete: false, key: "u35", text: "work at 11"}, { complete: false, key: "a55", text: "Biceps" }]
+          let newDateEntries = [...dateEntries]
+          // Get the index of the current Entry
+          let index = newDateEntries.findIndex(x => x.key === entry.id)
+          newDateEntries[index]['text'] = newText
+          chrome.storage.sync.set({ [date]: newDateEntries }, function () {
+
+            editButton.removeEventListener("click", submitText)
+            editButton.addEventListener("click", editEntry)
+          });
+        });
+      }
+
+    }
+
+    let editColor = function() {
+      
+    }
 
     let deleteEntry = function () {
       let entryDate = entry.classList.item(1); // check the classList for new dates
@@ -209,41 +254,54 @@ let entryFunctions = function (elmList, arr) {
       let active = false; // This is to check the entry click function. If false, we will turn it true. Will only go back to false if we edit or check
       // let entryEdit = document.createElement("button");
 
-      function createCheckAndDelete(id) {
+      function createEntryElements(entry) {
+        let entryText = document.createElement("p")
         let entryCheck = document.createElement("button");
         let entryDelete = document.createElement("button");
+        let entryEdit = document.createElement("button");
 
-        // entryEdit.setAttribute("class", "edit");
-        entryCheck.setAttribute("class", "check");
-        entryDelete.setAttribute("class", "delete");
+        entryText.className = 'text'
+        entryCheck.className = 'check'
+        entryDelete.className = 'delete'
+        entryEdit.className = 'edit'
 
         // Text Content
-        // entryEdit.textContent = "#";
+        entryEdit.textContent = 'Edit'
         entryCheck.innerHTML = "&#10003;";
         entryDelete.textContent = "x";
-        entryDelete.value = id
-        return { entryCheck, entryDelete }
+
+        entryText.textContent = entry.textContent
+        entryDelete.value = entry.id
+
+        let entryDiv = document.createElement("div")
+        entryDiv.className = 'entry-container'
+
+        entryDiv.append(entryText, entryEdit, entryCheck, entryDelete)
+        entryEdit.addEventListener("click", editEntry) // Edit Entry
+        entryCheck.addEventListener("click", checkEntry); // Check Entry
+        entryDelete.addEventListener("click", deleteEntry); // Delete entry
+
+        return entryDiv
       }
 
-      let { entryCheck, entryDelete } = createCheckAndDelete(entriesArr[i].id)
-
+      let entryDiv = createEntryElements(entry)
+      let text = entry.textContent
+      // If entry is not active
       entry.addEventListener("click", (event) => {
-        // If entry is not active
-
-
 
         if (!active) {
           active = true;
 
+          // let prevGhost = document.getElementById("ghostie")
+          // if (prevGhost) {
+          //   prevGhost.remove()
+          // }
+
           let ghostElm = document.createElement('li')
-          ghostElm.id = 'ghostie'
-
-
-          console.log(ghostElm)
+          ghostElm.id = 'ghostie' // should i make this a class or an id?
 
           let nextSib = entry.nextSibling
-
-          entry.parentNode.insertBefore(ghostElm, nextSib)
+          entry.parentNode.insertBefore(ghostElm, nextSib) // 1.element to place, 2. reference node // remember praentNode!
 
           let newStyle = {
             // height: '100px',
@@ -256,28 +314,24 @@ let entryFunctions = function (elmList, arr) {
             // NEW
             background: 'rgba(24, 127, 187, 0.993)',
             width: '300px',
-            height: '100px',
+            'max-width': '300px',
+            height: 'fit-content',
             position: 'absolute',
             'z-index': '100',
 
           }
 
-
-
-
           Object.assign(entry.style, newStyle) // style
 
-          let rect = entry.getBoundingClientRect()
+          entry.textContent = ''
+          // Make new div inside of entry
 
-          // Prepend li where entry was to fill in space
-          entry.append(entryCheck, entryDelete);
+          entry.append(entryDiv);
         }
         // If entry is active
-        else if (event.target.classList.contains("entry") && active) {
+        else if (event.target.classList.contains("entry") && active || event.target.classList.contains("entry-container") || event.target.classList.contains("text")) {
           active = false;
           let newStyle = {
-            // height: 'initial',
-
             background: 'rgba(24, 127, 187, 0.63)',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -290,24 +344,15 @@ let entryFunctions = function (elmList, arr) {
           }
           Object.assign(entry.style, newStyle) // style
           document.getElementById('ghostie').remove()
-          entry.removeChild(entryCheck);
-          entry.removeChild(entryDelete);
+          entry.removeChild(entryDiv);
+          entry.textContent = text
+
         }
       });
-
-      // DRAGGING ITEMS
-
-      // Edit Entry
-      // entryEdit.addEventListener('click',() => {
-
-      // })
-
-      entryCheck.addEventListener("click", checkEntry); // Check Entry
-      entryDelete.addEventListener("click", deleteEntry); // Delete entry
-    } else {
     }
-  }
+  };
 };
+
 
 // ENTRY DRAG
 let dragFunctions = function () {

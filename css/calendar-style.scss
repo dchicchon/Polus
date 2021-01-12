@@ -75,7 +75,7 @@ a {
     width: 10%;
   }
   to {
-    width: 85%;
+    width: 92%;
   }
 }
 @keyframes fadeIn {
@@ -267,6 +267,7 @@ button:hover {
   cursor: pointer;
 }
 
+
 .add {
   background: none;
   width: 1.5rem;
@@ -283,45 +284,50 @@ button:hover {
   background: rgba(43, 129, 185, 0.76);
 }
 
-.edit {
-  background: none;
-  transition: background 0.5s;
-}
-.edit:hover {
-  background: $tool-hover;
+// entry elements
+.entry-container {
+  // height:initial;
+  // min-height: 90px;
+  .edit {
+    background: none;
+    transition: background 0.5s;
+  }
+  .edit:hover {
+    background: $tool-hover;
+  }
+  .delete {
+    background: none;
+    text-align: center;
+    width: 25px;
+    height: 25px;
+    font-size: 0.9rem;
+    border-radius: 100%;
+    margin-left: 5px;
+    padding: 0 0.5rem;
+    transition: background 0.5s;
+  }
+  
+  .delete:hover {
+    background: $tool-hover;
+  }
+  
+  .check {
+    text-align: center;
+    width: 27px;
+    height: 25px;
+    font-size: 0.9rem;
+    border-radius: 100%;
+    margin-left: 5px;
+    padding: 0 0.5rem;
+    background: none;
+    transition: background 0.5s;
+  }
+  
+  .check:hover {
+    background: $tool-hover;
+  }
 }
 
-.delete {
-  background: none;
-  text-align: center;
-  width: 25px;
-  height: 25px;
-  font-size: 0.9rem;
-  border-radius: 100%;
-  margin-left: 5px;
-  padding: 0 0.5rem;
-  transition: background 0.5s;
-}
-
-.delete:hover {
-  background: $tool-hover;
-}
-
-.check {
-  text-align: center;
-  width: 27px;
-  height: 25px;
-  font-size: 0.9rem;
-  border-radius: 100%;
-  margin-left: 5px;
-  padding: 0 0.5rem;
-  background: none;
-  transition: background 0.5s;
-}
-
-.check:hover {
-  background: $tool-hover;
-}
 
 // DETAILS
 
@@ -502,7 +508,7 @@ button:hover {
         }
         li {
           position: relative;
-          z-index: 100;
+          // z-index: 100;
           width: 92%;
           text-align: center;
           white-space: nowrap;
@@ -522,6 +528,7 @@ button:hover {
           background: rgba(24, 127, 187, 0.993);
           cursor: pointer;
         }
+
       }
     }
     .weekDate {
