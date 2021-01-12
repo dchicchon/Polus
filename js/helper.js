@@ -69,8 +69,9 @@ let addFunction = function () {
 
 let getKey = () => {
   let alpha = "abcdefghijklmnopqrstuvwxyz";
-  let key = `${alpha[Math.floor(Math.random() * 25)]}${Math.floor(Math.random() * 98) + 1
-    }`;
+  let key = `${alpha[Math.floor(Math.random() * 25)]}${
+    Math.floor(Math.random() * 98) + 1
+  }`;
   return key;
 };
 
@@ -99,7 +100,7 @@ let addToStorage = function (listElm, date, text, key) {
       let dateEntries = result[`${date}`];
       dateEntries.push(entry);
       entryFunctions(listElm, dateEntries);
-      chrome.storage.sync.set({ [date]: dateEntries }, function () { });
+      chrome.storage.sync.set({ [date]: dateEntries }, function () {});
     }
   });
 };
@@ -117,25 +118,25 @@ let isEmpty = (obj) => {
 // SET ENTRIES
 let setEntries = function (date, elmList) {
   chrome.storage.sync.get([`${date}`], function (result) {
-
     // If the date has entries
     if (!isEmpty(result)) {
       let entriesArr = result[`${date}`]; // entries arr
 
       // For each entry
       for (let j = 0; j < entriesArr.length; j++) {
-
         let entryListItem = document.createElement("li");
 
         // Text Content
         entryListItem.textContent = entriesArr[j].text;
 
         let setEntryStyle = {
-          textDecoration: entriesArr[j]['complete'] ? 'line-through' : 'none',
-          background: entriesArr[j]['color'] ? entriesArr[j]['color'] : 'rgba(21, 115, 170, 0.63)'
-        }
+          textDecoration: entriesArr[j]["complete"] ? "line-through" : "none",
+          background: entriesArr[j]["color"]
+            ? entriesArr[j]["color"]
+            : "rgba(21, 115, 170, 0.63)",
+        };
         // Values
-        Object.assign(entryListItem.style, setEntryStyle)
+        Object.assign(entryListItem.style, setEntryStyle);
         // entryListItem.style.textDecoration = entriesArr[j]["complete"] ? "line-through" : "none";
         entryListItem.value = entriesArr[j]["complete"];
 
@@ -159,67 +160,62 @@ let entryFunctions = function (elmList, arr) {
   let entriesArr = elmList.getElementsByClassName("entry");
   for (let i = 0; i < entriesArr.length; i++) {
     let entry = entriesArr[i];
-    let date = entry.classList[1]
+    let date = entry.classList[1];
 
     let editEntry = function () {
-
-      let editButton = this // declare 'this' for less confusion and consistency in all functions
+      let editButton = this; // declare 'this' for less confusion and consistency in all functions
       // create input
-      let input = document.createElement("input")
-      input.className = 'newItem'
-      input.value = editButton.previousElementSibling.textContent
+      let input = document.createElement("input");
+      input.className = "newItem";
+      input.value = editButton.previousElementSibling.textContent;
 
+      editButton.parentNode.insertBefore(
+        input,
+        editButton.previousElementSibling
+      );
+      editButton.previousElementSibling.remove();
+      input.focus();
+      editButton.textContent = "Submit";
 
-      editButton.parentNode.insertBefore(input, editButton.previousElementSibling)
-      editButton.previousElementSibling.remove()
-      input.focus()
-      editButton.textContent = 'Submit'
-
-      editButton.removeEventListener('click', editEntry)
-      editButton.addEventListener('click', submitText)
+      editButton.removeEventListener("click", editEntry);
+      editButton.addEventListener("click", submitText);
 
       function submitText() {
-
         //  Get new text value
-        let newText = input.value
+        let newText = input.value;
 
         // Create new text Node
-        let textNode = document.createElement("p")
-        textNode.className = 'text'
-        textNode.textContent = newText
+        let textNode = document.createElement("p");
+        textNode.className = "text";
+        textNode.textContent = newText;
 
         // Insert and remove input node
-        console.log(editButton)
-        console.log(editButton.parentNode)
+        console.log(editButton);
+        console.log(editButton.parentNode);
 
-        input.blur()
-        editButton.parentNode.removeChild(input)
+        input.blur();
+        editButton.parentNode.removeChild(input);
 
-        editButton.parentNode.insertBefore(textNode, editButton)
+        editButton.parentNode.insertBefore(textNode, editButton);
 
-
-        editButton.textContent = "Edit"
+        editButton.textContent = "Edit";
 
         // add text to storage to update
         chrome.storage.sync.get([`${date}`], function (result) {
           let dateEntries = result[`${date}`]; // [{complete: false, key: "u35", text: "work at 11"}, { complete: false, key: "a55", text: "Biceps" }]
-          let newDateEntries = [...dateEntries]
+          let newDateEntries = [...dateEntries];
           // Get the index of the current Entry
-          let index = newDateEntries.findIndex(x => x.key === entry.id)
-          newDateEntries[index]['text'] = newText
+          let index = newDateEntries.findIndex((x) => x.key === entry.id);
+          newDateEntries[index]["text"] = newText;
           chrome.storage.sync.set({ [date]: newDateEntries }, function () {
-
-            editButton.removeEventListener("click", submitText)
-            editButton.addEventListener("click", editEntry)
+            editButton.removeEventListener("click", submitText);
+            editButton.addEventListener("click", editEntry);
           });
         });
       }
+    };
 
-    }
-
-    let editColor = function() {
-      
-    }
+    let editColor = function () {};
 
     let deleteEntry = function () {
       let entryDate = entry.classList.item(1); // check the classList for new dates
@@ -255,40 +251,40 @@ let entryFunctions = function (elmList, arr) {
       // let entryEdit = document.createElement("button");
 
       function createEntryElements(entry) {
-        let entryText = document.createElement("p")
+        let entryText = document.createElement("p");
+        // let entryColor = document.createElement("button");
+        let entryEdit = document.createElement("button");
         let entryCheck = document.createElement("button");
         let entryDelete = document.createElement("button");
-        let entryEdit = document.createElement("button");
 
-        entryText.className = 'text'
-        entryCheck.className = 'check'
-        entryDelete.className = 'delete'
-        entryEdit.className = 'edit'
+        entryText.className = "text";
+        entryCheck.className = "check";
+        entryDelete.className = "delete";
+        entryEdit.className = "edit";
 
         // Text Content
-        entryEdit.textContent = 'Edit'
+        entryEdit.textContent = "Edit";
         entryCheck.innerHTML = "&#10003;";
         entryDelete.textContent = "x";
 
-        entryText.textContent = entry.textContent
-        entryDelete.value = entry.id
+        entryText.textContent = entry.textContent;
+        entryDelete.value = entry.id;
 
-        let entryDiv = document.createElement("div")
-        entryDiv.className = 'entry-container'
+        let entryDiv = document.createElement("div");
+        entryDiv.className = "entry-container";
 
-        entryDiv.append(entryText, entryEdit, entryCheck, entryDelete)
-        entryEdit.addEventListener("click", editEntry) // Edit Entry
+        entryDiv.append(entryText, entryEdit, entryCheck, entryDelete);
+        entryEdit.addEventListener("click", editEntry); // Edit Entry
         entryCheck.addEventListener("click", checkEntry); // Check Entry
         entryDelete.addEventListener("click", deleteEntry); // Delete entry
 
-        return entryDiv
+        return entryDiv;
       }
 
-      let entryDiv = createEntryElements(entry)
-      let text = entry.textContent
+      let entryDiv = createEntryElements(entry);
+      let text = entry.textContent;
       // If entry is not active
       entry.addEventListener("click", (event) => {
-
         if (!active) {
           active = true;
 
@@ -297,67 +293,68 @@ let entryFunctions = function (elmList, arr) {
           //   prevGhost.remove()
           // }
 
-          let ghostElm = document.createElement('li')
-          ghostElm.id = 'ghostie' // should i make this a class or an id?
+          let ghostElm = document.createElement("li");
+          ghostElm.id = "ghostie"; // should i make this a class or an id?
 
-          let nextSib = entry.nextSibling
-          entry.parentNode.insertBefore(ghostElm, nextSib) // 1.element to place, 2. reference node // remember praentNode!
+          let nextSib = entry.nextSibling;
+          entry.parentNode.insertBefore(ghostElm, nextSib); // 1.element to place, 2. reference node // remember praentNode!
 
           let newStyle = {
             // height: '100px',
-            textOverflow: 'none',
+            textOverflow: "none",
             // position: 'relative',
-            height: 'fit-content',
-            whiteSpace: 'normal',
-            overflow: 'visible',
+            height: "fit-content",
+            whiteSpace: "normal",
+            overflow: "visible",
 
             // NEW
-            background: 'rgba(24, 127, 187, 0.993)',
-            width: '300px',
-            'max-width': '300px',
-            height: 'fit-content',
-            position: 'absolute',
-            'z-index': '100',
+            background: "rgba(24, 127, 187, 0.993)",
+            width: "300px",
+            "max-width": "300px",
+            height: "fit-content",
+            position: "absolute",
+            "z-index": "100",
+          };
 
-          }
+          Object.assign(entry.style, newStyle); // style
 
-          Object.assign(entry.style, newStyle) // style
-
-          entry.textContent = ''
+          entry.textContent = "";
           // Make new div inside of entry
 
           entry.append(entryDiv);
         }
         // If entry is active
-        else if (event.target.classList.contains("entry") && active || event.target.classList.contains("entry-container") || event.target.classList.contains("text")) {
+        else if (
+          (event.target.classList.contains("entry") && active) ||
+          event.target.classList.contains("entry-container") ||
+          event.target.classList.contains("text")
+        ) {
           active = false;
           let newStyle = {
-            background: 'rgba(24, 127, 187, 0.63)',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
+            background: "rgba(24, 127, 187, 0.63)",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
 
             // NEW
-            height: 'initial',
-            width: 'initial',
-            position: 'relative',
-          }
-          Object.assign(entry.style, newStyle) // style
-          document.getElementById('ghostie').remove()
+            height: "initial",
+            width: "90%",
+            position: "relative",
+          };
+          Object.assign(entry.style, newStyle); // style
+          document.getElementById("ghostie").remove();
           entry.removeChild(entryDiv);
-          entry.textContent = text
-
+          entry.textContent = text;
         }
       });
     }
-  };
+  }
 };
-
 
 // ENTRY DRAG
 let dragFunctions = function () {
   let dragged;
-  document.addEventListener("drag", function (event) { }, false);
+  document.addEventListener("drag", function (event) {}, false);
   document.addEventListener(
     "dragstart",
     function (event) {

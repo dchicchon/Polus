@@ -389,7 +389,7 @@ button:hover {
 }
 
 .details ul li {
-  width: 98%;
+  width: 90%;
   text-align: center;
   white-space: nowrap;
   display: block;
@@ -521,6 +521,14 @@ button:hover {
 /* =========================================== */
 /* WEEK VIEW */
 /* =========================================== */
+#ghostie {
+  z-index: 1;
+  position: relative;
+  display: block;
+  height: 100px;
+  background: none !important;
+}
+
 #week {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
@@ -566,14 +574,6 @@ button:hover {
 #week .weekday .weekDetails ul {
   list-style-type: none;
   padding: 0;
-}
-
-#week .weekday .weekDetails ul #ghostie {
-  z-index: 1;
-  position: relative;
-  display: block;
-  height: 100px;
-  background: none;
 }
 
 #week .weekday .weekDetails ul li {

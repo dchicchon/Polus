@@ -339,7 +339,7 @@ button:hover {
     list-style-type: none;
     padding: 0;
     li {
-      width: 98%;
+      width: 90%;
       text-align: center;
       white-space: nowrap;
       display: block;
@@ -456,6 +456,14 @@ button:hover {
 
 /* WEEK VIEW */
 /* =========================================== */
+#ghostie {
+  z-index: 1;
+  position: relative;
+  display: block;
+  height: 100px;
+  background: none !important;
+}
+
 #week {
   //   backface-visibility: hidden;
   flex-direction: column;
@@ -499,13 +507,7 @@ button:hover {
         // position: relative;
         // z-index: 1;
 
-        #ghostie {
-          z-index: 1;
-          position: relative;
-          display: block;
-          height: 100px;
-          background: none;
-        }
+      
         li {
           position: relative;
           // z-index: 100;
