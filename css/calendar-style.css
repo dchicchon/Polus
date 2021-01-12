@@ -578,7 +578,7 @@ button:hover {
 
 #week .weekday .weekDetails ul li {
   position: relative;
-  width: 92%;
+  width: 90%;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
