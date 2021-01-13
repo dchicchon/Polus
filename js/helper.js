@@ -130,10 +130,11 @@ let setEntries = function (date, elmList) {
 
         let setEntryStyle = {
           textDecoration: entriesArr[j]["complete"] ? "line-through" : "none",
-          background: entriesArr[j]["color"]
-            ? entriesArr[j]["color"]
-            : "rgba(21, 115, 170, 0.63)",
+          // background: entriesArr[j]["color"] ? entriesArr[j]["color"] : "rgba(21, 115, 170, 0.63)",
         };
+
+        let initialColor = entriesArr[j]["color"] ? entriesArr[j]["color"] : "blue"
+
         // Values
         Object.assign(entryListItem.style, setEntryStyle);
         // entryListItem.style.textDecoration = entriesArr[j]["complete"] ? "line-through" : "none";
@@ -141,7 +142,7 @@ let setEntries = function (date, elmList) {
 
         // Setting Attributes
         entryListItem.id = entriesArr[j]["key"];
-        entryListItem.classList.add("entry", `${date}`);
+        entryListItem.classList.add("entry", `${date}`, initialColor);
         entryListItem.setAttribute("draggable", "true");
 
         // Append
@@ -212,7 +213,18 @@ let entryFunctions = function (elmList, arr) {
       }
     };
 
-    let editColor = function () { };
+
+    let colorEntry = function () {
+      // console.log(this.value)
+      let subParent = this.parentNode
+      let mainParent = subParent.parentNode
+      // console.log(mainParent)
+      // console.log(mainParent.classList)
+      let prevVal = mainParent.classList[2]
+      console.log(prevVal)
+      mainParent.classList.remove(prevVal)
+      mainParent.classList.add(this.value)
+    }
 
     let deleteEntry = function () {
       let entryDate = entry.classList.item(1); // check the classList for new dates
@@ -262,13 +274,15 @@ let entryFunctions = function (elmList, arr) {
 
         // Text Content
 
-        let colorWheel = [{ text: 'blue', rgba: 'rgba(21, 115, 170, 0.63);' }, { text: 'green', rgba: 'rgba(0 101 22 / 92%)' }, { text: 'green', rgba: 'rgba(0 101 22 / 92%)' }]
+        entryColor.value = entry.classList[2]
+        entryColor.style.outline = 'none'
+        let colorWheel = ['blue', 'green', 'gold']
+        // initial selected option should be the color that is already on the entry
         for (let color of colorWheel) {
-          console.log(color)
+          // console.log(color)
           let option = document.createElement("option")
-          option.text = color.text
-          option.style.background = color['rgba']
-          option.style.color = 'white'
+          option.text = color
+          option.style.outline = 'none'
           entryColor.options.add(option)
         }
         entryEdit.textContent = "Edit";
@@ -282,6 +296,7 @@ let entryFunctions = function (elmList, arr) {
         entryDiv.className = "entry-container";
 
         entryDiv.append(entryText, entryEdit, entryColor, entryCheck, entryDelete);
+        entryColor.addEventListener("change", colorEntry)
         entryEdit.addEventListener("click", editEntry); // Edit Entry
         entryCheck.addEventListener("click", checkEntry); // Check Entry
         entryDelete.addEventListener("click", deleteEntry); // Delete entry
@@ -313,7 +328,7 @@ let entryFunctions = function (elmList, arr) {
             overflow: "visible",
 
             // NEW
-            background: "rgba(24, 127, 187, 0.993)",
+            // background: "rgba(24, 127, 187, 0.993)",
             width: "300px",
             "max-width": "300px",
             height: "fit-content",
@@ -336,7 +351,7 @@ let entryFunctions = function (elmList, arr) {
         ) {
           active = false;
           let newStyle = {
-            background: "rgba(24, 127, 187, 0.63)",
+            // background: "rgba(24, 127, 187, 0.63)",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
             overflow: "hidden",

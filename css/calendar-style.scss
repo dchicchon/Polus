@@ -287,6 +287,20 @@ button:hover {
   background: rgba(43, 129, 185, 0.76);
 }
 
+.blue {
+  background: rgba(21, 115, 170, 0.63);
+}
+
+.green {
+  background: rgba(7, 128, 7, 0.63);
+
+}
+
+.gold {
+  background: rgba(185, 174, 8, 0.63);
+}
+
+
 // entry elements
 .entry-container {
   // height:initial;
@@ -298,6 +312,9 @@ button:hover {
   .edit:hover {
     background: $tool-hover;
   }
+
+
+
   .delete {
     background: none;
     text-align: center;
@@ -526,7 +543,7 @@ button:hover {
           display: block;
           text-overflow: ellipsis;
           border: none;
-          background: rgba(21, 115, 170, 0.63);
+          // background: rgba(21, 115, 170, 0.63);
           transition: background 0.5s;
           color: white;
           margin-bottom: 0.25rem;
@@ -535,7 +552,7 @@ button:hover {
           font-size: 0.9rem;
         }
         li:hover {
-          background: rgba(24, 127, 187, 0.993);
+          // background: rgba(24, 127, 187, 0.993);
           cursor: pointer;
         }
 
