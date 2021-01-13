@@ -47,6 +47,9 @@ document.getElementById("submitPhoto").onclick = function () {
       chrome.storage.sync.set({
         background: { url, location, author, photoLink, downloadLink },
       });
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.reload(tabs[0].id);
+      });
     })
     .catch((err) => console.log(`Fetch failed: ${err}`));
 };

@@ -164,9 +164,10 @@ let entryFunctions = function (elmList, arr) {
     let editEntry = function () {
       let editButton = this; // declare 'this' for less confusion and consistency in all functions
       // create input
-      let input = document.createElement("input");
+      let input = document.createElement("textarea");
       input.className = "newItem";
       input.value = editButton.previousElementSibling.textContent;
+
 
       editButton.parentNode.insertBefore(
         input,
@@ -248,17 +249,28 @@ let entryFunctions = function (elmList, arr) {
 
       function createEntryElements(entry) {
         let entryText = document.createElement("p");
-        // let entryColor = document.createElement("button");
+        let entryColor = document.createElement("select");
         let entryEdit = document.createElement("button");
         let entryCheck = document.createElement("button");
         let entryDelete = document.createElement("button");
 
         entryText.className = "text";
+        entryColor.className = 'color';
         entryCheck.className = "check";
         entryDelete.className = "delete";
         entryEdit.className = "edit";
 
         // Text Content
+
+        let colorWheel = [{ text: 'blue', rgba: 'rgba(21, 115, 170, 0.63);' }, { text: 'green', rgba: 'rgba(0 101 22 / 92%)' }, { text: 'green', rgba: 'rgba(0 101 22 / 92%)' }]
+        for (let color of colorWheel) {
+          console.log(color)
+          let option = document.createElement("option")
+          option.text = color.text
+          option.style.background = color['rgba']
+          option.style.color = 'white'
+          entryColor.options.add(option)
+        }
         entryEdit.textContent = "Edit";
         entryCheck.innerHTML = "&#10003;";
         entryDelete.textContent = "x";
@@ -269,7 +281,7 @@ let entryFunctions = function (elmList, arr) {
         let entryDiv = document.createElement("div");
         entryDiv.className = "entry-container";
 
-        entryDiv.append(entryText, entryEdit, entryCheck, entryDelete);
+        entryDiv.append(entryText, entryEdit, entryColor, entryCheck, entryDelete);
         entryEdit.addEventListener("click", editEntry); // Edit Entry
         entryCheck.addEventListener("click", checkEntry); // Check Entry
         entryDelete.addEventListener("click", deleteEntry); // Delete entry
@@ -279,20 +291,12 @@ let entryFunctions = function (elmList, arr) {
 
       let entryDiv = createEntryElements(entry);
 
-
-      let text = entry.textContent;
-      // * Keep an eye on this variable 
-
       // If entry is not active
       entry.addEventListener("click", (event) => {
         if (!active) {
 
           active = true;
 
-          // let prevGhost = document.getElementById("ghostie")
-          // if (prevGhost) {
-          //   prevGhost.remove()
-          // }
 
           let ghostElm = document.createElement("li");
           ghostElm.id = "ghostie"; // should i make this a class or an id?
@@ -339,6 +343,7 @@ let entryFunctions = function (elmList, arr) {
 
             // NEW
             height: "initial",
+            'max-width': '',
             width: "90%",
             position: "relative",
           };
