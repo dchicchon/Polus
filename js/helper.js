@@ -69,9 +69,8 @@ let addFunction = function () {
 
 let getKey = () => {
   let alpha = "abcdefghijklmnopqrstuvwxyz";
-  let key = `${alpha[Math.floor(Math.random() * 25)]}${
-    Math.floor(Math.random() * 98) + 1
-  }`;
+  let key = `${alpha[Math.floor(Math.random() * 25)]}${Math.floor(Math.random() * 98) + 1
+    }`;
   return key;
 };
 
@@ -100,7 +99,7 @@ let addToStorage = function (listElm, date, text, key) {
       let dateEntries = result[`${date}`];
       dateEntries.push(entry);
       entryFunctions(listElm, dateEntries);
-      chrome.storage.sync.set({ [date]: dateEntries }, function () {});
+      chrome.storage.sync.set({ [date]: dateEntries }, function () { });
     }
   });
 };
@@ -190,9 +189,6 @@ let entryFunctions = function (elmList, arr) {
         textNode.textContent = newText;
 
         // Insert and remove input node
-        console.log(editButton);
-        console.log(editButton.parentNode);
-
         input.blur();
         editButton.parentNode.removeChild(input);
 
@@ -215,7 +211,7 @@ let entryFunctions = function (elmList, arr) {
       }
     };
 
-    let editColor = function () {};
+    let editColor = function () { };
 
     let deleteEntry = function () {
       let entryDate = entry.classList.item(1); // check the classList for new dates
@@ -224,6 +220,7 @@ let entryFunctions = function (elmList, arr) {
         oldArr = oldArr.filter((elm) => elm.key !== entry.id);
         entry.style.display = "none";
         entry.remove();
+        document.getElementById("ghostie").remove();
         chrome.storage.sync.set({ [entryDate]: oldArr });
       });
     };
@@ -248,7 +245,6 @@ let entryFunctions = function (elmList, arr) {
     if (entry.getAttribute("listener") !== "true") {
       entry.setAttribute("listener", true);
       let active = false; // This is to check the entry click function. If false, we will turn it true. Will only go back to false if we edit or check
-      // let entryEdit = document.createElement("button");
 
       function createEntryElements(entry) {
         let entryText = document.createElement("p");
@@ -282,10 +278,15 @@ let entryFunctions = function (elmList, arr) {
       }
 
       let entryDiv = createEntryElements(entry);
+
+
       let text = entry.textContent;
+      // * Keep an eye on this variable 
+
       // If entry is not active
       entry.addEventListener("click", (event) => {
         if (!active) {
+
           active = true;
 
           // let prevGhost = document.getElementById("ghostie")
@@ -344,7 +345,7 @@ let entryFunctions = function (elmList, arr) {
           Object.assign(entry.style, newStyle); // style
           document.getElementById("ghostie").remove();
           entry.removeChild(entryDiv);
-          entry.textContent = text;
+          entry.textContent = entryDiv.children[0].textContent;
         }
       });
     }
@@ -354,7 +355,7 @@ let entryFunctions = function (elmList, arr) {
 // ENTRY DRAG
 let dragFunctions = function () {
   let dragged;
-  document.addEventListener("drag", function (event) {}, false);
+  document.addEventListener("drag", function (event) { }, false);
   document.addEventListener(
     "dragstart",
     function (event) {
