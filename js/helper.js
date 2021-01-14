@@ -38,7 +38,7 @@ let addFunction = function () {
           parent.textContent = text; // when this is done, the input element is removed
           let list = parent.parentNode;
           if (text.length > 0) {
-            addToStorage(list, date, text, key);
+            addToStorage(list, date, text, key, "blue");
           } else {
             entryListItem.remove();
           }
@@ -69,19 +69,21 @@ let addFunction = function () {
 
 let getKey = () => {
   let alpha = "abcdefghijklmnopqrstuvwxyz";
-  let key = `${alpha[Math.floor(Math.random() * 25)]}${Math.floor(Math.random() * 98) + 1
-    }`;
+  let key = `${alpha[Math.floor(Math.random() * 25)]}${
+    Math.floor(Math.random() * 98) + 1
+  }`;
   return key;
 };
 
 // Takes a list, date, text, and key and add item to chrome.storage.sync
-let addToStorage = function (listElm, date, text, key) {
+let addToStorage = function (listElm, date, text, key, color) {
   // Get the Date Object from Storage to add the entry
   chrome.storage.sync.get([`${date}`], function (result) {
     // Entry
     let entry = {
       key,
       text,
+      color,
       complete: false,
     };
 
@@ -99,7 +101,7 @@ let addToStorage = function (listElm, date, text, key) {
       let dateEntries = result[`${date}`];
       dateEntries.push(entry);
       entryFunctions(listElm, dateEntries);
-      chrome.storage.sync.set({ [date]: dateEntries }, function () { });
+      chrome.storage.sync.set({ [date]: dateEntries }, function () {});
     }
   });
 };
@@ -133,7 +135,9 @@ let setEntries = function (date, elmList) {
           // background: entriesArr[j]["color"] ? entriesArr[j]["color"] : "rgba(21, 115, 170, 0.63)",
         };
 
-        let initialColor = entriesArr[j]["color"] ? entriesArr[j]["color"] : "blue"
+        let initialColor = entriesArr[j]["color"]
+          ? entriesArr[j]["color"]
+          : "blue";
 
         // Values
         Object.assign(entryListItem.style, setEntryStyle);
@@ -168,7 +172,6 @@ let entryFunctions = function (elmList, arr) {
       let input = document.createElement("textarea");
       input.className = "newItem";
       input.value = editButton.previousElementSibling.textContent;
-
 
       editButton.parentNode.insertBefore(
         input,
@@ -213,28 +216,24 @@ let entryFunctions = function (elmList, arr) {
       }
     };
 
-
     let colorEntry = function () {
-      // console.log(this.value)
-      let subParent = this.parentNode
-      let mainParent = subParent.parentNode
-      // console.log(mainParent)
-      // console.log(mainParent.classList)
-      let prevVal = mainParent.classList[2]
-      console.log(prevVal)
-      mainParent.classList.remove(prevVal)
-      mainParent.classList.add(this.value)
-    }
+      let subParent = this.parentNode;
+      let mainParent = subParent.parentNode;
+      let prevVal = mainParent.classList[2];
+      mainParent.classList.remove(prevVal);
+      mainParent.classList.add(this.value);
+      chrome.storage.sync.get([`${date}`], function (result) {});
+    };
 
     let deleteEntry = function () {
-      let entryDate = entry.classList.item(1); // check the classList for new dates
-      chrome.storage.sync.get([`${entryDate}`], (result) => {
-        let oldArr = result[`${entryDate}`];
+      // let entryDate = entry.classList.item(1); // check the classList for new dates
+      chrome.storage.sync.get([`${date}`], (result) => {
+        let oldArr = result[`${date}`];
         oldArr = oldArr.filter((elm) => elm.key !== entry.id);
         entry.style.display = "none";
         entry.remove();
         document.getElementById("ghostie").remove();
-        chrome.storage.sync.set({ [entryDate]: oldArr });
+        chrome.storage.sync.set({ [date]: oldArr });
       });
     };
 
@@ -267,23 +266,23 @@ let entryFunctions = function (elmList, arr) {
         let entryDelete = document.createElement("button");
 
         entryText.className = "text";
-        entryColor.className = 'color';
+        entryColor.className = "color";
         entryCheck.className = "check";
         entryDelete.className = "delete";
         entryEdit.className = "edit";
 
         // Text Content
 
-        entryColor.value = entry.classList[2]
-        entryColor.style.outline = 'none'
-        let colorWheel = ['blue', 'green', 'gold']
+        entryColor.value = entry.classList[2];
+        entryColor.style.outline = "none";
+        let colorWheel = ["blue", "green", "gold"];
         // initial selected option should be the color that is already on the entry
         for (let color of colorWheel) {
           // console.log(color)
-          let option = document.createElement("option")
-          option.text = color
-          option.style.outline = 'none'
-          entryColor.options.add(option)
+          let option = document.createElement("option");
+          option.text = color;
+          option.style.outline = "none";
+          entryColor.options.add(option);
         }
         entryEdit.textContent = "Edit";
         entryCheck.innerHTML = "&#10003;";
@@ -295,8 +294,14 @@ let entryFunctions = function (elmList, arr) {
         let entryDiv = document.createElement("div");
         entryDiv.className = "entry-container";
 
-        entryDiv.append(entryText, entryEdit, entryColor, entryCheck, entryDelete);
-        entryColor.addEventListener("change", colorEntry)
+        entryDiv.append(
+          entryText,
+          entryEdit,
+          entryColor,
+          entryCheck,
+          entryDelete
+        );
+        entryColor.addEventListener("change", colorEntry);
         entryEdit.addEventListener("click", editEntry); // Edit Entry
         entryCheck.addEventListener("click", checkEntry); // Check Entry
         entryDelete.addEventListener("click", deleteEntry); // Delete entry
@@ -309,9 +314,7 @@ let entryFunctions = function (elmList, arr) {
       // If entry is not active
       entry.addEventListener("click", (event) => {
         if (!active) {
-
           active = true;
-
 
           let ghostElm = document.createElement("li");
           ghostElm.id = "ghostie"; // should i make this a class or an id?
@@ -358,7 +361,7 @@ let entryFunctions = function (elmList, arr) {
 
             // NEW
             height: "initial",
-            'max-width': '',
+            "max-width": "",
             width: "90%",
             position: "relative",
           };
@@ -375,7 +378,7 @@ let entryFunctions = function (elmList, arr) {
 // ENTRY DRAG
 let dragFunctions = function () {
   let dragged;
-  document.addEventListener("drag", function (event) { }, false);
+  document.addEventListener("drag", function (event) {}, false);
   document.addEventListener(
     "dragstart",
     function (event) {

@@ -316,7 +316,6 @@ button:hover {
 }
 
 .entry:hover {
-  background: rgba(24, 127, 187, 0.993);
   cursor: pointer;
 }
 
@@ -337,6 +336,18 @@ button:hover {
 
 .add:focus {
   background: rgba(43, 129, 185, 0.76);
+}
+
+.blue {
+  background: rgba(21, 115, 170, 0.63);
+}
+
+.green {
+  background: rgba(7, 128, 7, 0.63);
+}
+
+.gold {
+  background: rgba(185, 174, 8, 0.63);
 }
 
 .entry-container .edit {
@@ -437,7 +448,7 @@ button:hover {
   border: none;
   width: 85%;
   float: left;
-  background: none;
+  background: rgba(21, 115, 170, 0.63);
   color: white;
   text-overflow: ellipsis;
   text-align: center;
@@ -600,7 +611,6 @@ button:hover {
   display: block;
   text-overflow: ellipsis;
   border: none;
-  background: rgba(21, 115, 170, 0.63);
   -webkit-transition: background 0.5s;
   transition: background 0.5s;
   color: white;
@@ -611,7 +621,6 @@ button:hover {
 }
 
 #week .weekday .weekDetails ul li:hover {
-  background: rgba(24, 127, 187, 0.993);
   cursor: pointer;
 }
 

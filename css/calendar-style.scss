@@ -191,8 +191,8 @@ button:hover {
   display: grid;
   text-align: center;
   background-blend-mode: screen;
-  background:none;
-  color:white;
+  background: none;
+  color: white;
 
   #background-location {
     grid-column: 1;
@@ -266,10 +266,9 @@ button:hover {
 // Main Classes
 // ====================
 .entry:hover {
-  background: rgba(24, 127, 187, 0.993);
+  // background: rgba(24, 127, 187, 0.993);
   cursor: pointer;
 }
-
 
 .add {
   background: none;
@@ -293,13 +292,11 @@ button:hover {
 
 .green {
   background: rgba(7, 128, 7, 0.63);
-
 }
 
 .gold {
   background: rgba(185, 174, 8, 0.63);
 }
-
 
 // entry elements
 .entry-container {
@@ -313,8 +310,6 @@ button:hover {
     background: $tool-hover;
   }
 
-
-
   .delete {
     background: none;
     text-align: center;
@@ -326,11 +321,11 @@ button:hover {
     padding: 0 0.5rem;
     transition: background 0.5s;
   }
-  
+
   .delete:hover {
     background: $tool-hover;
   }
-  
+
   .check {
     text-align: center;
     width: 27px;
@@ -342,12 +337,11 @@ button:hover {
     background: none;
     transition: background 0.5s;
   }
-  
+
   .check:hover {
     background: $tool-hover;
   }
 }
-
 
 // DETAILS
 
@@ -394,7 +388,7 @@ button:hover {
   border: none;
   width: 85%;
   float: left;
-  background: none;
+  background: rgba(21, 115, 170, 0.63);
   color: white;
   text-overflow: ellipsis;
   text-align: center;
@@ -518,7 +512,7 @@ button:hover {
     .weekDetails {
       overflow: auto;
       height: 14rem;
-      
+
       // new
       // width: 13%;
       // position: absolute;
@@ -532,7 +526,6 @@ button:hover {
         // flex-direction: column;
         // align-items: center;
 
-      
         li {
           position: relative;
           // z-index: 100;
@@ -555,7 +548,6 @@ button:hover {
           // background: rgba(24, 127, 187, 0.993);
           cursor: pointer;
         }
-
       }
     }
     .weekDate {
