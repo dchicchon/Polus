@@ -16,8 +16,10 @@ let addFunction = function () {
       let entryInput = document.createElement("input");
       let key = getKey();
 
-      entryInput.setAttribute("class", "newItem");
-      entryListItem.classList.add("entry", `${date}`, "new");
+      // entryInput.setAttribute("class", "newItem");
+      entryInput.classList.add("newItem");
+      entryInput.style.background = "none";
+      entryListItem.classList.add("entry", `${date}`, "blue", "new");
       entryListItem.id = key;
       entryListItem.setAttribute("draggable", "true");
 
