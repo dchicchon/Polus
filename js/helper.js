@@ -71,8 +71,9 @@ let addFunction = function () {
 
 let getKey = () => {
   let alpha = "abcdefghijklmnopqrstuvwxyz";
-  let key = `${alpha[Math.floor(Math.random() * 25)]}${Math.floor(Math.random() * 98) + 1
-    }`;
+  let key = `${alpha[Math.floor(Math.random() * 25)]}${
+    Math.floor(Math.random() * 98) + 1
+  }`;
   return key;
 };
 
@@ -102,7 +103,7 @@ let addToStorage = function (listElm, date, text, key, color) {
       let dateEntries = result[`${date}`];
       dateEntries.push(entry);
       entryFunctions(listElm, dateEntries);
-      chrome.storage.sync.set({ [date]: dateEntries }, function () { });
+      chrome.storage.sync.set({ [date]: dateEntries }, function () {});
     }
   });
 };
@@ -144,7 +145,7 @@ let setEntries = function (date, elmList) {
         Object.assign(entryListItem.style, setEntryStyle);
         // entryListItem.style.textDecoration = entriesArr[j]["complete"] ? "line-through" : "none";
         entryListItem.value = entriesArr[j]["complete"];
-        
+
         // Setting Attributes
         entryListItem.id = entriesArr[j]["key"];
         entryListItem.classList.add("entry", `${date}`, initialColor);
@@ -293,10 +294,9 @@ let entryFunctions = function (elmList, arr) {
           option.text = color;
           option.style.outline = "none";
           if (entry.classList[2] === color) {
-            option.selected = 'selected'
+            option.selected = "selected";
           }
           entryColor.options.add(option);
-
         }
 
         entryEdit.textContent = "Edit";
@@ -350,7 +350,8 @@ let entryFunctions = function (elmList, arr) {
             // background: "rgba(24, 127, 187, 0.993)",
             width: "300px",
             "max-width": "300px",
-            height: "fit-content",
+            "min-height": "100px",
+            // height: "fit-content",
             position: "absolute",
             "z-index": "100",
           };
@@ -377,6 +378,7 @@ let entryFunctions = function (elmList, arr) {
 
             // NEW
             height: "initial",
+            "min-height": "0px",
             "max-width": "",
             width: "90%",
             position: "relative",
@@ -395,13 +397,13 @@ let entryFunctions = function (elmList, arr) {
 let dragFunctions = function () {
   let dragged;
   let color;
-  document.addEventListener("drag", function (event) { }, false);
+  document.addEventListener("drag", function (event) {}, false);
   document.addEventListener(
     "dragstart",
     function (event) {
       if (event.target.classList.contains("entry")) {
         dragged = event.target;
-        color = dragged.classList[2]
+        color = dragged.classList[2];
         event.dataTransfer.setData("text/plain", dragged.id);
         event.target.style.opacity = 0.5;
       }
@@ -480,11 +482,12 @@ let dragFunctions = function () {
           });
 
           // Add to new date object
-          console.log(color)
+          let targetElmParent = dragged.children[0];
+          let targetElm = targetElmParent.children[0];
           addToStorage(
             event.target.children[0],
             date,
-            dragged.textContent,
+            targetElm.textContent,
             dragged.id,
             color
           );

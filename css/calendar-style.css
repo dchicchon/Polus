@@ -468,6 +468,10 @@ button:hover {
 .newItem {
   border: none;
   width: 85%;
+  -webkit-margin-before: 1em;
+          margin-block-start: 1em;
+  -webkit-margin-after: 1em;
+          margin-block-end: 1em;
   float: left;
   background: none;
   color: white;
