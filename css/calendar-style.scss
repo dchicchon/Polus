@@ -287,15 +287,15 @@ button:hover {
 }
 
 .blue {
-  background: rgba(21, 115, 170, 0.7);
+  background: rgba(21, 115, 170, 0.75);
 }
 
 .green {
-  background: rgba(7, 128, 7, 0.7);
+  background: rgba(7, 128, 7, 0.75);
 }
 
 .gold {
-  background: rgba(185, 174, 8, 0.7);
+  background: rgba(185, 174, 8, 0.75);
 }
 
 // entry elements
@@ -399,6 +399,7 @@ button:hover {
       padding: 0.5rem;
       border-radius: 25px;
       font-size: 0.9rem;
+      cursor: pointer;
       // height: 1rem;
     }
     @media (max-width: 760px) {
