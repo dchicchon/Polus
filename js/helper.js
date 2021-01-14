@@ -223,8 +223,17 @@ let entryFunctions = function (elmList, arr) {
       let mainParent = subParent.parentNode;
       let prevVal = mainParent.classList[2];
       mainParent.classList.remove(prevVal);
-      mainParent.classList.add(this.value);
-      chrome.storage.sync.get([`${date}`], function (result) {});
+      let color = this.value;
+      mainParent.classList.add(color);
+      chrome.storage.sync.get([`${date}`], function (result) {
+        let oldArr = result[`${date}`];
+        let newArr = [...oldArr];
+        let index = newArr.findIndex((x) => x.key === entry.id);
+        newArr[index]["color"] = color;
+        console.log(color);
+        console.log(newArr);
+        chrome.storage.sync.set({ [date]: newArr });
+      });
     };
 
     let deleteEntry = function () {
@@ -274,14 +283,21 @@ let entryFunctions = function (elmList, arr) {
         entryEdit.className = "edit";
 
         // Text Content
-
         entryColor.value = entry.classList[2];
+        
+        console.log("ClassValue");
+        console.log(entry.classList[2]);
+        console.log("Select");
+        console.log(entryColor);
+        console.log("Value");
+        console.log(entryColor.value);
         entryColor.style.outline = "none";
         let colorWheel = ["blue", "green", "gold"];
         // initial selected option should be the color that is already on the entry
         for (let color of colorWheel) {
           // console.log(color)
           let option = document.createElement("option");
+          option.classList.add("color-option", entry.classList[2]);
           option.text = color;
           option.style.outline = "none";
           entryColor.options.add(option);
@@ -303,6 +319,7 @@ let entryFunctions = function (elmList, arr) {
           entryCheck,
           entryDelete
         );
+
         entryColor.addEventListener("change", colorEntry);
         entryEdit.addEventListener("click", editEntry); // Edit Entry
         entryCheck.addEventListener("click", checkEntry); // Check Entry

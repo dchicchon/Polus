@@ -265,10 +265,10 @@ button:hover {
 
 // Main Classes
 // ====================
-.entry:hover {
-  // background: rgba(24, 127, 187, 0.993);
-  cursor: pointer;
-}
+// .entry:hover {
+//   // background: rgba(24, 127, 187, 0.993);
+//   cursor: pointer;
+// }
 
 .add {
   background: none;
@@ -287,15 +287,15 @@ button:hover {
 }
 
 .blue {
-  background: rgba(21, 115, 170, 0.63);
+  background: rgba(21, 115, 170, 0.7);
 }
 
 .green {
-  background: rgba(7, 128, 7, 0.63);
+  background: rgba(7, 128, 7, 0.7);
 }
 
 .gold {
-  background: rgba(185, 174, 8, 0.63);
+  background: rgba(185, 174, 8, 0.7);
 }
 
 // entry elements
@@ -308,6 +308,31 @@ button:hover {
   }
   .edit:hover {
     background: $tool-hover;
+  }
+
+  .color {
+    background: none;
+    border: none;
+    color: white;
+  }
+
+  .color-option {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 99;
+  }
+
+  .color:after {
+    position: absolute;
+    content: "";
+    top: 14px;
+    right: 10px;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-color: #fff transparent transparent transparent;
   }
 
   .delete {

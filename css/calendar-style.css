@@ -315,10 +315,6 @@ button:hover {
   background: rgba(43, 42, 42, 0.329);
 }
 
-.entry:hover {
-  cursor: pointer;
-}
-
 .add {
   background: none;
   width: 1.5rem;
@@ -339,15 +335,15 @@ button:hover {
 }
 
 .blue {
-  background: rgba(21, 115, 170, 0.63);
+  background: rgba(21, 115, 170, 0.7);
 }
 
 .green {
-  background: rgba(7, 128, 7, 0.63);
+  background: rgba(7, 128, 7, 0.7);
 }
 
 .gold {
-  background: rgba(185, 174, 8, 0.63);
+  background: rgba(185, 174, 8, 0.7);
 }
 
 .entry-container .edit {
@@ -358,6 +354,31 @@ button:hover {
 
 .entry-container .edit:hover {
   background: rgba(38, 96, 134, 0.76);
+}
+
+.entry-container .color {
+  background: none;
+  border: none;
+  color: white;
+}
+
+.entry-container .color-option {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+
+.entry-container .color:after {
+  position: absolute;
+  content: "";
+  top: 14px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #fff transparent transparent transparent;
 }
 
 .entry-container .delete {
