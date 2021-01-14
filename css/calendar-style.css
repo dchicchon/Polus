@@ -469,6 +469,7 @@ button:hover {
   border: none;
   width: 85%;
   float: left;
+  background: none;
   color: white;
   text-overflow: ellipsis;
   text-align: center;

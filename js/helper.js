@@ -71,9 +71,8 @@ let addFunction = function () {
 
 let getKey = () => {
   let alpha = "abcdefghijklmnopqrstuvwxyz";
-  let key = `${alpha[Math.floor(Math.random() * 25)]}${
-    Math.floor(Math.random() * 98) + 1
-  }`;
+  let key = `${alpha[Math.floor(Math.random() * 25)]}${Math.floor(Math.random() * 98) + 1
+    }`;
   return key;
 };
 
@@ -103,7 +102,7 @@ let addToStorage = function (listElm, date, text, key, color) {
       let dateEntries = result[`${date}`];
       dateEntries.push(entry);
       entryFunctions(listElm, dateEntries);
-      chrome.storage.sync.set({ [date]: dateEntries }, function () {});
+      chrome.storage.sync.set({ [date]: dateEntries }, function () { });
     }
   });
 };
@@ -230,8 +229,6 @@ let entryFunctions = function (elmList, arr) {
         let newArr = [...oldArr];
         let index = newArr.findIndex((x) => x.key === entry.id);
         newArr[index]["color"] = color;
-        console.log(color);
-        console.log(newArr);
         chrome.storage.sync.set({ [date]: newArr });
       });
     };
@@ -284,24 +281,24 @@ let entryFunctions = function (elmList, arr) {
 
         // Text Content
         entryColor.value = entry.classList[2];
-        
-        console.log("ClassValue");
-        console.log(entry.classList[2]);
-        console.log("Select");
-        console.log(entryColor);
-        console.log("Value");
-        console.log(entryColor.value);
+
         entryColor.style.outline = "none";
         let colorWheel = ["blue", "green", "gold"];
         // initial selected option should be the color that is already on the entry
         for (let color of colorWheel) {
           // console.log(color)
+
           let option = document.createElement("option");
           option.classList.add("color-option", entry.classList[2]);
           option.text = color;
           option.style.outline = "none";
+          if (entry.classList[2] === color) {
+            option.selected = 'selected'
+          }
           entryColor.options.add(option);
+
         }
+
         entryEdit.textContent = "Edit";
         entryCheck.innerHTML = "&#10003;";
         entryDelete.textContent = "x";
@@ -397,12 +394,14 @@ let entryFunctions = function (elmList, arr) {
 // ENTRY DRAG
 let dragFunctions = function () {
   let dragged;
-  document.addEventListener("drag", function (event) {}, false);
+  let color;
+  document.addEventListener("drag", function (event) { }, false);
   document.addEventListener(
     "dragstart",
     function (event) {
       if (event.target.classList.contains("entry")) {
         dragged = event.target;
+        color = dragged.classList[2]
         event.dataTransfer.setData("text/plain", dragged.id);
         event.target.style.opacity = 0.5;
       }
@@ -472,16 +471,22 @@ let dragFunctions = function () {
           // Filter from previous Date object
           chrome.storage.sync.get([`${prevDate}`], function (result) {
             let entriesArr = result[`${prevDate}`];
+
+            // !
+            // ! THIS IS NOT WORKING FOR SOME REASON
+            // !
             entriesArr = entriesArr.filter((elm) => elm.key !== dragged.id);
             chrome.storage.sync.set({ [prevDate]: entriesArr });
           });
 
           // Add to new date object
+          console.log(color)
           addToStorage(
             event.target.children[0],
             date,
             dragged.textContent,
-            dragged.id
+            dragged.id,
+            color
           );
         }
 
