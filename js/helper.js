@@ -144,7 +144,7 @@ let setEntries = function (date, elmList) {
         Object.assign(entryListItem.style, setEntryStyle);
         // entryListItem.style.textDecoration = entriesArr[j]["complete"] ? "line-through" : "none";
         entryListItem.value = entriesArr[j]["complete"];
-
+        
         // Setting Attributes
         entryListItem.id = entriesArr[j]["key"];
         entryListItem.classList.add("entry", `${date}`, initialColor);

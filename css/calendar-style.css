@@ -449,7 +449,6 @@ button:hover {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
-  background: rgba(21, 115, 170, 0.63);
   -webkit-transition: background 0.5s, height 0.25s;
   transition: background 0.5s, height 0.25s;
   color: white;
@@ -730,7 +729,6 @@ button:hover {
   display: block;
   text-overflow: ellipsis;
   border: none;
-  background: rgba(21, 115, 170, 0.63);
   -webkit-transition: background 0.5s;
   transition: background 0.5s;
   color: white;
@@ -741,7 +739,6 @@ button:hover {
 }
 
 #month .monthDays .monthDay .monthDetails ul li:hover {
-  background: rgba(24, 127, 187, 0.993);
   cursor: pointer;
 }
 

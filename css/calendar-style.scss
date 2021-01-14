@@ -392,7 +392,7 @@ button:hover {
       touch-action: none;
       user-select: none;
       //
-      background: rgba(21, 115, 170, 0.63);
+      // background: rgba(21, 115, 170, 0.63);
       transition: background 0.5s, height 0.25s;
       color: white;
       margin: 0.25rem auto;
@@ -649,7 +649,7 @@ button:hover {
             display: block;
             text-overflow: ellipsis;
             border: none;
-            background: rgba(21, 115, 170, 0.63);
+            // background: rgba(21, 115, 170, 0.63);
             transition: background 0.5s;
             color: white;
             margin-bottom: 0.25rem;
@@ -659,7 +659,7 @@ button:hover {
             // height: 1rem;
           }
           li:hover {
-            background: rgba(24, 127, 187, 0.993);
+            // background: rgba(24, 127, 187, 0.993);
             cursor: pointer;
           }
         }
