@@ -81,6 +81,10 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
+.update-details {
+  overflow: auto;
+}
+
 .signup-text {
   font-weight: 200;
 }

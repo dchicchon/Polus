@@ -4,6 +4,11 @@ html {
           backdrop-filter: brightness(90%);
 }
 
+textarea {
+  font-family: "Segoe UI", Tahoma, sans-serif !important;
+  resize: none;
+}
+
 body {
   color: white;
   margin: 0;
@@ -64,7 +69,7 @@ a {
     width: 10%;
   }
   to {
-    width: 85%;
+    width: 90%;
   }
 }
 
@@ -73,7 +78,7 @@ a {
     width: 10%;
   }
   to {
-    width: 85%;
+    width: 90%;
   }
 }
 
@@ -310,11 +315,6 @@ button:hover {
   background: rgba(43, 42, 42, 0.329);
 }
 
-.entry:hover {
-  background: rgba(24, 127, 187, 0.993);
-  cursor: pointer;
-}
-
 .add {
   background: none;
   width: 1.5rem;
@@ -334,17 +334,54 @@ button:hover {
   background: rgba(43, 129, 185, 0.76);
 }
 
-.edit {
+.blue {
+  background: rgba(21, 115, 170, 0.75);
+}
+
+.green {
+  background: rgba(7, 128, 7, 0.75);
+}
+
+.gold {
+  background: rgba(185, 174, 8, 0.75);
+}
+
+.entry-container .edit {
   background: none;
   -webkit-transition: background 0.5s;
   transition: background 0.5s;
 }
 
-.edit:hover {
+.entry-container .edit:hover {
   background: rgba(38, 96, 134, 0.76);
 }
 
-.delete {
+.entry-container .color {
+  background: none;
+  border: none;
+  color: white;
+}
+
+.entry-container .color-option {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+
+.entry-container .color:after {
+  position: absolute;
+  content: "";
+  top: 14px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #fff transparent transparent transparent;
+}
+
+.entry-container .delete {
   background: none;
   text-align: center;
   width: 25px;
@@ -357,11 +394,11 @@ button:hover {
   transition: background 0.5s;
 }
 
-.delete:hover {
+.entry-container .delete:hover {
   background: rgba(38, 96, 134, 0.76);
 }
 
-.check {
+.entry-container .check {
   text-align: center;
   width: 27px;
   height: 25px;
@@ -374,7 +411,7 @@ button:hover {
   transition: background 0.5s;
 }
 
-.check:hover {
+.entry-container .check:hover {
   background: rgba(38, 96, 134, 0.76);
 }
 
@@ -386,10 +423,20 @@ button:hover {
 .details ul {
   list-style-type: none;
   padding: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .details ul li {
-  width: 98%;
+  width: 90%;
   text-align: center;
   white-space: nowrap;
   display: block;
@@ -402,7 +449,6 @@ button:hover {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
-  background: rgba(21, 115, 170, 0.63);
   -webkit-transition: background 0.5s, height 0.25s;
   transition: background 0.5s, height 0.25s;
   color: white;
@@ -410,6 +456,7 @@ button:hover {
   padding: 0.5rem;
   border-radius: 25px;
   font-size: 0.9rem;
+  cursor: pointer;
 }
 
 @media (max-width: 760px) {
@@ -421,6 +468,10 @@ button:hover {
 .newItem {
   border: none;
   width: 85%;
+  -webkit-margin-before: 1em;
+          margin-block-start: 1em;
+  -webkit-margin-after: 1em;
+          margin-block-end: 1em;
   float: left;
   background: none;
   color: white;
@@ -521,6 +572,14 @@ button:hover {
 /* =========================================== */
 /* WEEK VIEW */
 /* =========================================== */
+#ghostie {
+  z-index: 1;
+  position: relative;
+  display: block;
+  height: 100px;
+  background: none !important;
+}
+
 #week {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
@@ -555,35 +614,28 @@ button:hover {
   padding: 0.75rem;
   border: 1px solid rgba(32, 32, 32, 0.555);
   background: rgba(0, 0, 0, 0.15);
-  position: relative;
-  z-index: 1;
 }
 
 #week .weekday .weekDetails {
   overflow: auto;
   height: 14rem;
-  position: relative;
   z-index: 1;
 }
 
 #week .weekday .weekDetails ul {
   list-style-type: none;
   padding: 0;
-  position: relative;
-  z-index: 1;
 }
 
 #week .weekday .weekDetails ul li {
   position: relative;
-  z-index: 100;
-  width: 92%;
+  width: 90%;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   display: block;
   text-overflow: ellipsis;
   border: none;
-  background: rgba(21, 115, 170, 0.63);
   -webkit-transition: background 0.5s;
   transition: background 0.5s;
   color: white;
@@ -594,7 +646,6 @@ button:hover {
 }
 
 #week .weekday .weekDetails ul li:hover {
-  background: rgba(24, 127, 187, 0.993);
   cursor: pointer;
 }
 
@@ -683,7 +734,6 @@ button:hover {
   display: block;
   text-overflow: ellipsis;
   border: none;
-  background: rgba(21, 115, 170, 0.63);
   -webkit-transition: background 0.5s;
   transition: background 0.5s;
   color: white;
@@ -694,7 +744,6 @@ button:hover {
 }
 
 #month .monthDays .monthDay .monthDetails ul li:hover {
-  background: rgba(24, 127, 187, 0.993);
   cursor: pointer;
 }
 
