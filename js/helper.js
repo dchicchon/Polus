@@ -16,13 +16,13 @@ let addFunction = function () {
       let entryInput = document.createElement("input");
       let key = getKey();
 
-      // entryInput.setAttribute("class", "newItem");
       entryInput.classList.add("newItem");
       entryInput.style.background = "none";
       entryListItem.classList.add("entry", `${date}`, "blue", "new");
       entryListItem.id = key;
-      entryListItem.setAttribute("draggable", "true");
+      entryListItem.setAttribute("draggable", "true"); // allows entry to be draggable
 
+      // Style
       entryListItem.style.animationName = "grow";
       entryListItem.style.animationFillMode = "forwards";
       entryListItem.style.animationDuration = "0.25s";
@@ -54,7 +54,7 @@ let addFunction = function () {
           parent.textContent = text; // when this is done, the input element is removed
           let list = parent.parentNode;
           if (text.length > 0) {
-            addToStorage(list, date, text, key);
+            addToStorage(list, date, text, key, 'blue');
           } else {
             entryListItem.remove();
           }
@@ -71,9 +71,8 @@ let addFunction = function () {
 
 let getKey = () => {
   let alpha = "abcdefghijklmnopqrstuvwxyz";
-  let key = `${alpha[Math.floor(Math.random() * 25)]}${
-    Math.floor(Math.random() * 98) + 1
-  }`;
+  let key = `${alpha[Math.floor(Math.random() * 25)]}${Math.floor(Math.random() * 98) + 1
+    }`;
   return key;
 };
 
@@ -103,7 +102,7 @@ let addToStorage = function (listElm, date, text, key, color) {
       let dateEntries = result[`${date}`];
       dateEntries.push(entry);
       entryFunctions(listElm, dateEntries);
-      chrome.storage.sync.set({ [date]: dateEntries }, function () {});
+      chrome.storage.sync.set({ [date]: dateEntries }, function () { });
     }
   });
 };
@@ -397,12 +396,14 @@ let entryFunctions = function (elmList, arr) {
 let dragFunctions = function () {
   let dragged;
   let color;
-  document.addEventListener("drag", function (event) {}, false);
+  document.addEventListener("drag", function (event) { }, false);
   document.addEventListener(
     "dragstart",
     function (event) {
       if (event.target.classList.contains("entry")) {
         dragged = event.target;
+        // console.log(dragged)
+        // console.log(dragged.classList)
         color = dragged.classList[2];
         event.dataTransfer.setData("text/plain", dragged.id);
         event.target.style.opacity = 0.5;
@@ -455,39 +456,66 @@ let dragFunctions = function () {
     "drop",
     function (event) {
       event.preventDefault();
+      console.log(event.target)
+      console.log("START ")
       // console.log(event.dataTransfer.getData("text"));  Might be useful later on to get data from the dragged item
       let date = event.target.id;
+      let initalColor = dragged.classList[2]
+      console.log(dragged.classList[2])
       let prevDate = dragged.classList.item(1);
       if (
         event.target.className === "weekDetails" ||
         event.target.className === "monthDetails"
       ) {
+        console.log("NEW START")
         event.target.style.background = "initial";
-        dragged.parentNode.removeChild(dragged); // remove from initial DOM placement
-        event.target.children[0].appendChild(dragged); // append to new location
 
+        let listElm = event.target
+
+        dragged.parentNode.removeChild(dragged); // remove from initial DOM placement
+        event.target.children[0].appendChild(dragged); // append to new <ul> tag
+
+        1
         if (date !== prevDate) {
+          console.log("FINAL START")
           dragged.classList.remove(prevDate); // remove previous date from classList
           dragged.classList.remove("new");
-          dragged.classList.add(event.target.id, "new"); // add the new date to classList
+          console.log(initalColor)
+          console.log(event.target.id)
+          dragged.classList.add(event.target.id, initalColor); // add the new date to classList
           // Filter from previous Date object
+
           chrome.storage.sync.get([`${prevDate}`], function (result) {
             let entriesArr = result[`${prevDate}`];
+            if (entriesArr.length === 1) {
+              chrome.storage.sync.set({ [prevDate]: [] });
+            } else {
+              let newEntriesArr = [...entriesArr]
+              newEntriesArr = newEntriesArr.filter((elm) => elm.key !== dragged.id);
+              chrome.storage.sync.set({ [prevDate]: newEntriesArr });
 
-            // !
-            // ! THIS IS NOT WORKING FOR SOME REASON
-            // !
-            entriesArr = entriesArr.filter((elm) => elm.key !== dragged.id);
-            chrome.storage.sync.set({ [prevDate]: entriesArr });
+            }
+            // console.log(entriesArr)
+
           });
 
-          // Add to new date object
-          let targetElmParent = dragged.children[0];
-          let targetElm = targetElmParent.children[0];
+
+          let targetElmParent
+          let targetElm
+          let mainText;
+          // I did this in order to get the correct text content
+          if (dragged.children.length > 1) {
+            targetElmParent = dragged.children[0];
+            targetElm = targetElmParent.children[0];
+            mainText = targetElm.textContent
+          } else {
+            mainText = dragged.textContent
+          }
+
           addToStorage(
-            event.target.children[0],
+            listElm.children[0],
             date,
-            targetElm.textContent,
+            mainText,
             dragged.id,
             color
           );
