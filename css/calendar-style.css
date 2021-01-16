@@ -346,6 +346,30 @@ button:hover {
   background: rgba(185, 174, 8, 0.75);
 }
 
+.purple {
+  background: rgba(122, 39, 138, 0.75);
+}
+
+.orange {
+  background: rgba(251, 119, 5, 0.75);
+}
+
+.red {
+  background: rgba(220, 5, 5, 0.75);
+}
+
+.brown {
+  background: rgba(113, 44, 3, 0.75);
+}
+
+.cyan {
+  background: rgba(0, 220, 255, 0.75);
+}
+
+.black {
+  background: black;
+}
+
 .entry-container .edit {
   background: none;
   -webkit-transition: background 0.5s;

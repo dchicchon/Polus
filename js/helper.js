@@ -288,7 +288,7 @@ let entryFunctions = function (elmList, arr) {
         entryColor.value = entry.classList[2];
 
         entryColor.style.outline = "none";
-        let colorWheel = ["blue", "green", "gold"];
+        let colorWheel = ["blue", "green", "gold", 'purple', 'orange', 'red', 'brown', 'cyan', 'black'];
         // initial selected option should be the color that is already on the entry
         for (let color of colorWheel) {
 
@@ -337,9 +337,12 @@ let entryFunctions = function (elmList, arr) {
 
           let ghostElm = document.createElement("li");
           ghostElm.id = "ghostie"; // should i make this a class or an id?
-
+          let parent = entry.parentNode
+          let gparent = parent.parentNode
           let nextSib = entry.nextSibling;
-          entry.parentNode.insertBefore(ghostElm, nextSib); // 1.element to place, 2. reference node // remember praentNode!
+          if (gparent.className !== 'details') {
+            entry.parentNode.insertBefore(ghostElm, nextSib); // 1.element to place, 2. reference node // remember praentNode!
+          }
 
           let newStyle = {
             // height: '100px',
@@ -355,7 +358,7 @@ let entryFunctions = function (elmList, arr) {
             "max-width": "300px",
             "min-height": "100px",
             // height: "fit-content",
-            position: "absolute",
+            position: gparent.className === 'details' ? '' : "absolute",
             "z-index": "100",
           };
 
