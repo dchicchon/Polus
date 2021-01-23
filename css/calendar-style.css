@@ -358,16 +358,8 @@ button:hover {
   background: rgba(220, 5, 5, 0.75);
 }
 
-.brown {
-  background: rgba(113, 44, 3, 0.75);
-}
-
 .cyan {
   background: rgba(0, 220, 255, 0.75);
-}
-
-.black {
-  background: black;
 }
 
 .entry-container .edit {

@@ -288,7 +288,7 @@ let entryFunctions = function (elmList, arr) {
         entryColor.value = entry.classList[2];
 
         entryColor.style.outline = "none";
-        let colorWheel = ["blue", "green", "gold", 'purple', 'orange', 'red', 'brown', 'cyan', 'black'];
+        let colorWheel = ["blue", "green", "gold", 'purple', 'orange', 'red', 'cyan'];
         // initial selected option should be the color that is already on the entry
         for (let color of colorWheel) {
 
@@ -334,33 +334,41 @@ let entryFunctions = function (elmList, arr) {
       entry.addEventListener("click", (event) => {
         if (!active) {
           active = true;
-
           let ghostElm = document.createElement("li");
           ghostElm.id = "ghostie"; // should i make this a class or an id?
           let parent = entry.parentNode
           let gparent = parent.parentNode
           let nextSib = entry.nextSibling;
+          let newStyle;
+
+          // Styling
           if (gparent.className !== 'details') {
             entry.parentNode.insertBefore(ghostElm, nextSib); // 1.element to place, 2. reference node // remember praentNode!
+            newStyle = {
+              textOverflow: "none",
+              height: "fit-content",
+              whiteSpace: "normal",
+              overflow: "visible",
+
+              // NEW
+              width: "300px",
+              "max-width": "300px",
+              "min-height": "100px",
+              "z-index": "100",
+              position: "absolute",
+            };
+          } else {
+            newStyle = {
+              textOverflow: "none",
+              height: "fit-content",
+              whiteSpace: "normal",
+              overflow: "visible",
+              width: "300px",
+              "max-width": "300px",
+              "min-height": "100px",
+              "z-index": "100",
+            }
           }
-
-          let newStyle = {
-            // height: '100px',
-            textOverflow: "none",
-            // position: 'relative',
-            height: "fit-content",
-            whiteSpace: "normal",
-            overflow: "visible",
-
-            // NEW
-            // background: "rgba(24, 127, 187, 0.993)",
-            width: "300px",
-            "max-width": "300px",
-            "min-height": "100px",
-            // height: "fit-content",
-            position: gparent.className === 'details' ? '' : "absolute",
-            "z-index": "100",
-          };
 
           Object.assign(entry.style, newStyle); // style
 
@@ -390,7 +398,9 @@ let entryFunctions = function (elmList, arr) {
             position: "relative",
           };
           Object.assign(entry.style, newStyle); // style
-          document.getElementById("ghostie").remove();
+          if (document.getElementById("ghostie")) {
+            document.getElementById("ghostie").remove();
+          }
           entry.removeChild(entryDiv);
           entry.textContent = entryDiv.children[0].textContent;
         }
