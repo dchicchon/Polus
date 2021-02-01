@@ -4,47 +4,54 @@
 let currentDate;
 let globalDate;
 
+// Format Options
+let options = {
+  weekday: "long",
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+};
+
 // Update Clock
 
 const updateTime = () => {
   // the format will chnage depending on the locale using the extension
-  // British En glish uses day-month-year order
+  // British English uses day-month-year order
   // Korean uses year-month-day order
   currentDate = new Date();
   globalDate = currentDate.toLocaleDateString();
-
-  // Format Options
-  let options = {
-    weekday: "long",
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-  };
-
-  chrome.storage.sync.get(['clock', 'date'], result => {
-    if (result['clock']) {
-      let clock = `${currentDate.toLocaleTimeString()}`;
-      document.getElementById("clock").textContent = clock;
-    } else {
-      document.getElementById("clock").innerHTML = '';
-
-    }
-    if (result['date']) {
-      let date = `${currentDate.toLocaleDateString(undefined, options)}`;
-      document.getElementById("date").textContent = date;
-    } else {
-      document.getElementById("date").innerHTML = '';
-
-    }
-  })
-
+  let clock = `${currentDate.toLocaleTimeString()}`;
+  document.getElementById("clock").textContent = clock;
+  let date = `${currentDate.toLocaleDateString(undefined, options)}`;
+  document.getElementById("date").textContent = date;
 
 };
 
 chrome.storage.onChanged.addListener(function (result) {
-  if (result['clock'] || result['date']) {
-    updateTime()
+  for (key in result) {
+    if (key === 'clock') {
+      let clockDiv = document.getElementById("clock")
+      if (result['clock']['newValue'] === true) {
+        console.log(result['clock']['newValue'])
+        clockDiv.classList.remove('hidden')
+
+      } else if (result['clock']['newValue'] === false) {
+        console.log(result['clock']['newValue'])
+        clockDiv.classList.add('hidden')
+      }
+    } else if (key === 'date') {
+      let dateDiv = document.getElementById("date")
+      if (result['date']['newValue'] === true) {
+        console.log(result['date']['newValue'])
+        dateDiv.classList.remove('hidden')
+
+      } else if (result['date']['newValue'] === false) {
+        console.log(result['date']['newValue'])
+        dateDiv.classList.add('hidden')
+      }
+    }
   }
+
 })
 
 updateTime();

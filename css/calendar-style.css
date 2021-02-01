@@ -315,6 +315,10 @@ button:hover {
   background: rgba(43, 42, 42, 0.329);
 }
 
+.hidden {
+  display: none !important;
+}
+
 .add {
   background: none;
   width: 1.5rem;

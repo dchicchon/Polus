@@ -265,10 +265,10 @@ button:hover {
 
 // Main Classes
 // ====================
-// .entry:hover {
-//   // background: rgba(24, 127, 187, 0.993);
-//   cursor: pointer;
-// }
+
+.hidden {
+  display: none !important;
+}
 
 .add {
   background: none;
@@ -310,7 +310,6 @@ button:hover {
 .red {
   background: rgba(220, 5, 5,0.75)
 }
-
 
 .cyan {
   background: rgba(0, 220, 255, 0.75)
