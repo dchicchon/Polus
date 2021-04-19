@@ -6,10 +6,6 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.json$/, // trying to load json not working
-                use: 'json-loader'
-            },
-            {
                 test: /\.html$/,
                 use: ["html-loader"]
             }, {
