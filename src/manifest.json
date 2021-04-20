@@ -4,14 +4,14 @@
   "version": "1.0.4",
   "description": "An online planner to help make you more effecient!",
   "icons": {
-    "16": "images/polus_tab_icon.png",
-    "48": "images/polus_icon48.png",
-    "128": "images/polus_icon128.png"
+    "16": "assets/polus_tab_icon.png",
+    "48": "assets/polus_icon48.png",
+    "128": "assets/polus_icon128.png"
   },
   "browser_action": {
     "default_title": "Polus",
-    "default_icon": "images/polus_tab_icon.png",
-    "default_popup": "html/options.html"
+    "default_icon": "assets/polus_tab_icon.png",
+    "default_popup": "./options.html"
   },
   "author": "dchicchon",
   "background": {
@@ -21,7 +21,7 @@
     "persistent": false
   },
   "chrome_url_overrides": {
-    "newtab": "html/index.html"
+    "newtab": "template.html"
   },
   "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://www.google-analytics.com https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",
   "incognito": "not_allowed",
