@@ -1,4 +1,7 @@
-const createMonth = () => {
+import { setEntries, addFunction } from "../utils/helper";
+
+
+export const createMonth = () => {
   monthView.innerHTML = "";
   let monthDate = new Date();
 

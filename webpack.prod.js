@@ -12,7 +12,7 @@ const CopyPlugin = require("copy-webpack-plugin"); // used to copy files of any 
 module.exports = merge(common, {
   mode: "production",
   output: {
-    filename: "[name].[contenthash].bundle.js",
+    filename: "[name].js",
     path: path.resolve(__dirname, "dist"),
   },
   optimization: {
@@ -20,9 +20,19 @@ module.exports = merge(common, {
     minimizer: [
       // new JsonMinimizerPlugin(), // for json
       new CssMinimizerPlugin(), // for css
-      new TerserPlugin(), // for js
+      // new TerserPlugin(), // for js
       new HtmlWebpackPlugin({
+        filename: "index.html",
         template: "./src/template.html", // my html file that im using
+        minify: {
+          removeAttributeQuotes: true,
+          collapseWhitespace: true,
+          remoteComments: true,
+        },
+      }),
+      new HtmlWebpackPlugin({
+        filename: "popup.html",
+        template: "./src/options.html", // my html file that im using
         minify: {
           removeAttributeQuotes: true,
           collapseWhitespace: true,
@@ -33,10 +43,6 @@ module.exports = merge(common, {
   },
   module: {
     rules: [
-      {
-        test: /\.json$/i,
-        type: "asset/resource",
-      },
       {
         test: /\.scss$/,
         use: [
@@ -55,18 +61,16 @@ module.exports = merge(common, {
           from: "*.json",
           to: path.resolve(__dirname, "dist"),
         },
-      ],
-    }),
-    new CopyPlugin({
-      patterns: [
         {
           context: "src/",
-          from: "*.json",
-          to: path.resolve(__dirname, "dist"),
+          from: "./assets/",
+          to: path.resolve(__dirname, "dist/assets"),
         },
       ],
     }),
-    new MiniCssExtractPlugin({ filename: "[name].[contenthash].css" }),
+    new MiniCssExtractPlugin({
+      filename: "[name].css",
+    }),
     new CleanWebpackPlugin(),
   ],
 });

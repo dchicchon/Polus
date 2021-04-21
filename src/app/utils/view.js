@@ -1,9 +1,12 @@
 // THIS SCRIPT IS FOR ALL THE VIEWS
+import { createToday } from "../calendar/day";
+import { createWeek } from "../calendar/week";
+import { createMonth } from "../calendar/month";
 
 let dayView = document.getElementById("daily");
 let weekView = document.getElementById("week");
 let monthView = document.getElementById("month");
-let views = [dayView, weekView, monthView];
+export const views = [dayView, weekView, monthView];
 
 // Click on view buttons to allow selective viewing
 export const viewFunction = () => {

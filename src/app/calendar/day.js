@@ -1,4 +1,6 @@
-const createToday = () => {
+import { setEntries, addFunction } from "../utils/helper";
+
+export const createToday = () => {
   let todayDate = new Date();
   let dayOptions = { weekday: "short" };
   let dayDate = todayDate.toLocaleDateString();

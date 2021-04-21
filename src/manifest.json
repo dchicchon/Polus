@@ -16,12 +16,12 @@
   "author": "dchicchon",
   "background": {
     "scripts": [
-      "js/background.js"
+      "background.js"
     ],
     "persistent": false
   },
   "chrome_url_overrides": {
-    "newtab": "template.html"
+    "newtab": "index.html"
   },
   "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://www.google-analytics.com https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",
   "incognito": "not_allowed",

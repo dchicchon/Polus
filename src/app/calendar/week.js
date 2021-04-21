@@ -1,4 +1,6 @@
-const createWeek = () => {
+import { setEntries, addFunction } from "../utils/helper";
+
+export const createWeek = () => {
   // LEVEL 1 Week View
   weekView.innerHTML = "";
 
@@ -61,10 +63,10 @@ const createWeek = () => {
   });
 
   // Nav
-  weekNav.append(prevBtn, weekTitle, nextBtn)
+  weekNav.append(prevBtn, weekTitle, nextBtn);
 
   // View
-  weekView.append(weekNav, weekdayNames, weekDays)
+  weekView.append(weekNav, weekdayNames, weekDays);
 
   let createDaysInWeek = (dateObj) => {
     weekDays.innerHTML = "";
@@ -126,8 +128,8 @@ const createWeek = () => {
       btn.value = date;
 
       // Append
-      details.append(detailsList, btn)
-      weekday.append(weekDate, details)
+      details.append(detailsList, btn);
+      weekday.append(weekDate, details);
       weekDays.appendChild(weekday);
     }
 
