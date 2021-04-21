@@ -1,4 +1,6 @@
 import { setEntries, addFunction } from "../utils/helper";
+import {globalDate } from '../utils/clock'
+let weekView = document.getElementById("week");
 
 export const createWeek = () => {
   // LEVEL 1 Week View
@@ -71,7 +73,7 @@ export const createWeek = () => {
   let createDaysInWeek = (dateObj) => {
     weekDays.innerHTML = "";
     let titleDate = new Date(dateObj);
-    startingDate = titleDate.toLocaleDateString();
+    let startingDate = titleDate.toLocaleDateString();
 
     if (titleDate.getDate() === initialDate.getDate()) {
       weekTitle.style.background = "rgba(5, 80, 123, 0.992)";
@@ -80,7 +82,7 @@ export const createWeek = () => {
       weekTitle.style.backgroundColor = "initial";
     }
     titleDate.setDate(titleDate.getDate() + 6);
-    endingDate = titleDate.toLocaleDateString();
+    let endingDate = titleDate.toLocaleDateString();
     weekTitle.textContent = `${startingDate} - ${endingDate}`;
 
     for (let i = 0; i <= 6; i++) {

@@ -1,4 +1,4 @@
 import { startApp } from './app/app'
-import './main.scss'
+import './css/main.scss'
 
 startApp();

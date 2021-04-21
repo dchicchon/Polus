@@ -1,5 +1,6 @@
 import { setEntries, addFunction } from "../utils/helper";
 
+let monthView = document.getElementById("month");
 
 export const createMonth = () => {
   monthView.innerHTML = "";

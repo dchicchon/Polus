@@ -1,4 +1,5 @@
 import { setEntries, addFunction } from "../utils/helper";
+let dayView = document.getElementById("daily");
 
 export const createToday = () => {
   let todayDate = new Date();

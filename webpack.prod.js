@@ -18,12 +18,12 @@ module.exports = merge(common, {
   optimization: {
     minimize: true,
     minimizer: [
-      // new JsonMinimizerPlugin(), // for json
+      new JsonMinimizerPlugin(), // for json
       new CssMinimizerPlugin(), // for css
       // new TerserPlugin(), // for js
       new HtmlWebpackPlugin({
         filename: "index.html",
-        template: "./src/template.html", // my html file that im using
+        template: "./src/index.html", // template html
         minify: {
           removeAttributeQuotes: true,
           collapseWhitespace: true,
@@ -32,7 +32,7 @@ module.exports = merge(common, {
       }),
       new HtmlWebpackPlugin({
         filename: "popup.html",
-        template: "./src/options.html", // my html file that im using
+        template: "./src/popup.html", // popup html
         minify: {
           removeAttributeQuotes: true,
           collapseWhitespace: true,

@@ -1,8 +1,10 @@
+import "./css/popup.scss";
+
 // TOGGLES
 // let clockToggle = document.getElementById('clock-toggle')
 chrome.storage.sync.get(null, function (result) {
-  console.log(result)
-})
+  console.log(result);
+});
 
 let toggles = document.getElementsByClassName("toggle");
 for (let toggle of toggles) {
@@ -43,7 +45,7 @@ document.getElementById("submitPhoto").onclick = function () {
     })
     .then((response) => response.json())
     .then(function (photo) {
-      console.log(photo)
+      console.log(photo);
       let url = photo.urls.raw;
       let location = photo.location.name ? `${photo.location.name}` : "Unknown";
       let author = photo.user.name ? `${photo.user.name}` : "Unknown";
@@ -57,10 +59,10 @@ document.getElementById("submitPhoto").onclick = function () {
       });
     })
     .catch((err) => {
-      console.log(`Fetch failed: ${err}`)
+      console.log(`Fetch failed: ${err}`);
     });
 };
 
 chrome.storage.onChanged.addListener(function (result) {
-  console.log(result)
-})
+  console.log(result);
+});

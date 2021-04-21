@@ -1,16 +1,22 @@
 const path = require("path");
-const { merge } = require("webpack-merge");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // extract css
-const common = require("./webpack.common");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin"); // used to copy files of any time to dist
 
-module.exports = merge(common, {
-  mode: "development",
+module.exports = {
+  mode: "production",
+  entry: {
+    index: "./src/index.js",
+    // popup: "./src/popup.js",
+    background: "./src/background.js",
+  },
 
   output: {
-    filename: "[name].js",
     path: path.resolve(__dirname, "dist"),
+    filename: "[name].js",
   },
+
   module: {
     rules: [
       {
@@ -38,9 +44,9 @@ module.exports = merge(common, {
         },
       ],
     }),
-    new MiniCssExtractPlugin({
-      filename: "[name].css",
-      path: path.resolve(__dirname, "dist/css"),
-    }),
+    new MiniCssExtractPlugin({ filename: "[name].css" }),
+    new HtmlWebpackPlugin({ template: "./src/index.html" }),
+    // new HtmlWebpackPlugin({ template: "./src/popup.html" }),
+    new CleanWebpackPlugin(),
   ],
-});
+};

@@ -114,7 +114,7 @@ export const startApp = () => {
   viewFunction(); // This function is to give the view buttons the ability to pick a view!
   let timer = setInterval(updateTime, 1000); // set a timer that executes the updateTime() function every second
   chrome.storage.sync.get(["pmode", "date", "clock"], (result) => {
-    for (key in result) {
+    for (let key in result) {
       if (key === "pmode") {
         if (result["pmode"] === false) {
           let mainView = document.getElementsByTagName("main");

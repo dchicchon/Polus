@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Options</title>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2 class="page-title">Options</h2>
+      <div>
+        Change Photo Daily
+        <label class="switch">
+          <input id="changePhoto" type="checkbox" class="toggle" />
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div>
+        Clock
+        <label class="switch">
+          <input id="clock" type="checkbox" class="toggle" />
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div>
+        Date
+        <label class="switch">
+          <input id="date" type="checkbox" class="toggle" />
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div>
+        Make Default New Tab
+        <label class="switch">
+          <input id="newTab" type="checkbox" class="toggle" />
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <div>
+        Select Photo from
+        <span>
+          <a
+            href="https://unsplash.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Unsplash</a
+          ></span
+        >
+        <input
+          id="photoURL"
+          type="text"
+          placeholder="https://unsplash.com/photos/NuBvAE6VfSM"
+        />
+      </div>
+      <button id="submitPhoto">Submit</button>
+    </div>
+
+    <ul id="popup-links">
+      <li class="active-popup">
+        <a href="./options.html">Options</a>
+      </li>
+      <li>
+        <a href="./updates.html">Updates</a>
+      </li>
+      <li>
+        <a href="./account.html">Account</a>
+      </li>
+    </ul>
+  </body>
+</html>

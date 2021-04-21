@@ -31,7 +31,7 @@ export const hideViews = (viewsArr) => {
     for (let k = 0; k < viewsArr.length; k++) {
       // If the view clicked on equals the result
       if (views[k].id === result["view"]) {
-        view = result["view"];
+        let view = result["view"];
         switch (view) {
           case "daily":
             createToday();

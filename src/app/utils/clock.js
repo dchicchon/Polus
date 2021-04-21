@@ -2,7 +2,7 @@
 
 // Global Variables
 let currentDate;
-let globalDate;
+export let globalDate;
 
 // Format Options
 let options = {
@@ -27,7 +27,7 @@ export const updateTime = () => {
 };
 
 chrome.storage.onChanged.addListener(function (result) {
-  for (key in result) {
+  for (let key in result) {
     if (key === "clock") {
       let clockDiv = document.getElementById("clock");
       if (result["clock"]["newValue"] === true) {
