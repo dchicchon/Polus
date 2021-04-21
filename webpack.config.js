@@ -8,13 +8,13 @@ module.exports = {
   mode: "production",
   entry: {
     index: "./src/index.js",
-    // popup: "./src/popup.js",
+    popup: "./src/popup.js",
     background: "./src/background.js",
   },
 
   output: {
+    filename: "[name].[contenthash].js",
     path: path.resolve(__dirname, "dist"),
-    filename: "[name].js",
   },
 
   module: {
@@ -44,9 +44,19 @@ module.exports = {
         },
       ],
     }),
-    new MiniCssExtractPlugin({ filename: "[name].css" }),
-    new HtmlWebpackPlugin({ template: "./src/index.html" }),
-    // new HtmlWebpackPlugin({ template: "./src/popup.html" }),
+    new MiniCssExtractPlugin({ filename: "[name].[contenthash].css" }),
+    new HtmlWebpackPlugin({
+      template: "./src/index.html",
+      chunks: ["index"],
+      inject: true,
+      filename: "index.html",
+    }),
+    new HtmlWebpackPlugin({
+      template: "./src/popup.html",
+      chunks: ["popup"],
+      filename: "popup.html",
+      inject: true,
+    }),
     new CleanWebpackPlugin(),
   ],
 };

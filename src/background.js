@@ -40,15 +40,13 @@ chrome.alarms.get("changeBackground", (alarm) => {
 });
 
 // CONTEXT MENUS
-
 // 1. User toggles off new tab
 // 2. Clicks on 'Open'
 // 3. Opens index.html
 
 chrome.contextMenus.onClicked.addListener(function (result) {
   if (result["menuItemId"] === "open-sesame") {
-    let newURL = chrome.extension.getURL("/html/index.html");
-
+    let newURL = chrome.extension.getURL("/index.html");
     chrome.storage.sync.set({ indexOpen: true });
     chrome.tabs.create({ url: newURL });
   }
