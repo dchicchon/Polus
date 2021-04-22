@@ -7,7 +7,6 @@
     "start": "webpack serve --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "main": "webpack --config webpack.config.js"
-
   },
   "repository": {
     "type": "git",
@@ -21,6 +20,7 @@
   },
   "homepage": "https://github.com/dchicchon/Polus#readme",
   "devDependencies": {
+    "app-manifest-loader": "^2.4.1",
     "clean-webpack-plugin": "*",
     "copy-webpack-plugin": "^8.1.1",
     "css-loader": "^5.2.2",
@@ -30,6 +30,7 @@
     "html-webpack-plugin": "^5.3.1",
     "json-loader": "^0.5.7",
     "json-minimizer-webpack-plugin": "^2.1.0",
+    "json5": "^2.2.0",
     "laravel-mix": "^6.0.16",
     "mini-css-extract-plugin": "^1.4.1",
     "node-sass": "^5.0.0",
@@ -38,6 +39,7 @@
     "webpack": "^5.33.2",
     "webpack-cli": "^4.6.0",
     "webpack-dev-server": "^3.11.2",
-    "webpack-merge": "^5.7.3"
+    "webpack-merge": "^5.7.3",
+    "webpack-pwa-manifest": "^4.3.0"
   }
 }
