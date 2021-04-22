@@ -8,5 +8,8 @@
     "/dist/assets/polus_icon.png": "/dist/assets/polus_icon.png",
     "/dist/assets/polus_icon128.png": "/dist/assets/polus_icon128.png",
     "/dist/assets/polus_icon48.png": "/dist/assets/polus_icon48.png",
-    "/dist/assets/polus_tab_icon.png": "/dist/assets/polus_tab_icon.png"
+    "/dist/assets/polus_tab_icon.png": "/dist/assets/polus_tab_icon.png",
+    "/dist/html/index.html": "/dist/html/index.html",
+    "/dist/html/popup.html": "/dist/html/popup.html",
+    "/dist/manifest.json": "/dist/manifest.json"
 }

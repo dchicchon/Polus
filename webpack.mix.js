@@ -6,4 +6,7 @@ mix.js("src/js/index.js", 'dist/js')
     .sass('src/css/main.scss', 'dist/css')
     .sass('src/css/popup.scss', 'dist/css')
     .copy('src/assets', 'dist/assets')
+    .copy('src/html', 'dist/html')
+    .copy('src/manifest.json', 'dist')
+
     .options({ processCssUrls: false })
