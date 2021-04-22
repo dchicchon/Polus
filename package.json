@@ -23,25 +23,13 @@
   },
   "homepage": "https://github.com/dchicchon/Polus#readme",
   "devDependencies": {
-    "clean-webpack-plugin": "*",
-    "copy-webpack-plugin": "^8.1.1",
     "cross-env": "^7.0.3",
-    "css-loader": "^5.2.2",
-    "css-minimizer-webpack-plugin": "^2.0.0",
-    "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^5.3.1",
-    "json-minimizer-webpack-plugin": "^2.1.0",
     "laravel-mix": "^6.0.18",
-    "mini-css-extract-plugin": "^1.4.1",
-    "node-sass": "^5.0.0",
     "postcss": "8.1",
-    "resolve-url-loader": "^3.1.2",
     "sass": "^1.32.11",
     "sass-loader": "^11.0.1",
-    "style-loader": "^2.0.0",
-    "webpack": "^5.33.2",
-    "webpack-cli": "^4.6.0",
-    "webpack-dev-server": "^3.11.2",
-    "webpack-merge": "^5.7.3"
+    "vue": "^2.6.12",
+    "vue-loader": "^15.9.5",
+    "vue-template-compiler": "^2.6.12"
   }
 }

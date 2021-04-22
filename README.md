@@ -190,3 +190,6 @@ chrome.cookies.set(
 - Using Chrome LocalStorage in future as not to throttle chrome.storage.sync
 - IOS and Android Stores
 - A notes tab to add to each day which will keep a log of your notes for the day
+
+### Reference for Vue Chrome Extension
+https://github.com/aschmelyun/simple-toggle-sites/blob/main/package.json

@@ -61,26 +61,26 @@ export const backgroundImage = () => {
     let photoLink = document.getElementById("photo-link");
     let download = document.getElementById("download");
 
-    let appInfo = document.getElementById("app-info");
-    let appTitle = document.getElementById("app-title");
-    let appItems = document.getElementById("app-items");
+    // let appInfo = document.getElementById("app-info");
+    // let appTitle = document.getElementById("app-title");
+    // let appItems = document.getElementById("app-items");
 
-    appInfo.addEventListener("mouseover", () => {
-      appTitle.style.display = "none";
-      appItems.style.display = "inline-block";
-    });
+    // appInfo.addEventListener("mouseover", () => {
+    //   appTitle.style.display = "none";
+    //   appItems.style.display = "inline-block";
+    // });
 
-    appInfo.addEventListener("mouseleave", () => {
-      appTitle.style.display = "inline-block";
-      appItems.style.display = "none";
-    });
+    // appInfo.addEventListener("mouseleave", () => {
+    //   appTitle.style.display = "inline-block";
+    //   appItems.style.display = "none";
+    // });
 
-    photoLink.textContent = result.background.author;
-    photoLink.href =
-      result.background.photoLink + "?utm_source=Planner&utm_medium=referral";
+    // photoLink.textContent = result.background.author;
+    // photoLink.href =
+    //   result.background.photoLink + "?utm_source=Planner&utm_medium=referral";
     // console.log  (result);
     if (result.background.downloadLink) {
-      download.href = result.background.downloadLink;
+      // download.href = result.background.downloadLink;
     }
 
     page[0].style.background = `rgba(0,0,0,0.9) url(${
@@ -89,19 +89,19 @@ export const backgroundImage = () => {
     // page[0].style = 'brightness(90%)'
 
     if (result.background.location) {
-      backgroundLocation.textContent = result.background.location;
+      // backgroundLocation.textContent = result.background.location;
     } else {
-      backgroundLocation.textContent = "Unknown";
+      // backgroundLocation.textContent = "Unknown";
     }
 
-    backgroundInfo.addEventListener("mouseover", () => {
-      backgroundLocation.style.opacity = 0;
-      backgroundSource.style.opacity = 0.75;
-    });
+    // backgroundInfo.addEventListener("mouseover", () => {
+    //   backgroundLocation.style.opacity = 0;
+    //   backgroundSource.style.opacity = 0.75;
+    // });
 
-    backgroundInfo.addEventListener("mouseleave", () => {
-      backgroundLocation.style.opacity = 0.75;
-      backgroundSource.style.opacity = 0;
-    });
+    // backgroundInfo.addEventListener("mouseleave", () => {
+    //   backgroundLocation.style.opacity = 0.75;
+    //   backgroundSource.style.opacity = 0;
+    // });
   });
 };
