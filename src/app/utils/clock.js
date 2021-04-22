@@ -1,7 +1,7 @@
 // THIS SCRIPT IS FOR EVERYTHING TIME RELATED
 
 // Global Variables
-let currentDate;
+export let currentDate;
 export let globalDate;
 
 // Format Options

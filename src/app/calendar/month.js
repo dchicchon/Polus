@@ -1,4 +1,5 @@
 import { setEntries, addFunction } from "../utils/helper";
+import { globalDate, currentDate } from "../utils/clock";
 
 let monthView = document.getElementById("month");
 

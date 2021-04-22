@@ -1,46 +1,43 @@
 const path = require("path");
-const common = require("./webpack.common");
 const { merge } = require("webpack-merge");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // extract css
+const common = require("./webpack.common");
+
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin"); // minimize css
-const TerserPlugin = require("terser-webpack-plugin"); // minimize js
-const HtmlWebpackPlugin = require("html-webpack-plugin"); // minimize html
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const JsonMinimizerPlugin = require("json-minimizer-webpack-plugin"); // minify json
+const TerserPlugin = require("terser-webpack-plugin"); // minimize js
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // extract css
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin"); // used to copy files of any time to dist
+
+// Use this to modify manifest.json
+function modify(buffer, path) {
+  let manifest = JSON.parse(buffer.toString());
+  console.log(manifest);
+
+  // make any modifications that you would like
+
+  // Pretty print to JSON with 2 spaces
+  manifest_JSON = JSON.stringify(manifest, null, 2);
+  return manifest_JSON;
+}
 
 module.exports = merge(common, {
   mode: "production",
-  output: {
-    filename: "[name].js",
-    path: path.resolve(__dirname, "dist"),
-  },
   optimization: {
     minimize: true,
     minimizer: [
       new JsonMinimizerPlugin(), // for json
       new CssMinimizerPlugin(), // for css
-      // new TerserPlugin(), // for js
-      new HtmlWebpackPlugin({
-        filename: "index.html",
-        template: "./src/index.html", // template html
-        minify: {
-          removeAttributeQuotes: true,
-          collapseWhitespace: true,
-          remoteComments: true,
-        },
-      }),
-      new HtmlWebpackPlugin({
-        filename: "popup.html",
-        template: "./src/popup.html", // popup html
-        minify: {
-          removeAttributeQuotes: true,
-          collapseWhitespace: true,
-          remoteComments: true,
-        },
-      }),
+      new TerserPlugin(), // for js
     ],
   },
+
+  output: {
+    filename: "[name].js",
+    path: path.resolve(__dirname, "dist"),
+  },
+
   module: {
     rules: [
       {
@@ -53,14 +50,10 @@ module.exports = merge(common, {
       },
     ],
   },
+
   plugins: [
     new CopyPlugin({
       patterns: [
-        {
-          context: "src/",
-          from: "*.json",
-          to: path.resolve(__dirname, "dist"),
-        },
         {
           context: "src/",
           from: "./assets/",
@@ -68,8 +61,29 @@ module.exports = merge(common, {
         },
       ],
     }),
-    new MiniCssExtractPlugin({
-      filename: "[name].css",
+    new CopyPlugin({
+      patterns: [
+        {
+          from: "./src/manifest.json",
+          to: "./manifest.json",
+        },
+      ],
+    }),
+
+    new MiniCssExtractPlugin({ filename: "[name].[fullhash].css" }),
+    new HtmlWebpackPlugin({
+      template: "./src/index.html",
+      chunks: ["index"],
+      inject: true,
+      filename: "index.html",
+      minify: "auto",
+    }),
+    new HtmlWebpackPlugin({
+      template: "./src/popup.html",
+      chunks: ["popup"],
+      filename: "popup.html",
+      inject: true,
+      minify: "auto",
     }),
     new CleanWebpackPlugin(),
   ],

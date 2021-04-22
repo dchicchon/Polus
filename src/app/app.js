@@ -1,4 +1,6 @@
 import { viewFunction, hideViews, backgroundImage, views } from "./utils/view";
+import "./utils/options";
+import "./utils/ga";
 import { dragFunctions } from "./utils/helper";
 import { updateTime } from "./utils/clock";
 
