@@ -1,4 +1,3 @@
-import "./css/popup.scss";
 
 // TOGGLES
 // let clockToggle = document.getElementById('clock-toggle')

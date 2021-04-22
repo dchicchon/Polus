@@ -4,8 +4,12 @@
   "description": "Plan your life using this planner! Includes daily, weekly, monthly calendars that syncs with your chrome storage",
   "main": "webpack.common.js",
   "scripts": {
-    "dev": "webpack serve --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js"
+    "local": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --env=local --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "staging": "cross-env NODE_ENV=staging node_modules/webpack/bin/webpack.js --progress --env=staging --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --env=production --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "dev": "npm run local",
+    "prod": "npm run production",
+    "watch": "npm run local -- --watch"
   },
   "repository": {
     "type": "git",
@@ -21,11 +25,13 @@
   "devDependencies": {
     "clean-webpack-plugin": "*",
     "copy-webpack-plugin": "^8.1.1",
+    "cross-env": "^7.0.3",
     "css-loader": "^5.2.2",
     "css-minimizer-webpack-plugin": "^2.0.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.3.1",
     "json-minimizer-webpack-plugin": "^2.1.0",
+    "laravel-mix": "^6.0.18",
     "mini-css-extract-plugin": "^1.4.1",
     "node-sass": "^5.0.0",
     "postcss": "8.1",

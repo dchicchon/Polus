@@ -1,0 +1,12 @@
+{
+    "/dist/js/index.js": "/dist/js/index.js",
+    "/dist/js/background.js": "/dist/js/background.js",
+    "/dist/js/popup.js": "/dist/js/popup.js",
+    "/dist/css/popup.css": "/dist/css/popup.css",
+    "/dist/css/main.css": "/dist/css/main.css",
+    "/dist/assets/favicon.ico": "/dist/assets/favicon.ico",
+    "/dist/assets/polus_icon.png": "/dist/assets/polus_icon.png",
+    "/dist/assets/polus_icon128.png": "/dist/assets/polus_icon128.png",
+    "/dist/assets/polus_icon48.png": "/dist/assets/polus_icon48.png",
+    "/dist/assets/polus_tab_icon.png": "/dist/assets/polus_tab_icon.png"
+}
