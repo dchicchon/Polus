@@ -1,12 +1,15 @@
+
+
 <template>
   <ul id="nav">
     <li id="app-info-box">
-      <div id="app-info">
-        <div id="app-title">
-          <!-- <img class="app-icon" src="../assets/polus_icon.png" /> -->
+      <div @mouseover="mouseOverNav" @mouseleave="mouseLeaveNav" id="app-info">
+        <div id="app-title" ref="title">
+          <!-- To bring in the img, we must use "/assets" in order to create a relative path for the compiler to find -->
+          <img class="app-icon" src="/assets/polus_icon.png" alt="App icon" />
           <span class="app-sub">Polus</span>
         </div>
-        <div id="app-items">
+        <div id="app-items" ref="items">
           <div id="site">
             <a
               target="_blank"
@@ -35,7 +38,11 @@
 
     <li id="background-info-box" style="float: right">
       <div id="background-info">
-        <span id="background-location"></span>
+        <span id="background-location">
+          <!-- {{
+            result.background.location ? result.background.location : "Unknown"
+          }} -->
+        </span>
         <span id="background-source"
           >Photo by
           <a id="photo-link" target="_blank" rel="noopener noreferrer"></a> on
@@ -54,16 +61,28 @@
 </template>
 
 <script>
-
 export default {
-    data() {
-
+  data: function () {
+    chrome.storage.sync.get(["background"], function (result) {
+      console.log(result);
+      let photoInfo = {
+          
+      }
+      return {
+        location: result,
+      };
+    });
+  },
+  created() {},
+  methods: {
+    mouseOverNav: function () {
+      this.$refs["title"].style.display = "none";
+      this.$refs["items"].style.display = "inline-block";
     },
-    created() {
-
+    mouseLeaveNav: function () {
+      this.$refs["title"].style.display = "inline-block";
+      this.$refs["items"].style.display = "none";
     },
-    methods() {
-         
-    }
-}
+  },
+};
 </script>
