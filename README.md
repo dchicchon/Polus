@@ -13,6 +13,11 @@ In the past, I have found planning out my life difficult and could never get acc
 
 ## Development
 
+### Run the app
+1. Install all the dev dependencies by running `npm i`
+2. Execute `npm run watch` to build the dist folder
+3. Load the dist folder in the `chrome://extensions` load unpacked and you should see the build!
+
 ### Creating Each View
 
 Creating each view involved working with the following items in order
