@@ -39,9 +39,7 @@
     <li id="background-info-box" style="float: right">
       <div id="background-info">
         <span id="background-location">
-          <!-- {{
-            result.background.location ? result.background.location : "Unknown"
-          }} -->
+          <!-- {{ photoInfo.location }} -->
         </span>
         <span id="background-source"
           >Photo by
@@ -60,17 +58,117 @@
   </ul>
 </template>
 
+<style lang="scss">
+#app-info {
+  padding: 0.5rem 1rem 0;
+  display: grid;
+  font-size: 1.5rem;
+
+  :hover {
+    #app-title {
+      display: none;
+    }
+    #app-items {
+      display: inline-block;
+    }
+  }
+  #app-title {
+    grid-column: 1;
+    grid-row: 1;
+    display: inline-block;
+    animation-name: fadeIn;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
+    color: white;
+    .app-icon {
+      width: 35px;
+      height: 35px;
+    }
+    .app-sub {
+      display: inline-block;
+      font-weight: 200;
+      letter-spacing: 0.1rem;
+      text-shadow: 0 0 15px rgba(0, 0, 0, 1);
+      transform: translateY(-25%);
+    }
+  }
+
+  #app-items {
+    display: none;
+    background-blend-mode: screen;
+    grid-column: 1;
+    grid-row: 1;
+    animation-name: fadeIn;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
+    div {
+      transition: background 0.25s;
+      font-size: 60%;
+      padding: 0.5rem;
+      cursor: pointer;
+      display: inline-block;
+      &:hover {
+        background-color: rgba($color: white, $alpha: 0.1);
+      }
+    }
+  }
+}
+
+#background-info {
+  padding: 1rem;
+  display: grid;
+  text-align: center;
+  background-blend-mode: screen;
+  background: none;
+  color: white;
+
+  #background-location {
+    grid-column: 1;
+    grid-row: 1;
+    opacity: 0.75;
+    font-size: 1rem;
+    transition: opacity 0.25s;
+  }
+  #background-source {
+    font-size: 1rem;
+    grid-column: 1;
+    grid-row: 1;
+    opacity: 0;
+    transition: opacity 0.25s;
+    a {
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    #download {
+      margin-left: 0.5rem;
+      color: white;
+    }
+  }
+
+  #background-link {
+    position: relative;
+    text-decoration: none;
+    color: white;
+  }
+}
+
+</style>
+
 <script>
 export default {
   data: function () {
-    chrome.storage.sync.get(["background"], function (result) {
-      console.log(result);
+    chrome.storage.sync.get(["background"], ({ background }) => {
+      console.log(background)
       let photoInfo = {
-          
-      }
-      return {
-        location: result,
+        location: background.location ? background.location : "Unknown",
+        download: background.downloadLink,
+        author: background.author,
+        link: background.photoLink + "?utm_source=Planner&utm_medium=referral",
       };
+      console.log(photoInfo);
+      return photoInfo;
     });
   },
   created() {},
