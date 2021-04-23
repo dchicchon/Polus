@@ -3,7 +3,7 @@
 <template>
   <ul id="nav">
     <li id="app-info-box">
-      <div @mouseover="mouseOverNav" @mouseleave="mouseLeaveNav" id="app-info">
+      <div id="app-info">
         <div id="app-title" ref="title">
           <!-- To bring in the img, we must use "/assets" in order to create a relative path for the compiler to find -->
           <img class="app-icon" src="/assets/polus_icon.png" alt="App icon" />
@@ -64,7 +64,7 @@
   display: grid;
   font-size: 1.5rem;
 
-  :hover {
+  &:hover {
     #app-title {
       display: none;
     }
@@ -153,14 +153,13 @@
     color: white;
   }
 }
-
 </style>
 
 <script>
 export default {
   data: function () {
     chrome.storage.sync.get(["background"], ({ background }) => {
-      console.log(background)
+      console.log(background);
       let photoInfo = {
         location: background.location ? background.location : "Unknown",
         download: background.downloadLink,
@@ -172,15 +171,6 @@ export default {
     });
   },
   created() {},
-  methods: {
-    mouseOverNav: function () {
-      this.$refs["title"].style.display = "none";
-      this.$refs["items"].style.display = "inline-block";
-    },
-    mouseLeaveNav: function () {
-      this.$refs["title"].style.display = "inline-block";
-      this.$refs["items"].style.display = "none";
-    },
-  },
+  methods: {},
 };
 </script>
