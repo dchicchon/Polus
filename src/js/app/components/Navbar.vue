@@ -38,11 +38,9 @@
 
     <li id="background-info-box" style="float: right">
       <div id="background-info">
-        <span id="background-location">
-          <!-- {{ photoInfo.location }} -->
-        </span>
+        <span id="background-location"> {{ location }}</span>
         <span id="background-source"
-          >Photo by
+          >Photo by {{ author }}
           <a id="photo-link" target="_blank" rel="noopener noreferrer"></a> on
           <a
             id="site-link"
@@ -59,6 +57,22 @@
 </template>
 
 <style lang="scss">
+#nav {
+  list-style-type: none;
+  top: 0;
+  height: 3rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  li {
+    float: left;
+    display: block;
+    a {
+      text-decoration: none;
+    }
+  }
+}
+
 #app-info {
   padding: 0.5rem 1rem 0;
   display: grid;
@@ -72,6 +86,7 @@
       display: inline-block;
     }
   }
+  // Default Display
   #app-title {
     grid-column: 1;
     grid-row: 1;
@@ -79,7 +94,6 @@
     animation-name: fadeIn;
     animation-duration: 0.75s;
     animation-fill-mode: forwards;
-    color: white;
     .app-icon {
       width: 35px;
       height: 35px;
@@ -101,6 +115,8 @@
     animation-name: fadeIn;
     animation-duration: 0.75s;
     animation-fill-mode: forwards;
+
+    // eventually remove this please
     div {
       transition: background 0.25s;
       font-size: 60%;
@@ -118,23 +134,36 @@
   padding: 1rem;
   display: grid;
   text-align: center;
+  font-size: 1rem;
   background-blend-mode: screen;
-  background: none;
-  color: white;
+  // background: none;
+  &:hover {
+    #background-location {
+      display: none;
+    }
+    #background-source {
+      display: inline-block;
+    }
+  }
+  // Default Display
 
   #background-location {
     grid-column: 1;
     grid-row: 1;
-    opacity: 0.75;
-    font-size: 1rem;
-    transition: opacity 0.25s;
+    display: inline-block;
+    animation-name: fadeIn;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
   }
   #background-source {
+    display: none;
     font-size: 1rem;
     grid-column: 1;
     grid-row: 1;
-    opacity: 0;
-    transition: opacity 0.25s;
+    // opacity: 0;
+    animation-name: fadeIn;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
     a {
       text-decoration: none;
     }
@@ -157,20 +186,26 @@
 
 <script>
 export default {
-  data: function () {
-    chrome.storage.sync.get(["background"], ({ background }) => {
-      console.log(background);
-      let photoInfo = {
-        location: background.location ? background.location : "Unknown",
-        download: background.downloadLink,
-        author: background.author,
-        link: background.photoLink + "?utm_source=Planner&utm_medium=referral",
-      };
-      console.log(photoInfo);
-      return photoInfo;
+  data() {
+    return {
+      location: "",
+      download: "",
+      author: "",
+      link: "",
+    };
+  },
+
+  created() {
+    let vuestate = this; // if we use this in the chrome method, it will refer to the chrome browser, not vuestate
+    chrome.storage.sync.get(["background"], function (result) {
+      vuestate.location = result.background.location
+        ? result.background.location
+        : "Unknown";
+      vuestate.download = result.background.downloadLink;
+      vuestate.author = result.background.author;
+      vuestate.link =
+        result.background.photoLink + "?utm_source=Planner&utm_medium=referral";
     });
   },
-  created() {},
-  methods: {},
 };
 </script>
