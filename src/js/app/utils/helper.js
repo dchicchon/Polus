@@ -4,7 +4,7 @@
 // GLOBAL VARIABLES
 // date = current Date
 
-let addFunction = function () {
+export const addFunction = function () {
   let addButtons = document.getElementsByClassName("add");
   // For each add button, do something
   for (let i = 0; i < addButtons.length; i++) {
@@ -55,7 +55,7 @@ let addFunction = function () {
           parent.textContent = text; // when this is done, the input element is removed
           let list = parent.parentNode;
           if (text.length > 0) {
-            addToStorage(list, date, text, key, 'blue');
+            addToStorage(list, date, text, key, "blue");
           } else {
             entryListItem.remove();
           }
@@ -70,15 +70,16 @@ let addFunction = function () {
   }
 };
 
-let getKey = () => {
+export const getKey = () => {
   let alpha = "abcdefghijklmnopqrstuvwxyz";
-  let key = `${alpha[Math.floor(Math.random() * 25)]}${Math.floor(Math.random() * 98) + 1
-    }`;
+  let key = `${alpha[Math.floor(Math.random() * 25)]}${
+    Math.floor(Math.random() * 98) + 1
+  }`;
   return key;
 };
 
 // Takes a list, date, text, and key and add item to chrome.storage.sync
-let addToStorage = function (listElm, date, text, key, color) {
+export const addToStorage = function (listElm, date, text, key, color) {
   // Get the Date Object from Storage to add the entry
   chrome.storage.sync.get([`${date}`], function (result) {
     // Entry
@@ -103,13 +104,13 @@ let addToStorage = function (listElm, date, text, key, color) {
       let dateEntries = result[`${date}`];
       dateEntries.push(entry);
       entryFunctions(listElm, dateEntries);
-      chrome.storage.sync.set({ [date]: dateEntries }, function () { });
+      chrome.storage.sync.set({ [date]: dateEntries }, function () {});
     }
   });
 };
 
 //   Check if object is empty. Used to see if a day has any entries
-let isEmpty = (obj) => {
+export const isEmpty = (obj) => {
   for (let key in obj) {
     if (obj.hasOwnProperty(key)) {
       return false;
@@ -119,18 +120,16 @@ let isEmpty = (obj) => {
 };
 
 // SET ENTRIES
-let setEntries = function (date, elmList) {
+export const setEntries = function (date, elmList) {
   chrome.storage.sync.get([`${date}`], function (result) {
     // If the date has entries
     if (!isEmpty(result)) {
       let entriesArr = result[`${date}`]; // entries arr
 
       if (entriesArr.length === 0) {
-        console.log("REMOVE DATE")
-        chrome.storage.sync.remove([`${date}`])
-        return
+        chrome.storage.sync.remove([`${date}`]);
+        return;
       }
-
 
       // For each entry
       for (let j = 0; j < entriesArr.length; j++) {
@@ -138,10 +137,14 @@ let setEntries = function (date, elmList) {
 
         // Text Content
         entryListItem.textContent = entriesArr[j].text;
-        let initialColor = entriesArr[j]["color"] ? entriesArr[j]["color"] : "blue"; // for new update, will users get this?
+        let initialColor = entriesArr[j]["color"]
+          ? entriesArr[j]["color"]
+          : "blue"; // for new update, will users get this?
 
         // Values
-        entryListItem.style.textDecoration = entriesArr[j]["complete"] ? "line-through" : "none";
+        entryListItem.style.textDecoration = entriesArr[j]["complete"]
+          ? "line-through"
+          : "none";
         entryListItem.value = entriesArr[j]["complete"];
 
         // Setting Attributes
@@ -160,7 +163,7 @@ let setEntries = function (date, elmList) {
 };
 
 // ENTRY FUNCTIONS
-let entryFunctions = function (elmList, arr) {
+export const entryFunctions = function (elmList, arr) {
   let entriesArr = elmList.getElementsByClassName("entry");
   for (let i = 0; i < entriesArr.length; i++) {
     let entry = entriesArr[i];
@@ -217,7 +220,7 @@ let entryFunctions = function (elmList, arr) {
     };
 
     let colorEntry = function () {
-      date = entry.classList[1]
+      date = entry.classList[1];
 
       let subParent = this.parentNode; // getting entry-container
       let mainParent = subParent.parentNode; // getting entry
@@ -235,14 +238,14 @@ let entryFunctions = function (elmList, arr) {
     };
 
     let deleteEntry = function () {
-      date = entry.classList[1]
+      date = entry.classList[1];
       chrome.storage.sync.get([`${date}`], (result) => {
         let oldArr = result[`${date}`];
         oldArr = oldArr.filter((elm) => elm.key !== entry.id);
         if (oldArr.length > 0) {
           chrome.storage.sync.set({ [date]: oldArr });
         } else {
-          chrome.storage.sync.remove([date])
+          chrome.storage.sync.remove([date]);
         }
         entry.style.display = "none";
         entry.remove();
@@ -288,10 +291,17 @@ let entryFunctions = function (elmList, arr) {
         entryColor.value = entry.classList[2];
 
         entryColor.style.outline = "none";
-        let colorWheel = ["blue", "green", "gold", 'purple', 'orange', 'red', 'cyan'];
+        let colorWheel = [
+          "blue",
+          "green",
+          "gold",
+          "purple",
+          "orange",
+          "red",
+          "cyan",
+        ];
         // initial selected option should be the color that is already on the entry
         for (let color of colorWheel) {
-
           let option = document.createElement("option");
           option.classList.add("color-option", entry.classList[2]);
           option.text = color;
@@ -336,13 +346,13 @@ let entryFunctions = function (elmList, arr) {
           active = true;
           let ghostElm = document.createElement("li");
           ghostElm.id = "ghostie"; // should i make this a class or an id?
-          let parent = entry.parentNode
-          let gparent = parent.parentNode
+          let parent = entry.parentNode;
+          let gparent = parent.parentNode;
           let nextSib = entry.nextSibling;
           let newStyle;
 
           // Styling
-          if (gparent.className !== 'details') {
+          if (gparent.className !== "details") {
             entry.parentNode.insertBefore(ghostElm, nextSib); // 1.element to place, 2. reference node // remember praentNode!
             newStyle = {
               textOverflow: "none",
@@ -367,7 +377,7 @@ let entryFunctions = function (elmList, arr) {
               "max-width": "300px",
               "min-height": "100px",
               "z-index": "100",
-            }
+            };
           }
 
           Object.assign(entry.style, newStyle); // style
@@ -410,10 +420,10 @@ let entryFunctions = function (elmList, arr) {
 };
 
 // ENTRY DRAG
-let dragFunctions = function () {
+export const dragFunctions = function () {
   let dragged;
   // let color;
-  document.addEventListener("drag", function (event) { }, false);
+  document.addEventListener("drag", function (event) {}, false);
   document.addEventListener(
     "dragstart",
     function (event) {
@@ -471,7 +481,7 @@ let dragFunctions = function () {
     function (event) {
       event.preventDefault();
       let date = event.target.id;
-      let initalColor = dragged.classList[2]
+      let initalColor = dragged.classList[2];
       let prevDate = dragged.classList.item(1);
       if (
         event.target.className === "weekDetails" ||
@@ -482,9 +492,8 @@ let dragFunctions = function () {
         dragged.parentNode.removeChild(dragged); // remove from initial DOM placement
         event.target.children[0].appendChild(dragged); // append to new <ul> tag
 
-
         if (date !== prevDate) {
-          dragged.classList.replace(prevDate, event.target.id) // replace date class with new one
+          dragged.classList.replace(prevDate, event.target.id); // replace date class with new one
 
           // Filter from previous Date object
           chrome.storage.sync.get([`${prevDate}`], function (result) {
@@ -492,25 +501,24 @@ let dragFunctions = function () {
             if (entriesArr.length === 1) {
               chrome.storage.sync.set({ [prevDate]: [] });
             } else {
-              let newEntriesArr = [...entriesArr]
-              newEntriesArr = newEntriesArr.filter((elm) => elm.key !== dragged.id);
+              let newEntriesArr = [...entriesArr];
+              newEntriesArr = newEntriesArr.filter(
+                (elm) => elm.key !== dragged.id
+              );
               chrome.storage.sync.set({ [prevDate]: newEntriesArr });
-
             }
-
           });
 
-
-          let targetElmParent
-          let targetElm
+          let targetElmParent;
+          let targetElm;
           let mainText;
           // I did this in order to get the correct text content
           if (dragged.children.length === 1) {
             targetElmParent = dragged.children[0];
             targetElm = targetElmParent.children[0];
-            mainText = targetElm.textContent
+            mainText = targetElm.textContent;
           } else {
-            mainText = dragged.textContent
+            mainText = dragged.textContent;
           }
 
           addToStorage(
@@ -520,7 +528,7 @@ let dragFunctions = function () {
             dragged.id,
             initalColor
           );
-          event.stopImmediatePropagation() // prevents function from happening multiple times
+          event.stopImmediatePropagation(); // prevents function from happening multiple times
         }
 
         // Add to new Date Object

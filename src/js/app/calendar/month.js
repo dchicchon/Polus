@@ -1,4 +1,9 @@
-const createMonth = () => {
+import { setEntries, addFunction } from "../utils/helper";
+import { globalDate, currentDate } from "../utils/clock";
+
+let monthView = document.getElementById("month");
+
+export const createMonth = () => {
   monthView.innerHTML = "";
   let monthDate = new Date();
 

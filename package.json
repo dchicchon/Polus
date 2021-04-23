@@ -1,0 +1,35 @@
+{
+  "name": "polus",
+  "version": "1.0.0",
+  "description": "Plan your life using this planner! Includes daily, weekly, monthly calendars that syncs with your chrome storage",
+  "main": "webpack.common.js",
+  "scripts": {
+    "local": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --env=local --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "staging": "cross-env NODE_ENV=staging node_modules/webpack/bin/webpack.js --progress --env=staging --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --env=production --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "dev": "npm run local",
+    "prod": "npm run production",
+    "watch": "npm run local -- --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dchicchon/Polus.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dchicchon/Polus/issues"
+  },
+  "homepage": "https://github.com/dchicchon/Polus#readme",
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "laravel-mix": "^6.0.18",
+    "postcss": "8.1",
+    "sass": "^1.32.11",
+    "sass-loader": "^11.0.1",
+    "vue": "^2.6.12",
+    "vue-loader": "^15.9.5",
+    "vue-template-compiler": "^2.6.12"
+  }
+}

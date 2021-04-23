@@ -1,4 +1,8 @@
-const createToday = () => {
+import { setEntries, addFunction } from "../utils/helper";
+import {globalDate } from '../utils/clock'
+let dayView = document.getElementById("daily");
+
+export const createToday = () => {
   let todayDate = new Date();
   let dayOptions = { weekday: "short" };
   let dayDate = todayDate.toLocaleDateString();

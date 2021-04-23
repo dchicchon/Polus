@@ -1,4 +1,8 @@
-const createWeek = () => {
+import { setEntries, addFunction } from "../utils/helper";
+import {globalDate } from '../utils/clock'
+let weekView = document.getElementById("week");
+
+export const createWeek = () => {
   // LEVEL 1 Week View
   weekView.innerHTML = "";
 
@@ -61,15 +65,15 @@ const createWeek = () => {
   });
 
   // Nav
-  weekNav.append(prevBtn, weekTitle, nextBtn)
+  weekNav.append(prevBtn, weekTitle, nextBtn);
 
   // View
-  weekView.append(weekNav, weekdayNames, weekDays)
+  weekView.append(weekNav, weekdayNames, weekDays);
 
   let createDaysInWeek = (dateObj) => {
     weekDays.innerHTML = "";
     let titleDate = new Date(dateObj);
-    startingDate = titleDate.toLocaleDateString();
+    let startingDate = titleDate.toLocaleDateString();
 
     if (titleDate.getDate() === initialDate.getDate()) {
       weekTitle.style.background = "rgba(5, 80, 123, 0.992)";
@@ -78,7 +82,7 @@ const createWeek = () => {
       weekTitle.style.backgroundColor = "initial";
     }
     titleDate.setDate(titleDate.getDate() + 6);
-    endingDate = titleDate.toLocaleDateString();
+    let endingDate = titleDate.toLocaleDateString();
     weekTitle.textContent = `${startingDate} - ${endingDate}`;
 
     for (let i = 0; i <= 6; i++) {
@@ -126,8 +130,8 @@ const createWeek = () => {
       btn.value = date;
 
       // Append
-      details.append(detailsList, btn)
-      weekday.append(weekDate, details)
+      details.append(detailsList, btn);
+      weekday.append(weekDate, details);
       weekDays.appendChild(weekday);
     }
 
