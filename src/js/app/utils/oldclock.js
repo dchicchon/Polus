@@ -21,7 +21,7 @@ export const updateTime = () => {
   currentDate = new Date();
   globalDate = currentDate.toLocaleDateString();
   let clock = `${currentDate.toLocaleTimeString()}`;
-  document.getElementById("clock").textContent = clock;
+  // document.getElementById("clock").textContent = clock;
   let date = `${currentDate.toLocaleDateString(undefined, options)}`;
   document.getElementById("date").textContent = date;
 };

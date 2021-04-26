@@ -1,18 +1,17 @@
 import { viewFunction, hideViews, backgroundImage, views } from "./utils/view";
-import "./utils/options";
 import "./utils/ga";
 import { dragFunctions } from "./utils/helper";
-import { updateTime } from "./utils/clock";
+import { updateTime } from "./utils/oldclock";
 
 export const startApp = () => {
   chrome.storage.sync.get(["newTab", "indexOpen"], function (result) {
     if (!("indexOpen" in result)) {
-      console.log("indexOpen hello");
+      // console.log("indexOpen hello");
       chrome.storage.sync.set({ indexOpen: false });
     }
 
     if (!("newTab" in result)) {
-      console.log("newTab hello");
+      // console.log("newTab hello");
       chrome.storage.sync.set({ newTab: false });
     }
 

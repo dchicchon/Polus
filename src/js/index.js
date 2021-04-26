@@ -1,4 +1,5 @@
 import { startApp } from "./app/app";
-import './app/navbar'
+import './app/vueapp'
+
 
 startApp();

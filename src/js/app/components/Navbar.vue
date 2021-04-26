@@ -28,7 +28,11 @@
             >
           </div>
           <div>
-            <a id="pmode" target="_blank" rel="noopener noreferrer"
+            <a
+              id="pmode"
+              @click="photoMode"
+              target="_blank"
+              rel="noopener noreferrer"
               >Photo Mode</a
             >
           </div>
@@ -192,12 +196,14 @@ export default {
       download: "",
       author: "",
       link: "",
+      pmode: false,
     };
   },
 
   created() {
     let vuestate = this; // if we use this in the chrome method, it will refer to the chrome browser, not vuestate
-    chrome.storage.sync.get(["background"], function (result) {
+    chrome.storage.sync.get(["background", "pmode"], function (result) {
+      vuestate.pmode = result.pmode;
       vuestate.location = result.background.location
         ? result.background.location
         : "Unknown";
@@ -206,6 +212,16 @@ export default {
       vuestate.link =
         result.background.photoLink + "?utm_source=Planner&utm_medium=referral";
     });
+  },
+
+  methods: {
+    photoMode() {
+      let vuestate = this;
+      vuestate.pmode = !vuestate.pmode;
+      chrome.storage.sync.set({ pmode: vuestate.pmode });
+      let mainView = document.getElementsByTagName("main");
+      mainView[0].style.display = vuestate.pmode ? "none" : "block";
+    },
   },
 };
 </script>

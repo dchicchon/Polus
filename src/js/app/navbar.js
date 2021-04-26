@@ -1,10 +1,8 @@
 import Vue from 'vue'
 import Navbar from './components/Navbar.vue'
+console.log("Navbar");
 
 window.onload = function () {
-    const app = new Vue({
-        el: '#vuenav',
-        render: createElement => createElement(Navbar)
-    })
+   
 
 }

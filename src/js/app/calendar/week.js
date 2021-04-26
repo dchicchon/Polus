@@ -1,5 +1,5 @@
 import { setEntries, addFunction } from "../utils/helper";
-import {globalDate } from '../utils/clock'
+import {globalDate } from '../utils/oldclock'
 let weekView = document.getElementById("week");
 
 export const createWeek = () => {
