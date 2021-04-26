@@ -1,30 +1,11 @@
 // THIS SCRIPT IS FOR EVERYTHING TIME RELATED
 
 // Global Variables
-export let currentDate;
-export let globalDate;
-
 // Format Options
-let options = {
-  weekday: "long",
-  year: "numeric",
-  month: "numeric",
-  day: "numeric",
-};
 
 // Update Clock
 
-export const updateTime = () => {
-  // the format will chnage depending on the locale using the extension
-  // British English uses day-month-year order
-  // Korean uses year-month-day order
-  currentDate = new Date();
-  globalDate = currentDate.toLocaleDateString();
-  let clock = `${currentDate.toLocaleTimeString()}`;
-  // document.getElementById("clock").textContent = clock;
-  let date = `${currentDate.toLocaleDateString(undefined, options)}`;
-  document.getElementById("date").textContent = date;
-};
+
 
 chrome.storage.onChanged.addListener(function (result) {
   for (let key in result) {
@@ -50,4 +31,3 @@ chrome.storage.onChanged.addListener(function (result) {
   }
 });
 
-updateTime();

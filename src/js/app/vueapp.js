@@ -1,7 +1,8 @@
 import Vue from 'vue'
+// Components
 import Navbar from './components/Navbar.vue'
 import Clock from './components/Clock.vue'
-console.log("Main Vue app")
+
 window.onload = function () {
     const clock = new Vue({
         el: '#vueclock',
@@ -11,5 +12,4 @@ window.onload = function () {
         el: '#vuenav',
         render: createElement => createElement(Navbar)
     })
-
 }
