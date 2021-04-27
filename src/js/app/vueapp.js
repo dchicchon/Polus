@@ -3,11 +3,6 @@ import Vue from 'vue'
 import Navbar from './components/Navbar.vue'
 import Clock from './components/Clock.vue'
 import Calendar from './components/Calendar.vue'
-import Day from './components/Day'
-
-// Vue.component("Day", {
-    
-// })
 
 window.onload = function () {
     const navbar = new Vue({
