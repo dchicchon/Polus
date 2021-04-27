@@ -1,5 +1,4 @@
-import { setEntries, addFunction } from "../utils/helper";
-import {globalDate } from '../utils/oldclock'
+    import { setEntries, addFunction } from "../utils/helper";
 let weekView = document.getElementById("week");
 
 export const createWeek = () => {
@@ -102,7 +101,7 @@ export const createWeek = () => {
       let btn = document.createElement("button");
 
       // If week day is today
-      if (globalDate === date) {
+      if (new Date() === date) {
         weekDate.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
       }
 

@@ -201,26 +201,24 @@ export default {
   },
 
   created() {
-    let vuestate = this; // if we use this in the chrome method, it will refer to the chrome browser, not vuestate
-    chrome.storage.sync.get(["background", "pmode"], function (result) {
-      vuestate.pmode = result.pmode;
-      vuestate.location = result.background.location
+    chrome.storage.sync.get(["background", "pmode"], (result) => {
+      this.pmode = result.pmode;
+      this.location = result.background.location
         ? result.background.location
         : "Unknown";
-      vuestate.download = result.background.downloadLink;
-      vuestate.author = result.background.author;
-      vuestate.link =
+      this.download = result.background.downloadLink;
+      this.author = result.background.author;
+      this.link =
         result.background.photoLink + "?utm_source=Planner&utm_medium=referral";
     });
   },
 
   methods: {
     photoMode() {
-      let vuestate = this;
-      vuestate.pmode = !vuestate.pmode;
-      chrome.storage.sync.set({ pmode: vuestate.pmode });
+      this.pmode = !this.pmode;
+      chrome.storage.sync.set({ pmode: this.pmode });
       let mainView = document.getElementsByTagName("main");
-      mainView[0].style.display = vuestate.pmode ? "none" : "block";
+      mainView[0].style.display = this.pmode ? "none" : "block";
     },
   },
 };

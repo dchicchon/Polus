@@ -1,5 +1,5 @@
 import { setEntries, addFunction } from "../utils/helper";
-import { globalDate, currentDate } from "../utils/oldclock";
+// import { globalDate, currentDate } from "../utils/oldclock";
 
 let monthView = document.getElementById("month");
 
@@ -78,7 +78,7 @@ export const createMonth = () => {
     let title = dateObj.toLocaleDateString(undefined, options);
 
     // Highlight todays date on calendar
-    if (dateObj.getMonth() === currentDate.getMonth()) {
+    if (dateObj.getMonth() === new Date().getMonth()) {
       monthTitle.style.background = "rgba(5, 80, 123, 0.992)";
       monthTitle.style.borderRadius = "75px";
     } else {
@@ -114,7 +114,7 @@ export const createMonth = () => {
       // Gets storage items and creates an li element for each item
       setEntries(date, monthDetailsList);
 
-      if (date === globalDate) {
+      if (date === new Date()) {
         monthDayTitle.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
       }
 

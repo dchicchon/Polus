@@ -55,53 +55,8 @@ export const hideViews = (viewsArr) => {
 export const backgroundImage = () => {
   chrome.storage.sync.get(["background"], function (result) {
     let page = document.getElementsByTagName("html");
-    let backgroundInfo = document.getElementById("background-info");
-    let backgroundLocation = document.getElementById("background-location");
-    let backgroundSource = document.getElementById("background-source");
-    let photoLink = document.getElementById("photo-link");
-    let download = document.getElementById("download");
+    page[0].style.background = `rgba(0,0,0,0.9) url(${result.background.url + `&w=${window.innerWidth}`
+      }) no-repeat fixed`;
 
-    // let appInfo = document.getElementById("app-info");
-    // let appTitle = document.getElementById("app-title");
-    // let appItems = document.getElementById("app-items");
-
-    // appInfo.addEventListener("mouseover", () => {
-    //   appTitle.style.display = "none";
-    //   appItems.style.display = "inline-block";
-    // });
-
-    // appInfo.addEventListener("mouseleave", () => {
-    //   appTitle.style.display = "inline-block";
-    //   appItems.style.display = "none";
-    // });
-
-    // photoLink.textContent = result.background.author;
-    // photoLink.href =
-    //   result.background.photoLink + "?utm_source=Planner&utm_medium=referral";
-    // console.log  (result);
-    if (result.background.downloadLink) {
-      // download.href = result.background.downloadLink;
-    }
-
-    page[0].style.background = `rgba(0,0,0,0.9) url(${
-      result.background.url + `&w=${window.innerWidth}`
-    }) no-repeat fixed`;
-    // page[0].style = 'brightness(90%)'
-
-    if (result.background.location) {
-      // backgroundLocation.textContent = result.background.location;
-    } else {
-      // backgroundLocation.textContent = "Unknown";
-    }
-
-    // backgroundInfo.addEventListener("mouseover", () => {
-    //   backgroundLocation.style.opacity = 0;
-    //   backgroundSource.style.opacity = 0.75;
-    // });
-
-    // backgroundInfo.addEventListener("mouseleave", () => {
-    //   backgroundLocation.style.opacity = 0.75;
-    //   backgroundSource.style.opacity = 0;
-    // });
   });
 };

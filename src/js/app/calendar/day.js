@@ -1,5 +1,5 @@
 import { setEntries, addFunction } from "../utils/helper";
-import {globalDate } from '../utils/oldclock'
+// import {globalDate } from '../utils/oldclock'
 let dayView = document.getElementById("daily");
 
 export const createToday = () => {
@@ -24,7 +24,7 @@ export const createToday = () => {
     let detailsList = document.createElement("ul");
     let btn = document.createElement("button");
 
-    if (dayDate === globalDate) {
+    if (dayDate === new Date()) {
       dayTitle.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
     } else {
       dayTitle.style.backgroundColor = "initial";
