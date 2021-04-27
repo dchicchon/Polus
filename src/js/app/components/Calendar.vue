@@ -14,13 +14,16 @@
     <div v-if="view === 'daily'">
       <Day />
     </div>
-    <div v-if="view === 'week'"></div>
-    <div v-if="view === 'month'"></div>
+    <div v-if="view === 'week'">
+      <h2>week</h2>
+    </div>
+    <div v-if="view === 'month'">
+      <h2>month</h2>
+    </div>
   </div>
 </template>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>
 
 <script>
 import Day from "./Day";
@@ -42,7 +45,9 @@ export default {
 
   methods: {
     changeView(type) {
-      chrome.storage.sync.set({ view: type });
+      chrome.storage.sync.set({ view: type }, () => {
+        this.view = type;
+      });
     },
   },
 };
