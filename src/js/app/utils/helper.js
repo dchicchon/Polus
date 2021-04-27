@@ -1,8 +1,3 @@
-// Helper functions for calendar
-// Feature to add new entries
-
-// GLOBAL VARIABLES
-// date = current Date
 
 export const addFunction = function () {
   let addButtons = document.getElementsByClassName("add");

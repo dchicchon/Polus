@@ -15,10 +15,10 @@
       <Day />
     </div>
     <div v-if="view === 'week'">
-      <h2>week</h2>
+      <Week />
     </div>
     <div v-if="view === 'month'">
-      <h2>month</h2>
+      <Month />
     </div>
   </div>
 </template>
@@ -27,9 +27,14 @@
 
 <script>
 import Day from "./Day";
+import Week from "./Week";
+import Month from "./Month";
+
 export default {
   components: {
     Day,
+    Week,
+    Month,
   },
   data() {
     return {

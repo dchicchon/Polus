@@ -11,7 +11,9 @@
     </div>
     <div class="dayDiv">
       <div class="details">
-        <ul></ul>
+        <ul>
+          
+        </ul>
         <button class="add" value="4/26/2021" style="opacity: 0">+</button>
       </div>
     </div>
