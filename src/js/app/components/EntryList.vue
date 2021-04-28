@@ -7,6 +7,8 @@
         :listDate="listDate"
         :index="index"
         :submitEntry="submitEntry"
+        :deleteEntry="deleteEntry"
+        :checkEntry="checkEntry"
         :key="entry.id"
       />
     </ul>
@@ -82,28 +84,33 @@ export default {
   methods: {
     addEntry() {
       // Add to entries state and to chrome storage
-      let copyArr = this.entries.slice();
       let newEntry = {
         key: uuid(),
         text: "",
         color: "blue",
         complete: false,
       };
-      copyArr.push(newEntry);
-      this.entries = copyArr;
+      this.entries.push(newEntry);
+    },
+    checkEntry(index) {
+      this.entries[index].active = !this.entries[index].active;
+      console.log(this.entries[index].active);
+      let currentDate = this.listDate.toLocaleDateString();
+      chrome.storage.sync.set({ [currentDate]: this.entries });
+    },
+    deleteEntry(index) {
+      this.entries.splice(index, 1);
+      let currentDate = this.listDate.toLocaleDateString();
+      chrome.storage.sync.set({ [currentDate]: this.entries });
     },
     submitEntry(text, index) {
-      let copyArr = this.entries.slice();
       if (text.length === 0) {
-        copyArr.splice(index, 1);
-        this.entries = copyArr;
+        this.entries.splice(index, 1);
       } else {
-        let copyArr = this.entries.slice();
-        let entry = copyArr[index];
-        entry.text = text;
-        console.log(copyArr);
+        this.entries[index].text = text;
         let currentDate = this.listDate.toLocaleDateString();
-        chrome.storage.sync.set({ [currentDate]: copyArr });
+        console.log(this.entries);
+        chrome.storage.sync.set({ [currentDate]: this.entries });
       }
     },
   },

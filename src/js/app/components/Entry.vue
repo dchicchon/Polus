@@ -1,22 +1,26 @@
 <template>
-  <!-- eslint-disable-next-line vue/max-attributes-per-line -->
   <!-- New Entry -->
   <input
     v-model="newText"
     class="newEntry entry"
     :class="color"
     ref="newEntry"
-    v-on:keyup.enter="submitEntry(newText, index)"
+    v-on:keypress.enter="submitEntry(newText, index)"
     v-if="entry.text.length === 0"
   />
   <!-- Not Active -->
-  <li class="entry" :class="color" v-else-if="!active" @click="changeActive">
+  <li
+    class="entry"
+    :class="[color, { checked: entry.active }]"
+    v-else-if="!active"
+    @click="changeActive"
+  >
     {{ entry.text }}
   </li>
   <!-- Active -->
   <li class="entry" :class="color" v-else @click="(e) => altChangeActive(e)">
     <div class="entry-container">
-      <p class="text">{{ entry.text }}</p>
+      <p class="text" :class="{ checked: entry.active }">{{ entry.text }}</p>
       <select @change="(e) => colorEntry(e)" class="color" v-model="color">
         <option
           v-for="(option, index) in colorOptions"
@@ -27,8 +31,8 @@
         </option>
       </select>
       <button @click="editEntry" class="edit">Edit</button>
-      <button @click="checkEntry" class="check">&#10003;</button>
-      <button @click="deleteEntry" class="delete">x</button>
+      <button @click="() => checkEntry(index)" class="check">&#10003;</button>
+      <button @click="() => deleteEntry(index)" class="delete">x</button>
     </div>
   </li>
 </template>
@@ -36,6 +40,9 @@
 <style lang="scss">
 $tool-hover: rgba(38, 96, 134, 0.76);
 
+.checked {
+  text-decoration: line-through;
+}
 .entry {
   width: 90%;
   text-align: center;
@@ -147,6 +154,15 @@ export default {
       required: true,
       type: Number,
     },
+    checkEntry: {
+      required: true,
+      type: Function,
+    },
+    deleteEntry: {
+      required: true,
+      type: Function,
+    },
+
     submitEntry: {
       required: true,
       type: Function,
@@ -183,14 +199,9 @@ export default {
     changeActive() {
       this.active = true;
     },
-    checkEntry() {
-      console.log("Check");
-    },
-    colorEntry(event) {
-      console.log(event);
-    },
-    deleteEntry() {
-      console.log("Delete");
+
+    colorEntry() {
+      console.log();
     },
     editEntry() {
       console.log("Edit");
