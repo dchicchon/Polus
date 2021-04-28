@@ -91,14 +91,14 @@ export default {
       copyArr.push(newEntry);
       this.entries = copyArr;
     },
-    submitEntry(id, text, index) {
+    submitEntry(text, index) {
       let copyArr = this.entries.slice();
       if (text.length === 0) {
         copyArr.splice(index, 1);
         this.entries = copyArr;
       } else {
         let copyArr = this.entries.slice();
-        let entry = copyArr[index]
+        let entry = copyArr[index];
         entry.text = text;
         console.log(copyArr);
         let currentDate = this.listDate.toLocaleDateString();

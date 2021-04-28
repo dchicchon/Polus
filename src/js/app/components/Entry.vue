@@ -5,7 +5,7 @@
       v-model="newText"
       class="newEntry"
       ref="newEntry"
-      v-on:keyup.enter="submitEntry(entry.key, newText, index)"
+      v-on:keyup.enter="submitEntry(newText, index)"
       v-if="entry.text.length === 0"
     />
     <!-- Not Active -->
