@@ -1,5 +1,3 @@
-
-
 <template>
   <ul id="nav">
     <li id="app-info-box">

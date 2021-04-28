@@ -1,4 +1,3 @@
-
 export const addFunction = function () {
   let addButtons = document.getElementsByClassName("add");
   // For each add button, do something
@@ -67,8 +66,9 @@ export const addFunction = function () {
 
 export const getKey = () => {
   let alpha = "abcdefghijklmnopqrstuvwxyz";
-  let key = `${alpha[Math.floor(Math.random() * 25)]}${Math.floor(Math.random() * 98) + 1
-    }`;
+  let key = `${alpha[Math.floor(Math.random() * 25)]}${
+    Math.floor(Math.random() * 98) + 1
+  }`;
   return key;
 };
 
@@ -96,10 +96,10 @@ export const addToStorage = function (listElm, date, text, key, color) {
       // If its not empty, we will append the entry to the current array
     } else {
       let dateEntries = result[`${date}`];
-      console.log(dateEntries)
+      console.log(dateEntries);
       dateEntries.push(entry);
       entryFunctions(listElm, dateEntries);
-      chrome.storage.sync.set({ [date]: dateEntries }, function () { });
+      chrome.storage.sync.set({ [date]: dateEntries }, function () {});
     }
   });
 };
@@ -418,7 +418,7 @@ export const entryFunctions = function (elmList, arr) {
 export const dragFunctions = function () {
   let dragged;
   // let color;
-  document.addEventListener("drag", function (event) { }, false);
+  document.addEventListener("drag", function (event) {}, false);
   document.addEventListener(
     "dragstart",
     function (event) {

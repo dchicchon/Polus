@@ -60,14 +60,14 @@ export const createToday = () => {
   // Event Listeners
   // ==============================
   // Previous Day
-  prevBtn.addEventListener("click", function() {
+  prevBtn.addEventListener("click", function () {
     todayDate.setDate(todayDate.getDate() - 1);
     dayDate = todayDate.toLocaleDateString();
     dayInfo(dayDate);
   });
 
   // Next Day
-  nextBtn.addEventListener("click", function() {
+  nextBtn.addEventListener("click", function () {
     todayDate.setDate(todayDate.getDate() + 1);
     dayDate = todayDate.toLocaleDateString();
     dayInfo(dayDate);

@@ -55,8 +55,8 @@ export const hideViews = (viewsArr) => {
 export const backgroundImage = () => {
   chrome.storage.sync.get(["background"], function (result) {
     let page = document.getElementsByTagName("html");
-    page[0].style.background = `rgba(0,0,0,0.9) url(${result.background.url + `&w=${window.innerWidth}`
-      }) no-repeat fixed`;
-
+    page[0].style.background = `rgba(0,0,0,0.9) url(${
+      result.background.url + `&w=${window.innerWidth}`
+    }) no-repeat fixed`;
   });
 };

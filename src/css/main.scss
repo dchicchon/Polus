@@ -5,7 +5,7 @@ $title-width: 17.5rem;
 $title-fontweight: 100;
 $border-color: rgba(32, 32, 32, 0.555);
 $day-background: rgba(0, 0, 0, 0.15);
-$tool-hover: rgba(38, 96, 134, 0.76);
+
 
 // ===================
 
@@ -47,6 +47,9 @@ a {
   color: white;
 }
 
+:focus-visible {
+  outline: none;
+}
 ::selection {
   background: rgba(90, 90, 90, 0.329);
 }
@@ -195,70 +198,6 @@ button:hover {
 .entry-container {
   // height:initial;
   // min-height: 90px;
-  .edit {
-    background: none;
-    transition: background 0.5s;
-  }
-  .edit:hover {
-    background: $tool-hover;
-  }
-
-  .color {
-    background: none;
-    border: none;
-    color: white;
-  }
-
-  .color-option {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 99;
-  }
-
-  .color:after {
-    position: absolute;
-    content: "";
-    top: 14px;
-    right: 10px;
-    width: 0;
-    height: 0;
-    border: 6px solid transparent;
-    border-color: #fff transparent transparent transparent;
-  }
-
-  .delete {
-    background: none;
-    text-align: center;
-    width: 25px;
-    height: 25px;
-    font-size: 0.9rem;
-    border-radius: 100%;
-    margin-left: 5px;
-    padding: 0 0.5rem;
-    transition: background 0.5s;
-  }
-
-  .delete:hover {
-    background: $tool-hover;
-  }
-
-  .check {
-    text-align: center;
-    width: 27px;
-    height: 25px;
-    font-size: 0.9rem;
-    border-radius: 100%;
-    margin-left: 5px;
-    padding: 0 0.5rem;
-    background: none;
-    transition: background 0.5s;
-  }
-
-  .check:hover {
-    background: $tool-hover;
-  }
 
   .text {
     // max-width: 250px;
@@ -319,11 +258,6 @@ button:hover {
   text-align: center;
 }
 
-.newItem:focus {
-  border: none;
-  outline: none;
-}
-
 .title {
   font-size: $title-fontsize;
   width: $title-width;
@@ -380,8 +314,6 @@ button:hover {
 
 /* DAY VIEW */
 /* =========================================== */
-
-
 
 /* =========================================== */
 

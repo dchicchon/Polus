@@ -1,22 +1,23 @@
 <template>
   <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-  <li class="entry" :class="color">
-    <!-- New Entry -->
-    <input
-      v-model="newText"
-      class="newEntry"
-      ref="newEntry"
-      v-on:keyup.enter="submitEntry(newText, index)"
-      v-if="entry.text.length === 0"
-    />
-    <!-- Not Active -->
-    <div v-else-if="!active" @click="changeActive">
-      {{ entry.text }}
-    </div>
-    <!-- Active -->
-    <div class="entry-container" v-else @click="changeActive">
+  <!-- New Entry -->
+  <input
+    v-model="newText"
+    class="newEntry entry"
+    :class="color"
+    ref="newEntry"
+    v-on:keyup.enter="submitEntry(newText, index)"
+    v-if="entry.text.length === 0"
+  />
+  <!-- Not Active -->
+  <li class="entry" :class="color" v-else-if="!active" @click="changeActive">
+    {{ entry.text }}
+  </li>
+  <!-- Active -->
+  <li class="entry" :class="color" v-else @click="(e) => altChangeActive(e)">
+    <div class="entry-container">
       <p class="text">{{ entry.text }}</p>
-      <select @change="(e) => colorEvent(e)" class="color" v-model="color">
+      <select @change="(e) => colorEntry(e)" class="color" v-model="color">
         <option
           v-for="(option, index) in colorOptions"
           :value="option"
@@ -25,16 +26,16 @@
           {{ option }}
         </option>
       </select>
-      <button class="edit">Edit</button>
-      <button class="check">&#10003;</button>
-      <button class="delete">x</button>
+      <button @click="editEntry" class="edit">Edit</button>
+      <button @click="checkEntry" class="check">&#10003;</button>
+      <button @click="deleteEntry" class="delete">x</button>
     </div>
   </li>
-    <div></div>
-
 </template>
 
 <style lang="scss">
+$tool-hover: rgba(38, 96, 134, 0.76);
+
 .entry {
   width: 90%;
   text-align: center;
@@ -69,6 +70,70 @@
     }
   }
 }
+.edit {
+  background: none;
+  transition: background 0.5s;
+}
+.edit:hover {
+  background: $tool-hover;
+}
+
+.color {
+  background: none;
+  border: none;
+  color: white;
+}
+
+.color-option {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+
+.color:after {
+  position: absolute;
+  content: "";
+  top: 14px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #fff transparent transparent transparent;
+}
+
+.delete {
+  background: none;
+  text-align: center;
+  width: 25px;
+  height: 25px;
+  font-size: 0.9rem;
+  border-radius: 100%;
+  margin-left: 5px;
+  padding: 0 0.5rem;
+  transition: background 0.5s;
+}
+
+.delete:hover {
+  background: $tool-hover;
+}
+
+.check {
+  text-align: center;
+  width: 27px;
+  height: 25px;
+  font-size: 0.9rem;
+  border-radius: 100%;
+  margin-left: 5px;
+  padding: 0 0.5rem;
+  background: none;
+  transition: background 0.5s;
+}
+
+.check:hover {
+  background: $tool-hover;
+}
 </style>
 
 <script>
@@ -97,23 +162,38 @@ export default {
       newText: "",
     };
   },
-
   // One of the first functions to execute on the render method
   created() {
     // this.color = this.entry.color;
   },
-
   // This will execute when the component is built on the DOM
   mounted() {
     if (this.$refs.newEntry) this.$refs.newEntry.focus();
   },
   methods: {
-    colorEvent(event) {
-      console.log(event);
+    altChangeActive(e) {
+      // console.log(e.target.className);
+      if (
+        e.target.classList.contains("text") ||
+        e.target.classList.contains("entry") ||
+        e.target.classList.contains("entry-container")
+      )
+        this.active = false;
     },
     changeActive() {
-      console.log("Change Active");
-      this.active = !this.active;
+      this.active = true;
+    },
+    checkEntry() {
+      console.log("Check");
+    },
+    colorEntry(event) {
+      console.log(event);
+    },
+    deleteEntry() {
+      console.log("Delete");
+    },
+    editEntry() {
+      console.log("Edit");
     },
   },
   computed: {

@@ -2,35 +2,42 @@
   "name": "polus",
   "version": "1.0.0",
   "description": "Plan your life using this planner! Includes daily, weekly, monthly calendars that syncs with your chrome storage",
-  "main": "webpack.common.js",
+  "author": "",
   "scripts": {
-    "local": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --env=local --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "staging": "cross-env NODE_ENV=staging node_modules/webpack/bin/webpack.js --progress --env=staging --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --env=production --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "lint": "vue-cli-service lint",
     "dev": "npm run local",
+    "local": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --env=local --config=node_modules/laravel-mix/setup/webpack.config.js",
     "prod": "npm run production",
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --env=production --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "staging": "cross-env NODE_ENV=staging node_modules/webpack/bin/webpack.js --progress --env=staging --config=node_modules/laravel-mix/setup/webpack.config.js",
     "watch": "npm run local -- --watch"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dchicchon/Polus.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/dchicchon/Polus/issues"
-  },
-  "homepage": "https://github.com/dchicchon/Polus#readme",
+  "main": "webpack.common.js",
   "devDependencies": {
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/eslint-config-prettier": "^6.0.0",
     "cross-env": "^7.0.3",
+    "eslint": "^6.7.2",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-vue": "^6.2.2",
     "laravel-mix": "^6.0.18",
     "postcss": "8.1",
+    "prettier": "^2.2.1",
     "sass": "^1.32.11",
     "sass-loader": "^11.0.1",
     "uuid": "^3.4.0",
     "vue": "^2.6.12",
     "vue-loader": "^15.9.5",
     "vue-template-compiler": "^2.6.12"
+  },
+  "bugs": {
+    "url": "https://github.com/dchicchon/Polus/issues"
+  },
+  "homepage": "https://github.com/dchicchon/Polus#readme",
+  "keywords": [],
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dchicchon/Polus.git"
   }
 }

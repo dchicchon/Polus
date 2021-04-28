@@ -1,4 +1,3 @@
-
 // TOGGLES
 // let clockToggle = document.getElementById('clock-toggle')
 chrome.storage.sync.get(null, function (result) {

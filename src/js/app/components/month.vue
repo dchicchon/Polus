@@ -4,20 +4,20 @@
       <button class="arrow">←</button>
       <div
         class="title"
-        style="background: rgba(5, 80, 123, 0.992); border-radius: 75px;"
+        style="background: rgba(5, 80, 123, 0.992); border-radius: 75px"
       >
         April 2021
       </div>
       <button class="arrow">→</button>
     </div>
     <div class="weekdayNames">
-      <h2 style="padding: 0px 0px 0.5rem; text-align: center;">Sunday</h2>
-      <h2 style="padding: 0px 0px 0.5rem; text-align: center;">Monday</h2>
-      <h2 style="padding: 0px 0px 0.5rem; text-align: center;">Tuesday</h2>
-      <h2 style="padding: 0px 0px 0.5rem; text-align: center;">Wednesday</h2>
-      <h2 style="padding: 0px 0px 0.5rem; text-align: center;">Thursday</h2>
-      <h2 style="padding: 0px 0px 0.5rem; text-align: center;">Friday</h2>
-      <h2 style="padding: 0px 0px 0.5rem; text-align: center;">Saturday</h2>
+      <h2 style="padding: 0px 0px 0.5rem; text-align: center">Sunday</h2>
+      <h2 style="padding: 0px 0px 0.5rem; text-align: center">Monday</h2>
+      <h2 style="padding: 0px 0px 0.5rem; text-align: center">Tuesday</h2>
+      <h2 style="padding: 0px 0px 0.5rem; text-align: center">Wednesday</h2>
+      <h2 style="padding: 0px 0px 0.5rem; text-align: center">Thursday</h2>
+      <h2 style="padding: 0px 0px 0.5rem; text-align: center">Friday</h2>
+      <h2 style="padding: 0px 0px 0.5rem; text-align: center">Saturday</h2>
     </div>
     <div class="monthDays">
       <div class="monthDay">
@@ -31,35 +31,35 @@
         <h3 class="monthDayTitle">29</h3>
         <div class="monthDetails" id="3/29/2021">
           <ul></ul>
-          <button class="add" value="3/29/2021" style="opacity: 0;">+</button>
+          <button class="add" value="3/29/2021" style="opacity: 0">+</button>
         </div>
       </div>
       <div class="monthDay">
         <h3 class="monthDayTitle">30</h3>
         <div class="monthDetails" id="3/30/2021">
           <ul></ul>
-          <button class="add" value="3/30/2021" style="opacity: 0;">+</button>
+          <button class="add" value="3/30/2021" style="opacity: 0">+</button>
         </div>
       </div>
       <div class="monthDay">
         <h3 class="monthDayTitle">31</h3>
         <div class="monthDetails" id="3/31/2021">
           <ul></ul>
-          <button class="add" value="3/31/2021" style="opacity: 0;">+</button>
+          <button class="add" value="3/31/2021" style="opacity: 0">+</button>
         </div>
       </div>
       <div class="monthDay">
         <h3 class="monthDayTitle">1</h3>
         <div class="monthDetails" id="4/1/2021">
           <ul></ul>
-          <button class="add" value="4/1/2021" style="opacity: 0;">+</button>
+          <button class="add" value="4/1/2021" style="opacity: 0">+</button>
         </div>
       </div>
       <div class="monthDay">
         <h3 class="monthDayTitle">2</h3>
         <div class="monthDetails" id="4/2/2021">
           <ul></ul>
-          <button class="add" value="4/2/2021" style="opacity: 0;">+</button>
+          <button class="add" value="4/2/2021" style="opacity: 0">+</button>
         </div>
       </div>
       <div class="monthDay">
@@ -108,7 +108,7 @@
         <h3 class="monthDayTitle">9</h3>
         <div class="monthDetails" id="4/9/2021">
           <ul></ul>
-          <button class="add" value="4/9/2021" style="opacity: 0;">+</button>
+          <button class="add" value="4/9/2021" style="opacity: 0">+</button>
         </div>
       </div>
       <div class="monthDay">

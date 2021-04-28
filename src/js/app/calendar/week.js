@@ -1,4 +1,4 @@
-    import { setEntries, addFunction } from "../utils/helper";
+import { setEntries, addFunction } from "../utils/helper";
 let weekView = document.getElementById("week");
 
 export const createWeek = () => {
