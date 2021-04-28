@@ -1,15 +1,21 @@
-<template  >
+<template>
   <li class="entry" :class="color">
+    <!-- New Entry -->
     <input
+      v-model="newText"
       class="newEntry"
       ref="newEntry"
-      v-on:keyup.enter="submitEntry"
+      v-on:keyup.enter="submitEntry(entry.key, newText, index)"
       v-if="entry.text.length === 0"
     />
+    <!-- Not Active -->
     <div v-else-if="!active" @click="changeActive">
       {{ entry.text }}
     </div>
-    <div v-else @click="changeActive"></div>
+    <!-- Active -->
+    <div v-else @click="changeActive">
+      NOT ACTIVE
+    </div>
   </li>
 </template>
 
@@ -56,10 +62,17 @@ export default {
     entry: {
       required: true,
     },
+    index: {
+      required: true,
+    },
+    submitEntry: {
+      required: true,
+    },
   },
   data() {
     return {
       active: false,
+      newText: "",
     };
   },
 
@@ -74,11 +87,9 @@ export default {
   },
   methods: {
     changeActive() {
+      console.log("Change");
       this.active = !this.active;
       console.log(this.active);
-    },
-    submitEntry() {
-      console.log("Entry Submitted!");
     },
   },
   computed: {

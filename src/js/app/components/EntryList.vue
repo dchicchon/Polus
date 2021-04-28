@@ -1,7 +1,13 @@
 <template>
   <div class="details">
     <ul ref="entryList" class="entryList">
-      <Entry v-for="entry in entries" v-bind:entry="entry" :key="entry.id" />
+      <Entry
+        v-for="(entry, index) in entries"
+        v-bind:entry="entry"
+        :index="index"
+        v-bind:submitEntry="submitEntry"
+        :key="entry.id"
+      />
     </ul>
     <button @click="addEntry" :value="dateStamp" class="addButton">+</button>
   </div>
@@ -57,10 +63,9 @@ export default {
   },
   created() {
     // We do this to get the entries for the date
-    // console.log("Render List");
     let dateStamp = this.listDate.toLocaleDateString();
     chrome.storage.sync.get([dateStamp], (result) => {
-      this.entries = Object.values(result[dateStamp]);
+      this.entries = Object.keys(result).length > 0 ? result[dateStamp] : [];
     });
   },
   // This is how we can check if a prop has changed
@@ -86,11 +91,19 @@ export default {
       copyArr.push(newEntry);
       this.entries = copyArr;
     },
-    submitEntry() {
-      let currentDate = this.listDate.toLocaleDateString();
-      chrome.storage.sync.set({ [currentDate]: oldArr }, () => {
-        console.log("added to storage");
-      });
+    submitEntry(id, text, index) {
+      let copyArr = this.entries.slice();
+      if (text.length === 0) {
+        copyArr.splice(index, 1);
+        this.entries = copyArr;
+      } else {
+        let copyArr = this.entries.slice();
+        let entry = copyArr[index]
+        entry.text = text;
+        console.log(copyArr);
+        let currentDate = this.listDate.toLocaleDateString();
+        chrome.storage.sync.set({ [currentDate]: copyArr });
+      }
     },
   },
   computed: {
