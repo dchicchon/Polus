@@ -129,9 +129,9 @@ export const createWeek = () => {
       btn.value = date;
 
       // Append
-      details.append(detailsList, btn);
-      weekday.append(weekDate, details);
-      weekDays.appendChild(weekday);
+      // details.append(detailsList, btn);
+      // weekday.append(weekDate, details);
+      // weekDays.appendChild(weekday);
     }
 
     addFunction();

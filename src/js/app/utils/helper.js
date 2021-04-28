@@ -276,11 +276,11 @@ export const entryFunctions = function (elmList, arr) {
         let entryCheck = document.createElement("button");
         let entryDelete = document.createElement("button");
 
-        entryText.className = "text";
-        entryColor.className = "color";
-        entryCheck.className = "check";
-        entryDelete.className = "delete";
-        entryEdit.className = "edit";
+        // entryText.className = "text";
+        // entryColor.className = "color";
+        // entryCheck.className = "check";
+        // entryDelete.className = "delete";
+        // entryEdit.className = "edit";
 
         // Text Content
         entryColor.value = entry.classList[2];
@@ -307,9 +307,9 @@ export const entryFunctions = function (elmList, arr) {
           entryColor.options.add(option);
         }
 
-        entryEdit.textContent = "Edit";
-        entryCheck.innerHTML = "&#10003;";
-        entryDelete.textContent = "x";
+        // entryEdit.textContent = "Edit";
+        // entryCheck.innerHTML = "&#10003;";
+        // entryDelete.textContent = "x";
 
         entryText.textContent = entry.textContent;
         entryDelete.value = entry.id;

@@ -4,8 +4,9 @@
       <Entry
         v-for="(entry, index) in entries"
         v-bind:entry="entry"
+        :listDate="listDate"
         :index="index"
-        v-bind:submitEntry="submitEntry"
+        :submitEntry="submitEntry"
         :key="entry.id"
       />
     </ul>

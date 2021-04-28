@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable-next-line vue/max-attributes-per-line -->
   <li class="entry" :class="color">
     <!-- New Entry -->
     <input
@@ -13,10 +14,24 @@
       {{ entry.text }}
     </div>
     <!-- Active -->
-    <div v-else @click="changeActive">
-      NOT ACTIVE
+    <div class="entry-container" v-else @click="changeActive">
+      <p class="text">{{ entry.text }}</p>
+      <select @change="(e) => colorEvent(e)" class="color" v-model="color">
+        <option
+          v-for="(option, index) in colorOptions"
+          :value="option"
+          :key="index"
+        >
+          {{ option }}
+        </option>
+      </select>
+      <button class="edit">Edit</button>
+      <button class="check">&#10003;</button>
+      <button class="delete">x</button>
     </div>
   </li>
+    <div></div>
+
 </template>
 
 <style lang="scss">
@@ -61,12 +76,19 @@ export default {
   props: {
     entry: {
       required: true,
+      type: Object,
     },
     index: {
       required: true,
+      type: Number,
     },
     submitEntry: {
       required: true,
+      type: Function,
+    },
+    listDate: {
+      required: true,
+      type: Date,
     },
   },
   data() {
@@ -78,7 +100,7 @@ export default {
 
   // One of the first functions to execute on the render method
   created() {
-    this.color = this.entry.color;
+    // this.color = this.entry.color;
   },
 
   // This will execute when the component is built on the DOM
@@ -86,10 +108,12 @@ export default {
     if (this.$refs.newEntry) this.$refs.newEntry.focus();
   },
   methods: {
+    colorEvent(event) {
+      console.log(event);
+    },
     changeActive() {
-      console.log("Change");
+      console.log("Change Active");
       this.active = !this.active;
-      console.log(this.active);
     },
   },
   computed: {
@@ -99,6 +123,11 @@ export default {
       },
       set(newValue) {
         // console.log(newValue);
+      },
+    },
+    colorOptions: {
+      get() {
+        return ["blue", "green", "gold", "purple", "orange", "red", "cyan"];
       },
     },
   },

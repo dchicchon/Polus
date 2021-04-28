@@ -147,11 +147,11 @@ export const createMonth = () => {
       btn.value = date;
 
       // Append
-      monthDays.appendChild(monthDay);
-      monthDetails.appendChild(monthDetailsList);
-      monthDay.appendChild(monthDayTitle);
-      monthDay.appendChild(monthDetails);
-      monthDetails.appendChild(btn);
+      // monthDays.appendChild(monthDay);
+      // monthDetails.appendChild(monthDetailsList);
+      // monthDay.appendChild(monthDayTitle);
+      // monthDay.appendChild(monthDetails);
+      // monthDetails.appendChild(btn);
     }
 
     // let monthNum = dateObj.getMonth(); // 2/27/2020
