@@ -1,5 +1,5 @@
 // THIS SCRIPT IS FOR ALL THE VIEWS
-import { createToday } from "../calendar/day";
+// import { createToday } from "../calendar/day";
 import { createWeek } from "../calendar/week";
 import { createMonth } from "../calendar/month";
 
@@ -34,7 +34,7 @@ export const hideViews = (viewsArr) => {
         let view = result["view"];
         switch (view) {
           case "daily":
-            createToday();
+            // createToday();
             break;
           case "week":
             createWeek();
