@@ -81,20 +81,20 @@ export const createToday = () => {
 
   // Set Attributes
 
-  // prevBtn.setAttribute("class", "arrow");
-  // nextBtn.setAttribute("class", "arrow");
-  // dayNav.setAttribute("class", "nav");
-  // dayDiv.setAttribute("class", "dayDiv");
-  // dayTitle.setAttribute("class", "dayTitle");
+  prevBtn.setAttribute("class", "arrow");
+  nextBtn.setAttribute("class", "arrow");
+  dayNav.setAttribute("class", "nav");
+  dayDiv.setAttribute("class", "dayDiv");
+  dayTitle.setAttribute("class", "dayTitle");
 
   // Append
-  // dayNav.appendChild(prevBtn);
-  // dayNav.appendChild(dayTitle);
-  // dayNav.appendChild(nextBtn);
+  dayNav.appendChild(prevBtn);
+  dayNav.appendChild(dayTitle);
+  dayNav.appendChild(nextBtn);
 
-  // dayDiv.appendChild(details);
-  // dayView.appendChild(dayNav);
-  // dayView.appendChild(dayDiv);
+  dayDiv.appendChild(details);
+  dayView.appendChild(dayNav);
+  dayView.appendChild(dayDiv);
 
   dayInfo(dayDate);
 };

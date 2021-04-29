@@ -3,25 +3,35 @@
   <input
     v-model="newText"
     class="newEntry entry"
-    :class="color"
+    :class="[entry.color, { checked: entry.active }]"
     ref="newEntry"
+    v-on:blur="submitEntry(newText, index)"
     v-on:keypress.enter="submitEntry(newText, index)"
     v-if="entry.text.length === 0"
   />
   <!-- Not Active -->
   <li
     class="entry"
-    :class="[color, { checked: entry.active }]"
+    :class="[entry.color, { checked: entry.active }]"
     v-else-if="!active"
     @click="changeActive"
   >
     {{ entry.text }}
   </li>
   <!-- Active -->
-  <li class="entry" :class="color" v-else @click="(e) => altChangeActive(e)">
+  <li
+    class="entry"
+    :class="entry.color"
+    v-else
+    @click="(e) => altChangeActive(e)"
+  >
     <div class="entry-container">
       <p class="text" :class="{ checked: entry.active }">{{ entry.text }}</p>
-      <select @change="(e) => colorEntry(e)" class="color" v-model="color">
+      <select
+        @change="colorEntry(index)"
+        :class="entry.color"
+        v-model="entry.color"
+      >
         <option
           v-for="(option, index) in colorOptions"
           :value="option"
@@ -30,119 +40,33 @@
           {{ option }}
         </option>
       </select>
-      <button @click="editEntry" class="edit">Edit</button>
-      <button @click="() => checkEntry(index)" class="check">&#10003;</button>
-      <button @click="() => deleteEntry(index)" class="delete">x</button>
+      <button
+        :style="hoverStyle"
+        @click="editEntry"
+        class="edit"
+        :class="entry.color"
+      >
+        Edit
+      </button>
+      <button
+        :style="hoverStyle"
+        @click="() => checkEntry(index)"
+        class="check"
+        :class="entry.color"
+      >
+        &#10003;
+      </button>
+      <button
+        :style="hoverStyle"
+        @click="() => deleteEntry(index)"
+        class="delete"
+        :class="entry.color"
+      >
+        x
+      </button>
     </div>
   </li>
 </template>
-
-<style lang="scss">
-$tool-hover: rgba(38, 96, 134, 0.76);
-
-.checked {
-  text-decoration: line-through;
-}
-.entry {
-  width: 90%;
-  text-align: center;
-  white-space: nowrap;
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  border: none;
-  touch-action: none;
-  user-select: none;
-  transition: background 0.5s, height 0.25s;
-  color: white;
-  margin: 0.25rem auto;
-  padding: 0.5rem;
-  border-radius: 25px;
-  font-size: 0.9rem;
-  cursor: pointer;
-
-  .newEntry {
-    border: none;
-    width: 85%;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    float: left;
-    background: none;
-    color: white;
-    text-overflow: ellipsis;
-    text-align: center;
-    &:focus {
-      border: none;
-      outline: none;
-    }
-  }
-}
-.edit {
-  background: none;
-  transition: background 0.5s;
-}
-.edit:hover {
-  background: $tool-hover;
-}
-
-.color {
-  background: none;
-  border: none;
-  color: white;
-}
-
-.color-option {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 99;
-}
-
-.color:after {
-  position: absolute;
-  content: "";
-  top: 14px;
-  right: 10px;
-  width: 0;
-  height: 0;
-  border: 6px solid transparent;
-  border-color: #fff transparent transparent transparent;
-}
-
-.delete {
-  background: none;
-  text-align: center;
-  width: 25px;
-  height: 25px;
-  font-size: 0.9rem;
-  border-radius: 100%;
-  margin-left: 5px;
-  padding: 0 0.5rem;
-  transition: background 0.5s;
-}
-
-.delete:hover {
-  background: $tool-hover;
-}
-
-.check {
-  text-align: center;
-  width: 27px;
-  height: 25px;
-  font-size: 0.9rem;
-  border-radius: 100%;
-  margin-left: 5px;
-  padding: 0 0.5rem;
-  background: none;
-  transition: background 0.5s;
-}
-
-.check:hover {
-  background: $tool-hover;
-}
-</style>
-
 <script>
 export default {
   props: {
@@ -155,6 +79,10 @@ export default {
       type: Number,
     },
     checkEntry: {
+      required: true,
+      type: Function,
+    },
+    colorEntry: {
       required: true,
       type: Function,
     },
@@ -200,21 +128,17 @@ export default {
       this.active = true;
     },
 
-    colorEntry() {
-      console.log();
-    },
+    mouseOver() {},
+
     editEntry() {
       console.log("Edit");
     },
   },
   computed: {
-    color: {
-      get() {
-        return this.entry.color;
-      },
-      set(newValue) {
-        // console.log(newValue);
-      },
+    hoverStyle() {
+      return {
+        "$hover-color": this.entry.color,
+      };
     },
     colorOptions: {
       get() {
@@ -224,3 +148,146 @@ export default {
   },
 };
 </script>
+
+
+
+<style scoped lang="scss">
+$brightness: 100%;
+$blue: rgba(21, 115, 170, 0.75);
+$green: rgba(7, 128, 7, 0.75);
+$color: #{var(--hover-color)};
+
+.checked {
+  text-decoration: line-through;
+}
+
+.entry {
+  width: 90%;
+  text-align: center;
+  white-space: nowrap;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: none;
+  touch-action: none;
+  user-select: none;
+  transition: background 0.5s, height 0.25s;
+  color: white;
+  margin: 0.25rem auto;
+  padding: 0.5rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  cursor: pointer;
+
+  .newEntry {
+    border: none;
+    width: 85%;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    float: left;
+    background: none;
+    color: white;
+    text-overflow: ellipsis;
+    text-align: center;
+    &:focus {
+      border: none;
+      outline: none;
+    }
+  }
+}
+
+.entryBtn {
+  background: none;
+  transition: background 0.5s;
+  &:hover {
+    opacity: 0.8;
+    filter: brightness($brightness);
+  }
+}
+
+.edit {
+  border-radius: 10%;
+  @extend .entryBtn;
+}
+.color {
+  background: none;
+  border: none;
+  color: white;
+}
+
+.color-option {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+
+.color:after {
+  position: absolute;
+  content: "";
+  top: 14px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #fff transparent transparent transparent;
+}
+
+.delete {
+  @extend .entryBtn;
+  text-align: center;
+  width: 25px;
+  height: 25px;
+  font-size: 0.9rem;
+  border-radius: 100%;
+  margin-left: 5px;
+  padding: 0 0.5rem;
+}
+
+.check {
+  @extend .entryBtn;
+  text-align: center;
+  width: 27px;
+  height: 25px;
+  font-size: 0.9rem;
+  border-radius: 100%;
+  margin-left: 5px;
+  padding: 0 0.5rem;
+}
+
+select {
+  color: white;
+  outline: none;
+  border: none;
+}
+// COLORS
+.blue {
+  background: rgba(21, 115, 170, 0.75);
+}
+
+.green {
+  background: rgba(7, 128, 7, 0.75);
+}
+
+.gold {
+  background: rgba(185, 174, 8, 0.75);
+}
+
+.purple {
+  background: rgba(122, 39, 138, 0.75);
+}
+
+.orange {
+  background: rgba(251, 119, 5, 0.75);
+}
+
+.red {
+  background: rgba(220, 5, 5, 0.75);
+}
+
+.cyan {
+  background: rgba(0, 220, 255, 0.75);
+}
+</style>
+

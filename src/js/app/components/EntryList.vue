@@ -6,9 +6,10 @@
         v-bind:entry="entry"
         :listDate="listDate"
         :index="index"
-        :submitEntry="submitEntry"
-        :deleteEntry="deleteEntry"
         :checkEntry="checkEntry"
+        :colorEntry="colorEntry"
+        :deleteEntry="deleteEntry"
+        :submitEntry="submitEntry"
         :key="entry.id"
       />
     </ul>
@@ -88,30 +89,33 @@ export default {
         key: uuid(),
         text: "",
         color: "blue",
-        complete: false,
+        active: false,
       };
       this.entries.push(newEntry);
     },
     checkEntry(index) {
-      this.entries[index].active = !this.entries[index].active;
-      console.log(this.entries[index].active);
-      let currentDate = this.listDate.toLocaleDateString();
-      chrome.storage.sync.set({ [currentDate]: this.entries });
+      let currentState = this.entries[index].active;
+      this.entries[index].active = !currentState;
+      this.updateStorage();
+    },
+    colorEntry() {
+      this.updateStorage();
     },
     deleteEntry(index) {
       this.entries.splice(index, 1);
-      let currentDate = this.listDate.toLocaleDateString();
-      chrome.storage.sync.set({ [currentDate]: this.entries });
+      this.updateStorage();
     },
     submitEntry(text, index) {
       if (text.length === 0) {
         this.entries.splice(index, 1);
       } else {
         this.entries[index].text = text;
-        let currentDate = this.listDate.toLocaleDateString();
-        console.log(this.entries);
-        chrome.storage.sync.set({ [currentDate]: this.entries });
+        this.updateStorage();
       }
+    },
+    updateStorage() {
+      let currentDate = this.listDate.toLocaleDateString();
+      chrome.storage.sync.set({ [currentDate]: this.entries });
     },
   },
   computed: {
