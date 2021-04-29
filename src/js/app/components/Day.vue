@@ -3,7 +3,8 @@
     <div id="nav">
       <div class="nav">
         <button @click="changeDay(-1)" class="arrow">←</button>
-        <h5 class="dayTitle" style="background-color: initial">
+
+        <h5 class="dayTitle" :style="checkDay">
           {{ dayTitle }}
         </h5>
         <button @click="changeDay(1)" class="arrow">→</button>
@@ -57,6 +58,12 @@ export default {
   },
 
   computed: {
+    checkDay() {
+      let date = new Date();
+      return date.getDay() === this.date.getDay()
+        ? "background: rgba(21, 115, 170, 0.75);"
+        : "background:none";
+    },
     dayTitle() {
       let options = { weekday: "short" };
       return `${this.date.toLocaleString(

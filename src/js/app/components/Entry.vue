@@ -28,32 +28,39 @@
     <div class="entry-container">
       <textarea
         v-model="newText"
-        v-if="editing"
+        :class="textClass"
         ref="textarea"
         class="editEntry"
-        name=""
       ></textarea>
 
       <p v-if="!editing" class="text" :class="{ checked: entry.active }">
         {{ entry.text }}
       </p>
       <!-- There is space here -->
-      <select @change="colorEntry(index)" class="select" v-model="entry.color">
-        <option
-          v-for="(option, index) in colorOptions"
-          :value="option"
-          :key="index"
-          :class="entry.color"
+      <div class="entryBtnContainer">
+        <button v-if="editing" @click="submitEdit(newText, index)" class="edit">
+          Submit
+        </button>
+        <button v-if="!editing" @click="editEntry" class="edit">Edit</button>
+
+        <select
+          @change="colorEntry(index)"
+          class="select"
+          v-model="entry.color"
         >
-          {{ option }}
-        </option>
-      </select>
-      <button v-if="editing" @click="submitEdit(newText, index)" class="edit">
-        Submit
-      </button>
-      <button v-if="!editing" @click="editEntry" class="edit">Edit</button>
-      <button @click="() => checkEntry(index)" class="check">&#10003;</button>
-      <button @click="() => deleteEntry(index)" class="delete">x</button>
+          <option
+            v-for="(option, index) in colorOptions"
+            :value="option"
+            :key="index"
+            :class="entry.color"
+          >
+            {{ option }}
+          </option>
+        </select>
+
+        <button @click="() => checkEntry(index)" class="check">&#10003;</button>
+        <button @click="() => deleteEntry(index)" class="delete">x</button>
+      </div>
     </div>
   </li>
 </template>
@@ -103,7 +110,6 @@ export default {
   // This will execute when the component is built on the DOM
   mounted() {
     if (this.$refs.newEntry) this.$refs.newEntry.focus();
-    if (this.$refs.textarea) this.$refs.textarea.focus();
   },
   methods: {
     altChangeActive(e) {
@@ -120,6 +126,8 @@ export default {
     },
     editEntry() {
       this.editing = true;
+      this.$refs.textarea.focus();
+      this.newText = this.entry.text;
     },
     submitEdit() {
       this.editing = false;
@@ -127,6 +135,11 @@ export default {
     },
   },
   computed: {
+    textClass: {
+      get() {
+        return this.editing ? "show" : "no-show";
+      },
+    },
     colorOptions: {
       get() {
         return ["blue", "green", "gold", "purple", "orange", "red", "cyan"];
@@ -141,21 +154,6 @@ export default {
 <style scoped lang="scss">
 $brightness: 100%;
 
-.editEntry {
-  font-family: "Segoe UI", Tahoma, sans-serif !important;
-  resize: none;
-  border: none;
-  width: 85%;
-  -webkit-margin-before: 1em;
-  margin-block-start: 1em;
-  -webkit-margin-after: 1em;
-  margin-block-end: 1em;
-  float: left;
-  background: none;
-  color: white;
-  text-overflow: ellipsis;
-  text-align: center;
-}
 .select {
   background: none;
   border: none;
@@ -165,14 +163,10 @@ $brightness: 100%;
   text-decoration: line-through;
 }
 
-.entry-container {
-  // display: flex;
-  // flex-direction: column;
-}
 .entry {
   width: 90%;
   text-align: center;
-  white-space: nowrap;
+  white-space: normal;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -202,14 +196,43 @@ $brightness: 100%;
       outline: none;
     }
   }
-}
-
-.entryBtn {
-  background: none;
-  transition: background 0.5s;
-  &:hover {
-    background: #2a2a2a73;
-    filter: brightness($brightness);
+  .entry-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    .editEntry {
+      font-family: "Segoe UI", Tahoma, sans-serif !important;
+      resize: none;
+      border: none;
+      width: 85%;
+      // margin-block-start: 1em;
+      // margin-block-end: 1em;
+      float: left;
+      background: none;
+      color: white;
+      text-overflow: ellipsis;
+      text-align: center;
+      &.show {
+        opacity: 1;
+        // height: fit-content;
+        margin: 0 auto;
+        padding-block-start: 1em;
+        padding-block-end: 1em;
+      }
+      &.no-show {
+        margin: 0 auto;
+        opacity: 0;
+        height: 0;
+      }
+    }
+    .entryBtn {
+      background: none;
+      transition: background 0.5s;
+      &:hover {
+        background: #2a2a2a73;
+        filter: brightness($brightness);
+      }
+    }
   }
 }
 

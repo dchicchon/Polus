@@ -20,7 +20,7 @@
 <style lang="scss">
 .details {
   overflow: auto;
-  height: 14rem;
+  height: 20rem;
   .entryList {
     list-style-type: none;
     padding: 0;
@@ -105,10 +105,8 @@ export default {
       this.entries.splice(index, 1);
       this.updateStorage();
     },
-  
 
     submitEntry(text, index) {
-      
       if (text.length === 0) {
         this.entries.splice(index, 1);
       } else {
