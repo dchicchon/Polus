@@ -40,30 +40,9 @@
           {{ option }}
         </option>
       </select>
-      <button
-        :style="hoverStyle"
-        @click="editEntry"
-        class="edit"
-        :class="entry.color"
-      >
-        Edit
-      </button>
-      <button
-        :style="hoverStyle"
-        @click="() => checkEntry(index)"
-        class="check"
-        :class="entry.color"
-      >
-        &#10003;
-      </button>
-      <button
-        :style="hoverStyle"
-        @click="() => deleteEntry(index)"
-        class="delete"
-        :class="entry.color"
-      >
-        x
-      </button>
+      <button @click="editEntry" class="edit">Edit</button>
+      <button @click="() => checkEntry(index)" class="check">&#10003;</button>
+      <button @click="() => deleteEntry(index)" class="delete">x</button>
     </div>
   </li>
 </template>
@@ -135,11 +114,6 @@ export default {
     },
   },
   computed: {
-    hoverStyle() {
-      return {
-        "$hover-color": this.entry.color,
-      };
-    },
     colorOptions: {
       get() {
         return ["blue", "green", "gold", "purple", "orange", "red", "cyan"];
@@ -153,9 +127,6 @@ export default {
 
 <style scoped lang="scss">
 $brightness: 100%;
-$blue: rgba(21, 115, 170, 0.75);
-$green: rgba(7, 128, 7, 0.75);
-$color: #{var(--hover-color)};
 
 .checked {
   text-decoration: line-through;
@@ -200,7 +171,7 @@ $color: #{var(--hover-color)};
   background: none;
   transition: background 0.5s;
   &:hover {
-    opacity: 0.8;
+    background:#2a2a2a73;
     filter: brightness($brightness);
   }
 }
