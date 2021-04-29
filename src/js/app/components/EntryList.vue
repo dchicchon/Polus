@@ -105,7 +105,10 @@ export default {
       this.entries.splice(index, 1);
       this.updateStorage();
     },
+  
+
     submitEntry(text, index) {
+      
       if (text.length === 0) {
         this.entries.splice(index, 1);
       } else {

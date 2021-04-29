@@ -26,21 +26,31 @@
     @click="(e) => altChangeActive(e)"
   >
     <div class="entry-container">
-      <p class="text" :class="{ checked: entry.active }">{{ entry.text }}</p>
-      <select
-        @change="colorEntry(index)"
-        :class="entry.color"
-        v-model="entry.color"
-      >
+      <textarea
+        v-model="newText"
+        v-if="editing"
+        class="editEntry"
+        name=""
+        cols="30"
+        rows="10"
+      ></textarea>
+      <p v-if="!editing" class="text" :class="{ checked: entry.active }">
+        {{ entry.text }}
+      </p>
+      <select @change="colorEntry(index)" class="select" v-model="entry.color">
         <option
           v-for="(option, index) in colorOptions"
           :value="option"
           :key="index"
+          :class="entry.color"
         >
           {{ option }}
         </option>
       </select>
-      <button @click="editEntry" class="edit">Edit</button>
+      <button v-if="editing" @click="submitEdit(newText, index)" class="edit">
+        Submit
+      </button>
+      <button v-if="!editing" @click="editEntry" class="edit">Edit</button>
       <button @click="() => checkEntry(index)" class="check">&#10003;</button>
       <button @click="() => deleteEntry(index)" class="delete">x</button>
     </div>
@@ -69,7 +79,6 @@ export default {
       required: true,
       type: Function,
     },
-
     submitEntry: {
       required: true,
       type: Function,
@@ -83,6 +92,7 @@ export default {
     return {
       active: false,
       newText: "",
+      editing: false,
     };
   },
   // One of the first functions to execute on the render method
@@ -106,11 +116,12 @@ export default {
     changeActive() {
       this.active = true;
     },
-
-    mouseOver() {},
-
     editEntry() {
-      console.log("Edit");
+      this.editing = true;
+    },
+    submitEdit() {
+      this.editing = false;
+      this.submitEntry(this.newText, this.index);
     },
   },
   computed: {
@@ -128,6 +139,15 @@ export default {
 <style scoped lang="scss">
 $brightness: 100%;
 
+.editEntry {
+  font-family: "Segoe UI", Tahoma, sans-serif !important;
+  resize: none;
+}
+.select {
+  background: none;
+  border: none;
+  outline: none;
+}
 .checked {
   text-decoration: line-through;
 }
@@ -171,7 +191,7 @@ $brightness: 100%;
   background: none;
   transition: background 0.5s;
   &:hover {
-    background:#2a2a2a73;
+    background: #2a2a2a73;
     filter: brightness($brightness);
   }
 }

@@ -15,10 +15,7 @@ html {
   backdrop-filter: brightness(90%);
   // max-width: 100vw;
 }
-textarea {
-  font-family: "Segoe UI", Tahoma, sans-serif !important;
-  resize: none;
-}
+
 body {
   color: white;
   margin: 0;
@@ -163,8 +160,6 @@ button:hover {
 .add:focus {
   background: rgba(43, 129, 185, 0.76);
 }
-
-
 
 // entry elements
 .newItem {
