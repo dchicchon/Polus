@@ -42,11 +42,11 @@ export default {
   },
   data() {
     return {
-      date: "",
+      date: new Date(),
     };
   },
   created() {
-    this.date = new Date();
+    // this.date = new Date();
   },
   methods: {
     // Change Date here

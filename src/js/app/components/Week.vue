@@ -1,7 +1,7 @@
 <template>
   <div id="week">
     <div class="nav">
-      <button class="arrow">←</button>
+      <button @click="changeDate(-7)" class="arrow">←</button>
       <div
         class="title"
         style="
@@ -10,9 +10,9 @@
           border-radius: 75px;
         "
       >
-        4/25/2021 - 5/1/2021
+        {{ weekRange }}
       </div>
-      <button class="arrow">→</button>
+      <button @click="changeDate(7)" class="arrow">→</button>
     </div>
     <div class="weekdayNames">
       <h2 style="padding: 0px 0px 0.5rem; text-align: center">Sunday</h2>
@@ -79,5 +79,29 @@
 
 <style lang="sass"></style>
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      date: new Date(),
+    };
+  },
+  created() {},
+  methods: {
+    changeDate(amount) {
+      let changeDate = new Date(this.date); // had to do this because computed couldn't see that it was updating
+      changeDate.setDate(this.date.getDate() + amount);
+      this.date = changeDate;
+    },
+  },
+  computed: {
+    weekRange() {
+      let startDate = this.date;
+      while (startDate.getDay() !== 0)
+        startDate.setDate(startDate.getDate() - 1);
+      let endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + 6);
+      return `${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`;
+    },
+  },
+};
 </script>
