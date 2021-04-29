@@ -29,14 +29,15 @@
       <textarea
         v-model="newText"
         v-if="editing"
+        ref="textarea"
         class="editEntry"
         name=""
-        cols="30"
-        rows="10"
       ></textarea>
+
       <p v-if="!editing" class="text" :class="{ checked: entry.active }">
         {{ entry.text }}
       </p>
+      <!-- There is space here -->
       <select @change="colorEntry(index)" class="select" v-model="entry.color">
         <option
           v-for="(option, index) in colorOptions"
@@ -102,6 +103,7 @@ export default {
   // This will execute when the component is built on the DOM
   mounted() {
     if (this.$refs.newEntry) this.$refs.newEntry.focus();
+    if (this.$refs.textarea) this.$refs.textarea.focus();
   },
   methods: {
     altChangeActive(e) {
@@ -142,6 +144,17 @@ $brightness: 100%;
 .editEntry {
   font-family: "Segoe UI", Tahoma, sans-serif !important;
   resize: none;
+  border: none;
+  width: 85%;
+  -webkit-margin-before: 1em;
+  margin-block-start: 1em;
+  -webkit-margin-after: 1em;
+  margin-block-end: 1em;
+  float: left;
+  background: none;
+  color: white;
+  text-overflow: ellipsis;
+  text-align: center;
 }
 .select {
   background: none;
@@ -152,6 +165,10 @@ $brightness: 100%;
   text-decoration: line-through;
 }
 
+.entry-container {
+  // display: flex;
+  // flex-direction: column;
+}
 .entry {
   width: 90%;
   text-align: center;
