@@ -1,5 +1,6 @@
 <template>
-  <div class="details">
+  <div class="details" :class="classNames">
+    <div v-if="dateTitle" class="weekDate">{{ dayNumber }}</div>
     <ul ref="entryList" class="entryList">
       <Entry
         v-for="(entry, index) in entries"
@@ -17,35 +18,6 @@
   </div>
 </template>
 
-<style scoped lang="scss">
-.details {
-  overflow: auto;
-  height: 20rem;
-  .entryList {
-    list-style-type: none;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-  }
-  &:hover {
-    .addButton {
-      opacity: 1;
-    }
-  }
-}
-
-.addButton {
-  background: none;
-  width: 1.5rem;
-  font-size: 1.25rem;
-  border-radius: 100%;
-  opacity: 0;
-  transition: background 0.5s, opacity 0.5s;
-  padding: 0 0.4rem;
-}
-</style>
-
 <script>
 import Entry from "./Entry";
 import uuid from "uuid/v4";
@@ -58,6 +30,14 @@ export default {
     listDate: {
       type: Date,
       required: true,
+    },
+    dateTitle: {
+      type: Boolean,
+      required: false,
+    },
+    classNames: {
+      type: Array,
+      required: false,
     },
   },
   data() {
@@ -75,6 +55,8 @@ export default {
   // This is how we can check if a prop has changed
   watch: {
     listDate(newValue) {
+      console.log(newValue);
+      console.log(this.listDate);
       let dateStamp = this.listDate.toLocaleDateString();
       chrome.storage.sync.get([dateStamp], (result) => {
         this.entries = Object.keys(result).length > 0 ? result[dateStamp] : [];
@@ -123,6 +105,37 @@ export default {
     dateStamp() {
       return this.listDate.toLocaleDateString();
     },
+    dayNumber() {
+      return this.listDate.getDate();
+    },
   },
 };
 </script>
+<style scoped lang="scss">
+.details {
+  overflow: auto;
+  height: 20rem;
+  .entryList {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  &:hover {
+    .addButton {
+      opacity: 1;
+    }
+  }
+}
+
+.addButton {
+  background: none;
+  width: 1.5rem;
+  font-size: 1.25rem;
+  border-radius: 100%;
+  opacity: 0;
+  transition: background 0.5s, opacity 0.5s;
+  padding: 0 0.4rem;
+}
+</style>
