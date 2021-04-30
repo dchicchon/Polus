@@ -31,7 +31,7 @@
         :dateTitle="true"
         :classNames="['weekday']"
       />
-    </div> b
+    </div> 
   </div>
 </template>
 

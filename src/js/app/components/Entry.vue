@@ -1,14 +1,16 @@
 <template>
   <!-- New Entry -->
+  <!-- <transition name="fade" v-if="entry.text.length === 0"> -->
   <input
     v-model="newText"
     class="newEntry entry"
     :class="[entry.color, { checked: entry.active }]"
+    v-if="entry.text.length === 0"
     ref="newEntry"
     v-on:blur="submitEntry(newText, index)"
     v-on:keypress.enter="submitEntry(newText, index)"
-    v-if="entry.text.length === 0"
   />
+  <!-- </transition> -->
   <!-- Not Active -->
   <li
     class="entry"
@@ -154,6 +156,14 @@ export default {
 <style scoped lang="scss">
 $brightness: 100%;
 
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
 .select {
   background: none;
   border: none;
@@ -173,7 +183,7 @@ $brightness: 100%;
   border: none;
   touch-action: none;
   user-select: none;
-  transition: background 0.5s, height 0.25s;
+  // transition: background 0.5s, height 0.25s;
   color: white;
   margin: 0.25rem auto;
   padding: 0.5rem;
@@ -182,15 +192,10 @@ $brightness: 100%;
   cursor: pointer;
 
   .newEntry {
-    border: none;
-    width: 85%;
     margin-block-start: 1em;
     margin-block-end: 1em;
+    transition: '';
     float: left;
-    background: none;
-    color: white;
-    text-overflow: ellipsis;
-    text-align: center;
     &:focus {
       border: none;
       outline: none;
