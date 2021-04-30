@@ -1,14 +1,14 @@
-<template>
+<template  >
   <!-- New Entry -->
   <!-- <transition name="fade" v-if="entry.text.length === 0"> -->
-  <input
+  <textarea
     v-model="newText"
     class="newEntry entry"
     :class="[entry.color, { checked: entry.active }]"
     v-if="entry.text.length === 0"
     ref="newEntry"
-    v-on:blur="submitEntry(newText, index)"
-    v-on:keypress.enter="submitEntry(newText, index)"
+    v-on:blur="submitEntry(newText, entry.key)"
+    v-on:keypress.enter="submitEntry(newText, entry.key)"
   />
   <!-- </transition> -->
   <!-- Not Active -->
@@ -17,6 +17,9 @@
     :class="[entry.color, { checked: entry.active }]"
     v-else-if="!active"
     @click="changeActive"
+    @dragstart="dragStart($event, entry)"
+    @dragend="dragEnd($event, entry.key)"
+    draggable
   >
     {{ entry.text }}
   </li>
@@ -26,6 +29,8 @@
     :class="entry.color"
     v-else
     @click="(e) => altChangeActive(e)"
+    @dragstart="dragStart($event, entry)"
+    @dragend="dragEnd($event, entry)"
   >
     <div class="entry-container">
       <textarea
@@ -40,7 +45,11 @@
       </p>
       <!-- There is space here -->
       <div class="entryBtnContainer">
-        <button v-if="editing" @click="submitEdit(newText, index)" class="edit">
+        <button
+          v-if="editing"
+          @click="submitEdit(newText, entry.key)"
+          class="edit"
+        >
           Submit
         </button>
         <button v-if="!editing" @click="editEntry" class="edit">Edit</button>
@@ -60,8 +69,10 @@
           </option>
         </select>
 
-        <button @click="() => checkEntry(index)" class="check">&#10003;</button>
-        <button @click="() => deleteEntry(index)" class="delete">x</button>
+        <button @click="() => checkEntry(entry.key)" class="check">
+          &#10003;
+        </button>
+        <button @click="() => deleteEntry(entry.key)" class="delete">x</button>
       </div>
     </div>
   </li>
@@ -73,10 +84,10 @@ export default {
       required: true,
       type: Object,
     },
-    index: {
-      required: true,
-      type: Number,
-    },
+    // index: {
+    //   required: true,
+    //   type: Number,
+    // },
     checkEntry: {
       required: true,
       type: Function,
@@ -91,6 +102,14 @@ export default {
     },
     submitEntry: {
       required: true,
+      type: Function,
+    },
+    dragStart: {
+      required: false,
+      type: Function,
+    },
+    dragEnd: {
+      required: false,
       type: Function,
     },
     listDate: {
@@ -133,7 +152,7 @@ export default {
     },
     submitEdit() {
       this.editing = false;
-      this.submitEntry(this.newText, this.index);
+      this.submitEntry(this.newText, this.entry.key);
     },
   },
   computed: {
@@ -156,12 +175,26 @@ export default {
 <style scoped lang="scss">
 $brightness: 100%;
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
+textarea {
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    width: 10px;
+    border: 4px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    background-color: #fff;
+    transition: background 0.5s;
+    box-shadow: inset -1px -1px 0px rgb(0 0 0 / 5%),
+      inset 1px 1px 0px rgb(0 0 0 / 5%);
+    border-radius: 25px;
+  }
+  &::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+    display: none;
+  }
 }
 
 .select {
@@ -183,7 +216,7 @@ $brightness: 100%;
   border: none;
   touch-action: none;
   user-select: none;
-  // transition: background 0.5s, height 0.25s;
+  transition: background 0.5s, height 0.25s;
   color: white;
   margin: 0.25rem auto;
   padding: 0.5rem;
@@ -194,7 +227,7 @@ $brightness: 100%;
   .newEntry {
     margin-block-start: 1em;
     margin-block-end: 1em;
-    transition: '';
+    transition: "";
     float: left;
     &:focus {
       border: none;
