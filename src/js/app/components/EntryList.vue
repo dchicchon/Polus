@@ -1,5 +1,5 @@
 <template>
-  <div class="details" :class="classNames" @drop="onDrop($event)">
+  <div class="details" :class="addClasses" @drop="onDrop($event)" ref="details">
     <div v-if="dateTitle" :style="todayDate" class="weekDate">
       {{ dayNumber }}
     </div>
@@ -47,6 +47,7 @@ export default {
   data() {
     return {
       entries: [],
+      isOver: false,
     };
   },
   created() {
@@ -56,6 +57,18 @@ export default {
       this.entries = Object.keys(result).length > 0 ? result[dateStamp] : [];
       // console.log(dateStamp);
       // console.log(this.entries);
+    });
+  },
+
+  mounted() {
+    this.$refs.details.addEventListener("dragover", () => {
+      this.isOver = true;
+    });
+    this.$refs.details.addEventListener("dragleave", () => {
+      this.isOver = false;
+    });
+    this.$refs.details.addEventListener("drop", () => {
+      this.isOver = false;
     });
   },
   // This is how we can check if a prop has changed
@@ -158,10 +171,23 @@ export default {
         };
       }
     },
+    addClasses() {
+      // classnames is a list
+      if (this.isOver) {
+        let classList = this.classNames.slice();
+        classList.push("over");
+        return classList;
+      }
+      return this.classNames;
+    },
   },
 };
 </script>
 <style scoped lang="scss">
+.over {
+  background: rgba(37, 37, 37, 0.329) !important;
+}
+
 .details {
   overflow: auto;
   height: 20rem;
