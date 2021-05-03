@@ -1,14 +1,14 @@
 <template>
   <div id="month">
     <div class="nav">
-      <button class="arrow">←</button>
+      <button @click="changeMonth(-1)" class="arrow">←</button>
       <div
         class="title"
         style="background: rgba(5, 80, 123, 0.992); border-radius: 75px"
       >
-        April 2021
+        {{ monthTitle }}
       </div>
-      <button class="arrow">→</button>
+      <button @click="changeMonth(1)" class="arrow">→</button>
     </div>
     <div class="weekdayNames">
       <h2 style="padding: 0px 0px 0.5rem; text-align: center">Sunday</h2>
@@ -20,255 +20,146 @@
       <h2 style="padding: 0px 0px 0.5rem; text-align: center">Saturday</h2>
     </div>
     <div class="monthDays">
-      <div class="monthDay">
-        <h3 class="monthDayTitle">28</h3>
-        <div class="monthDetails" id="3/28/2021">
-          <ul></ul>
-          <button class="add" value="3/28/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">29</h3>
-        <div class="monthDetails" id="3/29/2021">
-          <ul></ul>
-          <button class="add" value="3/29/2021" style="opacity: 0">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">30</h3>
-        <div class="monthDetails" id="3/30/2021">
-          <ul></ul>
-          <button class="add" value="3/30/2021" style="opacity: 0">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">31</h3>
-        <div class="monthDetails" id="3/31/2021">
-          <ul></ul>
-          <button class="add" value="3/31/2021" style="opacity: 0">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">1</h3>
-        <div class="monthDetails" id="4/1/2021">
-          <ul></ul>
-          <button class="add" value="4/1/2021" style="opacity: 0">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">2</h3>
-        <div class="monthDetails" id="4/2/2021">
-          <ul></ul>
-          <button class="add" value="4/2/2021" style="opacity: 0">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">3</h3>
-        <div class="monthDetails" id="4/3/2021">
-          <ul></ul>
-          <button class="add" value="4/3/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">4</h3>
-        <div class="monthDetails" id="4/4/2021">
-          <ul></ul>
-          <button class="add" value="4/4/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">5</h3>
-        <div class="monthDetails" id="4/5/2021">
-          <ul></ul>
-          <button class="add" value="4/5/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">6</h3>
-        <div class="monthDetails" id="4/6/2021">
-          <ul></ul>
-          <button class="add" value="4/6/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">7</h3>
-        <div class="monthDetails" id="4/7/2021">
-          <ul></ul>
-          <button class="add" value="4/7/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">8</h3>
-        <div class="monthDetails" id="4/8/2021">
-          <ul></ul>
-          <button class="add" value="4/8/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">9</h3>
-        <div class="monthDetails" id="4/9/2021">
-          <ul></ul>
-          <button class="add" value="4/9/2021" style="opacity: 0">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">10</h3>
-        <div class="monthDetails" id="4/10/2021">
-          <ul></ul>
-          <button class="add" value="4/10/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">11</h3>
-        <div class="monthDetails" id="4/11/2021">
-          <ul></ul>
-          <button class="add" value="4/11/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">12</h3>
-        <div class="monthDetails" id="4/12/2021">
-          <ul></ul>
-          <button class="add" value="4/12/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">13</h3>
-        <div class="monthDetails" id="4/13/2021">
-          <ul></ul>
-          <button class="add" value="4/13/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">14</h3>
-        <div class="monthDetails" id="4/14/2021">
-          <ul></ul>
-          <button class="add" value="4/14/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">15</h3>
-        <div class="monthDetails" id="4/15/2021">
-          <ul></ul>
-          <button class="add" value="4/15/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">16</h3>
-        <div class="monthDetails" id="4/16/2021">
-          <ul></ul>
-          <button class="add" value="4/16/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">17</h3>
-        <div class="monthDetails" id="4/17/2021">
-          <ul></ul>
-          <button class="add" value="4/17/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">18</h3>
-        <div class="monthDetails" id="4/18/2021">
-          <ul></ul>
-          <button class="add" value="4/18/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">19</h3>
-        <div class="monthDetails" id="4/19/2021">
-          <ul></ul>
-          <button class="add" value="4/19/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">20</h3>
-        <div class="monthDetails" id="4/20/2021">
-          <ul></ul>
-          <button class="add" value="4/20/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">21</h3>
-        <div class="monthDetails" id="4/21/2021">
-          <ul></ul>
-          <button class="add" value="4/21/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">22</h3>
-        <div class="monthDetails" id="4/22/2021">
-          <ul></ul>
-          <button class="add" value="4/22/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">23</h3>
-        <div class="monthDetails" id="4/23/2021">
-          <ul></ul>
-          <button class="add" value="4/23/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">24</h3>
-        <div class="monthDetails" id="4/24/2021">
-          <ul></ul>
-          <button class="add" value="4/24/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">25</h3>
-        <div class="monthDetails" id="4/25/2021">
-          <ul></ul>
-          <button class="add" value="4/25/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">26</h3>
-        <div class="monthDetails" id="4/26/2021">
-          <ul></ul>
-          <button class="add" value="4/26/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">27</h3>
-        <div class="monthDetails" id="4/27/2021">
-          <ul></ul>
-          <button class="add" value="4/27/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">28</h3>
-        <div class="monthDetails" id="4/28/2021">
-          <ul></ul>
-          <button class="add" value="4/28/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">29</h3>
-        <div class="monthDetails" id="4/29/2021">
-          <ul></ul>
-          <button class="add" value="4/29/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">30</h3>
-        <div class="monthDetails" id="4/30/2021">
-          <ul></ul>
-          <button class="add" value="4/30/2021">+</button>
-        </div>
-      </div>
-      <div class="monthDay">
-        <h3 class="monthDayTitle">1</h3>
-        <div class="monthDetails" id="5/1/2021">
-          <ul></ul>
-          <button class="add" value="5/1/2021">+</button>
-        </div>
-      </div>
+      <EntryList
+        v-for="(date, index) in dateList"
+        :key="index"
+        :listDate="date"
+        :dateTitle="true"
+        :classNames="['monthDay']"
+      />
     </div>
   </div>
 </template>
-<style lang="sass"></style>
+
+<style lang="scss" scoped>
+#month {
+  flex-direction: column;
+  justify-content: center;
+  .weekdayNames {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(50px, 1fr));
+    width: 98%;
+    margin: 0 auto;
+  }
+  .monthDays {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(50px, 1fr));
+    width: 98%;
+    margin: 0 auto;
+
+    .monthDay {
+      text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
+      height: 13rem;
+      padding: 0.75rem;
+      // border: 0.5px solid $border-color;
+      border: 0.5px solid rgba(32, 32, 32, 0.555);
+      float: left;
+      // background: $day-background;
+      background: rgba(0, 0, 0, 0.15);
+      transition: background 0.5s;
+      // .monthDayTitle {
+      //   font-weight: 0;
+      //   border-radius: 12px;
+      //   margin-bottom: 0.25rem;
+      //   width: 20px;
+      //   height: 20px;
+      //   min-width: 16px;
+      //   // padding: 4px 3px 0 3px;
+      //   text-align: center;
+      // }
+      // .monthDetails {
+      //   overflow: auto;
+      //   height: 12rem;
+      //   ul {
+      //     list-style-type: none;
+      //     padding: 0;
+      //     li {
+      //       width: 85%;
+      //       // V 1.0.0.9
+      //       text-align: center;
+      //       white-space: nowrap;
+      //       overflow: hidden;
+      //       display: block;
+      //       text-overflow: ellipsis;
+      //       border: none;
+      //       // background: rgba(21, 115, 170, 0.63);
+      //       transition: background 0.5s;
+      //       color: white;
+      //       margin-bottom: 0.25rem;
+      //       padding: 0.5rem;
+      //       border-radius: 25px;
+      //       font-size: 0.9rem;
+      //       // height: 1rem;
+      //     }
+      //     li:hover {
+      //       // background: rgba(24, 127, 187, 0.993);
+      //       cursor: pointer;
+      //     }
+      //   }
+      // }
+    }
+  }
+}
+</style>
 <script>
-export default {};
+import EntryList from "./EntryList";
+export default {
+  components: {
+    EntryList,
+  },
+
+  data() {
+    return {
+      date: new Date(),
+    };
+  },
+
+  created() {
+    // this.dateList();
+  },
+
+  methods: {
+    changeMonth(amount) {
+      let changeDate = new Date(this.date);
+      changeDate.setMonth(this.date.getMonth() + amount);
+      this.date = changeDate;
+      console.log(this.date);
+    },
+  },
+  computed: {
+    monthTitle() {
+      let options = { month: "long", year: "numeric" };
+      let date = new Date(this.date);
+      return date.toLocaleDateString(undefined, options);
+    },
+    dateList() {
+      let dates = [];
+      let startDate = new Date(this.date);
+      let currentMonth = startDate.getMonth();
+      startDate.setDate(1);
+
+      // This is how we set it to sunday
+      while (startDate.getDay() !== 0) {
+        startDate.setDate(startDate.getDate() - 1);
+      }
+
+      // Make a week if we are still in the same month
+      while (startDate.getMonth() <= currentMonth) {
+        let week = makeWeek();
+        dates = [...dates, ...week];
+      }
+
+      function makeWeek() {
+        let week = [];
+        for (let i = 0; i < 7; i++) {
+          let dayDate = new Date(startDate);
+          week.push(dayDate);
+          startDate.setDate(startDate.getDate() + 1);
+        }
+        return week;
+      }
+      return dates;
+    },
+  },
+};
 </script>

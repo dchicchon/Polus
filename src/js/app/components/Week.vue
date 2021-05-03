@@ -35,7 +35,6 @@
   </div>
 </template>
 
-
 <script>
 import EntryList from "./EntryList";
 export default {
@@ -47,7 +46,7 @@ export default {
       date: new Date(),
     };
   },
-  created() {},
+  // created() {},
   methods: {
     changeDate(amount) {
       let changeDate = new Date(this.date); // had to do this because computed couldn't see that it was updating

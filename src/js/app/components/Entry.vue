@@ -1,4 +1,4 @@
-<template  >
+<template>
   <!-- New Entry -->
   <!-- <transition name="fade" v-if="entry.text.length === 0"> -->
   <textarea
@@ -84,10 +84,6 @@ export default {
       required: true,
       type: Object,
     },
-    // index: {
-    //   required: true,
-    //   type: Number,
-    // },
     checkEntry: {
       required: true,
       type: Function,
@@ -125,16 +121,13 @@ export default {
     };
   },
   // One of the first functions to execute on the render method
-  created() {
-    // this.color = this.entry.color;
-  },
+  created() {},
   // This will execute when the component is built on the DOM
   mounted() {
     if (this.$refs.newEntry) this.$refs.newEntry.focus();
   },
   methods: {
     altChangeActive(e) {
-      // console.log(e.target.className);
       if (
         e.target.classList.contains("text") ||
         e.target.classList.contains("entry") ||
@@ -170,13 +163,12 @@ export default {
 };
 </script>
 
-
-
 <style scoped lang="scss">
 $brightness: 100%;
 
 textarea {
   font-family: "Segoe UI", Tahoma, sans-serif;
+  resize: none;
   &::-webkit-scrollbar {
     width: 10px;
   }
@@ -359,4 +351,3 @@ select {
   background: rgba(0, 220, 255, 0.75);
 }
 </style>
-

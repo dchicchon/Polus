@@ -1,6 +1,6 @@
 <template>
   <div class="details" :class="addClasses" @drop="onDrop($event)" ref="details">
-    <div v-if="dateTitle" :style="todayDate" class="weekDate">
+    <div v-if="dateTitle" :style="todayDate" class="dateTitle">
       {{ dayNumber }}
     </div>
     <ul ref="entryList" class="entryList">
@@ -51,20 +51,12 @@ export default {
     };
   },
   created() {
-    this.getEntries()
     // We do this to get the entries for the date
-    // let dateStamp = this.listDate.toLocaleDateString();
-    // chrome.storage.sync.get([dateStamp], (result) => {
-    //   this.entries = Object.keys(result).length > 0 ? result[dateStamp] : [];
-    // });
+    this.getEntries();
   },
   watch: {
     listDate(newValue) {
-      this.getEntries()
-      // let dateStamp = this.listDate.toLocaleDateString();
-      // chrome.storage.sync.get([dateStamp], (result) => {
-      //   this.entries = Object.keys(result).length > 0 ? result[dateStamp] : [];
-      // });
+      this.getEntries();
     },
   },
 
@@ -170,8 +162,9 @@ export default {
       return this.listDate.getDate();
     },
     todayDate() {
-      if (this.listDate.getDate() === new Date().getDate()) {
-        // console.log("Match!");
+      if (
+        this.listDate.toLocaleDateString() === new Date().toLocaleDateString()
+      ) {
         return {
           background: "rgba(5,80,123,0.992)",
           borderRadius: "75px",
@@ -199,6 +192,16 @@ export default {
   overflow: auto;
   height: 20rem;
 
+  .dateTitle {
+    font-weight: 0;
+    border-radius: 12px;
+    margin-bottom: 0.25rem;
+    width: 20px;
+    height: 20px;
+    min-width: 16px;
+    // padding: 4px 3px 0 3px;
+    text-align: center;
+  }
   .entryList {
     list-style-type: none;
     padding: 0;

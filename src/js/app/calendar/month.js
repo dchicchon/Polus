@@ -22,56 +22,6 @@ export const createMonth = () => {
     startDate.setDate(startDate.getDate() - 1);
   }
 
-  for (let k = 0; k < 7; k++) {
-    let weekdayTitle = document.createElement("h2");
-    let thisDate = new Date(startDate);
-    thisDate.setDate(thisDate.getDate() + k);
-    weekdayTitle.textContent = `${thisDate.toLocaleDateString(undefined, {
-      weekday: "long",
-    })}`;
-    weekdayTitle.style.padding = "0 0 0.5rem";
-    weekdayTitle.style.textAlign = "center";
-    weekdayNames.append(weekdayTitle);
-  }
-
-  // This will generate all the days for a month and all the associated notes
-
-  // Text Content
-  prevBtn.innerHTML = "&larr;";
-  nextBtn.innerHTML = "&rarr;";
-
-  // Set attributes
-  prevBtn.setAttribute("class", "arrow");
-  nextBtn.setAttribute("class", "arrow");
-  monthTitle.setAttribute("class", "title");
-  monthNav.setAttribute("class", "nav");
-  monthDays.setAttribute("class", "monthDays");
-  weekdayNames.setAttribute("class", "weekdayNames");
-
-  // Previous Month
-  prevBtn.addEventListener("click", function () {
-    monthDate.setMonth(monthDate.getMonth() - 1);
-    console.log(monthDate);
-    createDaysInMonth(monthDate);
-  });
-
-  // Next Month
-  nextBtn.addEventListener("click", function () {
-    monthDate.setMonth(monthDate.getMonth() + 1);
-    console.log(monthDate);
-    createDaysInMonth(monthDate);
-  });
-
-  // Nav
-  monthNav.appendChild(prevBtn);
-  monthNav.appendChild(monthTitle);
-  monthNav.appendChild(nextBtn);
-
-  // View
-  monthView.appendChild(monthNav);
-  monthView.appendChild(weekdayNames);
-  monthView.appendChild(monthDays);
-
   let createDaysInMonth = (dateObj) => {
     monthDays.innerHTML = "";
     let options = { month: "long", year: "numeric" };
@@ -112,7 +62,7 @@ export const createMonth = () => {
       let btn = document.createElement("button");
 
       // Gets storage items and creates an li element for each item
-      setEntries(date, monthDetailsList);
+      // setEntries(date, monthDetailsList);
 
       if (date === new Date()) {
         monthDayTitle.style.backgroundColor = "rgba(5, 80, 123, 0.992)";
@@ -161,7 +111,7 @@ export const createMonth = () => {
     // }
     // console.log(dateObj);
     dateObj.setDate(dateObj.getDate() + 7);
-    addFunction();
+    // addFunction();
   };
 
   createDaysInMonth(monthDate);
