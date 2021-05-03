@@ -66,9 +66,8 @@ export const addFunction = function () {
 
 export const getKey = () => {
   let alpha = "abcdefghijklmnopqrstuvwxyz";
-  let key = `${alpha[Math.floor(Math.random() * 25)]}${
-    Math.floor(Math.random() * 98) + 1
-  }`;
+  let key = `${alpha[Math.floor(Math.random() * 25)]}${Math.floor(Math.random() * 98) + 1
+    }`;
   return key;
 };
 
@@ -99,7 +98,7 @@ export const addToStorage = function (listElm, date, text, key, color) {
       console.log(dateEntries);
       dateEntries.push(entry);
       entryFunctions(listElm, dateEntries);
-      chrome.storage.sync.set({ [date]: dateEntries }, function () {});
+      chrome.storage.sync.set({ [date]: dateEntries }, function () { });
     }
   });
 };
@@ -418,7 +417,7 @@ export const entryFunctions = function (elmList, arr) {
 export const dragFunctions = function () {
   let dragged;
   // let color;
-  document.addEventListener("drag", function (event) {}, false);
+  document.addEventListener("drag", function (event) { }, false);
   document.addEventListener(
     "dragstart",
     function (event) {
@@ -526,9 +525,6 @@ export const dragFunctions = function () {
           event.stopImmediatePropagation(); // prevents function from happening multiple times
         }
 
-        // Add to new Date Object
-        // event.target.parentNode.appendChild(dragged);
-        // }
       }
     },
     false

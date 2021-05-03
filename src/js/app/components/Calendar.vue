@@ -50,6 +50,7 @@ export default {
 
   methods: {
     changeView(type) {
+      console.log(type);
       chrome.storage.sync.set({ view: type }, () => {
         this.view = type;
       });

@@ -67,7 +67,7 @@ export const createWeek = () => {
   weekNav.append(prevBtn, weekTitle, nextBtn);
 
   // View
-  weekView.append(weekNav, weekdayNames, weekDays);
+  // weekView.append(weekNav, weekdayNames, weekDays);
 
   let createDaysInWeek = (dateObj) => {
     weekDays.innerHTML = "";
@@ -137,5 +137,5 @@ export const createWeek = () => {
     addFunction();
   };
 
-  createDaysInWeek(startDate);
+  // createDaysInWeek(startDate);
 };

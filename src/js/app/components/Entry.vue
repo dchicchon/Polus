@@ -1,20 +1,25 @@
 <template>
   <!-- New Entry -->
-  <input
+  <!-- <transition name="fade" v-if="entry.text.length === 0"> -->
+  <textarea
     v-model="newText"
     class="newEntry entry"
     :class="[entry.color, { checked: entry.active }]"
-    ref="newEntry"
-    v-on:blur="submitEntry(newText, index)"
-    v-on:keypress.enter="submitEntry(newText, index)"
     v-if="entry.text.length === 0"
+    ref="newEntry"
+    v-on:blur="submitEntry(newText, entry.key)"
+    v-on:keypress.enter="submitEntry(newText, entry.key)"
   />
+  <!-- </transition> -->
   <!-- Not Active -->
   <li
     class="entry"
     :class="[entry.color, { checked: entry.active }]"
     v-else-if="!active"
     @click="changeActive"
+    @dragstart="dragStart($event, entry)"
+    @dragend="dragEnd($event, entry.key)"
+    draggable
   >
     {{ entry.text }}
   </li>
@@ -24,6 +29,8 @@
     :class="entry.color"
     v-else
     @click="(e) => altChangeActive(e)"
+    @dragstart="dragStart($event, entry)"
+    @dragend="dragEnd($event, entry)"
   >
     <div class="entry-container">
       <textarea
@@ -38,7 +45,11 @@
       </p>
       <!-- There is space here -->
       <div class="entryBtnContainer">
-        <button v-if="editing" @click="submitEdit(newText, index)" class="edit">
+        <button
+          v-if="editing"
+          @click="submitEdit(newText, entry.key)"
+          class="edit"
+        >
           Submit
         </button>
         <button v-if="!editing" @click="editEntry" class="edit">Edit</button>
@@ -58,8 +69,10 @@
           </option>
         </select>
 
-        <button @click="() => checkEntry(index)" class="check">&#10003;</button>
-        <button @click="() => deleteEntry(index)" class="delete">x</button>
+        <button @click="() => checkEntry(entry.key)" class="check">
+          &#10003;
+        </button>
+        <button @click="() => deleteEntry(entry.key)" class="delete">x</button>
       </div>
     </div>
   </li>
@@ -70,10 +83,6 @@ export default {
     entry: {
       required: true,
       type: Object,
-    },
-    index: {
-      required: true,
-      type: Number,
     },
     checkEntry: {
       required: true,
@@ -91,6 +100,14 @@ export default {
       required: true,
       type: Function,
     },
+    dragStart: {
+      required: false,
+      type: Function,
+    },
+    dragEnd: {
+      required: false,
+      type: Function,
+    },
     listDate: {
       required: true,
       type: Date,
@@ -104,16 +121,13 @@ export default {
     };
   },
   // One of the first functions to execute on the render method
-  created() {
-    // this.color = this.entry.color;
-  },
+  created() {},
   // This will execute when the component is built on the DOM
   mounted() {
     if (this.$refs.newEntry) this.$refs.newEntry.focus();
   },
   methods: {
     altChangeActive(e) {
-      // console.log(e.target.className);
       if (
         e.target.classList.contains("text") ||
         e.target.classList.contains("entry") ||
@@ -131,7 +145,7 @@ export default {
     },
     submitEdit() {
       this.editing = false;
-      this.submitEntry(this.newText, this.index);
+      this.submitEntry(this.newText, this.entry.key);
     },
   },
   computed: {
@@ -149,10 +163,31 @@ export default {
 };
 </script>
 
-
-
 <style scoped lang="scss">
 $brightness: 100%;
+
+textarea {
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  resize: none;
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    width: 10px;
+    border: 4px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    background-color: #fff;
+    transition: background 0.5s;
+    box-shadow: inset -1px -1px 0px rgb(0 0 0 / 5%),
+      inset 1px 1px 0px rgb(0 0 0 / 5%);
+    border-radius: 25px;
+  }
+  &::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}
 
 .select {
   background: none;
@@ -182,15 +217,10 @@ $brightness: 100%;
   cursor: pointer;
 
   .newEntry {
-    border: none;
-    width: 85%;
     margin-block-start: 1em;
     margin-block-end: 1em;
+    transition: "";
     float: left;
-    background: none;
-    color: white;
-    text-overflow: ellipsis;
-    text-align: center;
     &:focus {
       border: none;
       outline: none;
@@ -321,4 +351,3 @@ select {
   background: rgba(0, 220, 255, 0.75);
 }
 </style>
-
