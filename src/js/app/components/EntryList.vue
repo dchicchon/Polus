@@ -51,13 +51,21 @@ export default {
     };
   },
   created() {
+    this.getEntries()
     // We do this to get the entries for the date
-    let dateStamp = this.listDate.toLocaleDateString();
-    chrome.storage.sync.get([dateStamp], (result) => {
-      this.entries = Object.keys(result).length > 0 ? result[dateStamp] : [];
-      // console.log(dateStamp);
-      // console.log(this.entries);
-    });
+    // let dateStamp = this.listDate.toLocaleDateString();
+    // chrome.storage.sync.get([dateStamp], (result) => {
+    //   this.entries = Object.keys(result).length > 0 ? result[dateStamp] : [];
+    // });
+  },
+  watch: {
+    listDate(newValue) {
+      this.getEntries()
+      // let dateStamp = this.listDate.toLocaleDateString();
+      // chrome.storage.sync.get([dateStamp], (result) => {
+      //   this.entries = Object.keys(result).length > 0 ? result[dateStamp] : [];
+      // });
+    },
   },
 
   mounted() {
@@ -72,14 +80,6 @@ export default {
     });
   },
   // This is how we can check if a prop has changed
-  watch: {
-    listDate(newValue) {
-      let dateStamp = this.listDate.toLocaleDateString();
-      chrome.storage.sync.get([dateStamp], (result) => {
-        this.entries = Object.keys(result).length > 0 ? result[dateStamp] : [];
-      });
-    },
-  },
 
   methods: {
     addEntry() {
@@ -123,6 +123,13 @@ export default {
     // This will allow us to delete from the original list
     dragEnd(evt, key) {
       this.deleteEntry(key);
+    },
+
+    getEntries() {
+      let dateStamp = this.listDate.toLocaleDateString();
+      chrome.storage.sync.get([dateStamp], (result) => {
+        this.entries = Object.keys(result).length > 0 ? result[dateStamp] : [];
+      });
     },
 
     // This is how we add to the new list
