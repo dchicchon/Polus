@@ -1,6 +1,5 @@
-import { viewFunction, hideViews, backgroundImage, views } from "./utils/view";
+import { backgroundImage } from "./utils/view";
 import "./utils/ga";
-import { dragFunctions } from "./utils/helper";
 
 export const startApp = () => {
   chrome.storage.sync.get(["newTab", "indexOpen"], function (result) {
@@ -109,9 +108,6 @@ export const startApp = () => {
   }
 
   backgroundImage();
-  dragFunctions();
-  hideViews(views); // pass in views arr to hide different calendars depending on the stored view
-  viewFunction(); // This function is to give the view buttons the ability to pick a view!
   chrome.storage.sync.get(["pmode", "date", "clock"], (result) => {
     for (let key in result) {
       if (key === "pmode") {
