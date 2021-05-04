@@ -94,19 +94,6 @@ html {
 }
 // ===============
 
-main {
-  display: none;
-  width: 100%;
-  margin: 1rem auto;
-  section {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    animation-name: fadeIn;
-    animation-duration: 0.5s;
-    animation-fill-mode: forwards;
-  }
-}
 
 button {
   outline: none;

@@ -12,18 +12,23 @@
       </button>
     </div>
     <div v-if="view === 'daily'">
-      <Day />
+      <section>
+        <Day />
+      </section>
     </div>
     <div v-if="view === 'week'">
-      <Week />
+      <section>
+        <Week />
+      </section>
     </div>
     <div v-if="view === 'month'">
-      <Month />
+      <section>
+        <Month />
+      </section>
     </div>
   </div>
 </template>
 
-<style lang="scss"></style>
 
 <script>
 import Day from "./Day";
@@ -50,7 +55,6 @@ export default {
 
   methods: {
     changeView(type) {
-      console.log(type);
       chrome.storage.sync.set({ view: type }, () => {
         this.view = type;
       });
@@ -58,3 +62,6 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+</style>

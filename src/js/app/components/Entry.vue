@@ -9,7 +9,9 @@
     ref="newEntry"
     v-on:blur="submitEntry(newText, entry.key)"
     v-on:keypress.enter="submitEntry(newText, entry.key)"
-  />
+  >
+  </textarea>
+
   <!-- </transition> -->
   <!-- Not Active -->
   <li
@@ -212,7 +214,8 @@ textarea {
   border: none;
   touch-action: none;
   user-select: none;
-  transition: background 0.5s, height 0.25s;
+  // transition: background 0.5s, height 0.25s;
+  // transition: background 0.5s;
   color: white;
   margin: 0.25rem auto;
   padding: 0.5rem;
@@ -220,16 +223,6 @@ textarea {
   font-size: 0.9rem;
   cursor: pointer;
 
-  .newEntry {
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    transition: "";
-    float: left;
-    &:focus {
-      border: none;
-      outline: none;
-    }
-  }
   .entry-container {
     display: flex;
     flex-direction: column;
@@ -270,10 +263,38 @@ textarea {
   }
 }
 
-.edit {
-  border-radius: 10%;
-  @extend .entryBtn;
+.newEntry {
+  // width: 10% !important;
+  transition: none;
+  margin: 0.25rem auto;
+  // margin-block-start: 1em;
+  // margin-block-end: 1em;
+  float: left;
+
+  animation-name: "grow";
+  animation-fill-mode: forwards;
+  animation-duration: 0.25s;
+
+  &:focus {
+    border: none;
+    outline: none;
+  }
 }
+
+.edit {
+  @extend .entryBtn;
+  border-radius: 10%;
+}
+
+@keyframes grow {
+  from {
+    width: 10%;
+  }
+  to {
+    width: 90%;
+  }
+}
+
 .color {
   background: none;
   border: none;

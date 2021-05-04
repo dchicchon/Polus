@@ -108,14 +108,9 @@ export default {
     },
     deleteEntry(key) {
       // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
-      // if not in the same list
-      if (!this.sameList) {
-        let index = this.entries.map((entry) => entry.key).indexOf(key);
-        this.entries.splice(index, 1);
-        this.updateStorage();
-        return;
-      }
-      this.sameList = false;
+      let index = this.entries.map((entry) => entry.key).indexOf(key);
+      this.entries.splice(index, 1);
+      this.updateStorage();
     },
 
     // https://learnvue.co/2020/01/how-to-add-drag-and-drop-to-your-vuejs-project/
@@ -130,9 +125,16 @@ export default {
       evt.dataTransfer.setData("color", entry.color);
     },
 
-    // This will allow us to delete from the original list
+    // This will allow us to delete from the original list if it was dragged to somewhere else
     dragEnd(evt, key) {
-      this.deleteEntry(key);
+      // if not in the same list
+
+      if (this.sameList) {
+        console.log("DONT DELETE");
+        this.sameList = false;
+      } else {
+        this.deleteEntry(key);
+      }
     },
 
     // This is how we add to the new list
