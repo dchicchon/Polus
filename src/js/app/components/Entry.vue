@@ -13,24 +13,25 @@
   <!-- </transition> -->
   <!-- Not Active -->
   <li
+    v-else-if="!active"
     class="entry"
     :class="[entry.color, { checked: entry.active }]"
-    v-else-if="!active"
     @click="changeActive"
+    draggable
     @dragstart="dragStart($event, entry)"
     @dragend="dragEnd($event, entry.key)"
-    draggable
   >
     {{ entry.text }}
   </li>
   <!-- Active -->
   <li
+    v-else
     class="entry"
     :class="entry.color"
-    v-else
     @click="(e) => altChangeActive(e)"
+    draggable
     @dragstart="dragStart($event, entry)"
-    @dragend="dragEnd($event, entry)"
+    @dragend="dragEnd($event, entry.key)"
   >
     <div class="entry-container">
       <textarea
@@ -121,7 +122,7 @@ export default {
     };
   },
   // One of the first functions to execute on the render method
-  created() {},
+  // created() {},
   // This will execute when the component is built on the DOM
   mounted() {
     if (this.$refs.newEntry) this.$refs.newEntry.focus();
@@ -132,10 +133,13 @@ export default {
         e.target.classList.contains("text") ||
         e.target.classList.contains("entry") ||
         e.target.classList.contains("entry-container")
-      )
+      ) {
+        console.log("Deactive");
         this.active = false;
+      }
     },
     changeActive() {
+      console.log("Make Active");
       this.active = true;
     },
     editEntry() {

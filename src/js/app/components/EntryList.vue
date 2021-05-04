@@ -1,5 +1,12 @@
 <template>
-  <div class="details" :class="addClasses" @drop="onDrop($event)" ref="details">
+  <div
+    class="details"
+    :class="addClasses"
+    @drop="onDrop($event)"
+    @dragover.prevent
+    ref="details"
+  >
+    <!-- @dragenter.prevent -->
     <div v-if="dateTitle" :style="todayDate" class="dateTitle">
       {{ dayNumber }}
     </div>
@@ -25,6 +32,8 @@
 <script>
 import Entry from "./Entry";
 import uuid from "uuid/v4";
+
+// https://stackoverflow.com/questions/18548465/prevent-scroll-bar-from-adding-up-to-the-width-of-page-on-chrome
 export default {
   components: {
     Entry,
@@ -47,6 +56,7 @@ export default {
   data() {
     return {
       entries: [],
+      sameList: false,
       isOver: false,
     };
   },
@@ -61,7 +71,10 @@ export default {
   },
 
   mounted() {
-    this.$refs.details.addEventListener("dragover", () => {
+    // https://learnvue.co/2020/01/how-to-add-drag-and-drop-to-your-vuejs-project/
+    // However, one thing that is not-intuitive is that we have to call preventDefault on two of the drag-and-drop hooks: dragEnter and dragOver.
+    // This is because, by default, those two methods do not allow elements to be dropped. So, for our drop event to work properly, we have to prevent their default action.
+    this.$refs.details.addEventListener("dragenter", () => {
       this.isOver = true;
     });
     this.$refs.details.addEventListener("dragleave", () => {
@@ -95,14 +108,19 @@ export default {
     },
     deleteEntry(key) {
       // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
-      let index = this.entries.map((entry) => entry.key).indexOf(key);
-      this.entries.splice(index, 1);
-      this.updateStorage();
+      // if not in the same list
+      if (!this.sameList) {
+        let index = this.entries.map((entry) => entry.key).indexOf(key);
+        this.entries.splice(index, 1);
+        this.updateStorage();
+        return;
+      }
+      this.sameList = false;
     },
 
     // https://learnvue.co/2020/01/how-to-add-drag-and-drop-to-your-vuejs-project/
     // Start of drag
-    dragStart(evt, entry) {
+    dragStart: (evt, entry) => {
       // We need a callback so we can remove from the original data and entries list
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
@@ -117,27 +135,34 @@ export default {
       this.deleteEntry(key);
     },
 
-    getEntries() {
-      let dateStamp = this.listDate.toLocaleDateString();
-      chrome.storage.sync.get([dateStamp], (result) => {
-        this.entries = Object.keys(result).length > 0 ? result[dateStamp] : [];
-      });
-    },
-
     // This is how we add to the new list
     onDrop(evt) {
       const entryKey = evt.dataTransfer.getData("key");
       const entryColor = evt.dataTransfer.getData("color");
       const entryActive = JSON.parse(evt.dataTransfer.getData("complete"));
       const entryText = evt.dataTransfer.getData("entry");
+      let keyFound = this.entries.map((entry) => entry.key).indexOf(entryKey);
+      // if key is already in this list
+      if (keyFound !== -1) {
+        this.sameList = true; // have to do this so that we can commicate to the EntryList that the entry is dragged to itself
+        return;
+      }
       const entry = {
         key: entryKey,
         color: entryColor,
         text: entryText,
         active: entryActive,
       };
-      this.entries.unshift(entry); // might change it back to push later, unsure
+      this.entries.push(entry); // might change it back to push later, unsure
       this.updateStorage();
+    },
+
+    getEntries() {
+      console.log("get entries");
+      let dateStamp = this.listDate.toLocaleDateString();
+      chrome.storage.sync.get([dateStamp], (result) => {
+        this.entries = Object.keys(result).length > 0 ? result[dateStamp] : [];
+      });
     },
 
     submitEntry(text, key) {
