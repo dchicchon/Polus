@@ -4,13 +4,20 @@
     :class="addClasses"
     @drop="onDrop($event)"
     @dragover.prevent
-    ref="details"
+    @dragenter.prevent
   >
-    <!-- @dragenter.prevent -->
-    <div v-if="dateTitle" :style="todayDate" class="dateTitle">
+    <!-- @dragleave="isOver = false" -->
+    <!-- @dragenter="isOver = true" -->
+    <div
+      v-if="dateTitle"
+      @dragover.prevent
+      @dragenter.prevent
+      :style="todayDate"
+      class="dateTitle"
+    >
       {{ dayNumber }}
     </div>
-    <ul ref="entryList" class="entryList">
+    <ul @dragover.prevent @dragenter.prevent ref="entryList" class="entryList">
       <Entry
         v-for="(entry, index) in entries"
         v-bind:entry="entry"
@@ -25,7 +32,15 @@
         :key="entry.id"
       />
     </ul>
-    <button @click="addEntry" :value="dateStamp" class="addButton">+</button>
+    <button
+      @dragover.prevent
+      @dragenter.prevent
+      @click="addEntry"
+      :value="dateStamp"
+      class="addButton"
+    >
+      +
+    </button>
   </div>
 </template>
 
@@ -56,8 +71,8 @@ export default {
   data() {
     return {
       entries: [],
-      sameList: false,
       isOver: false,
+      sameList: false,
     };
   },
   created() {
@@ -74,15 +89,6 @@ export default {
     // https://learnvue.co/2020/01/how-to-add-drag-and-drop-to-your-vuejs-project/
     // However, one thing that is not-intuitive is that we have to call preventDefault on two of the drag-and-drop hooks: dragEnter and dragOver.
     // This is because, by default, those two methods do not allow elements to be dropped. So, for our drop event to work properly, we have to prevent their default action.
-    this.$refs.details.addEventListener("dragenter", () => {
-      this.isOver = true;
-    });
-    this.$refs.details.addEventListener("dragleave", () => {
-      this.isOver = false;
-    });
-    this.$refs.details.addEventListener("drop", () => {
-      this.isOver = false;
-    });
   },
   // This is how we can check if a prop has changed
 
@@ -107,6 +113,7 @@ export default {
       this.updateStorage();
     },
     deleteEntry(key) {
+      console.log("Delete");
       // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
       let index = this.entries.map((entry) => entry.key).indexOf(key);
       this.entries.splice(index, 1);
@@ -115,7 +122,9 @@ export default {
 
     // https://learnvue.co/2020/01/how-to-add-drag-and-drop-to-your-vuejs-project/
     // Start of drag
-    dragStart: (evt, entry) => {
+    dragStart(evt, entry) {
+      console.log("================");
+      console.log("DRAG START");
       // We need a callback so we can remove from the original data and entries list
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
@@ -127,28 +136,31 @@ export default {
 
     // This will allow us to delete from the original list if it was dragged to somewhere else
     dragEnd(evt, key) {
-      // if not in the same list
-
+      console.log("DRAG END");
       if (this.sameList) {
-        console.log("DONT DELETE");
         this.sameList = false;
-      } else {
-        this.deleteEntry(key);
+        return;
       }
+      this.deleteEntry(key);
     },
 
     // This is how we add to the new list
     onDrop(evt) {
+      evt.preventDefault();
+      console.log("DROP");
+      this.isOver = false;
       const entryKey = evt.dataTransfer.getData("key");
+      let keyFound = this.entries.map((entry) => entry.key).indexOf(entryKey);
+      // if its already in the list, exit this function
+      if (keyFound !== -1) {
+        console.log("DROP: SAME LIST");
+        this.sameList = true;
+        return;
+      }
       const entryColor = evt.dataTransfer.getData("color");
       const entryActive = JSON.parse(evt.dataTransfer.getData("complete"));
       const entryText = evt.dataTransfer.getData("entry");
-      let keyFound = this.entries.map((entry) => entry.key).indexOf(entryKey);
       // if key is already in this list
-      if (keyFound !== -1) {
-        this.sameList = true; // have to do this so that we can commicate to the EntryList that the entry is dragged to itself
-        return;
-      }
       const entry = {
         key: entryKey,
         color: entryColor,

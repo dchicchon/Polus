@@ -33,8 +33,8 @@
     @click="(e) => altChangeActive(e)"
     draggable
     @dragstart="dragStart($event, entry)"
-    @dragend="dragEnd($event, entry.key)"
   >
+    <!-- @dragend="dragEnd($event, entry.key)" -->
     <div class="entry-container">
       <textarea
         v-model="newText"
@@ -121,6 +121,7 @@ export default {
       active: false,
       newText: "",
       editing: false,
+      moving: false,
     };
   },
   // One of the first functions to execute on the render method
