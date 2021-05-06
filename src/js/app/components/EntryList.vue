@@ -8,21 +8,14 @@
   >
     <!-- @dragleave="isOver = false" -->
     <!-- @dragenter="isOver = true" -->
-    <div
-      v-if="dateTitle"
-      @dragover.prevent
-      @dragenter.prevent
-      :style="todayDate"
-      class="dateTitle"
-    >
+    <div v-if="dateTitle" :style="todayDate" class="dateTitle">
       {{ dayNumber }}
     </div>
-    <ul @dragover.prevent @dragenter.prevent ref="entryList" class="entryList">
+    <ul ref="entryList" class="entryList">
       <Entry
         v-for="(entry, index) in entries"
         v-bind:entry="entry"
         :dragStart="dragStart"
-        :dragEnd="dragEnd"
         :listDate="listDate"
         :index="index"
         :checkEntry="checkEntry"
@@ -32,15 +25,7 @@
         :key="entry.id"
       />
     </ul>
-    <button
-      @dragover.prevent
-      @dragenter.prevent
-      @click="addEntry"
-      :value="dateStamp"
-      class="addButton"
-    >
-      +
-    </button>
+    <button @click="addEntry" :value="dateStamp" class="addButton">+</button>
   </div>
 </template>
 
@@ -72,7 +57,6 @@ export default {
     return {
       entries: [],
       isOver: false,
-      sameList: false,
     };
   },
   created() {
@@ -122,9 +106,7 @@ export default {
 
     // https://learnvue.co/2020/01/how-to-add-drag-and-drop-to-your-vuejs-project/
     // Start of drag
-    dragStart(evt, entry) {
-      console.log("================");
-      console.log("DRAG START");
+    dragStart(evt, entry, parentId) {
       // We need a callback so we can remove from the original data and entries list
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
@@ -132,41 +114,42 @@ export default {
       evt.dataTransfer.setData("complete", entry.active);
       evt.dataTransfer.setData("entry", entry.text);
       evt.dataTransfer.setData("color", entry.color);
+      evt.dataTransfer.setData("parentId", parentId);
     },
 
-    // This will allow us to delete from the original list if it was dragged to somewhere else
-    dragEnd(evt, key) {
-      console.log("DRAG END");
-      if (this.sameList) {
-        this.sameList = false;
-        return;
-      }
-      this.deleteEntry(key);
-    },
-
-    // This is how we add to the new list
+    // On drop, we will add to our list and delete from old one
     onDrop(evt) {
-      evt.preventDefault();
-      console.log("DROP");
       this.isOver = false;
-      const entryKey = evt.dataTransfer.getData("key");
-      let keyFound = this.entries.map((entry) => entry.key).indexOf(entryKey);
-      // if its already in the list, exit this function
-      if (keyFound !== -1) {
-        console.log("DROP: SAME LIST");
-        this.sameList = true;
+
+      // get original parent id
+      const parentId = parseInt(evt.dataTransfer.getData("parentId"));
+
+      // If in the same list
+      if (parentId === this._uid) {
         return;
       }
+
+      // Else, lets grab the data from datatransfer
+      const entryKey = evt.dataTransfer.getData("key");
       const entryColor = evt.dataTransfer.getData("color");
       const entryActive = JSON.parse(evt.dataTransfer.getData("complete"));
       const entryText = evt.dataTransfer.getData("entry");
-      // if key is already in this list
       const entry = {
         key: entryKey,
         color: entryColor,
         text: entryText,
         active: entryActive,
       };
+
+      // find the original parent component by reference of this parent
+      let originalParent = this.$parent.$children.filter(
+        (list) => list._uid === parentId
+      )[0];
+
+      // Call the original parent function deleteEntry and pass in the key
+      originalParent.deleteEntry(entryKey);
+
+      // Add to our new list
       this.entries.push(entry); // might change it back to push later, unsure
       this.updateStorage();
     },

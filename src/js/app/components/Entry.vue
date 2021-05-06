@@ -20,9 +20,9 @@
     :class="[entry.color, { checked: entry.active }]"
     @click="changeActive"
     draggable
-    @dragstart="dragStart($event, entry)"
-    @dragend="dragEnd($event, entry.key)"
+    @dragstart="dragStart($event, entry, $parent._uid)"
   >
+    <!-- @dragend="dragEnd($event, entry.key)" -->
     {{ entry.text }}
   </li>
   <!-- Active -->
@@ -32,9 +32,8 @@
     :class="entry.color"
     @click="(e) => altChangeActive(e)"
     draggable
-    @dragstart="dragStart($event, entry)"
+    @dragstart="dragStart($event, entry, $parent._uid)"
   >
-    <!-- @dragend="dragEnd($event, entry.key)" -->
     <div class="entry-container">
       <textarea
         v-model="newText"
@@ -121,9 +120,9 @@ export default {
       active: false,
       newText: "",
       editing: false,
-      moving: false,
     };
   },
+
   // One of the first functions to execute on the render method
   // created() {},
   // This will execute when the component is built on the DOM
@@ -155,6 +154,7 @@ export default {
       this.submitEntry(this.newText, this.entry.key);
     },
   },
+
   computed: {
     textClass: {
       get() {
