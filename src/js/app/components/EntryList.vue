@@ -4,9 +4,8 @@
     :class="addClasses"
     @drop="onDrop($event)"
     @dragover.prevent
-    @dragenter.prevent
+    ref="details"
   >
-    <!-- @dragleave="isOver = false" -->
     <!-- @dragenter="isOver = true" -->
     <div v-if="dateTitle" :style="todayDate" class="dateTitle">
       {{ dayNumber }}
@@ -29,7 +28,7 @@
 
 <script>
 import Entry from "./Entry";
-import uuid from "uuid/v4";
+import shortId from "shortid"; // unique ids that dont add too much space
 
 // https://stackoverflow.com/questions/18548465/prevent-scroll-bar-from-adding-up-to-the-width-of-page-on-chrome
 export default {
@@ -61,8 +60,9 @@ export default {
     // We do this to get the entries for the date
     this.getEntries();
   },
-  
+
   watch: {
+    // do this if we change the date
     listDate(newValue) {
       this.getEntries();
     },
@@ -70,16 +70,19 @@ export default {
 
   mounted() {
     // https://learnvue.co/2020/01/how-to-add-drag-and-drop-to-your-vuejs-project/
-    // However, one thing that is not-intuitive is that we have to call preventDefault on two of the drag-and-drop hooks: dragEnter and dragOver.
-    // This is because, by default, those two methods do not allow elements to be dropped. So, for our drop event to work properly, we have to prevent their default action.
+    this.$refs.details.addEventListener("dragenter", () => {
+      this.isOver = true;
+    });
+    this.$refs.details.addEventListener("dragleave", () => {
+      this.isOver = false;
+    });
   },
-  // This is how we can check if a prop has changed
 
   methods: {
     addEntry() {
       // Add to entries state and to chrome storage
       let newEntry = {
-        key: uuid(),
+        key: shortId.generate(),
         text: "",
         color: "blue",
         active: false,
@@ -153,13 +156,17 @@ export default {
     getEntries() {
       let dateStamp = this.listDate.toLocaleDateString();
       chrome.storage.sync.get([dateStamp], (result) => {
-        this.entries = Object.keys(result).length > 0 ? result[dateStamp] : [];
+        if (Object.keys(result).length > 0) {
+          this.entries = result[dateStamp];
+        } else {
+          this.entries = [];
+        }
       });
     },
 
     submitEntry(text, key) {
       if (text.length === 0) {
-        this.deleteEntry(key)
+        this.deleteEntry(key);
       } else {
         let index = this.entries.map((entry) => entry.key).indexOf(key);
         this.entries[index].text = text;
@@ -169,7 +176,11 @@ export default {
 
     updateStorage() {
       let currentDate = this.listDate.toLocaleDateString();
-      chrome.storage.sync.set({ [currentDate]: this.entries });
+      if (this.entries.length > 0) {
+        chrome.storage.sync.set({ [currentDate]: this.entries });
+      } else {
+        chrome.storage.sync.remove([currentDate]); // remove from storage if there are no entries for this date
+      }
     },
   },
   computed: {

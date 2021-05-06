@@ -5,7 +5,7 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["browser_action"],
     id: "open-sesame",
   });
-  chrome.storage.sync.set({
+  let userSettingsData = {
     view: "week",
     pmode: false,
     clock: true,
@@ -13,16 +13,20 @@ chrome.runtime.onInstalled.addListener(() => {
     changePhoto: true,
     newTab: true,
     indexOpen: false,
-  });
+  }
+
+  chrome.storage.sync.set({ 'userSetings': userSettingsData })
   getPhoto();
 });
 
 chrome.runtime.setUninstallURL(
   "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit",
-  () => {}
+  () => { }
 );
 
 // Check Alarm
+
+// This is also how we can updateStorage Settings if they haven't updated to the newest version of polus yet
 chrome.alarms.get("changeBackground", (alarm) => {
   if (alarm) {
     // console.log(alarm);
