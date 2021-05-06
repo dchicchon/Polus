@@ -16,13 +16,11 @@
         v-for="(entry, index) in entries"
         v-bind:entry="entry"
         :dragStart="dragStart"
-        :listDate="listDate"
-        :index="index"
         :checkEntry="checkEntry"
         :colorEntry="colorEntry"
         :deleteEntry="deleteEntry"
-        :submitEntry="submitEntry"
-        :key="entry.id"
+        :submitEdit="submitEdit"
+        :key="index"
       />
     </ul>
     <button @click="addEntry" :value="dateStamp" class="addButton">+</button>
@@ -124,21 +122,19 @@ export default {
       // get original parent id
       const parentId = parseInt(evt.dataTransfer.getData("parentId"));
 
-      // If in the same list
-      if (parentId === this._uid) {
-        return;
-      }
+      // If in the same list, exit the function
+      if (parentId === this._uid) return;
 
       // Else, lets grab the data from datatransfer
-      const entryKey = evt.dataTransfer.getData("key");
-      const entryColor = evt.dataTransfer.getData("color");
-      const entryActive = JSON.parse(evt.dataTransfer.getData("complete"));
-      const entryText = evt.dataTransfer.getData("entry");
+      const key = evt.dataTransfer.getData("key");
+      const color = evt.dataTransfer.getData("color");
+      const active = JSON.parse(evt.dataTransfer.getData("complete"));
+      const text = evt.dataTransfer.getData("entry");
       const entry = {
-        key: entryKey,
-        color: entryColor,
-        text: entryText,
-        active: entryActive,
+        key,
+        color,
+        text,
+        active,
       };
 
       // find the original parent component by reference of this parent
@@ -147,7 +143,7 @@ export default {
       )[0];
 
       // Call the original parent function deleteEntry and pass in the key
-      originalParent.deleteEntry(entryKey);
+      originalParent.deleteEntry(key);
 
       // Add to our new list
       this.entries.push(entry); // might change it back to push later, unsure
@@ -162,7 +158,7 @@ export default {
       });
     },
 
-    submitEntry(text, key) {
+    submitEdit(text, key) {
       let index = this.entries.map((entry) => entry.key).indexOf(key);
       if (text.length === 0) {
         this.entries.splice(index, 1);
@@ -171,6 +167,7 @@ export default {
         this.updateStorage();
       }
     },
+
     updateStorage() {
       let currentDate = this.listDate.toLocaleDateString();
       chrome.storage.sync.set({ [currentDate]: this.entries });

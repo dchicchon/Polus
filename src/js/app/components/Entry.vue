@@ -49,7 +49,7 @@
       <div class="entryBtnContainer">
         <button
           v-if="editing"
-          @click="submitEdit(newText, entry.key)"
+          @click="entrySubmitEdit(newText, entry.key)"
           class="edit"
         >
           Submit
@@ -98,7 +98,7 @@ export default {
       required: true,
       type: Function,
     },
-    submitEntry: {
+    submitEdit: {
       required: true,
       type: Function,
     },
@@ -109,10 +109,6 @@ export default {
     dragEnd: {
       required: false,
       type: Function,
-    },
-    listDate: {
-      required: true,
-      type: Date,
     },
   },
   data() {
@@ -136,12 +132,10 @@ export default {
         e.target.classList.contains("entry") ||
         e.target.classList.contains("entry-container")
       ) {
-        console.log("Deactive");
         this.active = false;
       }
     },
     changeActive() {
-      console.log("Make Active");
       this.active = true;
     },
     editEntry() {
@@ -149,9 +143,9 @@ export default {
       this.$refs.textarea.focus();
       this.newText = this.entry.text;
     },
-    submitEdit() {
+    entrySubmitEdit() {
       this.editing = false;
-      this.submitEntry(this.newText, this.entry.key);
+      this.submitEdit(this.newText, this.entry.key);
     },
   },
 
