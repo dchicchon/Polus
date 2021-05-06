@@ -35,21 +35,20 @@
     @dragstart="dragStart($event, entry, $parent._uid)"
   >
     <div class="entry-container">
+      <p v-if="!editing" class="text" :class="{ checked: entry.active }">
+        {{ entry.text }}
+      </p>
       <textarea
         v-model="newText"
         :class="textClass"
         ref="textarea"
         class="editEntry"
       ></textarea>
-
-      <p v-if="!editing" class="text" :class="{ checked: entry.active }">
-        {{ entry.text }}
-      </p>
       <!-- There is space here -->
       <div class="entryBtnContainer">
         <button
           v-if="editing"
-          @click="entrySubmitEdit(newText, entry.key)"
+          @click="submitEdit(newText, entry.key)"
           class="edit"
         >
           Submit
@@ -98,15 +97,11 @@ export default {
       required: true,
       type: Function,
     },
-    submitEdit: {
+    submitEntry: {
       required: true,
       type: Function,
     },
     dragStart: {
-      required: false,
-      type: Function,
-    },
-    dragEnd: {
       required: false,
       type: Function,
     },
@@ -143,9 +138,9 @@ export default {
       this.$refs.textarea.focus();
       this.newText = this.entry.text;
     },
-    entrySubmitEdit() {
+    submitEdit() {
       this.editing = false;
-      this.submitEdit(this.newText, this.entry.key);
+      this.submitEntry(this.newText, this.entry.key);
     },
   },
 
@@ -224,7 +219,6 @@ textarea {
     justify-content: center;
     .editEntry {
       font-family: "Segoe UI", Tahoma, sans-serif !important;
-      resize: none;
       border: none;
       width: 85%;
       // margin-block-start: 1em;

@@ -19,7 +19,7 @@
         :checkEntry="checkEntry"
         :colorEntry="colorEntry"
         :deleteEntry="deleteEntry"
-        :submitEdit="submitEdit"
+        :submitEntry="submitEntry"
         :key="index"
       />
     </ul>
@@ -61,6 +61,7 @@ export default {
     // We do this to get the entries for the date
     this.getEntries();
   },
+  
   watch: {
     listDate(newValue) {
       this.getEntries();
@@ -95,7 +96,6 @@ export default {
       this.updateStorage();
     },
     deleteEntry(key) {
-      console.log("Delete");
       // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
       let index = this.entries.map((entry) => entry.key).indexOf(key);
       this.entries.splice(index, 1);
@@ -151,18 +151,17 @@ export default {
     },
 
     getEntries() {
-      console.log("get entries");
       let dateStamp = this.listDate.toLocaleDateString();
       chrome.storage.sync.get([dateStamp], (result) => {
         this.entries = Object.keys(result).length > 0 ? result[dateStamp] : [];
       });
     },
 
-    submitEdit(text, key) {
-      let index = this.entries.map((entry) => entry.key).indexOf(key);
+    submitEntry(text, key) {
       if (text.length === 0) {
-        this.entries.splice(index, 1);
+        this.deleteEntry(key)
       } else {
+        let index = this.entries.map((entry) => entry.key).indexOf(key);
         this.entries[index].text = text;
         this.updateStorage();
       }
