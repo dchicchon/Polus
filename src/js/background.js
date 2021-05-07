@@ -5,7 +5,7 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["browser_action"],
     id: "open-sesame",
   });
-  let userSettingsData = {
+  let userSettings = {
     view: "week",
     pmode: false,
     clock: true,
@@ -15,7 +15,7 @@ chrome.runtime.onInstalled.addListener(() => {
     indexOpen: false,
   }
 
-  chrome.storage.sync.set({ 'userSettings': userSettingsData })
+  chrome.storage.sync.set({ userSettings })
   getPhoto();
 });
 
@@ -25,13 +25,9 @@ chrome.runtime.setUninstallURL(
 );
 
 // Check Alarm
-
-// This is also how we can updateStorage Settings if they haven't updated to the newest version of polus yet
 chrome.alarms.get("changeBackground", (alarm) => {
-  if (alarm) {
-    // console.log(alarm);
-  } else {
-    // If no alarm, create one that executes at midnight
+  // If no alarm, create one that executes at midnight
+  if (!alarm) {
     let date = new Date();
     let midnight = new Date();
     midnight.setHours(23, 59, 59);
@@ -55,7 +51,6 @@ chrome.contextMenus.onClicked.addListener(function (result) {
     chrome.storage.sync.get('userSettings', result => {
       let { userSettings } = result
       userSettings.indexOpen = true;
-      console.log(userSettings)
       chrome.storage.sync.set({ userSettings }, () => {
         chrome.tabs.create({}); // create a new tab
       })
@@ -65,8 +60,9 @@ chrome.contextMenus.onClicked.addListener(function (result) {
 
 // Alarm to execute getPhoto()
 chrome.alarms.onAlarm.addListener((alarm) => {
-  chrome.storage.sync.get(["changePhoto"], (result) => {
-    if (result["changePhoto"] && alarm.name === "changeBackground") {
+  chrome.storage.sync.get("userSettings", (result) => {
+    let { userSettings } = result
+    if (userSettings.changePhoto && alarm.name === "changeBackground") {
       getPhoto();
     }
   });
@@ -84,16 +80,21 @@ const getPhoto = () => {
       return response;
     })
     .then((response) => response.json())
-    .then(function (photo) {
+    .then((photo) => {
       // console.log(photo);
       let url = photo.urls.raw;
       let location = photo.location.name ? `${photo.location.name}` : "Unknown";
       let author = photo.user.name ? `${photo.user.name}` : "Unknown";
       let photoLink = photo.links.html;
       let downloadLink = `https://unsplash.com/photos/${photo.id}/download?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&force=true`;
-      chrome.storage.sync.set({
-        background: { url, location, author, photoLink, downloadLink },
-      });
+      let background = {
+        url,
+        location,
+        author,
+        photoLink,
+        downloadLink
+      }
+      chrome.storage.sync.set({ background });
     })
     .catch((err) => console.log(`Fetch failed: ${err}`));
 };

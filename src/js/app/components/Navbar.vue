@@ -57,7 +57,44 @@
     </li>
   </ul>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      location: "",
+      download: "",
+      author: "",
+      link: "",
+      pmode: false,
+    };
+  },
+  created() {
+    chrome.storage.sync.get(["background", "userSettings"], (result) => {
+      this.pmode = result.userSettings.pmode;
+      this.location = result.background.location
+        ? result.background.location
+        : "Unknown";
+      this.download = result.background.downloadLink;
+      this.author = result.background.author;
+      this.link =
+        result.background.photoLink + "?utm_source=Planner&utm_medium=referral";
+    });
+  },
 
+  methods: {
+    photoMode() {
+      this.pmode = !this.pmode;
+      chrome.storage.sync.get("userSettings", (result) => {
+        let { userSettings } = result;
+        userSettings.pmode = this.pmode;
+        chrome.storage.sync.set({ userSettings });
+      });
+      let mainView = document.getElementsByTagName("main");
+      mainView[0].style.display = this.pmode ? "none" : "block";
+    },
+  },
+};
+</script>
 <style lang="scss">
 #nav {
   list-style-type: none;
@@ -185,39 +222,3 @@
   }
 }
 </style>
-
-<script>
-export default {
-  data() {
-    return {
-      location: "",
-      download: "",
-      author: "",
-      link: "",
-      pmode: false,
-    };
-  },
-
-  created() {
-    chrome.storage.sync.get(["background", "pmode"], (result) => {
-      this.pmode = result.pmode;
-      this.location = result.background.location
-        ? result.background.location
-        : "Unknown";
-      this.download = result.background.downloadLink;
-      this.author = result.background.author;
-      this.link =
-        result.background.photoLink + "?utm_source=Planner&utm_medium=referral";
-    });
-  },
-
-  methods: {
-    photoMode() {
-      this.pmode = !this.pmode;
-      chrome.storage.sync.set({ pmode: this.pmode });
-      let mainView = document.getElementsByTagName("main");
-      mainView[0].style.display = this.pmode ? "none" : "block";
-    },
-  },
-};
-</script>

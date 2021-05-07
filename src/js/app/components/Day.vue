@@ -61,7 +61,7 @@ export default {
     checkDay() {
       let date = new Date();
       return date.getDay() === this.date.getDay()
-        ? "background: rgba(21, 115, 170, 0.75);"
+        ? "background: rgba(5, 80, 123, 0.992);"
         : "background:none";
     },
     dayTitle() {

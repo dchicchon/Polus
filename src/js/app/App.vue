@@ -1,7 +1,7 @@
 <template>
   <div>
     <Navbar />
-    <main>
+    <main ref="main">
       <Clock />
       <Calendar />
     </main>
@@ -28,11 +28,16 @@ export default {
   methods: {
     //   Work on the background transition to load on page
     setBackground() {
-      chrome.storage.sync.get(["background"], function (result) {
+      chrome.storage.sync.get(["background", "userSettings"], (result) => {
+        // Background Photo
         let page = document.getElementsByTagName("html");
         page[0].style.background = `rgba(0,0,0,0.9) url(${
           result.background.url + `&w=${window.innerWidth}`
         }) no-repeat fixed`;
+        //
+        this.$refs.main.style.display = result.userSettings.pmode
+          ? "none"
+          : "block";
       });
     },
 

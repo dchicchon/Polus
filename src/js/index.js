@@ -11,7 +11,7 @@ function updateStorageVersion() {
         newTab: true,
         indexOpen: false,
     };
-    chrome.storage.sync.set({ 'userSettings': userSettings }, () => {
+    chrome.storage.sync.set({ userSettings }, () => {
         checkOptions()
     });
 
@@ -26,7 +26,6 @@ function checkOptions() {
         // If we can have this as our new tab
         else {
             let { userSettings } = result
-            console.log(userSettings)
             if (userSettings.newTab || userSettings.indexOpen) {
                 userSettings.indexOpen = false
                 chrome.storage.sync.set({ userSettings })
