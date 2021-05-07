@@ -11,6 +11,7 @@ $day-background: rgba(0, 0, 0, 0.15);
 // HTML ELEMENT STYLING
 // ===================
 html {
+  background-color: black;
   overflow-y: scroll;
   backdrop-filter: brightness(90%);
   font-family: "Segoe UI", Tahoma, sans-serif;
@@ -93,7 +94,6 @@ html {
   }
 }
 // ===============
-
 
 button {
   outline: none;
@@ -292,7 +292,6 @@ button:hover {
       }
     }
     .weekDate {
-   
     }
 
     @media (max-width: 760px) {

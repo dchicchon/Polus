@@ -30,8 +30,7 @@
     "activeTab",
     "alarms",
     "contextMenus",
-    "storage",
-    "tabs"
+    "storage"
   ],
   "short_name": "Polus"
 }

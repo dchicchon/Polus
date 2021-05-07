@@ -21,6 +21,7 @@ export default {
   },
 
   created() {
+    // This is where I should check if I have it set as default new tab or not
     this.setBackground();
   },
 
@@ -32,12 +33,6 @@ export default {
         page[0].style.background = `rgba(0,0,0,0.9) url(${
           result.background.url + `&w=${window.innerWidth}`
         }) no-repeat fixed`;
-      });
-    },
-
-    checkOptions() {
-      chrome.storage.sync.get(["newTab", "indexOpen"], (result) => {
-        console.log(result);
       });
     },
 

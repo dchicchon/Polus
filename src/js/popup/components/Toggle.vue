@@ -1,8 +1,8 @@
 <template>
   <div>
     {{ description }}
-    <label for="switch" class="switch">
-      <input @click="toggleItem($event, name)" type="checkbox" class="toggle" />
+    <label @click="toggleItem($event, name)" for="switch" class="switch">
+      <input type="checkbox" class="toggle" v-model="currentValue" />
       <span class="slider round"></span>
     </label>
   </div>
@@ -19,34 +19,18 @@ export default {
       type: String,
       required: true,
     },
-    currentValue: {
-      type: Boolean,
-      required: false,
-    },
     toggleItem: {
       type: Function,
       required: true,
     },
-  },
-
-  created() {
-    console.log(this.description);
-    console.log(this.currentValue);
+    currentValue: {
+      type: Boolean,
+      required: false,
+    },
   },
 
   watch: {
-    currentValue(val) {
-      console.log("Value");
-      console.log(val);
-    },
-  },
-
-  computed: {
-    getClass() {
-      if (this.currentValue) {
-        return ["toggle"];
-      }
-    },
+    currentValue(val) {},
   },
 };
 </script>

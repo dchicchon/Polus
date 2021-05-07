@@ -13,7 +13,7 @@
     <ul ref="entryList" class="entryList">
       <Entry
         v-for="(entry, index) in entries"
-        v-bind:entry="entry"
+        :entry="entry"
         :dragStart="dragStart"
         :checkEntry="checkEntry"
         :colorEntry="colorEntry"

@@ -15,7 +15,7 @@ chrome.runtime.onInstalled.addListener(() => {
     indexOpen: false,
   }
 
-  chrome.storage.sync.set({ 'userSetings': userSettingsData })
+  chrome.storage.sync.set({ 'userSettings': userSettingsData })
   getPhoto();
 });
 
@@ -49,10 +49,17 @@ chrome.alarms.get("changeBackground", (alarm) => {
 // 3. Opens index.html
 
 chrome.contextMenus.onClicked.addListener(function (result) {
+  console.log("Start contextmenu")
   if (result["menuItemId"] === "open-sesame") {
-    let newURL = chrome.extension.getURL("/index.html");
-    chrome.storage.sync.set({ indexOpen: true });
-    chrome.tabs.create({ url: newURL });
+    // let newURL = chrome.extension.getURL("/index.html");
+    chrome.storage.sync.get('userSettings', result => {
+      let { userSettings } = result
+      userSettings.indexOpen = true;
+      console.log(userSettings)
+      chrome.storage.sync.set({ userSettings }, () => {
+        chrome.tabs.create({}); // create a new tab
+      })
+    })
   }
 });
 

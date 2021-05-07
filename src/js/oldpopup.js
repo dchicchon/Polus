@@ -32,9 +32,7 @@ for (let toggle of toggles) {
 document.getElementById("submitPhoto").onclick = function () {
   let photoURL = document.getElementById("photoURL").value;
   let arr = photoURL.split("/");
-  console.log(arr);
   let id = arr[arr.length - 1];
-  console.log(id);
   let requestPhotoURL = `https://api.unsplash.com/photos/${id}/?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&`;
   fetch(requestPhotoURL, { mode: "cors", credentials: "omit" })
     .then((response) => {
