@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div id="date">{{ date }}</div>
-    <div id="clock">{{ clock }}</div>
+    <div ref="date" id="date">{{ date }}</div>
+    <div ref="clock" id="clock">{{ clock }}</div>
   </div>
 </template>
 
@@ -31,18 +31,13 @@ export default {
     return {
       clock: "",
       date: "",
-      options: {
-        weekday: "long",
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-      },
     };
   },
 
   created() {
     this.updateTime();
     let timer = setInterval(this.updateTime, 1000);
+    chrome.storage.sync.addListener;
   },
 
   methods: {
@@ -51,7 +46,13 @@ export default {
     // Korean uses year-month-day order
     updateTime() {
       let currentDate = new Date();
-      this.date = currentDate.toLocaleDateString(undefined, this.options);
+      let options = {
+        weekday: "long",
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+      };
+      this.date = currentDate.toLocaleDateString(undefined, options);
       this.clock = currentDate.toLocaleTimeString();
     },
   },

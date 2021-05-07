@@ -11,7 +11,7 @@
         :currentValue="userSettings['changePhoto']"
       />
 
-      <Toggle
+      <!-- <Toggle
         :key="2"
         :description="'Clock'"
         :toggleItem="toggleItem"
@@ -24,7 +24,7 @@
         :name="'date'"
         :currentValue="userSettings['date']"
         :description="'Date'"
-      />
+      /> -->
       <Toggle
         :key="4"
         :toggleItem="toggleItem"
@@ -139,8 +139,6 @@ export default {
       this.userSettings = {
         view: "week",
         pmode: false,
-        clock: true,
-        date: true,
         changePhoto: true,
         newTab: true,
         indexOpen: false,
