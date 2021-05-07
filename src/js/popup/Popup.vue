@@ -139,6 +139,7 @@ export default {
       this.userSettings = {
         view: "week",
         pmode: false,
+        date: true,
         changePhoto: true,
         newTab: true,
         indexOpen: false,
