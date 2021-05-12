@@ -8,8 +8,6 @@ chrome.runtime.onInstalled.addListener(() => {
   let userSettings = {
     view: "week",
     pmode: false,
-    clock: true,
-    date: true,
     changePhoto: true,
     newTab: true,
     indexOpen: false,

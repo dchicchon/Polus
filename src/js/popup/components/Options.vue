@@ -2,7 +2,6 @@
   <div>
     <div class="container">
       <h2 class="page-title">Options</h2>
-
       <Toggle
         :key="1"
         :toggleItem="toggleItem"

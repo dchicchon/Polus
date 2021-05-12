@@ -10,21 +10,6 @@
         :name="'changePhoto'"
         :currentValue="userSettings['changePhoto']"
       />
-
-      <!-- <Toggle
-        :key="2"
-        :description="'Clock'"
-        :toggleItem="toggleItem"
-        :name="'clock'"
-        :currentValue="userSettings['clock']"
-      />
-      <Toggle
-        :key="3"
-        :toggleItem="toggleItem"
-        :name="'date'"
-        :currentValue="userSettings['date']"
-        :description="'Date'"
-      /> -->
       <Toggle
         :key="4"
         :toggleItem="toggleItem"
@@ -73,6 +58,7 @@ export default {
   components: { Toggle },
   data() {
     return {
+      tab: "options",
       userSettings: {},
       photoLink: "",
     };
