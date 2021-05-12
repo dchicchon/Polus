@@ -1,40 +1,170 @@
 <template>
-  <div>
-    <div class="container">
-      <h2 class="page-title">Updates</h2>
-      <div class="update-details">
-        <h2 style="margin: 0%">Update 1.1</h2>
-        What we've addded:
-        <ul style="margin-top: 0">
-          <li>Edit and add color to entries</li>
-          <li>Fixed sizing with entries</li>
-          <li>Popup that now shows an options, updates, and account tab</li>
-          <li>
-            Several new options that include removing the clock, date and the
-            option to make Polus your new tab or not
-          </li>
-          <li>
-            Add any background photo you want from unsplash! (Video tutorial
-            coming soon)
-          </li>
-        </ul>
-        Please feel free to send us any additional suggestions and thank you for
-        your feedback!
-        <br />
-        - Danny
+  <div class="container">
+    <h2 class="page-title">Account</h2>
+    <div class="account-container">
+      <h3 class="signup-text">Join Polus</h3>
+      <button id="Auth:Google" class="social-btn">
+        <div style="display: inline-flex">
+          <img />
+          <div class="social-text">Continue with Google</div>
+        </div>
+      </button>
+      <!-- <button id="Auth:Apple" class="social-btn">
+          <div style="display: inline-flex">
+            <img />
+            <div class="social-text">Continue with Apple</div>
+          </div>
+        </button> -->
+      <div id="orContainer">
+        <div class="orBar"></div>
+        <div class="or">or</div>
+        <div class="orBar"></div>
+      </div>
+      <div class="email-btn-container">
+        <button class="email-btn">
+          <div class="btn-content-container">
+            <div class="email-btn-icon"></div>
+            <div class="email-btn-text">Join with Email</div>
+          </div>
+        </button>
+      </div>
+      <div class="terms">
+        By joining, I agree to Polus's
+        <a
+          class="term-link"
+          href="https://danielchicchon.io/polus/terms"
+          target="_blank"
+          rel="noopener noreferrer"
+          >TOS</a
+        >
+        and
+        <a
+          class="term-link"
+          href="https://danielchicchon.io/polus/privacy"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Privacy
+        </a>
+      </div>
+      <div class="login">
+        Already a member?
+        <button id="Auth:ToggleLink" class="login-btn">Login</button>
       </div>
     </div>
-
-    <ul id="popup-links">
-      <li>
-        <a href="./options.html">Options</a>
-      </li>
-      <li class="active-popup">
-        <a href="./updates.html">Updates</a>
-      </li>
-      <li>
-        <a href="./account.html">Account</a>
-      </li>
-    </ul>
   </div>
 </template>
+
+<script>
+export default {};
+</script>
+
+<style lang="scss" scoped>
+AUTH BEGIN .signup-text {
+  font-weight: 200;
+}
+.term-link {
+  color: #757575;
+  text-decoration: underline;
+}
+.social-btn {
+  width: 100%;
+  border: 1px solid #9e9e9e;
+  cursor: pointer;
+  margin: 0px auto 8px;
+  outline: none;
+  min-height: 42px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  .social-text {
+    font-size: 16px;
+    margin-top: 2px;
+    font-weight: 600;
+    line-height: 22px;
+    margin-left: 10px;
+  }
+}
+
+#orContainer {
+  display: flex;
+  padding: 5px 0px 10px;
+  .orBar {
+    width: 44%;
+    height: 1px;
+    margin-top: 10px;
+    background-color: #bdbdbd;
+  }
+  .or {
+    color: #9e9e9e;
+    width: 12%;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 600;
+  }
+}
+
+.email-btn-container {
+  margin: 5px auto 0;
+  .email-btn {
+    border-color: rgb(17, 151, 212);
+    background-color: rgb(17, 151, 212);
+    width: 100%;
+    overflow: hidden;
+    cursor: pointer;
+    height: 40px;
+    outline: none;
+    padding: 0px 16px;
+    box-shadow: none;
+    text-shadow: none;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    .btn-content-container {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .email-btn-icon {
+        order: 1;
+        display: flex;
+        margin-right: 10px;
+      }
+      .email-btn-text {
+        font-size: 14px;
+        color: rgb(255, 255, 255);
+        order: 2;
+        overflow: hidden;
+        font-style: normal;
+        font-family: SuisseIntl, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+          "Segoe UI Symbol";
+        font-weight: 600;
+        white-space: nowrap;
+        font-stretch: normal;
+        text-overflow: ellipsis;
+        letter-spacing: normal;
+        text-shadow: none !important;
+        text-transform: none !important;
+      }
+    }
+  }
+}
+
+.login {
+  color: #212121;
+  font-size: 14px;
+  margin-top: 16px;
+  text-align: left;
+  .login-btn {
+    font: inherit;
+    color: #3d68fb;
+    border: none;
+    cursor: pointer;
+    outline: inherit;
+    padding: 0px;
+    background: none;
+    text-decoration: underline;
+  }
+}
+</style>
