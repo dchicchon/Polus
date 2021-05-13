@@ -43,9 +43,7 @@ chrome.alarms.get("changeBackground", (alarm) => {
 // 3. Opens index.html
 
 chrome.contextMenus.onClicked.addListener(function (result) {
-  console.log("Start contextmenu")
   if (result["menuItemId"] === "open-sesame") {
-    // let newURL = chrome.extension.getURL("/index.html");
     chrome.storage.sync.get('userSettings', result => {
       let { userSettings } = result
       userSettings.indexOpen = true;

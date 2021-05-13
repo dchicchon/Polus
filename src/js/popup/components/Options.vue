@@ -1,41 +1,52 @@
 <template>
-  <div>
-    <div class="container">
-      <h2 class="page-title">Options</h2>
-      <Toggle
-        :key="1"
-        :toggleItem="toggleItem"
-        :description="'Change Photo Daily'"
-        :name="'changePhoto'"
-        :currentValue="userSettings['changePhoto']"
+  <div class="container">
+    <h2 class="page-title">Options</h2>
+    <Toggle
+      :key="1"
+      :toggleItem="toggleItem"
+      :description="'Change Photo Daily'"
+      :name="'changePhoto'"
+      :currentValue="userSettings['changePhoto']"
+    />
+    <Toggle
+      :key="2"
+      :toggleItem="toggleItem"
+      :name="'newTab'"
+      :currentValue="userSettings['newTab']"
+      :description="'Default New Tab'"
+    />
+    <Toggle
+      :key="3"
+      :toggleItem="toggleItem"
+      :name="'notifications'"
+      :currentValue="userSettings['notifications']"
+      :description="'Get Notifications'"
+    />
+    <br />
+    <div>
+      Select Photo from
+      <span>
+        <a
+          href="https://unsplash.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Unsplash</a
+        ></span
+      >
+      <input
+        id="photoURL"
+        type="text"
+        placeholder="https://unsplash.com/photos/NuBvAE6VfSM"
+        v-model="photoLink"
       />
-      <Toggle
-        :key="2"
-        :toggleItem="toggleItem"
-        :name="'newTab'"
-        :currentValue="userSettings['newTab']"
-        :description="'Default New Tab'"
-      />
-
-      <div>
-        Select Photo from
-        <span>
-          <a
-            href="https://unsplash.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Unsplash</a
-          ></span
-        >
-        <input
-          id="photoURL"
-          type="text"
-          placeholder="https://unsplash.com/photos/NuBvAE6VfSM"
-          v-model="photoLink"
-        />
-      </div>
-      <button @click="submitPhoto" id="submitPhoto">Submit</button>
+      <button class="button" @click="submitPhoto">Submit</button>
     </div>
+    <br />
+    <div>
+      Select a photo from your computer (< 5mb)
+      <button class="button" @click="uploadPhoto">Upload</button>
+    </div>
+    <p class="error">{{ error }}</p>
   </div>
 </template>
 <script>
@@ -49,6 +60,7 @@ export default {
       tab: "options",
       userSettings: {},
       photoLink: "",
+      error: "",
     };
   },
   created() {
@@ -57,7 +69,6 @@ export default {
   },
   methods: {
     toggleItem(event, name) {
-      console.log("Toggle!");
       this.userSettings[name] = !this.userSettings[name];
       console.log(this.userSettings);
       this.updateStorage();
@@ -93,15 +104,19 @@ export default {
           let author = photo.user.name ? `${photo.user.name}` : "Unknown";
           let photoLink = photo.links.html;
           let downloadLink = `https://unsplash.com/photos/${photo.id}/download?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&force=true`;
-          chrome.storage.sync.set({
-            background: { url, location, author, photoLink, downloadLink },
-          });
-          chrome.tabs.query(
-            { active: true, currentWindow: true },
-            function (tabs) {
+          let background = {
+            url,
+            location,
+            author,
+            photoLink,
+            downloadLink,
+          };
+          chrome.storage.sync.set({ background }, () => {
+            chrome.storage.local.remove("image");
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
               chrome.tabs.reload(tabs[0].id);
-            }
-          );
+            });
+          });
         })
         .catch((err) => {
           console.error(err);
@@ -109,8 +124,48 @@ export default {
     },
 
     // Allow user to submit photo from os
+    async handleFile() {
+      const options = {
+        types: [
+          {
+            description: "Images",
+            accept: {
+              "image/*": [".jpg"],
+            },
+          },
+        ],
+      };
+      let [fileHandle] = await window.showOpenFilePicker(options);
+      const file = await fileHandle.getFile(); // once a user picks an image return the path of that image
+      //  Lets let the user do the reader on the load
+      let reader = new FileReader();
+      reader.addEventListener(
+        "load",
+        function () {
+          chrome.storage.sync.set({ background: false }, () => {
+            console.log(reader.result);
+            chrome.storage.local.set({ image: reader.result }, () => {
+              chrome.tabs.query(
+                { active: true, currentWindow: true },
+                (tabs) => {
+                  chrome.tabs.reload(tabs[0].id);
+                }
+              );
+            });
+          });
+        },
+        false
+      );
+      if (file.size < 5000000) {
+        reader.readAsDataURL(file);
+        this.error = "";
+      } else {
+        this.error = "File Size is too large";
+      }
+    },
+
     uploadPhoto() {
-      
+      this.handleFile();
     },
 
     // Do this if user doesnt have the updated storage
@@ -130,7 +185,6 @@ export default {
       chrome.storage.sync.set({ userSettings: this.userSettings });
     },
   },
-  computed: {},
 };
 </script>
 
@@ -138,5 +192,19 @@ export default {
 #photoURL {
   width: 95%;
   outline: none;
+}
+
+.button {
+  outline: none;
+  border: none;
+  cursor: pointer;
+  margin: 5px 0;
+  padding: 0.5rem 1rem;
+  color: white;
+  background: rgb(17, 151, 212);
+}
+
+.error {
+  color: red;
 }
 </style>

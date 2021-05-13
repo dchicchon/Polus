@@ -11,8 +11,9 @@ $day-background: rgba(0, 0, 0, 0.15);
 // HTML ELEMENT STYLING
 // ===================
 html {
-  background-color: black;
+  background: black;
   overflow-y: scroll;
+  transition: background 5s ease;
   backdrop-filter: brightness(90%);
   font-family: "Segoe UI", Tahoma, sans-serif;
   // max-width: 100vw;
@@ -98,7 +99,6 @@ html {
 button {
   outline: none;
   border: none;
-  // transition: background 0.5s;
   padding: 0.5rem 1rem;
   color: white;
 }

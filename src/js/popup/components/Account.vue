@@ -60,7 +60,7 @@ export default {};
 </script>
 
 <style lang="scss" scoped>
-AUTH BEGIN .signup-text {
+.signup-text {
   font-weight: 200;
 }
 .term-link {

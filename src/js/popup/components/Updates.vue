@@ -4,17 +4,15 @@
       <h2 class="page-title">Updates</h2>
       <div class="update-details">
         <div>
-          <h2 style="margin: 0%">Update 2.0</h2>
-          What we've addded:
-          <ul style="margin-top: 0">
+          <h3 style="margin: 0%">Update 2.0</h3>
+          <ul style="margin-top: 0; padding-inline-start: 20px">
             <li>Upload photos from your device as your background</li>
             <li>Add times to entries and get notifications</li>
           </ul>
         </div>
         <div>
-          <h2 style="margin: 0%">Update 1.5</h2>
-          What we've addded:
-          <ul style="margin-top: 0">
+          <h3 style="margin: 0%">Update 1.5</h3>
+          <ul style="margin-top: 0; padding-inline-start: 20px">
             <li>Edit and add color to entries</li>
             <li>Fixed sizing with entries</li>
             <li>Popup that now shows an options, updates, and account tab</li>
@@ -22,10 +20,7 @@
               Several new options that include removing the clock, date and the
               option to make Polus your new tab or not
             </li>
-            <li>
-              Add any background photo you want from unsplash! (Video tutorial
-              coming soon)
-            </li>
+            <li>Add any background photo you want from unsplash!</li>
           </ul>
         </div>
         Please feel free to send us any additional suggestions and thank you for
@@ -41,5 +36,24 @@
 .update-details {
   overflow: auto;
   height: 14rem;
+  &::-webkit-scrollbar {
+    width: 3px;
+    height: 2px;
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    background: none;
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 }
 </style>

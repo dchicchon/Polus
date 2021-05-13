@@ -53,7 +53,9 @@
         >
           Submit
         </button>
-        <button v-if="!editing" @click="editEntry" class="edit">Edit</button>
+        <button v-if="!editing" @click="editEntry" class="edit">
+          <span class="material-icons">mode_edit</span>
+        </button>
 
         <select
           @change="colorEntry(index)"
@@ -73,7 +75,9 @@
         <button @click="() => checkEntry(entry.key)" class="check">
           &#10003;
         </button>
-        <button @click="() => deleteEntry(entry.key)" class="delete">x</button>
+        <button @click="() => deleteEntry(entry.key)" class="delete">
+          <span class="material-icons md-48"> delete </span>
+        </button>
       </div>
     </div>
   </li>
