@@ -5,6 +5,7 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["browser_action"],
     id: "open-sesame",
   });
+  
   let userSettings = {
     view: "week",
     pmode: false,

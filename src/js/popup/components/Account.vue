@@ -3,7 +3,7 @@
     <h2 class="page-title">Account</h2>
     <div class="account-container">
       <h3 class="signup-text">Join Polus</h3>
-      <button id="Auth:Google" class="social-btn">
+      <button @click="signUpWithGoogle()" id="Auth:Google" class="social-btn">
         <div style="display: inline-flex">
           <img />
           <div class="social-text">Continue with Google</div>
@@ -56,7 +56,52 @@
 </template>
 
 <script>
-export default {};
+import firebase from "firebase";
+export default {
+  methods: {
+    signUpWithGoogle() {
+      console.log("Sign up with google");
+      var config = {
+        apiKey: "AIzaSyC-jyQX_JbQnJAjADK3ApS1gyemkr-AqW8",
+        authDomain: "polus-cc376.firebaseapp.com",
+        databaseURL: "https://polus-cc376.firebaseio.com",
+        storageBucket: "polus-cc376.appspot.com",
+      };
+      firebase.initializeApp(config);
+      function startAuth(interactive) {
+        chrome.identity.getAuthToken({ interactive: true }, function (token) {
+          if (chrome.runtime.lastError && !interactive) {
+            console.log("Unable to get token programmatically");
+          } else if (chrome.runtime.lastError) {
+            console.log("Chrome error?");
+            console.error(chrome.runtime.lastError);
+          } else if (token) {
+            let credential = firebase.auth.GoogleAuthProvider.credential(
+              null,
+              token
+            );
+            firebase
+              .auth()
+              .signInWithCredential(credential)
+              .catch(function (error) {
+                if (error.code === "auth/invalid-credential") {
+                  chrome.identity.removeCachedAuthToken(
+                    { token: token },
+                    function () {
+                      startAuth(interactive);
+                    }
+                  );
+                }
+              });
+          } else {
+            console.error("The oAuth Token was null");
+          }
+        });
+      }
+      startAuth(true);
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>

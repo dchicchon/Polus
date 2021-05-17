@@ -11,17 +11,17 @@
         Month
       </button>
     </div>
-    <div v-if="view === 'daily'">
+    <div v-if="userSettings.view === 'daily'">
       <section>
         <Day />
       </section>
     </div>
-    <div v-if="view === 'week'">
+    <div v-if="userSettings.view === 'week'">
       <section>
         <Week />
       </section>
     </div>
-    <div v-if="view === 'month'">
+    <div v-if="userSettings.view === 'month'">
       <section>
         <Month />
       </section>
@@ -43,21 +43,22 @@ export default {
   },
   data() {
     return {
-      view: "",
-    };
+      userSettings: {},
+     };
   },
 
   created() {
-    chrome.storage.sync.get(["view"], (result) => {
-      this.view = result.view;
+    chrome.storage.sync.get("userSettings", (result) => {
+      let { userSettings } = result;
+      this.userSettings = userSettings;
     });
   },
 
   methods: {
     changeView(type) {
-      chrome.storage.sync.set({ view: type }, () => {
-        this.view = type;
-      });
+      this.userSettings.view = type;
+      let userSettings = this.userSettings;
+      chrome.storage.sync.set({ userSettings });
     },
   },
 };

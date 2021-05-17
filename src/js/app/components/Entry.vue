@@ -35,7 +35,7 @@
     @dragstart="dragStart($event, entry, $parent._uid)"
   >
     <div class="entry-container">
-      <p v-if="!editing" class="text" :class="{ checked: entry.active }">
+      <p class="text" v-if="mode !== 'edit'" :class="{ checked: entry.active }">
         {{ entry.text }}
       </p>
       <textarea
@@ -46,37 +46,69 @@
       ></textarea>
       <!-- There is space here -->
       <div class="entryBtnContainer">
-        <button
-          v-if="editing"
-          @click="submitEdit(newText, entry.key)"
-          class="edit"
-        >
-          Submit
-        </button>
-        <button v-if="!editing" @click="editEntry" class="edit">
-          <span class="material-icons">mode_edit</span>
-        </button>
-
-        <select
-          @change="colorEntry(index)"
-          class="select"
-          v-model="entry.color"
-        >
-          <option
-            v-for="(option, index) in colorOptions"
-            :value="option"
-            :key="index"
-            :class="entry.color"
+        <div class="button-container">
+          <button
+            v-if="mode !== 'color'"
+            @click="mode = 'color'"
+            class="entryBtn"
           >
-            {{ option }}
-          </option>
-        </select>
+            <span class="material-icons md-21"> palette </span>
+          </button>
+          <div class="select-container" v-if="mode === 'color'">
+            <select class="select" v-model="entry.color">
+              <option
+                v-for="(option, index) in colorOptions"
+                :value="option"
+                :key="index"
+                :class="entry.color"
+              >
+                {{ option }}
+              </option>
+            </select>
+            <button class="entryBtn" @click="selectColor()">
+              <!-- <span class="material-icons md-21"> done </span> -->
+              <span class="material-icons"> brush </span>
+            </button>
+          </div>
+        </div>
+        <div class="button-container">
+          <button
+            v-if="mode !== 'time'"
+            @click="mode = 'time'"
+            class="entryBtn"
+          >
+            <span class="material-icons md-21"> schedule </span>
+          </button>
 
-        <button @click="() => checkEntry(entry.key)" class="check">
-          &#10003;
+          <div class="select-container" v-if="mode === 'time'">
+            <input placeholder="none" type="time" />
+
+            <button
+              v-if="mode === 'time'"
+              @click="selectTime()"
+              class="entryBtn"
+            >
+              <span class="material-icons md-21"> update </span>
+            </button>
+          </div>
+        </div>
+        <button
+          v-if="mode === 'edit'"
+          @click="submitEdit(newText, entry.key)"
+          class="entryBtn"
+        >
+          <span class="material-icons md-21"> save </span>
         </button>
-        <button @click="() => deleteEntry(entry.key)" class="delete">
-          <span class="material-icons md-48"> delete </span>
+
+        <button v-if="mode !== 'edit'" @click="editEntry" class="entryBtn">
+          <span class="material-icons md-21">mode_edit</span>
+        </button>
+
+        <button @click="() => checkEntry(entry.key)" class="entryBtn">
+          <span class="material-icons md-21"> done </span>
+        </button>
+        <button @click="() => deleteEntry(entry.key)" class="entryBtn">
+          <span class="material-icons md-21"> delete </span>
         </button>
       </div>
     </div>
@@ -114,7 +146,7 @@ export default {
     return {
       active: false,
       newText: "",
-      editing: false,
+      mode: "",
     };
   },
 
@@ -132,18 +164,29 @@ export default {
         e.target.classList.contains("entry-container")
       ) {
         this.active = false;
+        this.mode = "";
       }
+    },
+
+    selectColor() {
+      this.mode = "";
+      this.colorEntry();
+    },
+    selectTime() {
+      this.mode = "";
+      // Add this.timeEntry() later
     },
     changeActive() {
       this.active = true;
     },
+
     editEntry() {
-      this.editing = true;
+      this.mode = "edit";
       this.$refs.textarea.focus();
       this.newText = this.entry.text;
     },
     submitEdit() {
-      this.editing = false;
+      this.mode = "";
       this.submitEntry(this.newText, this.entry.key);
     },
   },
@@ -151,7 +194,7 @@ export default {
   computed: {
     textClass: {
       get() {
-        return this.editing ? "show" : "no-show";
+        return this.mode === "edit" ? "show" : "no-show";
       },
     },
     colorOptions: {
@@ -166,6 +209,7 @@ export default {
 <style scoped lang="scss">
 $brightness: 100%;
 
+// Modify semantic tags here
 textarea {
   font-family: "Segoe UI", Tahoma, sans-serif;
   resize: none;
@@ -185,6 +229,61 @@ textarea {
   &::-webkit-scrollbar-button {
     width: 0;
     height: 0;
+    display: none;
+  }
+}
+
+input[type="time"] {
+  border: none;
+  background: none;
+  color: white;
+  /* Wrapper around the hour, minute, second, and am/pm fields as well as 
+the up and down buttons and the 'X' button */
+  &::-webkit-datetime-edit-fields-wrapper {
+    display: flex;
+  }
+  /* The space between the fields - between hour and minute, the minute and 
+second, second and am/pm */
+  &::-webkit-datetime-edit-text {
+    // padding: 19px 4px;
+  }
+
+  /* The naming convention for the hour, minute, second, and am/pm field is
+`-webkit-datetime-edit-{field}-field` */
+
+  /* Hour */
+  &::-webkit-datetime-edit-hour-field {
+    background: rgb(56 147 200 / 75%);
+    border-radius: 15%;
+    color: #fff;
+  }
+
+  /* Minute */
+  &::-webkit-datetime-edit-minute-field {
+    background: rgb(56 147 200 / 75%);
+    border-radius: 15%;
+    color: #fff;
+  }
+
+  /* AM/PM */
+  &::-webkit-datetime-edit-ampm-field {
+    background: rgb(56 147 200 / 75%);
+    border-radius: 15%;
+    color: #fff;
+  }
+
+  // clock
+  &::-webkit-calendar-picker-indicator {
+    display: none;
+  }
+
+  /* 'X' button for resetting/clearing time */
+  &::-webkit-clear-button {
+    display: none;
+  }
+
+  /* Up/Down arrows for incrementing/decrementing the value */
+  &::-webkit-inner-spin-button {
     display: none;
   }
 }
@@ -209,7 +308,7 @@ textarea {
   touch-action: none;
   user-select: none;
   // transition: background 0.5s, height 0.25s;
-  // transition: background 0.5s;
+  transition: background 0.5s;
   color: white;
   margin: 0.25rem auto;
   padding: 0.5rem;
@@ -224,7 +323,10 @@ textarea {
     .editEntry {
       font-family: "Segoe UI", Tahoma, sans-serif !important;
       border: none;
-      width: 85%;
+      // width: 100%;
+      padding: 0;
+      margin-block-start: 1em;
+      margin-block-end: 1em;
       // margin-block-start: 1em;
       // margin-block-end: 1em;
       float: left;
@@ -235,22 +337,14 @@ textarea {
       &.show {
         opacity: 1;
         // height: fit-content;
-        margin: 0 auto;
-        padding-block-start: 1em;
-        padding-block-end: 1em;
+        // margin: 0 auto;
+        // padding-block-start: 1em;
+        // padding-block-end: 1em;
       }
       &.no-show {
         margin: 0 auto;
         opacity: 0;
         height: 0;
-      }
-    }
-    .entryBtn {
-      background: none;
-      transition: background 0.5s;
-      &:hover {
-        background: #2a2a2a73;
-        filter: brightness($brightness);
       }
     }
   }
@@ -274,9 +368,23 @@ textarea {
   }
 }
 
-.edit {
-  @extend .entryBtn;
-  border-radius: 10%;
+.entryBtn {
+  background: none;
+  transition: background 0.5s;
+  padding: 0;
+  width: 25px;
+  font-size: 0.9rem;
+  border-radius: 100%;
+  // margin-left: 5px;
+  &:hover {
+    background: #2a2a2a73;
+    filter: brightness($brightness);
+  }
+}
+
+.button-container {
+  display: inline-block;
+  position: relative;
 }
 
 @keyframes grow {
@@ -311,28 +419,6 @@ textarea {
   height: 0;
   border: 6px solid transparent;
   border-color: #fff transparent transparent transparent;
-}
-
-.delete {
-  @extend .entryBtn;
-  text-align: center;
-  width: 25px;
-  height: 25px;
-  font-size: 0.9rem;
-  border-radius: 100%;
-  margin-left: 5px;
-  padding: 0 0.5rem;
-}
-
-.check {
-  @extend .entryBtn;
-  text-align: center;
-  width: 27px;
-  height: 25px;
-  font-size: 0.9rem;
-  border-radius: 100%;
-  margin-left: 5px;
-  padding: 0 0.5rem;
 }
 
 select {

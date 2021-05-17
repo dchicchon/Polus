@@ -118,6 +118,17 @@ export default {
       evt.dataTransfer.setData("parentId", parentId);
     },
 
+    getEntries() {
+      let dateStamp = this.listDate.toLocaleDateString();
+      chrome.storage.sync.get([dateStamp], (result) => {
+        if (Object.keys(result).length > 0) {
+          this.entries = result[dateStamp];
+        } else {
+          this.entries = [];
+        }
+      });
+    },
+
     // On drop, we will add to our list and delete from old one
     onDrop(evt) {
       this.isOver = false;
@@ -153,15 +164,8 @@ export default {
       this.updateStorage();
     },
 
-    getEntries() {
-      let dateStamp = this.listDate.toLocaleDateString();
-      chrome.storage.sync.get([dateStamp], (result) => {
-        if (Object.keys(result).length > 0) {
-          this.entries = result[dateStamp];
-        } else {
-          this.entries = [];
-        }
-      });
+    timeEntry() {
+      // this.updateStorage();
     },
 
     submitEntry(text, key) {

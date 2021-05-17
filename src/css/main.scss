@@ -10,6 +10,18 @@ $day-background: rgba(0, 0, 0, 0.15);
 
 // HTML ELEMENT STYLING
 // ===================
+.material-icons {
+  &.md-18 {
+    font-size: 18px;
+  }
+  &.md-21 {
+    font-size: 21px;
+  }
+  &.invert {
+    background: rgb(56 147 200 / 75%);
+  }
+}
+
 html {
   background: black;
   overflow-y: scroll;
@@ -45,6 +57,12 @@ h3 {
 a {
   color: white;
 }
+
+// button {
+//   &:hover {
+//     cursor: pointer;
+//   }
+// }
 
 :focus-visible {
   outline: none;
