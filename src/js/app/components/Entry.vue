@@ -311,7 +311,7 @@ second, second and am/pm */
   &::-webkit-calendar-picker-indicator {
     display: flex;
     color: transparent;
-    // background: none;
+    background: none;
     // display: none;
   }
 
