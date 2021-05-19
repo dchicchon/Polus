@@ -95,6 +95,7 @@ export default {
       this.entries[index].active = !currentState;
       this.updateStorage();
     },
+    
     colorEntry() {
       this.updateStorage();
     },
@@ -206,7 +207,7 @@ export default {
     },
     addClasses() {
       // classnames is a list
-      if (this.isOver) {
+      if (this.isOver && this.classNames) {
         let classList = this.classNames.slice();
         classList.push("over");
         return classList;

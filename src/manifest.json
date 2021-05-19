@@ -23,12 +23,7 @@
   "chrome_url_overrides": {
     "newtab": "html/index.html"
   },
-  "oauth2": {
-    "client_id":"",
-    "scopes": [
-      ""
-    ]
-  },
+ 
   "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://www.google-analytics.com https://*.firebaseio.com https://www.googleapis.com https://apis.google.com; object-src 'self'",
   "incognito": "not_allowed",
   "offline_enabled": true,
@@ -36,7 +31,6 @@
     "activeTab",
     "alarms",
     "contextMenus",
-    "identity",
     "notifications",
     "storage"
   ],

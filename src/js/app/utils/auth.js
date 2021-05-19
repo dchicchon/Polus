@@ -97,6 +97,8 @@ function startAuth() {
   });
 }
 
+
+
 // Login btn
 firebase.auth().onAuthStateChanged(function (user) {
   if (user) {

@@ -46,52 +46,50 @@
       ></textarea>
       <!-- There is space here -->
       <div class="entryBtnContainer">
-        <div class="button-container">
+        <!-- Color -->
+        <span>
           <button
-            v-if="mode !== 'color'"
-            @click="mode = 'color'"
-            class="entryBtn"
+            @click="changeMode('color')"
+            :class="[mode === 'color' ? 'activeBtn' : '', 'entryBtn']"
           >
             <span class="material-icons md-21"> palette </span>
-          </button>
-          <div class="select-container" v-if="mode === 'color'">
-            <select class="select" v-model="entry.color">
+            <select
+              style="cursor: pointer"
+              :value="''"
+              @input="selectColor($event.target.value)"
+            >
               <option
                 v-for="(option, index) in colorOptions"
                 :value="option"
                 :key="index"
-                :class="entry.color"
+                :class="option"
               >
                 {{ option }}
               </option>
             </select>
-            <button class="entryBtn" @click="selectColor()">
-              <!-- <span class="material-icons md-21"> done </span> -->
-              <span class="material-icons"> brush </span>
-            </button>
-          </div>
-        </div>
-        <div class="button-container">
-          <button
-            v-if="mode !== 'time'"
-            @click="mode = 'time'"
-            class="entryBtn"
-          >
-            <span class="material-icons md-21"> schedule </span>
           </button>
-
-          <div class="select-container" v-if="mode === 'time'">
-            <input placeholder="none" type="time" />
-
-            <button
-              v-if="mode === 'time'"
-              @click="selectTime()"
-              class="entryBtn"
-            >
-              <span class="material-icons md-21"> update </span>
-            </button>
-          </div>
-        </div>
+        </span>
+        <!-- Time -->
+        <span>
+          <button
+            @mouseup="changeMode('time')"
+            @mousedown="hideTime()"
+            ref="btn"
+            :class="[mode === 'time' ? 'activeBtn' : '', 'entryBtn']"
+          >
+            <!-- only activates clock on mouseup -->
+            <!-- v-if="mode === 'time'" -->
+            <span class="material-icons md-21"> schedule </span>
+            <input
+              @input="selectTime($event.target.value)"
+              :value="time"
+              placeholder="none"
+              ref="time"
+              type="time"
+            />
+          </button>
+        </span>
+        <!-- Edit -->
         <button
           v-if="mode === 'edit'"
           @click="submitEdit(newText, entry.key)"
@@ -147,11 +145,14 @@ export default {
       active: false,
       newText: "",
       mode: "",
+      time: "",
     };
   },
 
   // One of the first functions to execute on the render method
-  // created() {},
+  created() {
+    this.time = this.entry.time ? this.entry.time : "12:00";
+  },
   // This will execute when the component is built on the DOM
   mounted() {
     if (this.$refs.newEntry) this.$refs.newEntry.focus();
@@ -167,24 +168,43 @@ export default {
         this.mode = "";
       }
     },
-
-    selectColor() {
-      this.mode = "";
-      this.colorEntry();
-    },
-    selectTime() {
-      this.mode = "";
-      // Add this.timeEntry() later
+    changeMode(type) {
+      console.log("Change Mode");
+      if (type === "time" && this.mode === "time") {
+        console.log("Submit Time");
+        console.log(this.time);
+        this.$refs.time.style.display = "inline-block";
+        // this.hideTime = false;
+        // Submit time here
+      }
+      if (this.mode === type) this.mode = "";
+      else this.mode = type;
     },
     changeActive() {
       this.active = true;
     },
-
     editEntry() {
       this.mode = "edit";
       this.$refs.textarea.focus();
       this.newText = this.entry.text;
     },
+
+    hideTime() {
+      if (this.mode === "time") {
+        this.$refs.time.style.display = "none";
+      }
+    },
+
+    selectColor(color) {
+      this.entry.color = color;
+      this.colorEntry();
+    },
+    selectTime(time) {
+      console.log("Change Time");
+      this.time = time;
+      // Add this.timeEntry() later
+    },
+
     submitEdit() {
       this.mode = "";
       this.submitEntry(this.newText, this.entry.key);
@@ -197,9 +217,11 @@ export default {
         return this.mode === "edit" ? "show" : "no-show";
       },
     },
+
+    btnClass() {},
     colorOptions: {
       get() {
-        return ["blue", "green", "gold", "purple", "orange", "red", "cyan"];
+        return ["blue", "green", "gold", "purple", "orange", "red"];
       },
     },
   },
@@ -237,14 +259,26 @@ input[type="time"] {
   border: none;
   background: none;
   color: white;
+  width: 30px;
+
+  // order: none;
+  // background: none;
+  // color: white;
+  // width: 30px;
+  position: absolute;
+  align-items: flex-start;
+  transform: translateX(-30px);
+
   /* Wrapper around the hour, minute, second, and am/pm fields as well as 
 the up and down buttons and the 'X' button */
   &::-webkit-datetime-edit-fields-wrapper {
-    display: flex;
+    // display: flex;
+    display: none;
   }
   /* The space between the fields - between hour and minute, the minute and 
 second, second and am/pm */
   &::-webkit-datetime-edit-text {
+    display: none;
     // padding: 19px 4px;
   }
 
@@ -269,12 +303,16 @@ second, second and am/pm */
   &::-webkit-datetime-edit-ampm-field {
     background: rgb(56 147 200 / 75%);
     border-radius: 15%;
+    display: none;
     color: #fff;
   }
 
   // clock
   &::-webkit-calendar-picker-indicator {
-    display: none;
+    display: flex;
+    color: transparent;
+    // background: none;
+    // display: none;
   }
 
   /* 'X' button for resetting/clearing time */
@@ -288,11 +326,35 @@ second, second and am/pm */
   }
 }
 
-.select {
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: "";
+  height: 21px;
+  position: absolute;
   background: none;
   border: none;
   outline: none;
+  // width:100%;
+  width: 20px;
+  transform: translateX(-20px);
 }
+
+select option {
+  margin: 40px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+// .select {
+//   position: absolute;
+//   background: none;
+//   border: none;
+//   outline: none;
+//   transform: translateX(-15px);
+// }
+
 .checked {
   text-decoration: line-through;
 }
@@ -375,11 +437,15 @@ second, second and am/pm */
   width: 25px;
   font-size: 0.9rem;
   border-radius: 100%;
-  // margin-left: 5px;
   &:hover {
+    // background: #00000073;
     background: #2a2a2a73;
     filter: brightness($brightness);
   }
+}
+
+.activeBtn {
+  color: rgb(0 0 0 / 0.69);
 }
 
 .button-container {
@@ -396,36 +462,6 @@ second, second and am/pm */
   }
 }
 
-.color {
-  background: none;
-  border: none;
-  color: white;
-}
-
-.color-option {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 99;
-}
-
-.color:after {
-  position: absolute;
-  content: "";
-  top: 14px;
-  right: 10px;
-  width: 0;
-  height: 0;
-  border: 6px solid transparent;
-  border-color: #fff transparent transparent transparent;
-}
-
-select {
-  color: white;
-  outline: none;
-  border: none;
-}
 // COLORS
 .blue {
   background: rgba(21, 115, 170, 0.75);

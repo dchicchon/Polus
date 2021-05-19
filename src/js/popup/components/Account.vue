@@ -57,6 +57,15 @@
 
 <script>
 import firebase from "firebase";
+
+// Put this in the manifest to begin auth
+// "oauth2": {
+//   "client_id":"",
+//   "scopes": [
+//     ""
+//   ]
+// },
+
 export default {
   methods: {
     signUpWithGoogle() {
