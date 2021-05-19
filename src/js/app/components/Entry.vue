@@ -11,7 +11,6 @@
     v-on:keypress.enter="submitEntry(newText, entry.key)"
   >
   </textarea>
-
   <!-- </transition> -->
   <!-- Not Active -->
   <li
@@ -47,48 +46,44 @@
       <!-- There is space here -->
       <div class="entryBtnContainer">
         <!-- Color -->
-        <span>
-          <button
-            @click="changeMode('color')"
-            :class="[mode === 'color' ? 'activeBtn' : '', 'entryBtn']"
+        <button
+          @click="changeMode('color')"
+          :class="[mode === 'color' ? 'activeBtn' : '', 'entryBtn']"
+        >
+          <span class="material-icons md-21"> palette </span>
+          <select
+            style="cursor: pointer"
+            :value="''"
+            @input="selectColor($event.target.value)"
           >
-            <span class="material-icons md-21"> palette </span>
-            <select
-              style="cursor: pointer"
-              :value="''"
-              @input="selectColor($event.target.value)"
+            <option
+              v-for="(option, index) in colorOptions"
+              :value="option"
+              :key="index"
+              :class="option"
             >
-              <option
-                v-for="(option, index) in colorOptions"
-                :value="option"
-                :key="index"
-                :class="option"
-              >
-                {{ option }}
-              </option>
-            </select>
-          </button>
-        </span>
+              {{ option }}
+            </option>
+          </select>
+        </button>
         <!-- Time -->
-        <span>
-          <button
-            @mouseup="changeMode('time')"
-            @mousedown="hideTime()"
-            ref="btn"
-            :class="[mode === 'time' ? 'activeBtn' : '', 'entryBtn']"
-          >
-            <!-- only activates clock on mouseup -->
-            <!-- v-if="mode === 'time'" -->
-            <span class="material-icons md-21"> schedule </span>
-            <input
-              @input="selectTime($event.target.value)"
-              :value="time"
-              placeholder="none"
-              ref="time"
-              type="time"
-            />
-          </button>
-        </span>
+        <button
+          @mouseup="changeMode('time')"
+          @mousedown="hideTime()"
+          ref="btn"
+          :class="[mode === 'time' ? 'activeBtn' : '', 'entryBtn']"
+        >
+          <!-- only activates clock on mouseup -->
+          <!-- v-if="mode === 'time'" -->
+          <span class="material-icons md-21"> schedule </span>
+          <input
+            @input="selectTime($event.target.value)"
+            :value="time"
+            placeholder="none"
+            ref="time"
+            type="time"
+          />
+        </button>
         <!-- Edit -->
         <button
           v-if="mode === 'edit'"
@@ -162,19 +157,16 @@ export default {
       if (
         e.target.classList.contains("text") ||
         e.target.classList.contains("entry") ||
-        e.target.classList.contains("entry-container")
+        e.target.classList.contains("entry-container") ||
+        e.target.classList.contains("entryBtnContainer")
       ) {
         this.active = false;
         this.mode = "";
       }
     },
     changeMode(type) {
-      console.log("Change Mode");
       if (type === "time" && this.mode === "time") {
-        console.log("Submit Time");
-        console.log(this.time);
         this.$refs.time.style.display = "inline-block";
-        // this.hideTime = false;
         // Submit time here
       }
       if (this.mode === type) this.mode = "";
@@ -259,15 +251,20 @@ input[type="time"] {
   border: none;
   background: none;
   color: white;
-  width: 30px;
+  width: 25px;
+  height: 25px;
+  transform: translateY(-25px);
 
-  // order: none;
-  // background: none;
-  // color: white;
-  // width: 30px;
-  position: absolute;
-  align-items: flex-start;
-  transform: translateX(-30px);
+  // clock
+  &::-webkit-calendar-picker-indicator {
+    display: flex;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    background: none;
+    padding: 0px;
+    margin: 0px;
+  }
 
   /* Wrapper around the hour, minute, second, and am/pm fields as well as 
 the up and down buttons and the 'X' button */
@@ -307,14 +304,6 @@ second, second and am/pm */
     color: #fff;
   }
 
-  // clock
-  &::-webkit-calendar-picker-indicator {
-    display: flex;
-    color: transparent;
-    background: none;
-    // display: none;
-  }
-
   /* 'X' button for resetting/clearing time */
   &::-webkit-clear-button {
     display: none;
@@ -331,14 +320,14 @@ select {
   -moz-appearance: none;
   text-indent: 1px;
   text-overflow: "";
-  height: 21px;
+  height: 25px;
   position: absolute;
   background: none;
   border: none;
   outline: none;
   // width:100%;
-  width: 20px;
-  transform: translateX(-20px);
+  width: 25px;
+  transform: translateX(-23px);
 }
 
 select option {
@@ -347,13 +336,6 @@ select option {
   color: #fff;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
 }
-// .select {
-//   position: absolute;
-//   background: none;
-//   border: none;
-//   outline: none;
-//   transform: translateX(-15px);
-// }
 
 .checked {
   text-decoration: line-through;
@@ -435,6 +417,7 @@ select option {
   transition: background 0.5s;
   padding: 0;
   width: 25px;
+  height: 25px;
   font-size: 0.9rem;
   border-radius: 100%;
   &:hover {
