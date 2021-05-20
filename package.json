@@ -24,7 +24,7 @@
     "laravel-mix": "^6.0.18",
     "material-design-icons": "^3.0.1",
     "node-sass": "^5.0.0",
-    "postcss": "8.1",
+    "postcss": "8.2",
     "prettier": "^2.2.1",
     "sass": "^1.32.11",
     "sass-loader": "^11.0.1",
