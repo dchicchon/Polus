@@ -128,7 +128,7 @@ export default {
       const options = {
         types: [
           {
-            description: "Images",
+            description: "Image",
             accept: {
               "image/*": [".jpg"],
             },
@@ -142,6 +142,7 @@ export default {
       reader.addEventListener(
         "load",
         function () {
+          // USE INDEXED DB INSTEAD
           chrome.storage.sync.set({ background: false }, () => {
             console.log(reader.result);
             chrome.storage.local.set({ image: reader.result }, () => {
@@ -156,7 +157,7 @@ export default {
         },
         false
       );
-      if (file.size < 5000000) {
+      if (file.size < 4500000) {
         reader.readAsDataURL(file);
         this.error = "";
       } else {
@@ -165,6 +166,7 @@ export default {
     },
 
     uploadPhoto() {
+      console.log("Uploading Photo");
       this.handleFile();
     },
 
