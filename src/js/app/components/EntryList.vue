@@ -13,13 +13,14 @@
     <ul ref="entryList" class="entryList">
       <Entry
         v-for="(entry, index) in entries"
-        :entry="entry"
+        :deleteEntry="deleteEntry"
         :dragStart="dragStart"
+        :entry="entry"
         :checkEntry="checkEntry"
         :colorEntry="colorEntry"
-        :deleteEntry="deleteEntry"
-        :submitEntry="submitEntry"
         :key="index"
+        :submitEntry="submitEntry"
+        :timeEntry="timeEntry"
       />
     </ul>
     <button @click="addEntry" :value="dateStamp" class="addButton">+</button>
@@ -95,7 +96,7 @@ export default {
       this.entries[index].active = !currentState;
       this.updateStorage();
     },
-    
+
     colorEntry() {
       this.updateStorage();
     },
@@ -166,7 +167,7 @@ export default {
     },
 
     timeEntry() {
-      // this.updateStorage();
+      this.updateStorage();
     },
 
     submitEntry(text, key) {

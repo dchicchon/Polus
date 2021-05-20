@@ -68,17 +68,16 @@
         </button>
         <!-- Time -->
         <button
-          @mouseup="changeMode('time')"
-          @mousedown="hideTime()"
-          ref="btn"
+          @mousedown="changeMode('time')"
+          @mouseup="hideTime()"
           :class="[mode === 'time' ? 'activeBtn' : '', 'entryBtn']"
         >
           <!-- only activates clock on mouseup -->
-          <!-- v-if="mode === 'time'" -->
           <span class="material-icons md-21"> schedule </span>
           <input
-            @input="selectTime($event.target.value)"
-            :value="time"
+            v-model="time"
+            @blur="blur()"
+            @input="selectTime()"
             placeholder="none"
             ref="time"
             type="time"
@@ -110,10 +109,6 @@
 <script>
 export default {
   props: {
-    entry: {
-      required: true,
-      type: Object,
-    },
     checkEntry: {
       required: true,
       type: Function,
@@ -126,12 +121,20 @@ export default {
       required: true,
       type: Function,
     },
+    dragStart: {
+      required: false,
+      type: Function,
+    },
+    entry: {
+      required: true,
+      type: Object,
+    },
     submitEntry: {
       required: true,
       type: Function,
     },
-    dragStart: {
-      required: false,
+    timeEntry: {
+      required: true,
       type: Function,
     },
   },
@@ -147,6 +150,13 @@ export default {
   // One of the first functions to execute on the render method
   created() {
     this.time = this.entry.time ? this.entry.time : "12:00";
+    if (this.entry.time) {
+      let stdin = this.entry.time + "";
+      let newstd = stdin.splice(1, 0, ":");
+      console.log(newstd);
+       } else {
+      this.time = "12:00";
+    }
   },
   // This will execute when the component is built on the DOM
   mounted() {
@@ -164,12 +174,16 @@ export default {
         this.mode = "";
       }
     },
+
+    blur() {
+      this.mode = "";
+    },
+
     changeMode(type) {
       if (type === "time" && this.mode === "time") {
-        this.$refs.time.style.display = "inline-block";
-        // Submit time here
-      }
-      if (this.mode === type) this.mode = "";
+        this.$refs.time.style.display = "none";
+        this.mode = "";
+      } else if (this.mode === type) this.mode = "";
       else this.mode = type;
     },
     changeActive() {
@@ -182,18 +196,42 @@ export default {
     },
 
     hideTime() {
-      if (this.mode === "time") {
-        this.$refs.time.style.display = "none";
+      if (this.mode === "") {
+        this.$refs.time.style.display = "inline-block";
       }
     },
 
     selectColor(color) {
-      this.entry.color = color;
-      this.colorEntry();
+      if (color !== this.entry.color) {
+        this.entry.color = color;
+        this.colorEntry();
+      }
     },
-    selectTime(time) {
-      console.log("Change Time");
-      this.time = time;
+
+    selectTime() {
+      if (this.time !== this.entry.time) {
+        console.log("Updating since its different");
+        this.entry.time = parseInt(
+          this.time[0] + this.time[1] + this.time[3] + this.time[4]
+        ); // this is cheaper than using string
+        console.log();
+
+        chrome.notifications.create(
+          null,
+          {
+            contextMessage: this.entry.text,
+            type: "basic",
+            title: "Polus",
+            iconUrl: "",
+          },
+          function (result) {
+            console.log("This result");
+            console.log(result);
+          }
+        );
+        this.timeEntry();
+      }
+
       // Add this.timeEntry() later
     },
 

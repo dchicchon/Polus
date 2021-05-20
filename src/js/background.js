@@ -1,11 +1,14 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(() => {
+
+  // 1. On installed, we will check to see if they have anything from previous version in storage
+  // 2. If so, we will check every valid date for a storage item and change each item that was altered for the new update
   chrome.contextMenus.create({
     title: "Open",
     contexts: ["browser_action"],
     id: "open-sesame",
   });
-  
+
   let userSettings = {
     view: "week",
     pmode: false,
@@ -16,6 +19,7 @@ chrome.runtime.onInstalled.addListener(() => {
 
   chrome.storage.sync.set({ userSettings })
   getPhoto();
+  
 });
 
 chrome.runtime.setUninstallURL(
