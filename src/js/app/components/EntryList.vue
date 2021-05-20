@@ -19,6 +19,7 @@
         :checkEntry="checkEntry"
         :colorEntry="colorEntry"
         :key="index"
+        :listDate="listDate"
         :submitEntry="submitEntry"
         :timeEntry="timeEntry"
       />

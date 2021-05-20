@@ -17,7 +17,7 @@
     />
     <Toggle
       :key="3"
-      :toggleItem="toggleItem"
+      :toggleItem="modifyNotificationPermission"
       :name="'notifications'"
       :currentValue="userSettings['notifications']"
       :description="'Get Notifications'"
@@ -68,9 +68,43 @@ export default {
     //   On created, get all the items from storage relating to the thing
   },
   methods: {
+    modifyNotificationPermission(event, name) {
+      // get the current setting for notifications from user settings
+      if (this.userSettings["notifications"]) {
+        // ask if user wants to disable notifications
+        chrome.permissions.remove(
+          {
+            permissions: ["notifications"],
+          },
+          (removed) => {
+            if (removed) {
+              // The permissions have been removed.
+              console.log("Permission Removed");
+        
+              this.userSettings["notifications"] = false;
+              this.updateStorage();
+            }
+          }
+        );
+      } else {
+        // ask if user wants to enable notifications
+        chrome.permissions.request(
+          {
+            permissions: ["notifications"],
+          },
+          (granted) => {
+            if (granted) {
+            
+              console.log("Permission Granted");
+              this.userSettings["notifications"] = true;
+              this.updateStorage();
+            }
+          }
+        );
+      }
+    },
     toggleItem(event, name) {
       this.userSettings[name] = !this.userSettings[name];
-      console.log(this.userSettings);
       this.updateStorage();
       // chrome.storage.sync.set({ [name]: event.target.checked });
     },
@@ -82,6 +116,7 @@ export default {
           this.updateStorageVersion();
         } else {
           this.userSettings = result["userSettings"];
+          console.log(this.userSettings);
         }
       });
     },
@@ -166,7 +201,6 @@ export default {
     },
 
     uploadPhoto() {
-      console.log("Uploading Photo");
       this.handleFile();
     },
 
@@ -179,6 +213,7 @@ export default {
         changePhoto: true,
         newTab: true,
         indexOpen: false,
+        notifications: false,
       };
       this.updateStorage();
     },

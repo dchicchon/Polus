@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Polus",
-  "version": "2.0",
+  "version": "1.7",
   "description": "An online planner to help make you more effecient!",
   "icons": {
     "16": "assets/polus_tab_icon.png",
@@ -27,11 +27,11 @@
   "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://www.google-analytics.com https://*.firebaseio.com https://www.googleapis.com https://apis.google.com; object-src 'self'",
   "incognito": "not_allowed",
   "offline_enabled": true,
+  "optional_permissions":["notifications"],
   "permissions": [
     "activeTab",
     "alarms",
     "contextMenus",
-    "notifications",
     "storage"
   ],
   "short_name": "Polus"

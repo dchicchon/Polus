@@ -107,6 +107,7 @@
   </li>
 </template>
 <script>
+import icon from "../../../assets/polus_icon.png";
 export default {
   props: {
     checkEntry: {
@@ -129,6 +130,10 @@ export default {
       required: true,
       type: Object,
     },
+    listDate: {
+      type: Date,
+      required: true,
+    },
     submitEntry: {
       required: true,
       type: Function,
@@ -150,13 +155,6 @@ export default {
   // One of the first functions to execute on the render method
   created() {
     this.time = this.entry.time ? this.entry.time : "12:00";
-    if (this.entry.time) {
-      let stdin = this.entry.time + "";
-      let newstd = stdin.splice(1, 0, ":");
-      console.log(newstd);
-       } else {
-      this.time = "12:00";
-    }
   },
   // This will execute when the component is built on the DOM
   mounted() {
@@ -210,25 +208,52 @@ export default {
 
     selectTime() {
       if (this.time !== this.entry.time) {
-        console.log("Updating since its different");
-        this.entry.time = parseInt(
-          this.time[0] + this.time[1] + this.time[3] + this.time[4]
-        ); // this is cheaper than using string
-        console.log();
-
-        chrome.notifications.create(
-          null,
+        // this.entry.time = parseInt(
+        //   this.time[0] + this.time[1] + this.time[3] + this.time[4]
+        // ); // this is cheaper than using string
+        this.entry.time = this.time;
+        // We can use this to check if notifications have been enabled so that we can show the user
+        chrome.permissions.contains(
           {
-            contextMessage: this.entry.text,
-            type: "basic",
-            title: "Polus",
-            iconUrl: "",
+            permissions: ["notifications"],
           },
-          function (result) {
-            console.log("This result");
-            console.log(result);
+          (result) => {
+            // Currently Allowed
+
+            // REMEMBER TO DELETE PREVIOUS NOTIFICATION ONCE THE ENTRY TIME IS CHANGED
+            // REMEMBER TO DELETE PREVIOUS NOTIFICATION ONCE THE ENTRY TIME IS CHANGED
+            // REMEMBER TO DELETE PREVIOUS NOTIFICATION ONCE THE ENTRY TIME IS CHANGED
+            // REMEMBER TO DELETE PREVIOUS NOTIFICATION ONCE THE ENTRY TIME IS CHANGED
+            // REMEMBER TO DELETE PREVIOUS NOTIFICATION ONCE THE ENTRY TIME IS CHANGED
+
+            if (result) {
+              console.log("Notifications allowed, make notification");
+              // use this.time and entry date to calculate when to make the notification happen
+              let hours = parseInt(this.time[0] + this.time[1]);
+              let minutes = parseInt(this.time[3] + this.time[4]);
+              let eventDate = new Date(this.listDate);
+              eventDate.setHours(hours);
+              eventDate.setMinutes(minutes);
+              console.log(eventDate);
+              const ms = eventDate.getTime() - Date.now();
+              chrome.notifications.create(
+                this.entry.key,
+                {
+                  contextMessage: this.entry.text,
+                  type: "basic",
+                  title: "Polus",
+                  iconUrl: "/assets/polus_icon.png", // this isnt working at the moment
+                  eventTime: ms,
+                },
+                function (result) {
+                  console.log("This result");
+                  console.log(result);
+                }
+              );
+            }
           }
         );
+
         this.timeEntry();
       }
 
