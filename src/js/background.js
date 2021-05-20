@@ -1,15 +1,17 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(() => {
+
+  // 1. On installed, we will check to see if they have anything from previous version in storage
+  // 2. If so, we will check every valid date for a storage item and change each item that was altered for the new update
   chrome.contextMenus.create({
     title: "Open",
     contexts: ["browser_action"],
     id: "open-sesame",
   });
+
   let userSettings = {
     view: "week",
     pmode: false,
-    clock: true,
-    date: true,
     changePhoto: true,
     newTab: true,
     indexOpen: false,
@@ -17,6 +19,7 @@ chrome.runtime.onInstalled.addListener(() => {
 
   chrome.storage.sync.set({ userSettings })
   getPhoto();
+  
 });
 
 chrome.runtime.setUninstallURL(
@@ -45,9 +48,7 @@ chrome.alarms.get("changeBackground", (alarm) => {
 // 3. Opens index.html
 
 chrome.contextMenus.onClicked.addListener(function (result) {
-  console.log("Start contextmenu")
   if (result["menuItemId"] === "open-sesame") {
-    // let newURL = chrome.extension.getURL("/index.html");
     chrome.storage.sync.get('userSettings', result => {
       let { userSettings } = result
       userSettings.indexOpen = true;

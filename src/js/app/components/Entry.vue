@@ -11,7 +11,6 @@
     v-on:keypress.enter="submitEntry(newText, entry.key)"
   >
   </textarea>
-
   <!-- </transition> -->
   <!-- Not Active -->
   <li
@@ -35,7 +34,7 @@
     @dragstart="dragStart($event, entry, $parent._uid)"
   >
     <div class="entry-container">
-      <p v-if="!editing" class="text" :class="{ checked: entry.active }">
+      <p class="text" v-if="mode !== 'edit'" :class="{ checked: entry.active }">
         {{ entry.text }}
       </p>
       <textarea
@@ -46,34 +45,63 @@
       ></textarea>
       <!-- There is space here -->
       <div class="entryBtnContainer">
+        <!-- Color -->
         <button
-          v-if="editing"
-          @click="submitEdit(newText, entry.key)"
-          class="edit"
+          @click="changeMode('color')"
+          :class="[mode === 'color' ? 'activeBtn' : '', 'entryBtn']"
         >
-          Submit
-        </button>
-        <button v-if="!editing" @click="editEntry" class="edit">Edit</button>
-
-        <select
-          @change="colorEntry(index)"
-          class="select"
-          v-model="entry.color"
-        >
-          <option
-            v-for="(option, index) in colorOptions"
-            :value="option"
-            :key="index"
-            :class="entry.color"
+          <span class="material-icons md-21"> palette </span>
+          <select
+            style="cursor: pointer"
+            :value="''"
+            @input="selectColor($event.target.value)"
           >
-            {{ option }}
-          </option>
-        </select>
-
-        <button @click="() => checkEntry(entry.key)" class="check">
-          &#10003;
+            <option
+              v-for="(option, index) in colorOptions"
+              :value="option"
+              :key="index"
+              :class="option"
+            >
+              {{ option }}
+            </option>
+          </select>
         </button>
-        <button @click="() => deleteEntry(entry.key)" class="delete">x</button>
+        <!-- Time -->
+        <button
+          @mousedown="changeMode('time')"
+          @mouseup="hideTime()"
+          :class="[mode === 'time' ? 'activeBtn' : '', 'entryBtn']"
+        >
+          <!-- only activates clock on mouseup -->
+          <span class="material-icons md-21"> schedule </span>
+          <input
+            v-model="time"
+            @blur="blur()"
+            @input="selectTime()"
+            placeholder="none"
+            ref="time"
+            type="time"
+          />
+        </button>
+        <!-- Edit -->
+        <button
+          v-if="mode === 'edit'"
+          @click="submitEdit(newText, entry.key)"
+          class="entryBtn"
+        >
+          <span class="material-icons md-21"> save </span>
+        </button>
+
+        <button v-if="mode !== 'edit'" @click="editEntry" class="entryBtn">
+          <span class="material-icons md-21">mode_edit</span>
+        </button>
+
+        <button @click="() => checkEntry(entry.key)" class="entryBtn">
+          <span class="material-icons md-21"> done </span>
+        </button>
+        <button @click="() => deleteEntry(entry.key)" class="entryBtn">
+          <span class="material-icons md-21"> delete </span>
+        </button>
       </div>
     </div>
   </li>
@@ -81,10 +109,6 @@
 <script>
 export default {
   props: {
-    entry: {
-      required: true,
-      type: Object,
-    },
     checkEntry: {
       required: true,
       type: Function,
@@ -97,12 +121,20 @@ export default {
       required: true,
       type: Function,
     },
+    dragStart: {
+      required: false,
+      type: Function,
+    },
+    entry: {
+      required: true,
+      type: Object,
+    },
     submitEntry: {
       required: true,
       type: Function,
     },
-    dragStart: {
-      required: false,
+    timeEntry: {
+      required: true,
       type: Function,
     },
   },
@@ -110,12 +142,22 @@ export default {
     return {
       active: false,
       newText: "",
-      editing: false,
+      mode: "",
+      time: "",
     };
   },
 
   // One of the first functions to execute on the render method
-  // created() {},
+  created() {
+    this.time = this.entry.time ? this.entry.time : "12:00";
+    if (this.entry.time) {
+      let stdin = this.entry.time + "";
+      let newstd = stdin.splice(1, 0, ":");
+      console.log(newstd);
+       } else {
+      this.time = "12:00";
+    }
+  },
   // This will execute when the component is built on the DOM
   mounted() {
     if (this.$refs.newEntry) this.$refs.newEntry.focus();
@@ -125,21 +167,76 @@ export default {
       if (
         e.target.classList.contains("text") ||
         e.target.classList.contains("entry") ||
-        e.target.classList.contains("entry-container")
+        e.target.classList.contains("entry-container") ||
+        e.target.classList.contains("entryBtnContainer")
       ) {
         this.active = false;
+        this.mode = "";
       }
+    },
+
+    blur() {
+      this.mode = "";
+    },
+
+    changeMode(type) {
+      if (type === "time" && this.mode === "time") {
+        this.$refs.time.style.display = "none";
+        this.mode = "";
+      } else if (this.mode === type) this.mode = "";
+      else this.mode = type;
     },
     changeActive() {
       this.active = true;
     },
     editEntry() {
-      this.editing = true;
+      this.mode = "edit";
       this.$refs.textarea.focus();
       this.newText = this.entry.text;
     },
+
+    hideTime() {
+      if (this.mode === "") {
+        this.$refs.time.style.display = "inline-block";
+      }
+    },
+
+    selectColor(color) {
+      if (color !== this.entry.color) {
+        this.entry.color = color;
+        this.colorEntry();
+      }
+    },
+
+    selectTime() {
+      if (this.time !== this.entry.time) {
+        console.log("Updating since its different");
+        this.entry.time = parseInt(
+          this.time[0] + this.time[1] + this.time[3] + this.time[4]
+        ); // this is cheaper than using string
+        console.log();
+
+        chrome.notifications.create(
+          null,
+          {
+            contextMessage: this.entry.text,
+            type: "basic",
+            title: "Polus",
+            iconUrl: "",
+          },
+          function (result) {
+            console.log("This result");
+            console.log(result);
+          }
+        );
+        this.timeEntry();
+      }
+
+      // Add this.timeEntry() later
+    },
+
     submitEdit() {
-      this.editing = false;
+      this.mode = "";
       this.submitEntry(this.newText, this.entry.key);
     },
   },
@@ -147,12 +244,14 @@ export default {
   computed: {
     textClass: {
       get() {
-        return this.editing ? "show" : "no-show";
+        return this.mode === "edit" ? "show" : "no-show";
       },
     },
+
+    btnClass() {},
     colorOptions: {
       get() {
-        return ["blue", "green", "gold", "purple", "orange", "red", "cyan"];
+        return ["blue", "green", "gold", "purple", "orange", "red"];
       },
     },
   },
@@ -162,6 +261,7 @@ export default {
 <style scoped lang="scss">
 $brightness: 100%;
 
+// Modify semantic tags here
 textarea {
   font-family: "Segoe UI", Tahoma, sans-serif;
   resize: none;
@@ -185,11 +285,96 @@ textarea {
   }
 }
 
-.select {
+input[type="time"] {
+  border: none;
+  background: none;
+  color: white;
+  width: 25px;
+  height: 25px;
+  transform: translateY(-25px);
+
+  // clock
+  &::-webkit-calendar-picker-indicator {
+    display: flex;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    background: none;
+    padding: 0px;
+    margin: 0px;
+  }
+
+  /* Wrapper around the hour, minute, second, and am/pm fields as well as 
+the up and down buttons and the 'X' button */
+  &::-webkit-datetime-edit-fields-wrapper {
+    // display: flex;
+    display: none;
+  }
+  /* The space between the fields - between hour and minute, the minute and 
+second, second and am/pm */
+  &::-webkit-datetime-edit-text {
+    display: none;
+    // padding: 19px 4px;
+  }
+
+  /* The naming convention for the hour, minute, second, and am/pm field is
+`-webkit-datetime-edit-{field}-field` */
+
+  /* Hour */
+  &::-webkit-datetime-edit-hour-field {
+    background: rgb(56 147 200 / 75%);
+    border-radius: 15%;
+    color: #fff;
+  }
+
+  /* Minute */
+  &::-webkit-datetime-edit-minute-field {
+    background: rgb(56 147 200 / 75%);
+    border-radius: 15%;
+    color: #fff;
+  }
+
+  /* AM/PM */
+  &::-webkit-datetime-edit-ampm-field {
+    background: rgb(56 147 200 / 75%);
+    border-radius: 15%;
+    display: none;
+    color: #fff;
+  }
+
+  /* 'X' button for resetting/clearing time */
+  &::-webkit-clear-button {
+    display: none;
+  }
+
+  /* Up/Down arrows for incrementing/decrementing the value */
+  &::-webkit-inner-spin-button {
+    display: none;
+  }
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: "";
+  height: 25px;
+  position: absolute;
   background: none;
   border: none;
   outline: none;
+  // width:100%;
+  width: 25px;
+  transform: translateX(-23px);
 }
+
+select option {
+  margin: 40px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
 .checked {
   text-decoration: line-through;
 }
@@ -205,7 +390,7 @@ textarea {
   touch-action: none;
   user-select: none;
   // transition: background 0.5s, height 0.25s;
-  // transition: background 0.5s;
+  transition: background 0.5s;
   color: white;
   margin: 0.25rem auto;
   padding: 0.5rem;
@@ -220,7 +405,10 @@ textarea {
     .editEntry {
       font-family: "Segoe UI", Tahoma, sans-serif !important;
       border: none;
-      width: 85%;
+      // width: 100%;
+      padding: 0;
+      margin-block-start: 1em;
+      margin-block-end: 1em;
       // margin-block-start: 1em;
       // margin-block-end: 1em;
       float: left;
@@ -231,22 +419,14 @@ textarea {
       &.show {
         opacity: 1;
         // height: fit-content;
-        margin: 0 auto;
-        padding-block-start: 1em;
-        padding-block-end: 1em;
+        // margin: 0 auto;
+        // padding-block-start: 1em;
+        // padding-block-end: 1em;
       }
       &.no-show {
         margin: 0 auto;
         opacity: 0;
         height: 0;
-      }
-    }
-    .entryBtn {
-      background: none;
-      transition: background 0.5s;
-      &:hover {
-        background: #2a2a2a73;
-        filter: brightness($brightness);
       }
     }
   }
@@ -270,9 +450,28 @@ textarea {
   }
 }
 
-.edit {
-  @extend .entryBtn;
-  border-radius: 10%;
+.entryBtn {
+  background: none;
+  transition: background 0.5s;
+  padding: 0;
+  width: 25px;
+  height: 25px;
+  font-size: 0.9rem;
+  border-radius: 100%;
+  &:hover {
+    // background: #00000073;
+    background: #2a2a2a73;
+    filter: brightness($brightness);
+  }
+}
+
+.activeBtn {
+  color: rgb(0 0 0 / 0.69);
+}
+
+.button-container {
+  display: inline-block;
+  position: relative;
 }
 
 @keyframes grow {
@@ -284,58 +483,6 @@ textarea {
   }
 }
 
-.color {
-  background: none;
-  border: none;
-  color: white;
-}
-
-.color-option {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 99;
-}
-
-.color:after {
-  position: absolute;
-  content: "";
-  top: 14px;
-  right: 10px;
-  width: 0;
-  height: 0;
-  border: 6px solid transparent;
-  border-color: #fff transparent transparent transparent;
-}
-
-.delete {
-  @extend .entryBtn;
-  text-align: center;
-  width: 25px;
-  height: 25px;
-  font-size: 0.9rem;
-  border-radius: 100%;
-  margin-left: 5px;
-  padding: 0 0.5rem;
-}
-
-.check {
-  @extend .entryBtn;
-  text-align: center;
-  width: 27px;
-  height: 25px;
-  font-size: 0.9rem;
-  border-radius: 100%;
-  margin-left: 5px;
-  padding: 0 0.5rem;
-}
-
-select {
-  color: white;
-  outline: none;
-  border: none;
-}
 // COLORS
 .blue {
   background: rgba(21, 115, 170, 0.75);

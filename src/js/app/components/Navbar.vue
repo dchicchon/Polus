@@ -5,7 +5,6 @@
         <div id="app-title" ref="title">
           <!-- To bring in the img, we must use "/assets" in order to create a relative path for the compiler to find -->
           <img class="app-icon" src="/assets/polus_icon.png" alt="App icon" />
-          <span class="app-sub">Polus</span>
         </div>
         <div id="app-items" ref="items">
           <div id="site">

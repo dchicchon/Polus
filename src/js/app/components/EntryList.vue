@@ -13,13 +13,14 @@
     <ul ref="entryList" class="entryList">
       <Entry
         v-for="(entry, index) in entries"
-        :entry="entry"
+        :deleteEntry="deleteEntry"
         :dragStart="dragStart"
+        :entry="entry"
         :checkEntry="checkEntry"
         :colorEntry="colorEntry"
-        :deleteEntry="deleteEntry"
-        :submitEntry="submitEntry"
         :key="index"
+        :submitEntry="submitEntry"
+        :timeEntry="timeEntry"
       />
     </ul>
     <button @click="addEntry" :value="dateStamp" class="addButton">+</button>
@@ -95,6 +96,7 @@ export default {
       this.entries[index].active = !currentState;
       this.updateStorage();
     },
+
     colorEntry() {
       this.updateStorage();
     },
@@ -116,6 +118,17 @@ export default {
       evt.dataTransfer.setData("entry", entry.text);
       evt.dataTransfer.setData("color", entry.color);
       evt.dataTransfer.setData("parentId", parentId);
+    },
+
+    getEntries() {
+      let dateStamp = this.listDate.toLocaleDateString();
+      chrome.storage.sync.get([dateStamp], (result) => {
+        if (Object.keys(result).length > 0) {
+          this.entries = result[dateStamp];
+        } else {
+          this.entries = [];
+        }
+      });
     },
 
     // On drop, we will add to our list and delete from old one
@@ -153,15 +166,8 @@ export default {
       this.updateStorage();
     },
 
-    getEntries() {
-      let dateStamp = this.listDate.toLocaleDateString();
-      chrome.storage.sync.get([dateStamp], (result) => {
-        if (Object.keys(result).length > 0) {
-          this.entries = result[dateStamp];
-        } else {
-          this.entries = [];
-        }
-      });
+    timeEntry() {
+      this.updateStorage();
     },
 
     submitEntry(text, key) {
@@ -202,7 +208,7 @@ export default {
     },
     addClasses() {
       // classnames is a list
-      if (this.isOver) {
+      if (this.isOver && this.classNames) {
         let classList = this.classNames.slice();
         classList.push("over");
         return classList;
