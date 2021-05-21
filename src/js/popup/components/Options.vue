@@ -22,6 +22,15 @@
       :currentValue="userSettings['notifications']"
       :description="'Get Notifications'"
     />
+
+    <p class="notification-time-text">Set notifications:</p>
+    <select name="notification-time" id="">
+      <option value="">0 minutes before</option>
+      <option value="">15 minutes before</option>
+      <option value="">30 minutes before</option>
+      <option value="">1 hour before</option>
+    </select>
+    <br>
     <br />
     <div>
       Select Photo from
@@ -43,7 +52,7 @@
     </div>
     <br />
     <div>
-      Select a photo from your computer (< 5mb)
+      Select a photo from your computer (< 5MB)
       <button class="button" @click="uploadPhoto">Upload</button>
     </div>
     <p class="error">{{ error }}</p>
@@ -79,8 +88,6 @@ export default {
           (removed) => {
             if (removed) {
               // The permissions have been removed.
-              console.log("Permission Removed");
-        
               this.userSettings["notifications"] = false;
               this.updateStorage();
             }
@@ -94,8 +101,6 @@ export default {
           },
           (granted) => {
             if (granted) {
-            
-              console.log("Permission Granted");
               this.userSettings["notifications"] = true;
               this.updateStorage();
             }
@@ -116,7 +121,6 @@ export default {
           this.updateStorageVersion();
         } else {
           this.userSettings = result["userSettings"];
-          console.log(this.userSettings);
         }
       });
     },
@@ -179,7 +183,6 @@ export default {
         function () {
           // USE INDEXED DB INSTEAD
           chrome.storage.sync.set({ background: false }, () => {
-            console.log(reader.result);
             chrome.storage.local.set({ image: reader.result }, () => {
               chrome.tabs.query(
                 { active: true, currentWindow: true },
@@ -226,6 +229,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.notification-time-text {
+  margin: 0;
+}
+
 #photoURL {
   width: 95%;
   outline: none;

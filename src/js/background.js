@@ -19,7 +19,7 @@ chrome.runtime.onInstalled.addListener(() => {
 
   chrome.storage.sync.set({ userSettings })
   getPhoto();
-  
+
 });
 
 chrome.runtime.setUninstallURL(
@@ -61,13 +61,60 @@ chrome.contextMenus.onClicked.addListener(function (result) {
 
 // Alarm to execute getPhoto()
 chrome.alarms.onAlarm.addListener((alarm) => {
-  chrome.storage.sync.get("userSettings", (result) => {
-    let { userSettings } = result
-    if (userSettings.changePhoto && alarm.name === "changeBackground") {
-      getPhoto();
-    }
-  });
+  if (alarm.name === 'changeBackground') {
+    chrome.storage.sync.get("userSettings", (result) => {
+      let { userSettings } = result
+      if (userSettings.changePhoto) {
+        getPhoto();
+      }
+    });
+  }
+
+  // If we want custom alarms later on, add them here
+
+  // Alarm from Notifications
+  else {
+    // have the alarm occur, look at the alarm name for the key of the entry
+    clearNotifications()
+    let dateStamp = new Date().toLocaleDateString();
+    chrome.storage.sync.get([dateStamp], result => {
+      let entries = result[dateStamp]
+      let entry = entries.find(entry => entry.key === alarm.name)
+      let notificationObj = {
+        message: entry.text,
+        type: 'basic',
+        title: 'Polus',
+        iconUrl: "/assets/polus_icon.png"
+      }
+      // Clear all other notification before this
+      chrome.notifications.create(entry.key, notificationObj,);
+    })
+
+
+
+  }
+
 });
+
+function clearNotifications() {
+  chrome.notifications.getAll(result => {
+    let notifications = Object.keys(result)
+    for (let notification of notifications) {
+      chrome.notifications.clear(notification)
+    }
+
+    // chrome.notifications.getAll(check => {
+    //   console.log("Check if notifications are cleared")
+    //   console.log(check)
+    // })
+  })
+
+}
+
+chrome.notifications.onClicked.addListener((notificationId) => {
+  clearNotifications()
+})
+
 
 // Get new photo from collection https://unsplash.com/documentation
 const getPhoto = () => {

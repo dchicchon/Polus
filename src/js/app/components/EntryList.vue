@@ -104,6 +104,7 @@ export default {
     deleteEntry(key) {
       // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
       let index = this.entries.map((entry) => entry.key).indexOf(key);
+      if (this.entries[index]["time"]) chrome.alarms.clear(key); // clearing alarm if it has a time
       this.entries.splice(index, 1);
       this.updateStorage();
     },

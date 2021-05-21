@@ -1,15 +1,15 @@
 {
-    "/public/js/index.js": "/public/js/index.js?id=4dff630e46a21b1e3095",
-    "/public/js/popup.js": "/public/js/popup.js?id=89d576dd444c16515251",
-    "/public/js/background.js": "/public/js/background.js?id=e6ab3cee47a61279c330",
-    "/public/css/popup.css": "/public/css/popup.css?id=11e67149a0023e17087d",
-    "/public/css/main.css": "/public/css/main.css?id=b04f1040f7ad31ac7d1c",
-    "/public/assets/favicon.ico": "/public/assets/favicon.ico?id=f74ebe79100fe8a38047",
-    "/public/assets/polus_icon.png": "/public/assets/polus_icon.png?id=2e7eb6688e5655199a93",
-    "/public/assets/polus_icon128.png": "/public/assets/polus_icon128.png?id=d9c529da72ae0664d81b",
-    "/public/assets/polus_icon48.png": "/public/assets/polus_icon48.png?id=950dc4867bc04e23d296",
-    "/public/assets/polus_tab_icon.png": "/public/assets/polus_tab_icon.png?id=1480a06ea3d2a06681ef",
-    "/public/html/index.html": "/public/html/index.html?id=9de1df57700a7fbb59ca",
-    "/public/html/popup.html": "/public/html/popup.html?id=53434b559a48903eca05",
-    "/public/manifest.json": "/public/manifest.json?id=eca124f694bc5a4e7aa5"
+    "/dist/js/index.js": "/dist/js/index.js?id=568fe2f36061734bd404",
+    "/dist/js/popup.js": "/dist/js/popup.js?id=3fd2d819b114b58aee40",
+    "/dist/js/background.js": "/dist/js/background.js?id=740eb948fa8e762ed362",
+    "/dist/css/popup.css": "/dist/css/popup.css?id=11e67149a0023e17087d",
+    "/dist/css/main.css": "/dist/css/main.css?id=b04f1040f7ad31ac7d1c",
+    "/dist/assets/favicon.ico": "/dist/assets/favicon.ico?id=f74ebe79100fe8a38047",
+    "/dist/assets/polus_icon.png": "/dist/assets/polus_icon.png?id=2e7eb6688e5655199a93",
+    "/dist/assets/polus_icon128.png": "/dist/assets/polus_icon128.png?id=d9c529da72ae0664d81b",
+    "/dist/assets/polus_icon48.png": "/dist/assets/polus_icon48.png?id=950dc4867bc04e23d296",
+    "/dist/assets/polus_tab_icon.png": "/dist/assets/polus_tab_icon.png?id=1480a06ea3d2a06681ef",
+    "/dist/html/index.html": "/dist/html/index.html?id=9de1df57700a7fbb59ca",
+    "/dist/html/popup.html": "/dist/html/popup.html?id=53434b559a48903eca05",
+    "/dist/manifest.json": "/dist/manifest.json?id=eca124f694bc5a4e7aa5"
 }

@@ -1,7 +1,8 @@
 <template>
   <div class="container">
     <h2 class="page-title">Account</h2>
-    <div class="account-container">
+    <p>Coming Soon!</p>
+    <!-- <div class="account-container">
       <h3 class="signup-text">Join Polus</h3>
       <button @click="signUpWithGoogle()" id="Auth:Google" class="social-btn">
         <div style="display: inline-flex">
@@ -9,12 +10,6 @@
           <div class="social-text">Continue with Google</div>
         </div>
       </button>
-      <!-- <button id="Auth:Apple" class="social-btn">
-          <div style="display: inline-flex">
-            <img />
-            <div class="social-text">Continue with Apple</div>
-          </div>
-        </button> -->
       <div id="orContainer">
         <div class="orBar"></div>
         <div class="or">or</div>
@@ -51,12 +46,12 @@
         Already a member?
         <button id="Auth:ToggleLink" class="login-btn">Login</button>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
-import firebase from "firebase";
+import auth from "firebase/auth";
 
 // Put this in the manifest to begin auth
 // "oauth2": {

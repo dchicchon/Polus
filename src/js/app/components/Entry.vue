@@ -96,6 +96,7 @@
           <span class="material-icons md-21">mode_edit</span>
         </button>
 
+
         <button @click="() => checkEntry(entry.key)" class="entryBtn">
           <span class="material-icons md-21"> done </span>
         </button>
@@ -107,7 +108,6 @@
   </li>
 </template>
 <script>
-import icon from "../../../assets/polus_icon.png";
 export default {
   props: {
     checkEntry: {
@@ -161,6 +161,17 @@ export default {
     if (this.$refs.newEntry) this.$refs.newEntry.focus();
   },
   methods: {
+    makeNotification() {
+      chrome.notifications.clear("test");
+      chrome.notifications.create("test", {
+        message: "hello",
+        type: "basic",
+        title: "Polus",
+        iconUrl: "/assets/polus_icon.png",
+      });
+      // chrome.notifications.onClosed.addListener();
+    },
+
     altChangeActive(e) {
       if (
         e.target.classList.contains("text") ||
@@ -208,51 +219,30 @@ export default {
 
     selectTime() {
       if (this.time !== this.entry.time) {
-        // this.entry.time = parseInt(
-        //   this.time[0] + this.time[1] + this.time[3] + this.time[4]
-        // ); // this is cheaper than using string
         this.entry.time = this.time;
-        // We can use this to check if notifications have been enabled so that we can show the user
-        chrome.permissions.contains(
-          {
-            permissions: ["notifications"],
-          },
-          (result) => {
-            // Currently Allowed
-
-            // REMEMBER TO DELETE PREVIOUS NOTIFICATION ONCE THE ENTRY TIME IS CHANGED
-            // REMEMBER TO DELETE PREVIOUS NOTIFICATION ONCE THE ENTRY TIME IS CHANGED
-            // REMEMBER TO DELETE PREVIOUS NOTIFICATION ONCE THE ENTRY TIME IS CHANGED
-            // REMEMBER TO DELETE PREVIOUS NOTIFICATION ONCE THE ENTRY TIME IS CHANGED
-            // REMEMBER TO DELETE PREVIOUS NOTIFICATION ONCE THE ENTRY TIME IS CHANGED
-
-            if (result) {
-              console.log("Notifications allowed, make notification");
-              // use this.time and entry date to calculate when to make the notification happen
-              let hours = parseInt(this.time[0] + this.time[1]);
-              let minutes = parseInt(this.time[3] + this.time[4]);
-              let eventDate = new Date(this.listDate);
-              eventDate.setHours(hours);
-              eventDate.setMinutes(minutes);
-              console.log(eventDate);
-              const ms = eventDate.getTime() - Date.now();
-              chrome.notifications.create(
-                this.entry.key,
-                {
-                  contextMessage: this.entry.text,
-                  type: "basic",
-                  title: "Polus",
-                  iconUrl: "/assets/polus_icon.png", // this isnt working at the moment
-                  eventTime: ms,
-                },
-                function (result) {
-                  console.log("This result");
-                  console.log(result);
-                }
-              );
+        let eventDate = new Date(this.listDate);
+        let hours = parseInt(this.time[0] + this.time[1]);
+        let minutes = parseInt(this.time[3] + this.time[4]);
+        eventDate.setSeconds(0);
+        eventDate.setHours(hours);
+        eventDate.setMinutes(minutes);
+        const ms = eventDate.getTime() - Date.now();
+        if (ms > 0) {
+          chrome.permissions.contains(
+            {
+              permissions: ["notifications"],
+            },
+            (result) => {
+              // Currently Allowed
+              if (result) {
+                chrome.alarms.create(this.entry.key, {
+                  when: eventDate.getTime(),
+                });
+              }
             }
-          }
-        );
+          );
+        }
+        // We can use this to check if notifications have been enabled so that we can show the user
 
         this.timeEntry();
       }
