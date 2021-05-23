@@ -1,6 +1,5 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(() => {
-
   // 1. On installed, we will check to see if they have anything from previous version in storage
   // 2. If so, we will check every valid date for a storage item and change each item that was altered for the new update
   chrome.contextMenus.create({
@@ -10,16 +9,18 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
   let userSettings = {
-    view: "week",
-    pmode: false,
     changePhoto: true,
-    newTab: true,
     indexOpen: false,
-  }
+    newTab: true,
+    notifications: false,
+    notificationTime: '0',
+    pmode: false,
+    view: "week",
 
-  chrome.storage.sync.set({ userSettings })
+  };
+
+  chrome.storage.sync.set({ userSettings });
   getPhoto();
-  
 });
 
 chrome.runtime.setUninstallURL(
@@ -47,27 +48,73 @@ chrome.alarms.get("changeBackground", (alarm) => {
 // 2. Clicks on 'Open'
 // 3. Opens index.html
 
+chrome.permissions.contains(
+  {
+    permissions: ["notifications"],
+  },
+  (result) => {
+    if (result) {
+      chrome.notifications.onClicked.addListener((notificationId) => {
+        clearNotifications();
+      });
+    }
+  }
+);
+
 chrome.contextMenus.onClicked.addListener(function (result) {
   if (result["menuItemId"] === "open-sesame") {
-    chrome.storage.sync.get('userSettings', result => {
-      let { userSettings } = result
+    chrome.storage.sync.get("userSettings", (result) => {
+      let { userSettings } = result;
       userSettings.indexOpen = true;
       chrome.storage.sync.set({ userSettings }, () => {
         chrome.tabs.create({}); // create a new tab
-      })
-    })
+      });
+    });
   }
 });
 
 // Alarm to execute getPhoto()
 chrome.alarms.onAlarm.addListener((alarm) => {
-  chrome.storage.sync.get("userSettings", (result) => {
-    let { userSettings } = result
-    if (userSettings.changePhoto && alarm.name === "changeBackground") {
-      getPhoto();
-    }
-  });
+  if (alarm.name === "changeBackground") {
+    chrome.storage.sync.get("userSettings", (result) => {
+      let { userSettings } = result;
+      if (userSettings.changePhoto) {
+        getPhoto();
+      }
+    });
+  }
+
+  // If we want custom alarms later on, add them here
+
+  // Alarm from Notifications
+  else {
+    // have the alarm occur, look at the alarm name for the key of the entry
+    clearNotifications();
+    let dateStamp = new Date().toLocaleDateString();
+    chrome.storage.sync.get([dateStamp], (result) => {
+      let entries = result[dateStamp];
+      let entry = entries.find((entry) => entry.key === alarm.name);
+      let notificationObj = {
+        message: entry.text,
+        type: "basic",
+        title: "Polus",
+        iconUrl: "/assets/polus_icon.png",
+      };
+      // Clear all other notification before this
+      chrome.notifications.create(entry.key, notificationObj);
+    });
+  }
 });
+
+function clearNotifications() {
+  chrome.notifications.getAll((result) => {
+    let notifications = Object.keys(result);
+    for (let notification of notifications) {
+      chrome.notifications.clear(notification);
+    }
+
+  });
+}
 
 // Get new photo from collection https://unsplash.com/documentation
 const getPhoto = () => {
@@ -93,8 +140,8 @@ const getPhoto = () => {
         location,
         author,
         photoLink,
-        downloadLink
-      }
+        downloadLink,
+      };
       chrome.storage.sync.set({ background });
     })
     .catch((err) => console.log(`Fetch failed: ${err}`));

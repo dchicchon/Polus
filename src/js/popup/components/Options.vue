@@ -17,11 +17,25 @@
     />
     <Toggle
       :key="3"
-      :toggleItem="toggleItem"
+      :toggleItem="modifyNotificationPermission"
       :name="'notifications'"
       :currentValue="userSettings['notifications']"
       :description="'Get Notifications'"
     />
+
+    <p class="notification-time-text">Set notifications:</p>
+    <select
+      @change="editNotificationTime($event.target.value)"
+      :value="userSettings['notificationTime']"
+      name="notification-time"
+      id=""
+    >
+      <option value="0">0 minutes before</option>
+      <option value="15">15 minutes before</option>
+      <option value="30">30 minutes before</option>
+      <option value="60">1 hour before</option>
+    </select>
+    <br />
     <br />
     <div>
       Select Photo from
@@ -43,7 +57,7 @@
     </div>
     <br />
     <div>
-      Select a photo from your computer (< 5mb)
+      Select a photo from your computer (< 5MB)
       <button class="button" @click="uploadPhoto">Upload</button>
     </div>
     <p class="error">{{ error }}</p>
@@ -68,11 +82,80 @@ export default {
     //   On created, get all the items from storage relating to the thing
   },
   methods: {
+    editNotificationTime(newTime) {
+      let oldTime = this.userSettings["notificationTime"];
+      // if they are using notifications, please update all alarms for notifications
+      chrome.permissions.contains(
+        { permissions: ["notifications"] },
+        (result) => {
+          // if user is using notifications
+          if (result) {
+            chrome.alarms.getAll((alarms) => {
+              if (alarms.length === 1) return; // use this if they only have one alarm
+
+              for (let alarm of alarms) {
+                if (alarm.name == "changeBackground") continue; // avoid this alarm
+
+                // add previous notification time to scheduledTime to get original time
+                let changeTime = new Date(alarm.scheduledTime);
+                // Get original time
+                changeTime.setMinutes(
+                  changeTime.getMinutes() + parseInt(oldTime)
+                );
+                // Now make the change to the new time
+                changeTime.setMinutes(
+                  changeTime.getMinutes() - parseInt(newTime)
+                );
+
+                //  To test this, I will get all alarms and check their time in date format
+                chrome.alarms.create(alarm.name, {
+                  when: changeTime.getTime(),
+                });
+              }
+            });
+          }
+        }
+      );
+      // hopefull this happens after everything so i can get the previous notification time
+      this.userSettings["notificationTime"] = newTime;
+      this.updateStorage();
+    },
+
+    modifyNotificationPermission(event, name) {
+      // get the current setting for notifications from user settings
+      if (this.userSettings["notifications"]) {
+        // ask if user wants to disable notifications
+        chrome.permissions.remove(
+          {
+            permissions: ["notifications"],
+          },
+          (removed) => {
+            if (removed) {
+              // The permissions have been removed.
+              this.userSettings["notifications"] = false;
+              this.updateStorage();
+            }
+          }
+        );
+      } else {
+        // ask if user wants to enable notifications
+        chrome.permissions.request(
+          {
+            permissions: ["notifications"],
+          },
+          (granted) => {
+            if (granted) {
+              this.userSettings["notifications"] = true;
+              this.updateStorage();
+            }
+          }
+        );
+      }
+    },
+
     toggleItem(event, name) {
       this.userSettings[name] = !this.userSettings[name];
-      console.log(this.userSettings);
       this.updateStorage();
-      // chrome.storage.sync.set({ [name]: event.target.checked });
     },
 
     getSettings() {
@@ -144,7 +227,6 @@ export default {
         function () {
           // USE INDEXED DB INSTEAD
           chrome.storage.sync.set({ background: false }, () => {
-            console.log(reader.result);
             chrome.storage.local.set({ image: reader.result }, () => {
               chrome.tabs.query(
                 { active: true, currentWindow: true },
@@ -166,19 +248,19 @@ export default {
     },
 
     uploadPhoto() {
-      console.log("Uploading Photo");
       this.handleFile();
     },
 
     // Do this if user doesnt have the updated storage
     updateStorageVersion() {
       this.userSettings = {
-        view: "week",
-        pmode: false,
-        date: true,
         changePhoto: true,
-        newTab: true,
         indexOpen: false,
+        newTab: true,
+        notifications: false,
+        notificationTime: "0",
+        pmode: false,
+        view: "week",
       };
       this.updateStorage();
     },
@@ -191,6 +273,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.notification-time-text {
+  margin: 0;
+}
+
 #photoURL {
   width: 95%;
   outline: none;

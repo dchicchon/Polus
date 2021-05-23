@@ -129,6 +129,10 @@ export default {
       required: true,
       type: Object,
     },
+    listDate: {
+      type: Date,
+      required: true,
+    },
     submitEntry: {
       required: true,
       type: Function,
@@ -150,19 +154,23 @@ export default {
   // One of the first functions to execute on the render method
   created() {
     this.time = this.entry.time ? this.entry.time : "12:00";
-    if (this.entry.time) {
-      let stdin = this.entry.time + "";
-      let newstd = stdin.splice(1, 0, ":");
-      console.log(newstd);
-       } else {
-      this.time = "12:00";
-    }
   },
   // This will execute when the component is built on the DOM
   mounted() {
     if (this.$refs.newEntry) this.$refs.newEntry.focus();
   },
   methods: {
+    makeNotification() {
+      chrome.notifications.clear("test");
+      chrome.notifications.create("test", {
+        message: "hello",
+        type: "basic",
+        title: "Polus",
+        iconUrl: "/assets/polus_icon.png",
+      });
+      // chrome.notifications.onClosed.addListener();
+    },
+
     altChangeActive(e) {
       if (
         e.target.classList.contains("text") ||
@@ -210,25 +218,33 @@ export default {
 
     selectTime() {
       if (this.time !== this.entry.time) {
-        console.log("Updating since its different");
-        this.entry.time = parseInt(
-          this.time[0] + this.time[1] + this.time[3] + this.time[4]
-        ); // this is cheaper than using string
-        console.log();
+        this.entry.time = this.time;
+        let eventDate = new Date(this.listDate);
+        let hours = parseInt(this.time[0] + this.time[1]);
+        let minutes = parseInt(this.time[3] + this.time[4]);
+        eventDate.setSeconds(0);
+        eventDate.setHours(hours);
+        eventDate.setMinutes(minutes);
+        const ms = eventDate.getTime() - Date.now();
+        // if alarm is in the future
+        if (ms > 0) {
+          // Check if notifications are allowed
+          chrome.permissions.contains(
+            {
+              permissions: ["notifications"],
+            },
+            (result) => {
+              // If allowed, create an alarm for this entry
+              if (result) {
+                chrome.alarms.create(this.entry.key, {
+                  when: eventDate.getTime(),
+                });
+              }
+            }
+          );
+        }
+        // We can use this to check if notifications have been enabled so that we can show the user
 
-        chrome.notifications.create(
-          null,
-          {
-            contextMessage: this.entry.text,
-            type: "basic",
-            title: "Polus",
-            iconUrl: "",
-          },
-          function (result) {
-            console.log("This result");
-            console.log(result);
-          }
-        );
         this.timeEntry();
       }
 

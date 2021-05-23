@@ -4,10 +4,11 @@
       <h2 class="page-title">Updates</h2>
       <div class="update-details">
         <div>
-          <h3 style="margin: 0%">Update 2.0</h3>
+          <h3 style="margin: 0%">Update 1.7</h3>
           <ul style="margin-top: 0; padding-inline-start: 20px">
             <li>Upload photos from your device as your background</li>
             <li>Add times to entries and get notifications</li>
+            <li>Add icons to entries</li>
           </ul>
         </div>
         <div>

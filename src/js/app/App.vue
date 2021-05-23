@@ -23,10 +23,6 @@ export default {
   created() {
     // This is where I should check if I have it set as default new tab or not
     this.setBackground();
-    console.log("Request notifications");
-    chrome.notifications.getPermissionLevel(function (result) {
-      console.log(result);
-    });
   },
 
   methods: {
@@ -51,7 +47,7 @@ export default {
       });
     },
 
-    checkLogin() {},
+    // checkLogin() {},
   },
 };
 </script>
