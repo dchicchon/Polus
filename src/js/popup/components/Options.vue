@@ -71,7 +71,6 @@ export default {
   },
   data() {
     return {
-      tab: "options",
       userSettings: {},
       photoLink: "",
       error: "",
