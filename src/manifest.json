@@ -29,7 +29,6 @@
   "offline_enabled": true,
   "optional_permissions":["notifications"],
   "permissions": [
-    "activeTab",
     "alarms",
     "contextMenus",
     "storage"
