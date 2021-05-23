@@ -24,13 +24,18 @@
     />
 
     <p class="notification-time-text">Set notifications:</p>
-    <select name="notification-time" id="">
-      <option value="">0 minutes before</option>
-      <option value="">15 minutes before</option>
-      <option value="">30 minutes before</option>
-      <option value="">1 hour before</option>
+    <select
+      @change="editNotificationTime($event.target.value)"
+      :value="userSettings['notificationTime']"
+      name="notification-time"
+      id=""
+    >
+      <option value="0">0 minutes before</option>
+      <option value="15">15 minutes before</option>
+      <option value="30">30 minutes before</option>
+      <option value="60">1 hour before</option>
     </select>
-    <br>
+    <br />
     <br />
     <div>
       Select Photo from
@@ -77,6 +82,45 @@ export default {
     //   On created, get all the items from storage relating to the thing
   },
   methods: {
+    editNotificationTime(newTime) {
+      let oldTime = this.userSettings["notificationTime"];
+      // if they are using notifications, please update all alarms for notifications
+      chrome.permissions.contains(
+        { permissions: ["notifications"] },
+        (result) => {
+          // if user is using notifications
+          if (result) {
+            chrome.alarms.getAll((alarms) => {
+              if (alarms.length === 1) return; // use this if they only have one alarm
+
+              for (let alarm of alarms) {
+                if (alarm.name == "changeBackground") continue; // avoid this alarm
+
+                // add previous notification time to scheduledTime to get original time
+                let changeTime = new Date(alarm.scheduledTime);
+                // Get original time
+                changeTime.setMinutes(
+                  changeTime.getMinutes() + parseInt(oldTime)
+                );
+                // Now make the change to the new time
+                changeTime.setMinutes(
+                  changeTime.getMinutes() - parseInt(newTime)
+                );
+
+                //  To test this, I will get all alarms and check their time in date format
+                chrome.alarms.create(alarm.name, {
+                  when: changeTime.getTime(),
+                });
+              }
+            });
+          }
+        }
+      );
+      // hopefull this happens after everything so i can get the previous notification time
+      this.userSettings["notificationTime"] = newTime;
+      this.updateStorage();
+    },
+
     modifyNotificationPermission(event, name) {
       // get the current setting for notifications from user settings
       if (this.userSettings["notifications"]) {
@@ -108,10 +152,10 @@ export default {
         );
       }
     },
+
     toggleItem(event, name) {
       this.userSettings[name] = !this.userSettings[name];
       this.updateStorage();
-      // chrome.storage.sync.set({ [name]: event.target.checked });
     },
 
     getSettings() {
@@ -210,13 +254,13 @@ export default {
     // Do this if user doesnt have the updated storage
     updateStorageVersion() {
       this.userSettings = {
-        view: "week",
-        pmode: false,
-        date: true,
         changePhoto: true,
-        newTab: true,
         indexOpen: false,
+        newTab: true,
         notifications: false,
+        notificationTime: "0",
+        pmode: false,
+        view: "week",
       };
       this.updateStorage();
     },

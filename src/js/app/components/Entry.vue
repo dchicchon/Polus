@@ -96,7 +96,6 @@
           <span class="material-icons md-21">mode_edit</span>
         </button>
 
-
         <button @click="() => checkEntry(entry.key)" class="entryBtn">
           <span class="material-icons md-21"> done </span>
         </button>
@@ -227,13 +226,15 @@ export default {
         eventDate.setHours(hours);
         eventDate.setMinutes(minutes);
         const ms = eventDate.getTime() - Date.now();
+        // if alarm is in the future
         if (ms > 0) {
+          // Check if notifications are allowed
           chrome.permissions.contains(
             {
               permissions: ["notifications"],
             },
             (result) => {
-              // Currently Allowed
+              // If allowed, create an alarm for this entry
               if (result) {
                 chrome.alarms.create(this.entry.key, {
                   when: eventDate.getTime(),

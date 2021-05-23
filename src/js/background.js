@@ -9,11 +9,14 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
   let userSettings = {
-    view: "week",
-    pmode: false,
     changePhoto: true,
-    newTab: true,
     indexOpen: false,
+    newTab: true,
+    notifications: false,
+    notificationTime: '0',
+    pmode: false,
+    view: "week",
+
   };
 
   chrome.storage.sync.set({ userSettings });
@@ -110,10 +113,6 @@ function clearNotifications() {
       chrome.notifications.clear(notification);
     }
 
-    // chrome.notifications.getAll(check => {
-    //   console.log("Check if notifications are cleared")
-    //   console.log(check)
-    // })
   });
 }
 
