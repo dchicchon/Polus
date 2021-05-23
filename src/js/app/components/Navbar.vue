@@ -41,8 +41,15 @@
       <div id="background-info">
         <span id="background-location"> {{ location }}</span>
         <span id="background-source"
-          >Photo by {{ author }}
-          <a id="photo-link" target="_blank" rel="noopener noreferrer"></a> on
+          >Photo by
+          <a
+            id="photo-link"
+            :href="link"
+            target="_blank"
+            rel="noopener noreferrer"
+            >{{ author }}</a
+          >
+          on
           <a
             id="site-link"
             target="_blank"
