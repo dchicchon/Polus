@@ -3,11 +3,13 @@ import App from "./app/App.vue"; // vue
 
 function updateStorageVersion() {
     let userSettings = {
-        view: "week",
-        pmode: false,
         changePhoto: true,
-        newTab: true,
         indexOpen: false,
+        newTab: true,
+        notifications: false,
+        notificationTime: "0",
+        pmode: false,
+        view: "week",
     };
     chrome.storage.sync.set({ userSettings }, () => {
         checkOptions()
