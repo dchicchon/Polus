@@ -106,7 +106,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   }
 });
 
-function clearNotifications() {
+const clearNotifications = () => {
   chrome.notifications.getAll((result) => {
     let notifications = Object.keys(result);
     for (let notification of notifications) {
