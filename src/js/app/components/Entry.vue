@@ -50,7 +50,11 @@
           @click="changeMode('color')"
           :class="[mode === 'color' ? 'activeBtn' : '', 'entryBtn']"
         >
-          <span class="material-icons md-21"> palette </span>
+          <img
+            :style="{ filter: 'invert(1)' }"
+            src="/assets/entry_icons/palette.png"
+            alt="color"
+          />
           <select
             style="cursor: pointer"
             :value="''"
@@ -73,7 +77,11 @@
           :class="[mode === 'time' ? 'activeBtn' : '', 'entryBtn']"
         >
           <!-- only activates clock on mouseup -->
-          <span class="material-icons md-21"> schedule </span>
+          <img
+            :style="{ filter: 'invert(1)' }"
+            src="/assets/entry_icons/clock.png"
+            alt="clock"
+          />
           <input
             v-model="time"
             @blur="blur()"
@@ -89,18 +97,34 @@
           @click="submitEdit(newText, entry.key)"
           class="entryBtn"
         >
-          <span class="material-icons md-21"> save </span>
+          <img
+            :style="{ filter: 'invert(1)' }"
+            src="/assets/entry_icons/save.png"
+            alt="save"
+          />
         </button>
 
         <button v-if="mode !== 'edit'" @click="editEntry" class="entryBtn">
-          <span class="material-icons md-21">mode_edit</span>
+          <img
+            :style="{ filter: 'invert(1)' }"
+            src="/assets/entry_icons/edit.png"
+            alt="edit"
+          />
         </button>
 
         <button @click="() => checkEntry(entry.key)" class="entryBtn">
-          <span class="material-icons md-21"> done </span>
+          <img
+            :style="{ filter: 'invert(1)' }"
+            src="/assets/entry_icons/done.png"
+            alt="done"
+          />
         </button>
         <button @click="() => deleteEntry(entry.key)" class="entryBtn">
-          <span class="material-icons md-21"> delete </span>
+          <img
+            :style="{ filter: 'invert(1)' }"
+            src="/assets/entry_icons/delete.png"
+            alt="delete"
+          />
         </button>
       </div>
     </div>

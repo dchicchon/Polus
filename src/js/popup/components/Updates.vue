@@ -7,6 +7,7 @@
           <h4 style="margin: 0%">Update 1.7.1</h4>
           <ul style="margin-top: 0; padding-inline-start: 20px">
             <li>Bug fixes for dragging entries from previous version</li>
+            <li>Bring icons into polus app instead of relying on internet connection</li>
           </ul>
         </div>
         <div>
