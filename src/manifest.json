@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Polus",
   "version": "1.7.1",
-  "description": "An online planner to help make you more effecient!",
+  "description": "An online planner to help make you more efficient!",
   "icons": {
     "16": "assets/polus_tab_icon.png",
     "48": "assets/polus_icon48.png",
