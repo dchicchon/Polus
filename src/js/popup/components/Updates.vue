@@ -4,7 +4,13 @@
       <h2 class="page-title">Updates</h2>
       <div class="update-details">
         <div>
-          <h3 style="margin: 0%">Update 1.7</h3>
+          <h4 style="margin: 0%">Update 1.7.1</h4>
+          <ul style="margin-top: 0; padding-inline-start: 20px">
+            <li>Bug fixes for dragging entries from previous version</li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="margin: 0%">Update 1.7</h4>
           <ul style="margin-top: 0; padding-inline-start: 20px">
             <li>Upload photos from your device as your background</li>
             <li>Add times to entries and get notifications</li>
@@ -12,7 +18,7 @@
           </ul>
         </div>
         <div>
-          <h3 style="margin: 0%">Update 1.5</h3>
+          <h4 style="margin: 0%">Update 1.5</h4>
           <ul style="margin-top: 0; padding-inline-start: 20px">
             <li>Edit and add color to entries</li>
             <li>Fixed sizing with entries</li>
