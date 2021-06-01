@@ -1,5 +1,6 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(() => {
+  console.log("INSTALLING POLUS");
   // 1. On installed, we will check to see if they have anything from previous version in storage
   // 2. If so, we will check every valid date for a storage item and change each item that was altered for the new update
   chrome.contextMenus.create({
@@ -13,10 +14,9 @@ chrome.runtime.onInstalled.addListener(() => {
     indexOpen: false,
     newTab: true,
     notifications: false,
-    notificationTime: '0',
+    notificationTime: "0",
     pmode: false,
     view: "week",
-
   };
 
   chrome.storage.sync.set({ userSettings });
@@ -25,7 +25,7 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.runtime.setUninstallURL(
   "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit",
-  () => { }
+  () => {}
 );
 
 // Check Alarm
@@ -112,9 +112,8 @@ const clearNotifications = () => {
     for (let notification of notifications) {
       chrome.notifications.clear(notification);
     }
-
   });
-}
+};
 
 // Get new photo from collection https://unsplash.com/documentation
 const getPhoto = () => {

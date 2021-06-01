@@ -160,17 +160,6 @@ export default {
     if (this.$refs.newEntry) this.$refs.newEntry.focus();
   },
   methods: {
-    makeNotification() {
-      chrome.notifications.clear("test");
-      chrome.notifications.create("test", {
-        message: "hello",
-        type: "basic",
-        title: "Polus",
-        iconUrl: "/assets/polus_icon.png",
-      });
-      // chrome.notifications.onClosed.addListener();
-    },
-
     altChangeActive(e) {
       if (
         e.target.classList.contains("text") ||

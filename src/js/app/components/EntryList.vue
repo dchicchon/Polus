@@ -116,7 +116,11 @@ export default {
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
       evt.dataTransfer.setData("key", entry.key);
-      evt.dataTransfer.setData("complete", entry.active);
+      if (entry.active) {
+        evt.dataTransfer.setData("complete", entry.active);
+      } else {
+        evt.dataTransfer.setData("complete", entry.completed);
+      }
       evt.dataTransfer.setData("entry", entry.text);
       evt.dataTransfer.setData("color", entry.color);
       evt.dataTransfer.setData("parentId", parentId);
