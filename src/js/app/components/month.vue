@@ -57,46 +57,6 @@
       // background: $day-background;
       background: rgba(0, 0, 0, 0.15);
       transition: background 0.5s;
-      // .monthDayTitle {
-      //   font-weight: 0;
-      //   border-radius: 12px;
-      //   margin-bottom: 0.25rem;
-      //   width: 20px;
-      //   height: 20px;
-      //   min-width: 16px;
-      //   // padding: 4px 3px 0 3px;
-      //   text-align: center;
-      // }
-      // .monthDetails {
-      //   overflow: auto;
-      //   height: 12rem;
-      //   ul {
-      //     list-style-type: none;
-      //     padding: 0;
-      //     li {
-      //       width: 85%;
-      //       // V 1.0.0.9
-      //       text-align: center;
-      //       white-space: nowrap;
-      //       overflow: hidden;
-      //       display: block;
-      //       text-overflow: ellipsis;
-      //       border: none;
-      //       // background: rgba(21, 115, 170, 0.63);
-      //       transition: background 0.5s;
-      //       color: white;
-      //       margin-bottom: 0.25rem;
-      //       padding: 0.5rem;
-      //       border-radius: 25px;
-      //       font-size: 0.9rem;
-      //       // height: 1rem;
-      //     }
-      //     li:hover {
-      //       // background: rgba(24, 127, 187, 0.993);
-      //       cursor: pointer;
-      //     }
-      //   }
-      // }
     }
   }
 }
@@ -114,16 +74,13 @@ export default {
     };
   },
 
-  created() {
-    // this.dateList();
-  },
+  created() {},
 
   methods: {
     changeMonth(amount) {
-      let changeDate = new Date(this.date);
+      let changeDate = new Date(this.date); // current date:
       changeDate.setMonth(this.date.getMonth() + amount);
       this.date = changeDate;
-      console.log(this.date);
     },
   },
   computed: {
@@ -132,23 +89,31 @@ export default {
       let date = new Date(this.date);
       return date.toLocaleDateString(undefined, options);
     },
+
+    // what is date list? -> Used for making Entry Lists
     dateList() {
       let dates = [];
       let startDate = new Date(this.date);
-      let currentMonth = startDate.getMonth();
-      startDate.setDate(1);
+      let currentMonth = startDate.getMonth(); // what month is it
+      startDate.setDate(1); // set it to day 1 of month
 
       // This is how we set it to sunday
       while (startDate.getDay() !== 0) {
+        // while startDate.getDay is not equal to 0, continue to set date
         startDate.setDate(startDate.getDate() - 1);
       }
 
-      // Make a week if we are still in the same month
-      while (startDate.getMonth() <= currentMonth) {
+      // I think that this is not working because eventually when we change years, we might be in a different month thing not too sure
+      // instead check if its equal to the next month. Easy!
+      let nextDate = new Date();
+      nextDate.setMonth(currentMonth + 1);
+      // if the startDate month is equal to the next month, then exit this loop
+      while (startDate.getMonth() !== nextDate.getMonth()) {
         let week = makeWeek();
         dates = [...dates, ...week];
       }
 
+      // Make a week while we are still in the same month
       function makeWeek() {
         let week = [];
         for (let i = 0; i < 7; i++) {

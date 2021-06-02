@@ -104,7 +104,9 @@ export default {
     deleteEntry(key) {
       // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
       let index = this.entries.map((entry) => entry.key).indexOf(key);
-      if ("time" in this.entries[index]) chrome.alarms.clear(key); // clearing alarm if it has a time
+      if (this.entries[index].hasOwnProperty("time")) {
+        chrome.alarms.clear(key); // clearing alarm if it has time
+      }
       this.entries.splice(index, 1);
       this.updateStorage();
     },
@@ -212,6 +214,8 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+// https://css-tricks.com/almanac/properties/b/backdrop-filter/
+
 .over {
   background: rgba(37, 37, 37, 0.329) !important;
 }
