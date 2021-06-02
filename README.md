@@ -2,6 +2,10 @@
 
 Plan your life using this planner! Includes daily, weekly, monthly calendars that syncs with your chrome storage
 
+## Photos
+
+![Photo](https://i.imgur.com/BBIEU3A.png)
+
 ## Summary
 
 In the past, I have found planning out my life difficult and could never get accustomed to the act of writing in a physical daily planner (from which I never followed through with). That's why I have decided to build my own online daily planner as a google chrome extension! The way I am driven to use my planner daily now is that with each new tab I open, I am forced to look at my calendar and make plans.
