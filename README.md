@@ -4,7 +4,7 @@ Plan your life using this planner! Includes daily, weekly, monthly calendars tha
 
 ## Photos
 
-![Photo](https://i.imgur.com/BBIEU3A.png)
+![App Gif](https://i.imgur.com/nd4hWLg.gif)
 
 ## Summary
 
