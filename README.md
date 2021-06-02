@@ -14,6 +14,11 @@ In the past, I have found planning out my life difficult and could never get acc
 - Three different view buttons that change accordingly: Today, Weekly, and Monthly.
 - Persistent data storage so you can view your calendar wherever you go
 
+## Table of Contents
+1. [Using Firebase](#firebase)
+3. [Chrome APIs](#chrome-api)
+4. [Stretch Goals](#stretch-goals)
+
 <hr>
 
 ## Desktop App Development
@@ -26,7 +31,7 @@ In the past, I have found planning out my life difficult and could never get acc
 
 
 
-### Using Firebase
+### Using Firebase <a name='firebase'></a>
 To allow users to persist their data across their chrome browser and mobile device, 
 users can signup using `Firebase Authentication` to use the `Firestore Database` which will migrate their current data to the database.
 
@@ -104,7 +109,7 @@ chrome.storage.sync.get(null, result => {
 
 <hr>
 
-### Using Chrome APIs
+### Using Chrome APIs <a name='chrome-api'></a>
 
 There are several APIs that you can use when developing Chrome Extensions. One that I mainly use for this extension is the Chrome Storage API.
 
@@ -300,10 +305,8 @@ chrome.cookies.set(
   ### iOS
 
   ### Android
-### Future Builds
+### Stretch Goals <a name='stretch-goals'></a>
 
-<!-- - Separate Weeks on MonthView -->
-<!-- - Draggable list items to other days -->
 - Using Chrome LocalStorage in future as not to throttle chrome.storage.sync
 - IOS and Android Stores
 - A notes tab to add to each day which will keep a log of your notes for the day
