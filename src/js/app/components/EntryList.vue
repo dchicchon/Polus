@@ -212,6 +212,9 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+
+// https://css-tricks.com/almanac/properties/b/backdrop-filter/
+
 .over {
   background: rgba(37, 37, 37, 0.329) !important;
 }
