@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "926662511983",
+    "firebase_url": "https://polus-cc376.firebaseio.com",
+    "project_id": "polus-cc376",
+    "storage_bucket": "polus-cc376.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:926662511983:android:a44edad6fd0c57ec116c9a",
+        "android_client_info": {
+          "package_name": "com.polus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "926662511983-i1kcodt5coasintom4g9fo0fd2ej043q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPSyjCshKFSjT7FnJWHSXofMIGGGWw-50"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "926662511983-i1kcodt5coasintom4g9fo0fd2ej043q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
