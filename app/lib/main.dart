@@ -1,122 +1,104 @@
 import 'package:flutter/material.dart';
-import 'package:app/login.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  MyApp({Key key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _initialized = false;
+  bool _error = false;
+
+  void initializeFlutterFire() async {
+    try {
+      await Firebase.initializeApp();
+      setState(() {
+        _initialized = true;
+      });
+    } catch (e) {
+      setState(() {
+        _error = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    initializeFlutterFire();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_error) {
+      return MaterialApp(
+          title: "Error",
+          theme: ThemeData(primarySwatch: Colors.blue),
+          home: SomethingWentWrong());
+    }
+
+    if (!_initialized) {
+      return Loading();
+    }
+
     return MaterialApp(
-      title: "Polus",
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        title: "Polus",
+        theme: ThemeData(primarySwatch: Colors.blue),
+        home: MyAwesomeApp());
+  }
+}
+
+class SomethingWentWrong extends StatelessWidget {
+  const SomethingWentWrong({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Center(
+        child: Text(
+          "Error",
+        ),
       ),
-      home: LoginPage(),
     );
   }
 }
 
-// https://firebase.flutter.dev/docs/overview#initializing-flutterfire
+class Loading extends StatelessWidget {
+  const Loading({Key key}) : super(key: key);
 
-// class App extends StatefulWidget {
-//   @override
-//   _AppState createState() => _AppState();
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Center(
+        child: Text("Loading"),
+      ),
+    );
+  }
+}
 
-// class _AppState extends State<App> {
-//   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-//   @override
-//   Widget build(BuildContext context) {
-//     return FutureBuilder(
-//         future: _initialization,
-//         builder: (context, snapshot) {
-//           // Check for errors
-//           if (snapshot.hasError) {
-//             return MaterialApp(
-//                 title: 'Something Went Wrong',
-//                 theme: ThemeData(primarySwatch: Colors.blue),
-//                 home: MyErrorPage(title: 'Error'));
-//           }
+// This is where we will check if there is a user logged in or not
 
-//           // Once complete, show your application
-//           if (snapshot.connectionState == ConnectionState.done) {
-//             return MyMainApp(title: 'Polus');
-//           }
+class MyAwesomeApp extends StatefulWidget {
+  MyAwesomeApp({Key key}) : super(key: key);
 
-// // Otherwise, show something while waiting for initialization to complete
-//           return Loading(title: "Loading");
-//         });
-//   }
-// }
+  @override
+  _MyAwesomeAppState createState() => _MyAwesomeAppState();
+}
 
-// class MyErrorPage extends StatefulWidget {
-//   MyErrorPage({Key key, this.title}) : super(key: key);
-
-//   final String title;
-
-//   @override
-//   _MyErrorPageState createState() => _MyErrorPageState();
-// }
-
-// class _MyErrorPageState extends State<MyErrorPage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         appBar: AppBar(title: Text(widget.title)),
-//         body: Center(
-//           child: Column(
-//               mainAxisAlignment: MainAxisAlignment.center,
-//               children: [Text("Error Page")]),
-//         ));
-//   }
-// }
-
-// class MyMainApp extends StatefulWidget {
-//   MyMainApp({Key key, this.title}) : super(key: key);
-
-//   final String title;
-
-//   @override
-//   _MyMainAppState createState() => _MyMainAppState();
-// }
-
-// class _MyMainAppState extends State<MyMainApp> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         appBar: AppBar(title: Text(widget.title)),
-//         body: Center(
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [Text("My Main App")],
-//           ),
-//         )
-//         );
-//   }
-// }
-
-// class Loading extends StatefulWidget {
-//   Loading({Key key, this.title}) : super(key: key);
-
-//   final String title;
-
-//   @override
-//   _LoadingState createState() => _LoadingState();
-// }
-
-// class _LoadingState extends State<Loading> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text(widget.title)),
-//       body: Center(
-//           child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [Text("Loading")],
-//       )),
-//     );
-//   }
-// }
+class _MyAwesomeAppState extends State<MyAwesomeApp> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Polus")),
+      body: const Center(child: Text("Hello World")),
+    );
+  }
+}
