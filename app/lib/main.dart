@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+
+// Starting FlutterFire through the suggestion found here
+// https://firebase.flutter.dev/docs/overview
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
