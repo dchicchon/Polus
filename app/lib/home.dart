@@ -1,5 +1,6 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -54,11 +55,33 @@ class _EntriesListState extends State<EntriesList> {
       .doc(FirebaseAuth.instance.currentUser.uid)
       .snapshots();
 
-  Widget checkEntries(snapshot) {
-    dynamic jsonDocument = snapshot.data;
-    print(jsonDocument['text']);
+// https://stackoverflow.com/questions/66074484/type-documentsnapshot-is-not-a-subtype-of-type-mapstring-dynamic
+  List<Widget> getEntries(snapshot, dateStamp) {
+    print(snapshot.data
+        .data()); // this returns all of the data I have in my database
 
-    return ListTile(title: Text("Hello"));
+    List myList = snapshot.data.data()['7/6/2021'].map<Widget>((entry) {
+      print("ENTRY");
+      print(entry);
+
+      return ListTile(title: Text(entry['text']));
+    }).toList();
+
+    print(myList);
+
+    return myList;
+
+    // Map<String, dynamic> map = Map<String, dynamic>.from(snapshot.data.data()['7/6/2021']);
+
+    // print("GET DATE");
+    // print(map);
+
+    // return snapshot.data.data().map((entry) {
+    //   Map<String, dynamic> data = entry as Map<String, dynamic>;
+    //   return ListTile(title: Text(data['text']));
+    // }).toList();
+
+    // return Text("Hello");
   }
 
   @override
@@ -73,19 +96,14 @@ class _EntriesListState extends State<EntriesList> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         }
-
+        return ListView(children: getEntries(snapshot, null));
         // return ListView(children: [Text('${snapshot.data}')]);
-        return ListView(
-            children: snapshot.data['7-6-2021'].map(
-              (Map entry) {
-                  return ListTile(
-                    title: entry['text'],
-                    subtitle: entry['color'],
-                  );
-              }
-        ).toList()
-        
-        );
+
+        // return ListView(
+        //     children: snapshot.data['7-6-2021'].map((k, v) {
+
+        //   return ListTile(title: Text(v));
+        // }).toList());
       },
     );
   }
