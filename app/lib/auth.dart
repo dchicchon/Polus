@@ -1,5 +1,5 @@
 // import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -18,9 +18,11 @@ Future<UserCredential> signInWithGoogle() async {
   return await FirebaseAuth.instance.signInWithCredential(credential);
 }
 
-Future<UserCredential> createWithEmailAndPassword(email, password) async {
+Future<void> createWithEmailAndPassword(email, password) async {
+  UserCredential userCredential;
+
   try {
-    UserCredential userCredential = await FirebaseAuth.instance
+    userCredential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
     return userCredential;
   } on FirebaseAuthException catch (e) {
@@ -34,3 +36,14 @@ Future<UserCredential> createWithEmailAndPassword(email, password) async {
   }
 }
 
+Future<void> signInWithEmailAndPassword(email, password) async {
+  UserCredential userCredential;
+
+  try {
+    userCredential = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
+    return userCredential;
+  } catch (e) {
+    print(e);
+  }
+}

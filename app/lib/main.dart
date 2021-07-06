@@ -63,6 +63,7 @@ class _MyAppState extends State<MyApp> {
         title: "Polus",
         theme: ThemeData(primarySwatch: Colors.blue),
         home: Navigator(
+          // Pages are here, we only go to home page if a user exists
           pages: [
             MaterialPage(
                 key: ValueKey("Auth Page"), child: Auth(onLogin: _handleLogin)),
@@ -74,7 +75,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _handleLogin(User user) {
-    print("Handle Login");
+    // print("Handle Login");
     setState(() {
       _user = user;
     });
@@ -111,7 +112,7 @@ class Loading extends StatelessWidget {
 
 // This is where we will check if there is a user logged in or not
 class Auth extends StatefulWidget {
-  final Function onLogin;
+  final Function onLogin; // function passed in from parent
 
   Auth({Key key, this.onLogin}) : super(key: key);
 
@@ -126,25 +127,16 @@ class _AuthState extends State<Auth> {
   String authWidget = 'login';
 
   Widget whichWidget() {
-    if (this.authWidget == 'login') {
-      return Login();
-    } else {
-      return SignUp();
-    }
+    return this.authWidget == 'login' ? Login() : SignUp();
   }
 
   @override
   void initState() {
+    // Listen for changes in whether or not there is a user
     firebaseAuth.authStateChanges().listen((User user) {
-      widget.onLogin(user);
-      // if (user == null) {
-      //   print("User is signed out");
-      //   widget.onLogin(user)
-      // } else {
-      //   // Maybe navigate to homePage?
-      //   print("User is signed in, changing login state");
-      //   widget.onLogin(user);
-      // }
+      print("Change in user status");
+      print(user);
+      widget.onLogin(user); // this will change to logged out or logged in
     });
     super.initState();
   }
@@ -248,10 +240,10 @@ class _LoginState extends State<Login> {
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: ElevatedButton(
                           onPressed: () {
-                            print("Submitting Credentials");
-                            if (_loginKey.currentState.validate()) {
-                              print("Valid form");
-                              // Do work here
+                            final form = _loginKey.currentState;
+                            if (form.validate()) {
+                              signInWithEmailAndPassword(emailController.text,
+                                  passwordController.text);
                             } else {
                               print("Form not valid");
                             }
@@ -342,8 +334,6 @@ class _SignUpState extends State<SignUp> {
                             final form = _signUpKey.currentState;
                             // Do work here
                             if (form.validate()) {
-                              print(emailController.text);
-                              print(passwordController.text);
                               createWithEmailAndPassword(emailController.text,
                                   passwordController.text);
                             } else {
@@ -374,6 +364,12 @@ class _SignUpState extends State<SignUp> {
         ));
   }
 }
+
+/** 
+
+* TODO: Get entries from firestore 
+
+*/
 
 class HomePage extends StatefulWidget {
   const HomePage({Key key}) : super(key: key);
