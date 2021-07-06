@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'home.dart';
 import 'auth.dart';
 
 // Starting FlutterFire through the suggestion found here
@@ -61,6 +62,7 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
         title: "Polus",
+        // https://api.flutter.dev/flutter/material/ThemeData-class.html
         theme: ThemeData(primarySwatch: Colors.blue),
         home: Navigator(
           // Pages are here, we only go to home page if a user exists
@@ -123,7 +125,6 @@ class Auth extends StatefulWidget {
 class _AuthState extends State<Auth> {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  // Only show this if user is not signedin
   String authWidget = 'login';
 
   Widget whichWidget() {
@@ -371,28 +372,3 @@ class _SignUpState extends State<SignUp> {
 
 */
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key key}) : super(key: key);
-
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-        child: Center(
-            child: Container(
-                child: Column(
-      children: [
-        Text('You are logged in!'),
-        ElevatedButton(
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-            },
-            child: Text("Logout")),
-      ],
-    ))));
-  }
-}
