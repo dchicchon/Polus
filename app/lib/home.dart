@@ -10,16 +10,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // List<String> entries = <String>['A', 'B', 'C'];
-  // List<int> colorCodes = <int>[600, 500, 100];
+  bool newEntry = false;
+  final TextEditingController entryTextController = TextEditingController();
 
-  // By default, look at todays date
-  // show loading symbol while getting entries
-
-  // Get a list of entries from our database
-
-  // List<Map> getEntries() {}
-  Future<void> addEntry({String date = '7/6/2021'}) async {
+  Future<void> submitEntry({String date = '7-6-2021'}) async {
     print("Adding Entry");
 
     // Document reference
@@ -28,55 +22,93 @@ class _HomePageState extends State<HomePage> {
         .doc(FirebaseAuth.instance.currentUser.uid);
 
     // get data
-    dynamic data = await userRef.get();
 
     // set date (will do in parameters later)
 
     // Get our list of entries
-    List entryList = data.data()[date];
+    // My problem is still the date unfortulately
 
-    Map<String, dynamic> entry = {'text': 'Hello World'};
+    // This is fine since its rare someone would put the same thing twice anyways for a date
+    List<Map<String, dynamic>> entry = [
+      {'text': 'Hello World'}
+    ];
 
-    entryList.add(entry);
+    userRef
+        .update({date: FieldValue.arrayUnion(entry)})
+        .then((value) => print("Entry List Updated"))
+        .catchError((error) => print("Failed to update list $error"));
+  }
 
-    print(entryList);
-
-    // userRef
-    //     .set({'text': "Hello"})
-    //     .then((value) => print('success'))
-    //     .catchError((err) => print(err));
-    // Fieldpath field = FieldPath.of(date);
-    // userRef
-    //     .update()
-    //     .then((value) => print("Entry List Updated"))
-    //     .catchError((error) => print("Failed to update list $error"));
+  void addEntry() {
+    setState(() {
+      entryTextController.text = '';
+      this.newEntry = !this.newEntry;
+    });
   }
 
   @override
-  void initState() {
-    // getEntries();
-    super.initState();
+  void dispose() {
+    entryTextController.dispose();
+    super.dispose();
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Polus"),
-        actions: [
-          IconButton(
-              onPressed: FirebaseAuth.instance.signOut,
-              icon: Icon(Icons.navigate_next)),
-        ],
-      ),
-      body: Container(child: Center(child: EntriesList())),
-      floatingActionButton: FloatingActionButton(
-          onPressed: addEntry, tooltip: 'Increment', child: Icon(Icons.add)),
-    );
+        appBar: AppBar(
+          title: const Text("Polus"),
+          actions: [
+            IconButton(
+                onPressed: FirebaseAuth.instance.signOut,
+                icon: Icon(Icons.navigate_next)),
+          ],
+        ),
+        body: Column(
+          children: [
+            EntriesList(),
+            // If newEntry is true, show the List Tile
+            Visibility(
+                visible: this.newEntry,
+                child: ListTile(
+                    title: TextFormField(
+                  controller: entryTextController,
+                  decoration: InputDecoration(hintText: "Go for a walk..."),
+                  validator: (String value) {
+                    if (value == null || value.isEmpty) {
+                      // Turn new entry off if no value is detected on submit
+                      return 'Please Enter Some text';
+                    }
+                    return '';
+                  },
+                )))
+          ],
+        ),
+        floatingActionButton: Stack(
+          children: [
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: FloatingActionButton(
+                    onPressed: () {
+                      print("hello");
+                    },
+                    child: Icon(Icons.add))),
+            Align(
+                alignment: Alignment.bottomRight,
+                child: FloatingActionButton(
+                    onPressed: () {
+                      print("hello");
+                    },
+                    child: Icon(Icons.add)))
+          ],
+        )
+        // FloatingActionButton(
+        //     onPressed: addEntry, tooltip: 'Increment', child: Icon(Icons.add)),
+        );
   }
 }
 
 class EntriesList extends StatefulWidget {
-  const EntriesList({Key key}) : super(key: key);
+  final Function addEntry;
+  const EntriesList({Key key, this.addEntry}) : super(key: key);
 
   @override
   _EntriesListState createState() => _EntriesListState();
@@ -89,12 +121,13 @@ class _EntriesListState extends State<EntriesList> {
       .snapshots();
 
 // https://stackoverflow.com/questions/66074484/type-documentsnapshot-is-not-a-subtype-of-type-mapstring-dynamic
-  List<Widget> getEntries(snapshot, {String dateStamp = '7/6/2021'}) {
+  List<Widget> getEntries(snapshot, {String dateStamp = '7-6-2021'}) {
     print("Get Entries");
 
     // Our entry list based on datestamp
     List entryList = snapshot.data.data()[dateStamp];
 
+    print(entryList);
     // Check if data is empty
     if (entryList == null) {
       return [];
@@ -126,19 +159,14 @@ class _EntriesListState extends State<EntriesList> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         }
-        return ListView(children: getEntries(snapshot));
+        return ListView(
+          children: getEntries(snapshot),
+          shrinkWrap: true,
+        );
       },
     );
   }
 }
-
-// snapshot.data.map((DocumentSnapshot document) {
-//             Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-//             return ListTile(
-//               title: Text(data['text']),
-//               subtitle: Text(data['color']),
-//             );
-//           }).toList(),
 
 //  ListView.separated(
 //     padding: EdgeInsets.all(8),
