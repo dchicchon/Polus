@@ -366,9 +366,5 @@ class _SignUpState extends State<SignUp> {
   }
 }
 
-/** 
 
-* TODO: Get entries from firestore 
-
-*/
 

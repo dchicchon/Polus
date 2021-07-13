@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uuid/uuid.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key key}) : super(key: key);
@@ -11,39 +12,68 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool newEntry = false;
+  DateTime date = new DateTime.now();
+
+  // This date will change based on which date that we choose. For now, choose todays date
+
   final TextEditingController entryTextController = TextEditingController();
 
-  Future<void> submitEntry({String date = '7-6-2021'}) async {
-    print("Adding Entry");
-
-    // Document reference
-    DocumentReference userRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser.uid);
-
-    // get data
-
-    // set date (will do in parameters later)
-
-    // Get our list of entries
-    // My problem is still the date unfortulately
-
-    // This is fine since its rare someone would put the same thing twice anyways for a date
-    List<Map<String, dynamic>> entry = [
-      {'text': 'Hello World'}
-    ];
-
-    userRef
-        .update({date: FieldValue.arrayUnion(entry)})
-        .then((value) => print("Entry List Updated"))
-        .catchError((error) => print("Failed to update list $error"));
-  }
-
+// Add an additonal entry to our database
   void addEntry() {
     setState(() {
       entryTextController.text = '';
       this.newEntry = !this.newEntry;
     });
+  }
+
+  void submitEntry() {
+    print("Submit Entry");
+
+    final uuid = Uuid();
+
+    if (entryTextController.text != '') {
+      CollectionReference users =
+          FirebaseFirestore.instance.collection('users');
+
+      List<Map<String, dynamic>> entry = [
+        {
+          'text': entryTextController.text,
+          'active': false,
+          'color': 'blue',
+          'key': uuid.v4().substring(0, 9)
+        }
+      ];
+
+      int month = date.month;
+      int day = date.day;
+      int year = date.year;
+
+      String dateString = '$month-$day-$year';
+
+      users
+          .doc(FirebaseAuth.instance.currentUser.uid)
+          .update({dateString: FieldValue.arrayUnion(entry)})
+          .then((value) => print("Entry List Updated"))
+          .catchError((err) => print("Failed to update list $err"));
+      setState(() {
+        entryTextController.text = '';
+        this.newEntry = !this.newEntry;
+      });
+    } else {
+      print("No text in input!");
+    }
+  }
+
+  void handleMenuClick(String value) {
+    // https://stackoverflow.com/questions/58144948/easiest-way-to-add-3-dot-pop-up-menu-appbar-in-flutter
+    switch (value) {
+      case 'Logout':
+        FirebaseAuth.instance.signOut();
+        break;
+      case 'Settings':
+        print("Settings");
+        break;
+    }
   }
 
   @override
@@ -57,15 +87,21 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: const Text("Polus"),
           actions: [
-            IconButton(
-                onPressed: FirebaseAuth.instance.signOut,
-                icon: Icon(Icons.navigate_next)),
+            PopupMenuButton<String>(
+                onSelected: handleMenuClick,
+                itemBuilder: (BuildContext context) {
+                  return {'Logout', 'Settings'}.map((String choice) {
+                    return PopupMenuItem<String>(
+                      value: choice,
+                      child: Text(choice),
+                    );
+                  }).toList();
+                }),
           ],
         ),
         body: Column(
           children: [
-            EntriesList(),
-            // If newEntry is true, show the List Tile
+            EntriesList(this.date),
             Visibility(
                 visible: this.newEntry,
                 child: ListTile(
@@ -84,20 +120,25 @@ class _HomePageState extends State<HomePage> {
         ),
         floatingActionButton: Stack(
           children: [
-            Align(
-                alignment: Alignment.bottomCenter,
-                child: FloatingActionButton(
-                    onPressed: () {
-                      print("hello");
-                    },
-                    child: Icon(Icons.add))),
-            Align(
-                alignment: Alignment.bottomRight,
-                child: FloatingActionButton(
-                    onPressed: () {
-                      print("hello");
-                    },
-                    child: Icon(Icons.add)))
+            Visibility(
+              visible: !this.newEntry,
+              child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: FloatingActionButton(
+                      onPressed: addEntry, child: Icon(Icons.add))),
+            ),
+            Visibility(
+                visible: this.newEntry,
+                child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: FloatingActionButton(
+                        onPressed: submitEntry, child: Icon(Icons.save)))),
+            Visibility(
+                visible: this.newEntry,
+                child: Align(
+                    alignment: Alignment(1, 0.75),
+                    child: FloatingActionButton(
+                        onPressed: addEntry, child: Icon(Icons.cancel)))),
           ],
         )
         // FloatingActionButton(
@@ -107,8 +148,9 @@ class _HomePageState extends State<HomePage> {
 }
 
 class EntriesList extends StatefulWidget {
-  final Function addEntry;
-  const EntriesList({Key key, this.addEntry}) : super(key: key);
+  final DateTime date;
+
+  const EntriesList(this.date);
 
   @override
   _EntriesListState createState() => _EntriesListState();
@@ -121,30 +163,46 @@ class _EntriesListState extends State<EntriesList> {
       .snapshots();
 
 // https://stackoverflow.com/questions/66074484/type-documentsnapshot-is-not-a-subtype-of-type-mapstring-dynamic
-  List<Widget> getEntries(snapshot, {String dateStamp = '7-6-2021'}) {
+  List<Widget> getEntries(snapshot) {
     print("Get Entries");
+    int month = widget.date.month;
+    int day = widget.date.day;
+    int year = widget.date.year;
+
+    String dateString = '$month-$day-$year';
 
     // Our entry list based on datestamp
-    List entryList = snapshot.data.data()[dateStamp];
-
+    print("Snapshot Data");
+    print(snapshot.data);
+    List entryList = snapshot.data.data()[dateString];
+    print("EntryList");
     print(entryList);
     // Check if data is empty
     if (entryList == null) {
-      return [];
+      List myList = entryList.map<Widget>((entry) {
+        return ListTile(
+          title: Text(
+            '',
+          ),
+        );
+      }).toList();
+
+      return myList;
+    } else {
+      // If not empty, return a list of ListTiles widgets with the data we got
+      List myList = entryList.map<Widget>((entry) {
+        return ListTile(
+          title: Text(
+            entry['text'],
+            style: TextStyle(color: Colors.white),
+          ),
+          // Tile Color will be based on entry['color']
+          tileColor: Color.fromRGBO(21, 115, 170, 0.80),
+        );
+      }).toList();
+
+      return myList;
     }
-
-    // If not empty, return a list of ListTiles widgets with the data we got
-    List myList = entryList.map<Widget>((entry) {
-      return ListTile(
-        title: Text(
-          entry['text'],
-          style: TextStyle(color: Colors.white),
-        ),
-        tileColor: Color.fromRGBO(21, 115, 170, 0.80),
-      );
-    }).toList();
-
-    return myList;
   }
 
   @override
