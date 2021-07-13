@@ -1,9 +1,9 @@
 // import 'package:flutter/material.dart';
-// import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-Future<UserCredential> signInWithGoogle() async {
+Future<void> signInWithGoogle() async {
   // Trigger auth flow
   final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
 
@@ -15,15 +15,48 @@ Future<UserCredential> signInWithGoogle() async {
       accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
   // once signed in, return the user credential
-  return await FirebaseAuth.instance.signInWithCredential(credential);
+  await FirebaseAuth.instance.signInWithCredential(credential);
+  
+  // Create user in our firestore with their user id
+  FirebaseFirestore.instance
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser.uid)
+      .set({
+    'userSettings': {
+      'changePhoto': true,
+      'indexOpen': false,
+      'newTab': true,
+      'notifications': false,
+      'notificationTime': "0",
+      'pmode': false,
+      'view': "week",
+    }
+  });
 }
 
+// When we create a user in our database, we must give them an initial data
 Future<void> createWithEmailAndPassword(email, password) async {
   UserCredential userCredential;
-
   try {
     userCredential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
+
+// Create user in our firestore with their user id
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .set({
+      'userSettings': {
+        'changePhoto': true,
+        'indexOpen': false,
+        'newTab': true,
+        'notifications': false,
+        'notificationTime': "0",
+        'pmode': false,
+        'view': "week",
+      }
+    });
+
     return userCredential;
   } on FirebaseAuthException catch (e) {
     if (e.code == 'weak-password') {

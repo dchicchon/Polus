@@ -28,7 +28,6 @@ class _HomePageState extends State<HomePage> {
 
   void submitEntry() {
     print("Submit Entry");
-
     final uuid = Uuid();
 
     if (entryTextController.text != '') {
@@ -85,7 +84,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Polus"),
+          automaticallyImplyLeading: false,
+          title: Text("Polus"),
           actions: [
             PopupMenuButton<String>(
                 onSelected: handleMenuClick,
@@ -101,11 +101,31 @@ class _HomePageState extends State<HomePage> {
         ),
         body: Column(
           children: [
+            // ListView(
+            //   children: [
+            //     Container(
+            //         height: 80,
+            //         child: ListView(
+            //           scrollDirection: Axis.horizontal,
+            //           children: List.generate(3, (int index) {
+            //             return Card(
+            //               color: Colors.blue,
+            //               child: Container(
+            //                 width: 50,
+            //                 height: 50,
+            //                 child: Text("$index"),
+            //               ),
+            //             );
+            //           }),
+            //         ))
+            //   ],
+            // ),
             EntriesList(this.date),
             Visibility(
                 visible: this.newEntry,
                 child: ListTile(
                     title: TextFormField(
+                  autofocus: true,
                   controller: entryTextController,
                   decoration: InputDecoration(hintText: "Go for a walk..."),
                   validator: (String value) {
@@ -170,25 +190,13 @@ class _EntriesListState extends State<EntriesList> {
     int year = widget.date.year;
 
     String dateString = '$month-$day-$year';
-
+    Map<String, dynamic> myMap =
+        Map<String, dynamic>.from(snapshot.data.data());
     // Our entry list based on datestamp
-    print("Snapshot Data");
-    print(snapshot.data);
-    List entryList = snapshot.data.data()[dateString];
     print("EntryList");
-    print(entryList);
     // Check if data is empty
-    if (entryList == null) {
-      List myList = entryList.map<Widget>((entry) {
-        return ListTile(
-          title: Text(
-            '',
-          ),
-        );
-      }).toList();
-
-      return myList;
-    } else {
+    if (myMap.containsKey(dateString)) {
+      List entryList = snapshot.data.data()[dateString];
       // If not empty, return a list of ListTiles widgets with the data we got
       List myList = entryList.map<Widget>((entry) {
         return ListTile(
@@ -201,6 +209,10 @@ class _EntriesListState extends State<EntriesList> {
         );
       }).toList();
 
+      return myList;
+    } else {
+      print("Snapshot data null, make up own list");
+      List<Widget> myList = [Placeholder()];
       return myList;
     }
   }
