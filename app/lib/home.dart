@@ -193,10 +193,13 @@ class _EntriesListState extends State<EntriesList> {
         int year = widget.date.year;
         String dateString = '$month-$day-$year';
 
-        FirebaseFirestore.instance
+        DocumentReference user = FirebaseFirestore.instance
             .collection('users')
-            .doc(FirebaseAuth.instance.currentUser.uid)
-            .update({dateString: FieldValue.arrayRemove(selected[1])});
+            .doc(FirebaseAuth.instance.currentUser.uid);
+
+        user.update({
+          dateString: FieldValue.arrayRemove([selected[1]])
+        });
 
         break;
       case 'Edit':
@@ -241,7 +244,7 @@ class _EntriesListState extends State<EntriesList> {
               return {'Edit', 'Delete', 'Check', 'Color'}.map((String choice) {
                 return PopupMenuItem(
                   child: Text(choice),
-                  value: [choice, entry['text']],
+                  value: [choice, entry],
                 );
               }).toList();
             },

@@ -19,16 +19,18 @@ Future<void> signInWithGoogle() async {
 
   // Create user in our firestore with their user id
   FirebaseFirestore.instance
-      .collection(FirebaseAuth.instance.currentUser.uid)
-      .doc('userSettings')
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser.uid)
       .set({
-    'changePhoto': true,
-    'indexOpen': false,
-    'newTab': true,
-    'notifications': false,
-    'notificationTime': "0",
-    'pmode': false,
-    'view': "week",
+    'userSettings': {
+      'changePhoto': true,
+      'indexOpen': false,
+      'newTab': true,
+      'notifications': false,
+      'notificationTime': "0",
+      'pmode': false,
+      'view': "week",
+    }
   });
 }
 
