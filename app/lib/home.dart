@@ -182,39 +182,78 @@ class _EntriesListState extends State<EntriesList> {
       .doc(FirebaseAuth.instance.currentUser.uid)
       .snapshots();
 
+  // List currentEntries = [];
+
+  void handleEntryMenuClick(List selected) {
+    print(selected);
+    switch (selected[0]) {
+      case 'Delete':
+        int month = widget.date.month;
+        int day = widget.date.day;
+        int year = widget.date.year;
+        String dateString = '$month-$day-$year';
+
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser.uid)
+            .update({dateString: FieldValue.arrayRemove(selected[1])});
+
+        break;
+      case 'Edit':
+        break;
+      case 'Check':
+        break;
+      case 'Color':
+        break;
+    }
+  }
+
 // https://stackoverflow.com/questions/66074484/type-documentsnapshot-is-not-a-subtype-of-type-mapstring-dynamic
   List<Widget> getEntries(snapshot) {
     print("Get Entries");
     int month = widget.date.month;
     int day = widget.date.day;
     int year = widget.date.year;
-
     String dateString = '$month-$day-$year';
+
     Map<String, dynamic> myMap =
         Map<String, dynamic>.from(snapshot.data.data());
     // Our entry list based on datestamp
     print("EntryList");
     // Check if data is empty
+    List<Widget> myList;
+
     if (myMap.containsKey(dateString)) {
       List entryList = snapshot.data.data()[dateString];
       // If not empty, return a list of ListTiles widgets with the data we got
-      List myList = entryList.map<Widget>((entry) {
-        return ListTile(
+      myList = entryList.map<Widget>((entry) {
+        return Card(
+            child: ListTile(
           title: Text(
             entry['text'],
             style: TextStyle(color: Colors.white),
           ),
           // Tile Color will be based on entry['color']
+          trailing: PopupMenuButton(
+            onSelected: handleEntryMenuClick,
+            itemBuilder: (BuildContext context) {
+              // Also pass in item id here too
+              return {'Edit', 'Delete', 'Check', 'Color'}.map((String choice) {
+                return PopupMenuItem(
+                  child: Text(choice),
+                  value: [choice, entry['text']],
+                );
+              }).toList();
+            },
+          ),
           tileColor: Color.fromRGBO(21, 115, 170, 0.80),
-        );
+        ));
       }).toList();
-
-      return myList;
     } else {
       print("Snapshot data null, make up own list");
-      List<Widget> myList = [Placeholder()];
-      return myList;
+      myList = [Placeholder()];
     }
+    return myList;
   }
 
   @override
@@ -237,15 +276,3 @@ class _EntriesListState extends State<EntriesList> {
     );
   }
 }
-
-//  ListView.separated(
-//     padding: EdgeInsets.all(8),
-//     itemCount: entries.length,
-//     itemBuilder: (BuildContext context, int index) {
-//       return Container(
-//           child: Center(child: Text('Entry ${entries[index]}')),
-//           height: 50,
-//           color: Colors.blue[colorCodes[index]]);
-//     },
-//     separatorBuilder: (BuildContext context, int index) => Divider(),
-//   )

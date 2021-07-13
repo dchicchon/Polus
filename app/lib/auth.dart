@@ -16,21 +16,19 @@ Future<void> signInWithGoogle() async {
 
   // once signed in, return the user credential
   await FirebaseAuth.instance.signInWithCredential(credential);
-  
+
   // Create user in our firestore with their user id
   FirebaseFirestore.instance
-      .collection('users')
-      .doc(FirebaseAuth.instance.currentUser.uid)
+      .collection(FirebaseAuth.instance.currentUser.uid)
+      .doc('userSettings')
       .set({
-    'userSettings': {
-      'changePhoto': true,
-      'indexOpen': false,
-      'newTab': true,
-      'notifications': false,
-      'notificationTime': "0",
-      'pmode': false,
-      'view': "week",
-    }
+    'changePhoto': true,
+    'indexOpen': false,
+    'newTab': true,
+    'notifications': false,
+    'notificationTime': "0",
+    'pmode': false,
+    'view': "week",
   });
 }
 
