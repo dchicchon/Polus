@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'home.dart';
 import 'auth.dart';
+import 'settings.dart';
 
 // Starting FlutterFire through the suggestion found here
 // https://firebase.flutter.dev/docs/overview
@@ -48,7 +49,9 @@ class _MyAppState extends State<MyApp> {
     if (_error) {
       return MaterialApp(
           title: "Error",
-          theme: ThemeData(primarySwatch: Colors.blue),
+          theme: ThemeData(
+              primarySwatch: Colors.blue,
+              scaffoldBackgroundColor: Colors.black),
           home: SomethingWentWrong());
     }
 
@@ -64,16 +67,25 @@ class _MyAppState extends State<MyApp> {
         title: "Polus",
         // https://api.flutter.dev/flutter/material/ThemeData-class.html
         theme: ThemeData(primarySwatch: Colors.blue),
-        home: Navigator(
-          // Pages are here, we only go to home page if a user exists
-          pages: [
-            MaterialPage(
-                key: ValueKey("Auth Page"), child: Auth(onLogin: _handleLogin)),
-            if (_user != null)
-              MaterialPage(key: ValueKey("Home Page"), child: HomePage())
-          ],
-          onPopPage: (route, result) => route.didPop(result),
-        ));
+        home: _user == null
+            ? Navigator(
+                // Pages are here, we only go to home page if a user exists
+                pages: [
+                  MaterialPage(
+                      key: ValueKey("Auth Page"),
+                      child: Auth(onLogin: _handleLogin)),
+                  // if (_user != null)
+                  //   MaterialPage(key: ValueKey("Home Page"), child: HomePage()),
+                ],
+                onPopPage: (route, result) => route.didPop(result),
+              )
+            : Navigator(
+                pages: [
+                  MaterialPage(key: ValueKey("Settings"), child: SettingsPage()),
+                  MaterialPage(key: ValueKey("Home Page"), child: HomePage()),
+                ],
+                onPopPage: (route, result) => route.didPop(result),
+              ));
   }
 
   void _handleLogin(User user) {
@@ -144,6 +156,7 @@ class _AuthState extends State<Auth> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(title: const Text("Polus")),
       body: Center(
           child: Container(
@@ -243,8 +256,9 @@ class _LoginState extends State<Login> {
                           onPressed: () {
                             final form = _loginKey.currentState;
                             if (form.validate()) {
-                              signInWithEmailAndPassword(emailController.text,
-                                  passwordController.text);
+                              signInWithEmailAndPassword(
+                                  emailController.text.trim(),
+                                  passwordController.text.trim());
                             } else {
                               print("Form not valid");
                             }
@@ -335,8 +349,9 @@ class _SignUpState extends State<SignUp> {
                             final form = _signUpKey.currentState;
                             // Do work here
                             if (form.validate()) {
-                              createWithEmailAndPassword(emailController.text,
-                                  passwordController.text);
+                              createWithEmailAndPassword(
+                                  emailController.text.trim(),
+                                  passwordController.text.trim());
                             } else {
                               print("Form not valid");
                             }
@@ -365,6 +380,3 @@ class _SignUpState extends State<SignUp> {
         ));
   }
 }
-
-
-

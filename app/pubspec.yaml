@@ -26,7 +26,7 @@ dependencies:
 
   # Add the dependencies for the Firebase products you want to use in your app
   # For example, to use Firebase Authentication and Cloud Firestore
-
+  intl: 0.17.0
   firebase_core: ^1.3.0
   cloud_firestore: ^2.3.0
   firebase_auth: ^1.4.1

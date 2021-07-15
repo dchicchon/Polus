@@ -1,10 +1,14 @@
+import 'package:app/settings.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:uuid/uuid.dart';
+// import 'package:uuid/uuid.dart';
+import 'package:intl/intl.dart';
+import 'settings.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key key}) : super(key: key);
+  const HomePage();
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -13,6 +17,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool newEntry = false;
   DateTime date = new DateTime.now();
+  ScrollController scrollController = ScrollController();
 
   // This date will change based on which date that we choose. For now, choose todays date
 
@@ -24,11 +29,13 @@ class _HomePageState extends State<HomePage> {
       entryTextController.text = '';
       this.newEntry = !this.newEntry;
     });
+    scrollController.animateTo(scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 500), curve: Curves.easeOut);
   }
 
   void submitEntry() {
     print("Submit Entry");
-    final uuid = Uuid();
+    // final uuid = Uuid();
 
     if (entryTextController.text != '') {
       CollectionReference users =
@@ -39,14 +46,12 @@ class _HomePageState extends State<HomePage> {
           'text': entryTextController.text,
           'active': false,
           'color': 'blue',
-          'key': uuid.v4().substring(0, 9)
         }
       ];
 
       int month = date.month;
       int day = date.day;
       int year = date.year;
-
       String dateString = '$month-$day-$year';
 
       users
@@ -59,7 +64,11 @@ class _HomePageState extends State<HomePage> {
         this.newEntry = !this.newEntry;
       });
     } else {
+      // Delete Entry
       print("No text in input!");
+      setState(() {
+        this.newEntry = !this.newEntry;
+      });
     }
   }
 
@@ -70,9 +79,18 @@ class _HomePageState extends State<HomePage> {
         FirebaseAuth.instance.signOut();
         break;
       case 'Settings':
-        print("Settings");
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SettingsPage()));
         break;
     }
+  }
+
+  void changeDate(int num) {
+    var newDate =
+        new DateTime(this.date.year, this.date.month, this.date.day + num);
+    setState(() {
+      date = newDate;
+    });
   }
 
   @override
@@ -83,61 +101,74 @@ class _HomePageState extends State<HomePage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text("Polus"),
-          actions: [
-            PopupMenuButton<String>(
-                onSelected: handleMenuClick,
-                itemBuilder: (BuildContext context) {
-                  return {'Logout', 'Settings'}.map((String choice) {
-                    return PopupMenuItem<String>(
-                      value: choice,
-                      child: Text(choice),
-                    );
-                  }).toList();
-                }),
-          ],
-        ),
         body: Column(
           children: [
-            // ListView(
-            //   children: [
-            //     Container(
-            //         height: 80,
-            //         child: ListView(
-            //           scrollDirection: Axis.horizontal,
-            //           children: List.generate(3, (int index) {
-            //             return Card(
-            //               color: Colors.blue,
-            //               child: Container(
-            //                 width: 50,
-            //                 height: 50,
-            //                 child: Text("$index"),
-            //               ),
-            //             );
-            //           }),
-            //         ))
-            //   ],
-            // ),
-            EntriesList(this.date),
-            Visibility(
-                visible: this.newEntry,
-                child: ListTile(
-                    title: TextFormField(
-                  autofocus: true,
-                  controller: entryTextController,
-                  decoration: InputDecoration(hintText: "Go for a walk..."),
-                  validator: (String value) {
-                    if (value == null || value.isEmpty) {
-                      // Turn new entry off if no value is detected on submit
-                      return 'Please Enter Some text';
-                    }
-                    return '';
-                  },
-                )))
+            Flexible(
+              flex: 1,
+              child: Container(
+                  color: Colors.grey[900],
+                  padding: EdgeInsets.all(5),
+                  child: (Column(children: [
+                    Row(
+                      children: [
+                        Image(
+                            height: 30.0,
+                            image: AssetImage('assets/polus_icon48.png')),
+                        Spacer(),
+                        PopupMenuButton<String>(
+                            onSelected: handleMenuClick,
+                            icon: Icon(Icons.more_vert, color: Colors.white),
+                            itemBuilder: (BuildContext context) {
+                              return {'Logout', 'Settings'}
+                                  .map((String choice) {
+                                return PopupMenuItem<String>(
+                                  value: choice,
+                                  child: Text(choice),
+                                );
+                              }).toList();
+                            }),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {
+                              changeDate(-1);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: Color.fromRGBO(21, 115, 170, 0.80),
+                            ),
+                            child: Icon(Icons.arrow_left)),
+                        Spacer(),
+                        ElevatedButton(
+                            onPressed: () {
+                              changeDate(1);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: Color.fromRGBO(21, 115, 170, 0.80),
+                            ),
+                            child: Icon(Icons.arrow_right))
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(DateFormat.yMMMMEEEEd().format(this.date),
+                            style: TextStyle(color: Colors.white)),
+                      ],
+                    )
+                  ]))),
+            ),
+            // Scrollable list of dates
+            Flexible(
+                flex: 5,
+                child: Container(
+                  child: EntriesList(this.date, this.newEntry,
+                      this.entryTextController, this.scrollController),
+                ))
           ],
         ),
+        backgroundColor: Colors.black,
         floatingActionButton: Stack(
           children: [
             Visibility(
@@ -160,17 +191,17 @@ class _HomePageState extends State<HomePage> {
                     child: FloatingActionButton(
                         onPressed: addEntry, child: Icon(Icons.cancel)))),
           ],
-        )
-        // FloatingActionButton(
-        //     onPressed: addEntry, tooltip: 'Increment', child: Icon(Icons.add)),
-        );
+        ));
   }
 }
 
 class EntriesList extends StatefulWidget {
   final DateTime date;
-
-  const EntriesList(this.date);
+  final bool newEntry;
+  final ScrollController scrollController;
+  final TextEditingController entryTextController;
+  const EntriesList(this.date, this.newEntry, this.entryTextController,
+      this.scrollController);
 
   @override
   _EntriesListState createState() => _EntriesListState();
@@ -182,25 +213,19 @@ class _EntriesListState extends State<EntriesList> {
       .doc(FirebaseAuth.instance.currentUser.uid)
       .snapshots();
 
-  // List currentEntries = [];
-
   void handleEntryMenuClick(List selected) {
-    print(selected);
+    int month = widget.date.month;
+    int day = widget.date.day;
+    int year = widget.date.year;
+    String dateString = '$month-$day-$year';
+    DocumentReference user = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser.uid);
     switch (selected[0]) {
       case 'Delete':
-        int month = widget.date.month;
-        int day = widget.date.day;
-        int year = widget.date.year;
-        String dateString = '$month-$day-$year';
-
-        DocumentReference user = FirebaseFirestore.instance
-            .collection('users')
-            .doc(FirebaseAuth.instance.currentUser.uid);
-
         user.update({
           dateString: FieldValue.arrayRemove([selected[1]])
         });
-
         break;
       case 'Edit':
         break;
@@ -214,54 +239,86 @@ class _EntriesListState extends State<EntriesList> {
 // https://stackoverflow.com/questions/66074484/type-documentsnapshot-is-not-a-subtype-of-type-mapstring-dynamic
   List<Widget> getEntries(snapshot) {
     print("Get Entries");
-    int month = widget.date.month;
-    int day = widget.date.day;
-    int year = widget.date.year;
-    String dateString = '$month-$day-$year';
+    String dateString =
+        '${widget.date.month}-${widget.date.day}-${widget.date.year}';
 
     Map<String, dynamic> myMap =
         Map<String, dynamic>.from(snapshot.data.data());
-    // Our entry list based on datestamp
-    print("EntryList");
-    // Check if data is empty
     List<Widget> myList;
 
     if (myMap.containsKey(dateString)) {
       List entryList = snapshot.data.data()[dateString];
       // If not empty, return a list of ListTiles widgets with the data we got
       myList = entryList.map<Widget>((entry) {
-        return Card(
-            child: ListTile(
-          title: Text(
-            entry['text'],
-            style: TextStyle(color: Colors.white),
-          ),
-          // Tile Color will be based on entry['color']
-          trailing: PopupMenuButton(
-            onSelected: handleEntryMenuClick,
-            itemBuilder: (BuildContext context) {
-              // Also pass in item id here too
-              return {'Edit', 'Delete', 'Check', 'Color'}.map((String choice) {
-                return PopupMenuItem(
-                  child: Text(choice),
-                  value: [choice, entry],
-                );
-              }).toList();
-            },
-          ),
-          tileColor: Color.fromRGBO(21, 115, 170, 0.80),
-        ));
+        return Entry(entry, handleEntryMenuClick);
       }).toList();
+
+      // What about if we add space additonally after the input?
+
+      myList.add(Visibility(
+          visible: widget.newEntry,
+          child: Card(
+              child: ListTile(
+            title: TextFormField(
+              style: TextStyle(color: Colors.white),
+              autofocus: true,
+              controller: widget.entryTextController, // comes from parent
+              decoration: InputDecoration(hintText: "Go for a walk..."),
+              validator: (String value) {
+                if (value == null || value.isEmpty) {
+                  // Turn new entry off if no value is detected on submit
+                  return 'Please Enter Some text';
+                }
+                return '';
+              },
+            ),
+            tileColor: Color.fromRGBO(21, 115, 170, 0.80),
+          ))));
+
+      myList.add(Visibility(
+          visible: widget.newEntry,
+          child: Opacity(
+              opacity: 0.0,
+              child: Placeholder(
+                fallbackHeight: MediaQuery.of(context).viewInsets.bottom,
+              ))));
     } else {
       print("Snapshot data null, make up own list");
-      myList = [Placeholder()];
+      myList = [
+        Visibility(
+            visible: widget.newEntry,
+            child: Card(
+                child: ListTile(
+              title: TextFormField(
+                style: TextStyle(color: Colors.white),
+                autofocus: true,
+                controller: widget.entryTextController, // comes from parent
+                decoration: InputDecoration(hintText: "Go for a walk..."),
+                validator: (String value) {
+                  if (value == null || value.isEmpty) {
+                    // Turn new entry off if no value is detected on submit
+                    return 'Please Enter Some text';
+                  }
+                  return '';
+                },
+              ),
+              tileColor: Color.fromRGBO(21, 115, 170, 0.80),
+            ))),
+        Visibility(
+            visible: widget.newEntry,
+            child: Opacity(
+                opacity: 0.0,
+                child: Placeholder(
+                  fallbackHeight: MediaQuery.of(context).viewInsets.bottom,
+                )))
+      ];
     }
     return myList;
   }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return (StreamBuilder(
       stream: _entryStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasError) {
@@ -273,9 +330,58 @@ class _EntriesListState extends State<EntriesList> {
         }
         return ListView(
           children: getEntries(snapshot),
+          padding: EdgeInsets.all(8.0),
+          controller: widget.scrollController,
           shrinkWrap: true,
+          // reverse: true,
+
+          // physics:
+          //     BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         );
       },
-    );
+    ));
+  }
+}
+
+class Entry extends StatefulWidget {
+  final Map entry;
+  final Function handleEntryMenuClick;
+  const Entry(this.entry, this.handleEntryMenuClick);
+
+  @override
+  _EntryState createState() => _EntryState();
+}
+
+class _EntryState extends State<Entry> {
+// For picking time
+// https://www.youtube.com/watch?v=aPaFalC2a28&ab_channel=JohannesMilke
+
+  @override
+  Widget build(BuildContext context) {
+    // For each entry, I want to be able to swipe left and be able to peform
+    // certain actions
+    return Card(
+        child: ListTile(
+      title: Text(
+        widget.entry['text'],
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
+      // Tile Color will be based on entry['color']
+      trailing: PopupMenuButton(
+        onSelected: widget.handleEntryMenuClick,
+        itemBuilder: (BuildContext context) {
+          // Also pass in item id here too
+          return {'Edit', 'Delete', 'Check', 'Color'}.map((String choice) {
+            return PopupMenuItem(
+              child: Text(choice),
+              value: [choice, widget.entry],
+            );
+          }).toList();
+        },
+      ),
+      tileColor: Color.fromRGBO(21, 115, 170, 0.80),
+    ));
   }
 }
