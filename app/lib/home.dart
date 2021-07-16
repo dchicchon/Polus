@@ -9,7 +9,6 @@ import 'settings.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage();
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -38,25 +37,23 @@ class _HomePageState extends State<HomePage> {
     // final uuid = Uuid();
 
     if (entryTextController.text != '') {
-      CollectionReference users =
-          FirebaseFirestore.instance.collection('users');
+      print("Entry not empty: Submit here");
+      String dateString =
+          '${this.date.month}-${this.date.day}-${this.date.year}';
 
-      List<Map<String, dynamic>> entry = [
-        {
-          'text': entryTextController.text,
-          'active': false,
-          'color': 'blue',
-        }
-      ];
-
-      int month = date.month;
-      int day = date.day;
-      int year = date.year;
-      String dateString = '$month-$day-$year';
-
-      users
+      CollectionReference date = FirebaseFirestore.instance
+          .collection('users')
           .doc(FirebaseAuth.instance.currentUser.uid)
-          .update({dateString: FieldValue.arrayUnion(entry)})
+          .collection(dateString);
+
+      Map<String, dynamic> entry = {
+        'text': entryTextController.text,
+        'active': false,
+        'color': 'blue',
+      };
+
+      date
+          .add(entry)
           .then((value) => print("Entry List Updated"))
           .catchError((err) => print("Failed to update list $err"));
       setState(() {
@@ -204,132 +201,136 @@ class EntriesList extends StatefulWidget {
 }
 
 class _EntriesListState extends State<EntriesList> {
-  final Stream _entryStream = FirebaseFirestore.instance
-      .collection('users')
-      .doc(FirebaseAuth.instance.currentUser.uid)
-      .snapshots();
+  Stream<QuerySnapshot> _entryStream;
 
   void handleEntryMenuClick(List selected) {
-    int month = widget.date.month;
-    int day = widget.date.day;
-    int year = widget.date.year;
-    String dateString = '$month-$day-$year';
-    DocumentReference user = FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser.uid);
-    switch (selected[0]) {
+    var type = selected[0];
+    var entry = selected[1];
+    var id = selected[2];
+
+    switch (type) {
       case 'Delete':
-        user.update({
-          dateString: FieldValue.arrayRemove([selected[1]])
-        });
+        deleteEntry(entry, id);
         break;
       case 'Edit':
+        // user.update({});
         break;
       case 'Check':
+        checkEntry(entry);
         break;
       case 'Color':
         break;
     }
+
+    // Maybe our switch statement will get what kind of edit that we are doing?
   }
 
-// https://stackoverflow.com/questions/66074484/type-documentsnapshot-is-not-a-subtype-of-type-mapstring-dynamic
-  List<Widget> getEntries(snapshot) {
-    print("Get Entries");
+  void editEntry() {}
 
+  void setStream() {
     String dateString =
         '${widget.date.month}-${widget.date.day}-${widget.date.year}';
+    _entryStream = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .collection(dateString)
+        .snapshots();
+  }
 
-    Map<String, dynamic> myMap =
-        Map<String, dynamic>.from(snapshot.data.data());
-    List<Widget> myList;
+  void updateEntries() {}
 
-    if (myMap.containsKey(dateString)) {
-      List entryList = snapshot.data.data()[dateString];
-      // If not empty, return a list of ListTiles widgets with the data we got
-      myList = entryList.map<Widget>((entry) {
-        return Entry(entry, handleEntryMenuClick);
+  void deleteEntry(entry, id) {
+    String date = '${widget.date.month}-${widget.date.day}-${widget.date.year}';
+    CollectionReference dateRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .collection(date);
+    print(id);
+    dateRef
+        .doc(id)
+        .delete()
+        .then((value) => print("Entry Deleted"))
+        .catchError((error) => print("Failed to Delete Entry: $error"));
+  }
+
+  void colorEntry(entry) {
+    String date = '${widget.date.month}-${widget.date.day}-${widget.date.year}';
+    CollectionReference dateRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .collection(date);
+  }
+
+  void checkEntry(entry) {
+    String date = '${widget.date.month}-${widget.date.day}-${widget.date.year}';
+    DocumentReference user = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser.uid);
+
+    // we need an update where statement here that will refer to the same text thats currently on our datebase
+    user.update({});
+  }
+
+// Return List<Widget> to ListView in build
+// https://stackoverflow.com/questions/66074484/type-documentsnapshot-is-not-a-subtype-of-type-mapstring-dynamic
+  List<Widget> getEntries(snapshot) {
+    print("Getting Entries");
+    List<Widget> myList = []; // initalize list
+    // Add items to our list if we have data. If I don't add the `toList()` method it does not work. Not sure why
+    if (snapshot.data.docs.length != 0) {
+      snapshot.data.docs.map((DocumentSnapshot document) {
+        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+        myList.add(Entry(data, handleEntryMenuClick));
       }).toList();
+    }
 
-      // What about if we add space additonally after the input?
+    // Add in our Text Input Widget after adding all of the entries
+    // https://stackoverflow.com/questions/59197602/keyboard-not-being-detected-mediaquery-ofcontext-viewinsets-bottom-always-ret
 
-// This might be a solution to the keyboard margin
-// https://stackoverflow.com/questions/59197602/keyboard-not-being-detected-mediaquery-ofcontext-viewinsets-bottom-always-ret
-      myList.add(Visibility(
-          visible: widget.newEntry,
-          child: Card(
-              margin: widget.newEntry
-                  ? EdgeInsets.fromLTRB(
-                      0,
-                      0,
-                      0,
-                      MediaQuery.of(context)
-                          .viewInsets
-                          .bottom) // maybe input the Height of Keyboard instead Here
-                  : EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: ListTile(
-                title: TextFormField(
-                  style: TextStyle(color: Colors.white),
-                  autofocus: true,
-                  controller: widget.entryTextController, // comes from parent
-                  decoration: InputDecoration(hintText: "Go for a walk..."),
-                  validator: (String value) {
-                    if (value == null || value.isEmpty) {
-                      // Turn new entry off if no value is detected on submit
-                      return 'Please Enter Some text';
-                    }
-                    return '';
-                  },
-                ),
-                tileColor: Color.fromRGBO(21, 115, 170, 0.80),
-              ))));
-
-// Instead of placeholder, use margin? not sure
-      // myList.add(Visibility(
-      //     visible: widget.newEntry,
-      //     child: Opacity(
-      //         opacity: 0.0,
-      //         child: Placeholder(
-      //           fallbackHeight: MediaQuery.of(context)
-      //               .viewInsets
-      //               .bottom, // height of keyboard
-      //         ))));
-    } else {
-      print("Snapshot data null, make up own list");
-      myList = [
-        Visibility(
-            visible: widget.newEntry,
-            child: Card(
-                child: ListTile(
+    myList.add(Visibility(
+        visible: widget.newEntry,
+        child: Card(
+            margin: widget.newEntry
+                ? EdgeInsets.fromLTRB(
+                    0,
+                    0,
+                    0,
+                    MediaQuery.of(context)
+                        .viewInsets
+                        .bottom) // maybe input the Height of Keyboard instead Here
+                : EdgeInsets.fromLTRB(0, 0, 0, 0),
+            child: ListTile(
               title: TextFormField(
                 style: TextStyle(color: Colors.white),
                 autofocus: true,
                 controller: widget.entryTextController, // comes from parent
                 decoration: InputDecoration(hintText: "Go for a walk..."),
-                validator: (String value) {
-                  if (value == null || value.isEmpty) {
-                    // Turn new entry off if no value is detected on submit
-                    return 'Please Enter Some text';
-                  }
-                  return '';
-                },
+                // validator: (String value) {
+                //   if (value == null || value.isEmpty) {
+                //     // Turn new entry off if no value is detected on submit
+                //     return 'Please Enter Some text';
+                //   }
+                //   return '';
+                // },
               ),
               tileColor: Color.fromRGBO(21, 115, 170, 0.80),
-            ))),
-        Visibility(
-            visible: widget.newEntry,
-            child: Opacity(
-                opacity: 0.0,
-                child: Placeholder(
-                  fallbackHeight: MediaQuery.of(context).viewInsets.bottom,
-                )))
-      ];
-    }
+            ))));
     return myList;
   }
 
   @override
+  void initState() {
+    super.initState();
+    setStream();
+  }
+
+  void didUpdateWidget(old) {
+    super.didUpdateWidget(old);
+    setStream();
+  }
+
   Widget build(BuildContext context) {
-    return (StreamBuilder(
+    return (StreamBuilder<QuerySnapshot>(
       stream: _entryStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasError) {
@@ -339,15 +340,13 @@ class _EntriesListState extends State<EntriesList> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         }
-        return ListView(
+        return new ListView(
           children: getEntries(snapshot),
           padding: EdgeInsets.all(8.0),
           controller: widget.scrollController,
           shrinkWrap: true,
-          // reverse: true,
-
-          // physics:
-          //     BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          physics:
+              BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         );
       },
     ));
@@ -357,6 +356,7 @@ class _EntriesListState extends State<EntriesList> {
 class Entry extends StatefulWidget {
   final Map entry;
   final Function handleEntryMenuClick;
+  // final int documentID;
   const Entry(this.entry, this.handleEntryMenuClick);
 
   @override
