@@ -106,8 +106,9 @@ class _HomePageState extends State<HomePage> {
             Flexible(
               flex: 1,
               child: Container(
+                  // Leave margin here for top bar
                   color: Colors.grey[900],
-                  padding: EdgeInsets.all(5),
+                  padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 5.0),
                   child: (Column(children: [
                     Row(
                       children: [
@@ -161,7 +162,7 @@ class _HomePageState extends State<HomePage> {
             ),
             // Scrollable list of dates
             Flexible(
-                flex: 5,
+                flex: 4,
                 child: Container(
                   child: EntriesList(this.date, this.newEntry,
                       this.entryTextController, this.scrollController),
@@ -239,6 +240,7 @@ class _EntriesListState extends State<EntriesList> {
 // https://stackoverflow.com/questions/66074484/type-documentsnapshot-is-not-a-subtype-of-type-mapstring-dynamic
   List<Widget> getEntries(snapshot) {
     print("Get Entries");
+
     String dateString =
         '${widget.date.month}-${widget.date.day}-${widget.date.year}';
 
@@ -255,33 +257,47 @@ class _EntriesListState extends State<EntriesList> {
 
       // What about if we add space additonally after the input?
 
+// This might be a solution to the keyboard margin
+// https://stackoverflow.com/questions/59197602/keyboard-not-being-detected-mediaquery-ofcontext-viewinsets-bottom-always-ret
       myList.add(Visibility(
           visible: widget.newEntry,
           child: Card(
+              margin: widget.newEntry
+                  ? EdgeInsets.fromLTRB(
+                      0,
+                      0,
+                      0,
+                      MediaQuery.of(context)
+                          .viewInsets
+                          .bottom) // maybe input the Height of Keyboard instead Here
+                  : EdgeInsets.fromLTRB(0, 0, 0, 0),
               child: ListTile(
-            title: TextFormField(
-              style: TextStyle(color: Colors.white),
-              autofocus: true,
-              controller: widget.entryTextController, // comes from parent
-              decoration: InputDecoration(hintText: "Go for a walk..."),
-              validator: (String value) {
-                if (value == null || value.isEmpty) {
-                  // Turn new entry off if no value is detected on submit
-                  return 'Please Enter Some text';
-                }
-                return '';
-              },
-            ),
-            tileColor: Color.fromRGBO(21, 115, 170, 0.80),
-          ))));
-
-      myList.add(Visibility(
-          visible: widget.newEntry,
-          child: Opacity(
-              opacity: 0.0,
-              child: Placeholder(
-                fallbackHeight: MediaQuery.of(context).viewInsets.bottom,
+                title: TextFormField(
+                  style: TextStyle(color: Colors.white),
+                  autofocus: true,
+                  controller: widget.entryTextController, // comes from parent
+                  decoration: InputDecoration(hintText: "Go for a walk..."),
+                  validator: (String value) {
+                    if (value == null || value.isEmpty) {
+                      // Turn new entry off if no value is detected on submit
+                      return 'Please Enter Some text';
+                    }
+                    return '';
+                  },
+                ),
+                tileColor: Color.fromRGBO(21, 115, 170, 0.80),
               ))));
+
+// Instead of placeholder, use margin? not sure
+      // myList.add(Visibility(
+      //     visible: widget.newEntry,
+      //     child: Opacity(
+      //         opacity: 0.0,
+      //         child: Placeholder(
+      //           fallbackHeight: MediaQuery.of(context)
+      //               .viewInsets
+      //               .bottom, // height of keyboard
+      //         ))));
     } else {
       print("Snapshot data null, make up own list");
       myList = [
