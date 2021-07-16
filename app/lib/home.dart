@@ -103,70 +103,65 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         body: Column(
           children: [
-            Flexible(
-              flex: 1,
-              child: Container(
-                  // Leave margin here for top bar
-                  color: Colors.grey[900],
-                  padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 5.0),
-                  child: (Column(children: [
-                    Row(
-                      children: [
-                        Image(
-                            height: 30.0,
-                            image: AssetImage('assets/polus_icon48.png')),
-                        Spacer(),
-                        PopupMenuButton<String>(
-                            onSelected: handleMenuClick,
-                            icon: Icon(Icons.more_vert, color: Colors.white),
-                            itemBuilder: (BuildContext context) {
-                              return {'Logout', 'Settings'}
-                                  .map((String choice) {
-                                return PopupMenuItem<String>(
-                                  value: choice,
-                                  child: Text(choice),
-                                );
-                              }).toList();
-                            }),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        ElevatedButton(
-                            onPressed: () {
-                              changeDate(-1);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: Color.fromRGBO(21, 115, 170, 0.80),
-                            ),
-                            child: Icon(Icons.arrow_left)),
-                        Spacer(),
-                        ElevatedButton(
-                            onPressed: () {
-                              changeDate(1);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: Color.fromRGBO(21, 115, 170, 0.80),
-                            ),
-                            child: Icon(Icons.arrow_right))
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(DateFormat.yMMMMEEEEd().format(this.date),
-                            style: TextStyle(color: Colors.white)),
-                      ],
-                    )
-                  ]))),
-            ),
+            Container(
+                // Leave margin here for top bar
+                color: Colors.grey[900],
+                padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 5.0),
+                child: (Column(children: [
+                  Row(
+                    children: [
+                      Image(
+                          height: 30.0,
+                          image: AssetImage('assets/polus_icon48.png')),
+                      Spacer(),
+                      PopupMenuButton<String>(
+                          onSelected: handleMenuClick,
+                          icon: Icon(Icons.more_vert, color: Colors.white),
+                          itemBuilder: (BuildContext context) {
+                            return {'Logout', 'Settings'}.map((String choice) {
+                              return PopupMenuItem<String>(
+                                value: choice,
+                                child: Text(choice),
+                              );
+                            }).toList();
+                          }),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                          onPressed: () {
+                            changeDate(-1);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Color.fromRGBO(21, 115, 170, 0.80),
+                          ),
+                          child: Icon(Icons.arrow_left)),
+                      Spacer(),
+                      ElevatedButton(
+                          onPressed: () {
+                            changeDate(1);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Color.fromRGBO(21, 115, 170, 0.80),
+                          ),
+                          child: Icon(Icons.arrow_right))
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(DateFormat.yMMMMEEEEd().format(this.date),
+                          style: TextStyle(color: Colors.white)),
+                    ],
+                  )
+                ]))),
             // Scrollable list of dates
             Flexible(
-                flex: 4,
                 child: Container(
-                  child: EntriesList(this.date, this.newEntry,
-                      this.entryTextController, this.scrollController),
-                ))
+              child: EntriesList(this.date, this.newEntry,
+                  this.entryTextController, this.scrollController),
+            ))
           ],
         ),
         backgroundColor: Colors.black,
