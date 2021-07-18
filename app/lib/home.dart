@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter/cupertino.dart';
 // import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 import 'settings.dart';
@@ -216,9 +218,10 @@ class _EntriesListState extends State<EntriesList> {
         // user.update({});
         break;
       case 'Check':
-        checkEntry(entry);
+        checkEntry(entry, id);
         break;
       case 'Color':
+        colorEntry(entry, id);
         break;
     }
 
@@ -227,25 +230,15 @@ class _EntriesListState extends State<EntriesList> {
 
   void editEntry() {}
 
-  void setStream() {
-    String dateString =
-        '${widget.date.month}-${widget.date.day}-${widget.date.year}';
-    _entryStream = FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser.uid)
-        .collection(dateString)
-        .snapshots();
-  }
-
   void updateEntries() {}
 
   void deleteEntry(entry, id) {
+    print("Delete Entry By Id");
     String date = '${widget.date.month}-${widget.date.day}-${widget.date.year}';
     CollectionReference dateRef = FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser.uid)
         .collection(date);
-    print(id);
     dateRef
         .doc(id)
         .delete()
@@ -253,22 +246,59 @@ class _EntriesListState extends State<EntriesList> {
         .catchError((error) => print("Failed to Delete Entry: $error"));
   }
 
-  void colorEntry(entry) {
+  void colorEntry(entry, id) async {
+    print("Change Color");
+
+    List colorSheet = ['blue', 'green', 'red', 'orange', 'purple'];
+
+    int index;
+    // https://stackoverflow.com/questions/49874771/flutter-cupertinopicker-bottomsheet-listener-for-onclose
+    await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+              height: 200,
+              color: Colors.white,
+              child: Center(
+                  child: CupertinoPicker(
+                backgroundColor: Colors.white,
+                onSelectedItemChanged: (value) {
+                  index = value;
+                },
+                itemExtent: 50.0,
+                children: [
+                  Text("Blue", style: TextStyle(height: 2)),
+                  Text("Green", style: TextStyle(height: 2)),
+                  Text("Red", style: TextStyle(height: 2)),
+                  Text('Orange', style: TextStyle(height: 2)),
+                  Text('Purple', style: TextStyle(height: 2)),
+                ],
+              )));
+        });
+
+    if (entry['color'] != colorSheet[index]) {
+      String date =
+          '${widget.date.month}-${widget.date.day}-${widget.date.year}';
+      CollectionReference dateRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser.uid)
+          .collection(date);
+      dateRef.doc(id).update({'color': colorSheet[index]});
+    }
+  }
+
+  void checkEntry(entry, id) {
     String date = '${widget.date.month}-${widget.date.day}-${widget.date.year}';
-    CollectionReference dateRef = FirebaseFirestore.instance
+    CollectionReference user = FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser.uid)
         .collection(date);
-  }
 
-  void checkEntry(entry) {
-    String date = '${widget.date.month}-${widget.date.day}-${widget.date.year}';
-    DocumentReference user = FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser.uid);
-
-    // we need an update where statement here that will refer to the same text thats currently on our datebase
-    user.update({});
+    user
+        .doc(id)
+        .update({'active': !entry['active']})
+        .then((value) => print("Entry Checked"))
+        .catchError((error) => print("Failed to Check Entry: $error"));
   }
 
 // Return List<Widget> to ListView in build
@@ -280,7 +310,7 @@ class _EntriesListState extends State<EntriesList> {
     if (snapshot.data.docs.length != 0) {
       snapshot.data.docs.map((DocumentSnapshot document) {
         Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-        myList.add(Entry(data, handleEntryMenuClick));
+        myList.add(Entry(data, handleEntryMenuClick, document.id));
       }).toList();
     }
 
@@ -318,6 +348,17 @@ class _EntriesListState extends State<EntriesList> {
     return myList;
   }
 
+  void setStream() {
+    print("Setting Stream");
+    String dateString =
+        '${widget.date.month}-${widget.date.day}-${widget.date.year}';
+    _entryStream = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .collection(dateString)
+        .snapshots();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -326,7 +367,16 @@ class _EntriesListState extends State<EntriesList> {
 
   void didUpdateWidget(old) {
     super.didUpdateWidget(old);
-    setStream();
+    // Only Set stream if EntryList Widget changed. If not, dont reset stream
+    // This is important to ensure the list doesnt keep reloading. Looks bad
+    // and it would create alot of get requests which we want to minimize
+    if (old.date != widget.date) {
+      setStream();
+    }
+  }
+
+  void dispose() {
+    super.dispose();
   }
 
   Widget build(BuildContext context) {
@@ -356,8 +406,8 @@ class _EntriesListState extends State<EntriesList> {
 class Entry extends StatefulWidget {
   final Map entry;
   final Function handleEntryMenuClick;
-  // final int documentID;
-  const Entry(this.entry, this.handleEntryMenuClick);
+  final String id;
+  const Entry(this.entry, this.handleEntryMenuClick, this.id);
 
   @override
   _EntryState createState() => _EntryState();
@@ -366,6 +416,23 @@ class Entry extends StatefulWidget {
 class _EntryState extends State<Entry> {
 // For picking time
 // https://www.youtube.com/watch?v=aPaFalC2a28&ab_channel=JohannesMilke
+
+  Color getColor(String color) {
+    switch (color) {
+      case 'blue':
+        return Color.fromRGBO(21, 115, 170, 0.80);
+      case 'green':
+        return Color.fromRGBO(7, 128, 7, 0.80);
+      case 'purple':
+        return Color.fromRGBO(122, 39, 138, 0.80);
+      case 'gold':
+        return Color.fromRGBO(185, 174, 8, 0.80);
+      case 'orange':
+        return Color.fromRGBO(251, 119, 5, 0.80);
+      case 'red':
+        return Color.fromRGBO(220, 5, 5, 0.75);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -376,8 +443,10 @@ class _EntryState extends State<Entry> {
       title: Text(
         widget.entry['text'],
         style: TextStyle(
-          color: Colors.white,
-        ),
+            color: Colors.white,
+            decoration: widget.entry['active']
+                ? TextDecoration.lineThrough
+                : TextDecoration.none),
       ),
       // Tile Color will be based on entry['color']
       trailing: PopupMenuButton(
@@ -387,12 +456,14 @@ class _EntryState extends State<Entry> {
           return {'Edit', 'Delete', 'Check', 'Color'}.map((String choice) {
             return PopupMenuItem(
               child: Text(choice),
-              value: [choice, widget.entry],
+              value: [choice, widget.entry, widget.id],
             );
           }).toList();
         },
       ),
-      tileColor: Color.fromRGBO(21, 115, 170, 0.80),
+      tileColor: widget.entry['active']
+          ? Colors.grey
+          : getColor(widget.entry['color']),
     ));
   }
 }
