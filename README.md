@@ -1,6 +1,6 @@
 # Polus
 
-Plan your life using this planner! Includes daily, weekly, monthly calendars that syncs with your chrome storage
+Plan your day using this planner! Includes daily, weekly, monthly calendars that syncs with your chrome storage
 
 ## Photos
 
