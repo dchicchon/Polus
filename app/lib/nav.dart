@@ -28,7 +28,8 @@ class _NavbarState extends State<Navbar> {
     }
   }
 
-  void generateWeekDates() {
+// Optimize this later. Right now this code is rerunning every single time
+  List<Widget> generateWeekDates() {
     print("Generating dates");
     // RETURN A LIST OF WIDGETS THAT REPRESENTS A WEEK
     // Each of these should be clickable to go to that date
@@ -38,41 +39,30 @@ class _NavbarState extends State<Navbar> {
 
     // Based on this date, we should get all the dates associated with this week
     int weekDay = parentDate.weekday;
+    if (weekDay == 7) {
+      weekDay = 0;
+    }
     DateTime newDate = parentDate
         .subtract(Duration(days: weekDay)); // returns Sunday as DateTime?
 
     for (var i = 0; i < 7; i++) {
-      if (newDate.day == DateTime.now().day) {
-        daysOfWeek.add(Day(newDate, widget.changeDate, true));
-      } else {
-        daysOfWeek.add(Day(newDate, widget.changeDate,
-            false)); // pass our date as a prop to days of week
-      }
+      daysOfWeek.add(Day(
+          newDate,
+          widget.changeDate,
+          newDate.day ==
+              parentDate.day)); // pass our date as a prop to days of week
       newDate = newDate.add(Duration(days: 1)); // change days by 1
     }
 
     // DateList should be a list of all of our qualifying dates
-    setState(() {
-      dates = daysOfWeek;
-    });
+    return daysOfWeek;
+  }
+
+  void swipeWeek(details) {
+    print(details);
   }
 
   @override
-  void initState() {
-    super.initState();
-    generateWeekDates();
-  }
-
-  void didUpdateWidget(old) {
-    super.didUpdateWidget(old);
-    // print(old); // this is navbar
-    // Only re-render this week widget is swiped, otherwise do not re-render
-  }
-
-  void dispose() {
-    super.dispose();
-  }
-
   Widget build(BuildContext context) {
     return Container(
         // Leave margin here for top bar
@@ -97,10 +87,11 @@ class _NavbarState extends State<Navbar> {
             ],
           ),
           GestureDetector(
+            onHorizontalDragStart: swipeWeek,
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 // Make this into a swipable element that generates days and whatnot
-                children: dates),
+                children: generateWeekDates()),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -115,23 +106,56 @@ class _NavbarState extends State<Navbar> {
 
 class Day extends StatelessWidget {
   final DateTime date;
+  final bool selected;
   final Function changeDate;
-  final bool currentDate;
-  const Day(this.date, this.changeDate, this.currentDate);
+  const Day(this.date, this.changeDate, this.selected);
+
+  Color ContainerBackgroundColor() {
+    if (selected && date.day == DateTime.now().day) {
+      return Colors.red;
+    } else if (selected) {
+      return Colors.white;
+    } else {
+      return Colors.transparent;
+    }
+  }
+
+  TextStyle DayTextStyle() {
+    if (selected && date.day == DateTime.now().day) {
+      return TextStyle(
+        color: Colors.white,
+        // backgroundColor: Colors.red,
+      );
+    } else if (selected) {
+      return TextStyle(
+        color: Colors.black,
+        // backgroundColor: Colors.white
+      );
+    } else if (date.day == DateTime.now().day) {
+      return TextStyle(color: Colors.red);
+    } else {
+      return TextStyle(color: Colors.white);
+    }
+  }
+
+  void selectDay() {
+    if (!selected) changeDate(date);
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        print("Changing date to:");
-        print(date);
-        changeDate(date);
-        // Change the date to this one
-      },
-      child: Text(
-        date.day.toString(),
-        style: TextStyle(color: currentDate ? Colors.red : Colors.white),
-      ),
-    );
+        onTap: selectDay,
+        child: Container(
+            height: 22.0,
+            width: 22.0,
+            decoration: BoxDecoration(
+                color: ContainerBackgroundColor(), shape: BoxShape.circle),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(date.day.toString(), style: DayTextStyle()),
+              ],
+            )));
   }
 }
