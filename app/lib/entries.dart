@@ -10,9 +10,11 @@ class EntriesList extends StatefulWidget {
   final DateTime date;
   final bool newEntry;
   final ScrollController scrollController;
-  final TextEditingController entryTextController;
-  const EntriesList(this.date, this.newEntry, this.entryTextController,
-      this.scrollController);
+  final Function newEntryState;
+  // final TextEditingController entryTextController;
+  // final Function submitEntry;
+  const EntriesList(
+      this.date, this.newEntry, this.scrollController, this.newEntryState);
 
   @override
   _EntriesListState createState() => _EntriesListState();
@@ -21,6 +23,40 @@ class EntriesList extends StatefulWidget {
 // Include Add Button in this widget somehow
 class _EntriesListState extends State<EntriesList> {
   Stream<QuerySnapshot> _entryStream;
+  final TextEditingController entryTextController = TextEditingController();
+
+  void submitEntry(String fieldString) {
+    print("Submit Entry");
+
+    if (entryTextController.text != '') {
+      String dateString =
+          '${widget.date.month}-${widget.date.day}-${widget.date.year}';
+
+      CollectionReference date = FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser.uid)
+          .collection(dateString);
+
+      Map<String, dynamic> entry = {
+        'text': entryTextController.text,
+        'active': false,
+        'color': 'blue',
+      };
+
+      date
+          .add(entry)
+          .then((value) => print("Entry List Updated"))
+          .catchError((err) => print("Failed to update list $err"));
+
+      setState(() {
+        entryTextController.text = '';
+      });
+      widget.newEntryState(false);
+    } else {
+      print("No text in input!");
+      widget.newEntryState(false);
+    }
+  }
 
   void handleEntryMenuClick(List selected) {
     var type = selected[0];
@@ -120,16 +156,16 @@ class _EntriesListState extends State<EntriesList> {
         .catchError((error) => print("Failed to Check Entry: $error"));
   }
 
-// Return List<Widget> to ListView in build
-// https://stackoverflow.com/questions/66074484/type-documentsnapshot-is-not-a-subtype-of-type-mapstring-dynamic
   List<Widget> getEntries(snapshot) {
+// https://stackoverflow.com/questions/66074484/type-documentsnapshot-is-not-a-subtype-of-type-mapstring-dynamic
     print("Getting Entries");
     List<Widget> myList = []; // initalize list
     // Add items to our list if we have data. If I don't add the `toList()` method it does not work. Not sure why
     if (snapshot.data.docs.length != 0) {
       snapshot.data.docs.map((DocumentSnapshot document) {
         Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-        myList.add(Entry(data, handleEntryMenuClick, document.id));
+        myList.add(
+            Entry(data, handleEntryMenuClick, document.id, this.deleteEntry));
       }).toList();
     }
 
@@ -152,15 +188,10 @@ class _EntriesListState extends State<EntriesList> {
               title: TextFormField(
                 style: TextStyle(color: Colors.white),
                 autofocus: true,
-                controller: widget.entryTextController, // comes from parent
+                onFieldSubmitted: this.submitEntry,
+                textInputAction: TextInputAction.done,
+                controller: this.entryTextController, // comes from parent
                 decoration: InputDecoration(hintText: "Go for a walk..."),
-                // validator: (String value) {
-                //   if (value == null || value.isEmpty) {
-                //     // Turn new entry off if no value is detected on submit
-                //     return 'Please Enter Some text';
-                //   }
-                //   return '';
-                // },
               ),
               tileColor: Color.fromRGBO(21, 115, 170, 0.80),
             ))));
@@ -196,6 +227,7 @@ class _EntriesListState extends State<EntriesList> {
 
   void dispose() {
     super.dispose();
+    entryTextController.dispose();
   }
 
   Widget build(BuildContext context) {
@@ -211,7 +243,7 @@ class _EntriesListState extends State<EntriesList> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         }
-        return new ListView(
+        return ListView(
           children: getEntries(snapshot),
           padding: EdgeInsets.all(8.0),
           controller: widget.scrollController,
@@ -230,14 +262,18 @@ class _EntriesListState extends State<EntriesList> {
 class Entry extends StatefulWidget {
   final Map entry;
   final Function handleEntryMenuClick;
+  final Function deleteEntry;
   final String id;
-  const Entry(this.entry, this.handleEntryMenuClick, this.id);
+
+  Entry(this.entry, this.handleEntryMenuClick, this.id, this.deleteEntry);
 
   @override
   _EntryState createState() => _EntryState();
 }
 
 class _EntryState extends State<Entry> {
+  AnimationController animation;
+  Animation<double> _fadeInFadeOut;
 // For picking time
 // https://www.youtube.com/watch?v=aPaFalC2a28&ab_channel=JohannesMilke
 
@@ -268,36 +304,68 @@ class _EntryState extends State<Entry> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    animation = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 3),
+    );
+    _fadeInFadeOut = Tween<double>(begin: 0.0, end: 0.1).animate(animation);
+
+    animation.addListener(() {
+      if (animation.isCompleted) {
+        animation.reverse();
+      } else {
+        animation.forward();
+      }
+    });
+    animation.repeat();
+  }
+
+  void dispose() {
+    super.dispose();
+  }
+
   Widget build(BuildContext context) {
     // For each entry, I want to be able to swipe left and be able to peform
     // certain actions
-    return Card(
-        child: ListTile(
-      title: Text(
-        widget.entry['text'],
-        style: TextStyle(
-            color: Colors.white,
-            decoration: widget.entry['active']
-                ? TextDecoration.lineThrough
-                : TextDecoration.none),
-      ),
-      // Tile Color will be based on entry['color']
-      trailing: PopupMenuButton(
-        onSelected: widget.handleEntryMenuClick,
-        itemBuilder: (BuildContext context) {
-          // Also pass in item id here too
-          return {'Edit', 'Delete', 'Check', 'Color'}.map((String choice) {
-            return PopupMenuItem(
-              child: Text(choice),
-              value: [choice, widget.entry, widget.id],
-            );
-          }).toList();
-        },
-      ),
-      tileColor: widget.entry['active']
-          ? Colors.grey
-          : getColor(widget.entry['color']),
-    ));
+    return FadeTransition(
+        opacity: animation,
+        child: Dismissible(
+            key: ValueKey<String>(widget.id),
+            onDismissed: (DismissDirection direction) {
+              if (direction == DismissDirection.startToEnd) {
+                // TODO swipe right to complete item
+                // Function to archive checked items
+              } else {
+                // TODO swipe left to delete item
+                widget.deleteEntry(widget.entry, widget.id);
+              }
+              // What to do based on direction
+            },
+            background: Container(
+              color: Colors.green,
+              child: Icon(Icons.archive, color: Colors.white, size: 30.0),
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.only(left: 15.0),
+            ),
+            secondaryBackground: Container(
+              color: Colors.red,
+              child: Icon(Icons.delete, color: Colors.white, size: 30.0),
+              alignment: Alignment.centerRight,
+              padding: EdgeInsets.only(right: 15.0),
+            ),
+            child: Card(
+                child: ListTile(
+              title: Text(
+                widget.entry['text'],
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              tileColor: getColor(widget.entry['color']),
+            ))));
   }
 }
 // =================================================================

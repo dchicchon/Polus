@@ -7,7 +7,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 class Navbar extends StatefulWidget {
   final Function changeDate;
   final DateTime date;
-  const Navbar(this.changeDate, this.date);
+  final Function addEntry;
+  const Navbar(this.changeDate, this.date, this.addEntry);
 
   @override
   _NavbarState createState() => _NavbarState();
@@ -94,6 +95,10 @@ class _NavbarState extends State<Navbar> {
             children: [
               // Image(height: 30.0, image: AssetImage('assets/polus_icon48.png')),
               Spacer(),
+              GestureDetector(
+                onTap: widget.addEntry,
+                child: Icon(Icons.add, color: Colors.white),
+              ),
               PopupMenuButton<String>(
                   onSelected: handleMenuClick,
                   icon: Icon(Icons.more_vert, color: Colors.white),
