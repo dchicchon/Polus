@@ -16,6 +16,7 @@ class Navbar extends StatefulWidget {
 class _NavbarState extends State<Navbar> {
   // List<Widget> dates = [];
   bool swipeDir = false;
+  double scrollNum = 10000.0;
   void handleMenuClick(String value) {
     // https://stackoverflow.com/questions/58144948/easiest-way-to-add-3-dot-pop-up-menu-appbar-in-flutter
     switch (value) {
@@ -32,20 +33,13 @@ class _NavbarState extends State<Navbar> {
 // Optimize this later. Right now this code is rerunning every single time
 
   List<Widget> generateWeekDates() {
-    print("Generating dates");
-    // print(index);
-    // print(pageIndex);
-    // RETURN A LIST OF WIDGETS THAT REPRESENTS A WEEK
-    // Each of these should be clickable to go to that date
-
+    // print("GENERATE WEEK DATES");
     DateTime parentDate = widget.date;
-    List<Widget> daysOfWeek = [];
+    List<Day> daysOfWeek = [];
 
     // Based on this date, we should get all the dates associated with this week
-    int weekDay = parentDate.weekday;
-    if (weekDay == 7) {
-      weekDay = 0;
-    }
+    int weekDay = parentDate.weekday == 7 ? 0 : parentDate.weekday;
+
     DateTime newDate = parentDate
         .subtract(Duration(days: weekDay)); // returns Sunday as DateTime?
 
@@ -59,20 +53,15 @@ class _NavbarState extends State<Navbar> {
     }
 
     // DateList should be a list of all of our qualifying dates
-    // setState(() {
-    //   dates = daysOfWeek;
-    // });
     return daysOfWeek;
   }
 
   void swipeWeek(int num, CarouselPageChangedReason reason) {
-    // No indexes exist at the moment, so its changing atm
+    // print("SWIPE WEEK");
     DateTime thisDate;
     if (swipeDir) {
-      print("Increase");
       thisDate = widget.date.add(Duration(days: 7));
     } else {
-      print("Decrease");
       thisDate = widget.date.subtract(Duration(days: 7));
     }
     widget.changeDate(thisDate);
@@ -80,17 +69,10 @@ class _NavbarState extends State<Navbar> {
   }
 
   void scrollWeek(double num) {
-    bool scrollBool;
-    print("Num");
-    print(num);
-    if (num < 10000.0)
-      scrollBool = false;
-    else
-      scrollBool = true;
-
-    print("Scroll Direct");
-    print(scrollBool);
+    // print("SCROLL WEEK");
+    bool scrollBool = num < scrollNum ? false : true;
     setState(() {
+      scrollNum = num;
       swipeDir = scrollBool;
     });
   }
@@ -126,14 +108,14 @@ class _NavbarState extends State<Navbar> {
             ],
           ),
           CarouselSlider.builder(
-            itemCount: 3,
+            itemCount: 1,
             options: CarouselOptions(
               onPageChanged: swipeWeek,
               onScrolled: scrollWeek,
               viewportFraction: 1.0,
               height: 25.0,
             ),
-            itemBuilder:  
+            itemBuilder:
                 (BuildContext context, int itemIndex, int pageViewIndex) =>
                     (Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -158,7 +140,10 @@ class Day extends StatelessWidget {
   const Day(this.date, this.changeDate, this.selected);
 
   Color ContainerBackgroundColor() {
-    if (selected && date.day == DateTime.now().day) {
+    if (selected &&
+        date.day == DateTime.now().day &&
+        date.month == DateTime.now().month &&
+        date.year == DateTime.now().year) {
       return Colors.red;
     } else if (selected) {
       return Colors.white;
@@ -168,7 +153,10 @@ class Day extends StatelessWidget {
   }
 
   TextStyle DayTextStyle() {
-    if (selected && date.day == DateTime.now().day) {
+    if (selected &&
+        date.day == DateTime.now().day &&
+        date.month == DateTime.now().month &&
+        date.year == DateTime.now().year) {
       return TextStyle(
         color: Colors.white,
         // backgroundColor: Colors.red,
