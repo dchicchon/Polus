@@ -271,7 +271,7 @@ class Entry extends StatefulWidget {
   _EntryState createState() => _EntryState();
 }
 
-class _EntryState extends State<Entry> {
+class _EntryState extends State<Entry> with TickerProviderStateMixin {
   AnimationController animation;
   Animation<double> _fadeInFadeOut;
 // For picking time
@@ -308,7 +308,7 @@ class _EntryState extends State<Entry> {
     super.initState();
     animation = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 3),
+      duration: Duration(milliseconds: 500),
     );
     _fadeInFadeOut = Tween<double>(begin: 0.0, end: 0.1).animate(animation);
 
