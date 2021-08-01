@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 // =================================================================
 // ENTRY LIST
@@ -11,8 +12,6 @@ class EntriesList extends StatefulWidget {
   final bool newEntry;
   final ScrollController scrollController;
   final Function newEntryState;
-  // final TextEditingController entryTextController;
-  // final Function submitEntry;
   const EntriesList(
       this.date, this.newEntry, this.scrollController, this.newEntryState);
 
@@ -272,8 +271,6 @@ class Entry extends StatefulWidget {
 }
 
 class _EntryState extends State<Entry> with TickerProviderStateMixin {
-  AnimationController animation;
-  Animation<double> _fadeInFadeOut;
 // For picking time
 // https://www.youtube.com/watch?v=aPaFalC2a28&ab_channel=JohannesMilke
 
@@ -306,66 +303,90 @@ class _EntryState extends State<Entry> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    animation = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 500),
-    );
-    _fadeInFadeOut = Tween<double>(begin: 0.0, end: 0.1).animate(animation);
-
-    animation.addListener(() {
-      if (animation.isCompleted) {
-        animation.reverse();
-      } else {
-        animation.forward();
-      }
-    });
-    animation.repeat();
   }
 
   void dispose() {
     super.dispose();
   }
 
+  void deleteEntry(BuildContext context) {
+    widget.deleteEntry(widget.entry, widget.id);
+  }
+
+  void archiveEntry(BuildContext context) {
+    print("ARCHIVE ENTRY");
+  }
+
+  void doNothing(BuildContext context) {}
+
+  void editEntry(BuildContext context) {}
+
+  void timeEntry(BuildContext context) {}
+
   Widget build(BuildContext context) {
     // For each entry, I want to be able to swipe left and be able to peform
     // certain actions
-    return FadeTransition(
-        opacity: animation,
-        child: Dismissible(
-            key: ValueKey<String>(widget.id),
-            onDismissed: (DismissDirection direction) {
-              if (direction == DismissDirection.startToEnd) {
-                // TODO swipe right to complete item
-                // Function to archive checked items
-              } else {
-                // TODO swipe left to delete item
-                widget.deleteEntry(widget.entry, widget.id);
-              }
-              // What to do based on direction
-            },
-            background: Container(
-              color: Colors.green,
-              child: Icon(Icons.archive, color: Colors.white, size: 30.0),
-              alignment: Alignment.centerLeft,
-              padding: EdgeInsets.only(left: 15.0),
+    return (Slidable(
+        key: ValueKey<String>(widget.id),
+        startActionPane: ActionPane(
+          motion: ScrollMotion(),
+          // dismissible: DismissiblePane(
+          //   onDismissed: () {},
+          // ),
+          children: [
+            SlidableAction(
+                onPressed: archiveEntry,
+                // flex: 2,
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                icon: Icons.archive,
+                label: 'Archive'),
+            SlidableAction(
+                onPressed: deleteEntry,
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                icon: Icons.delete,
+                label: 'Delete')
+          ],
+        ),
+        endActionPane: ActionPane(
+          motion: ScrollMotion(),
+          children: [
+            SlidableAction(
+                onPressed: doNothing,
+                backgroundColor: Colors.yellow[700],
+                foregroundColor: Colors.white,
+                icon: Icons.edit,
+                label: 'Edit'),
+            SlidableAction(
+                onPressed: doNothing,
+                backgroundColor: Colors.purple,
+                foregroundColor: Colors.white,
+                icon: Icons.timer,
+                label: 'Time')
+          ],
+        ),
+
+        // onDismissed: (DismissDirection direction) {
+        //   if (direction == DismissDirection.startToEnd) {
+        //     // TODO swipe right to complete item
+        //     // Function to archive checked items
+        //   } else {
+        //     // TODO swipe left to delete item
+        //     widget.deleteEntry(widget.entry, widget.id);
+        //   }
+        //   // What to do based on direction
+        child: Card(
+            child: ListTile(
+          title: Text(
+            widget.entry['text'],
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
             ),
-            secondaryBackground: Container(
-              color: Colors.red,
-              child: Icon(Icons.delete, color: Colors.white, size: 30.0),
-              alignment: Alignment.centerRight,
-              padding: EdgeInsets.only(right: 15.0),
-            ),
-            child: Card(
-                child: ListTile(
-              title: Text(
-                widget.entry['text'],
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              tileColor: getColor(widget.entry['color']),
-            ))));
+          ),
+          tileColor: getColor(widget.entry['color']),
+        ))));
   }
 }
 // =================================================================

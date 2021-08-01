@@ -1,7 +1,5 @@
 import 'package:app/nav.dart';
 import 'package:flutter/material.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'entries.dart';
 
 class HomePage extends StatefulWidget {
@@ -63,7 +61,6 @@ class _HomePageState extends State<HomePage> {
           body: Column(
             children: [
               Navbar(this.changeDate, this.date, this.addEntry),
-              
               EntriesList(this.date, this.newEntry, this.scrollController,
                   this.newEntryState),
             ],
