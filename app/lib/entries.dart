@@ -329,7 +329,7 @@ class _EntryState extends State<Entry> with TickerProviderStateMixin {
     return (Slidable(
         key: ValueKey<String>(widget.id),
         startActionPane: ActionPane(
-          motion: ScrollMotion(),
+          motion: ScrollMotion(), 
           // dismissible: DismissiblePane(
           //   onDismissed: () {},
           // ),
