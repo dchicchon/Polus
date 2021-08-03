@@ -1,15 +1,55 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'home.dart';
 import 'auth.dart';
 import 'settings.dart';
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+  print('Handling a background message ${message.messageId}');
+}
+
+/// Create a [AndroidNotificationChannel] for heads up notifications
+AndroidNotificationChannel channel;
+
+/// Initialize the [FlutterLocalNotificationsPlugin] package.
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
 // Starting FlutterFire through the suggestion found here
 // https://firebase.flutter.dev/docs/overview
-
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  channel = const AndroidNotificationChannel(
+      'high_importance_channel',
+      'High Importance Notifications',
+      'This channel is used for important notifications');
+  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  /// Create an Android Notification Channel.
+  ///
+  /// We use this channel in the `AndroidManifest.xml` file to override the
+  /// default FCM channel to enable heads up notifications.
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+
+  /// Update the iOS foreground notification presentation options to allow
+  /// heads up notifications.
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
   runApp(MyApp());
 }
 
@@ -22,26 +62,51 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   User _user;
-  bool _initialized = false;
+  FirebaseAnalytics analytics;
   bool _error = false;
-
-  void initializeFlutterFire() async {
-    try {
-      await Firebase.initializeApp();
-      setState(() {
-        _initialized = true;
-      });
-    } catch (e) {
-      setState(() {
-        _error = true;
-      });
-    }
-  }
 
   @override
   void initState() {
-    initializeFlutterFire();
     super.initState();
+
+// If we had an initial message for our app?
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage message) {
+      if (message != null) {
+        print("GOT INITIAL MESSAGE");
+        print(message);
+      }
+    });
+
+    // Listen for any new messages
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+      if (notification != null && android != null && !kIsWeb) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channel.description,
+                // TODO add a proper drawable resource to android, for now using
+                //      one that already exists in example app.
+                icon: 'launch_background',
+              ),
+            ));
+      }
+    });
+
+    // if we opened the app through a notification, it will send us via this
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+      // Navigator.pushNamed(context, '/message',
+      //     arguments: MessageArguments(message, true));
+    });
   }
 
   @override
@@ -49,19 +114,19 @@ class _MyAppState extends State<MyApp> {
     if (_error) {
       return MaterialApp(
           title: "Error",
+          // navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
           theme: ThemeData(
               primarySwatch: Colors.blue,
               scaffoldBackgroundColor: Colors.black),
           home: SomethingWentWrong());
     }
 
-// change this to its own thing late
-    if (!_initialized) {
-      return MaterialApp(
-          title: "loading",
-          theme: ThemeData(primarySwatch: Colors.blue),
-          home: Loading());
-    }
+    // if (!_initialized) {
+    //   return MaterialApp(
+    //       title: "loading",
+    //       theme: ThemeData(primarySwatch: Colors.blue),
+    //       home: Loading());
+    // }
 
     return MaterialApp(
         title: "Polus",
@@ -81,7 +146,8 @@ class _MyAppState extends State<MyApp> {
               )
             : Navigator(
                 pages: [
-                  MaterialPage(key: ValueKey("Settings"), child: SettingsPage()),
+                  MaterialPage(
+                      key: ValueKey("Settings"), child: SettingsPage()),
                   MaterialPage(key: ValueKey("Home Page"), child: HomePage()),
                 ],
                 onPopPage: (route, result) => route.didPop(result),
@@ -124,7 +190,7 @@ class Loading extends StatelessWidget {
   }
 }
 
-// This is where we will check if there is a user logged in or not
+// This is where we will check  if there is a user logged in or not
 class Auth extends StatefulWidget {
   final Function onLogin; // function passed in from parent
 

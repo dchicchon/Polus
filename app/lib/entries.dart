@@ -26,7 +26,6 @@ class _EntriesListState extends State<EntriesList> {
 
   void submitEntry(String fieldString) {
     print("Submit Entry");
-
     if (entryTextController.text != '') {
       String dateString =
           '${widget.date.month}-${widget.date.day}-${widget.date.year}';
@@ -72,9 +71,6 @@ class _EntriesListState extends State<EntriesList> {
   }
 
   void updateEntry(entry, id) {
-    print("Update Entry By Id");
-    print("ENTRY");
-    print(entry);
     String date = '${widget.date.month}-${widget.date.day}-${widget.date.year}';
     CollectionReference dateRef = FirebaseFirestore.instance
         .collection('users')
@@ -251,31 +247,23 @@ class _EntryState extends State<Entry> {
     return newColor;
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  void dispose() {
-    super.dispose();
+  DateTime getTimeFromString(String timeStr) {
+    var time = timeStr.split(':');
+    DateTime timeToReturn = DateTime(widget.date.year, widget.date.month,
+        widget.date.day, int.parse(time[0]), int.parse(time[1]));
+    return timeToReturn;
   }
 
   void deleteEntry(BuildContext context) {
     widget.deleteEntry(widget.entry, widget.id);
   }
 
-  void archiveEntry(BuildContext context) {
-    // widget.checkEntry(widget.entry, widget.id);
-    // print("ARCHIVE ENTRY");
-  }
+  void archiveEntry(BuildContext context) {}
 
   void updateText(string) {
     if (string != widget.entry['text']) {
-      Map<String, dynamic> entry = {
-        'text': string,
-        'active': widget.entry['active'],
-        'color': widget.entry['color'],
-      };
+      Map<String, dynamic> entry = Map<String, dynamic>.from(widget.entry);
+      entry['text'] = string;
       widget.updateEntry(entry, widget.id);
     }
     setState(() {
@@ -283,8 +271,6 @@ class _EntryState extends State<Entry> {
     });
     // Find this entry on our db and update the text on there
   }
-
-  void doNothing(BuildContext context) {}
 
   void editEntry(BuildContext context) {
     print("Editing!");
@@ -296,7 +282,9 @@ class _EntryState extends State<Entry> {
   void updateColor(BuildContext context) async {
     print("Change Color");
 
+    // Eventually, get a sheet of predetermined colors by user
     List colorSheet = ['blue', 'green', 'red', 'orange', 'purple'];
+    int index = colorSheet.indexOf(widget.entry['color']);
 
     // https://stackoverflow.com/questions/49874771/flutter-cupertinopicker-bottomsheet-listener-for-onclose
     await showModalBottomSheet(
@@ -307,6 +295,9 @@ class _EntryState extends State<Entry> {
               color: Colors.white,
               child: Center(
                   child: CupertinoPicker(
+                scrollController:
+                    // https://stackoverflow.com/questions/52385149/set-selected-initial-cupertinopicker-chosen-index
+                    FixedExtentScrollController(initialItem: index),
                 backgroundColor: Colors.white,
                 onSelectedItemChanged: (value) {
                   Map<String, dynamic> entry =
@@ -326,17 +317,10 @@ class _EntryState extends State<Entry> {
         });
   }
 
-  DateTime getTimeFromString(String timeStr) {
-    var time = timeStr.split(':');
-
-    DateTime timeToReturn = DateTime(widget.date.year, widget.date.month,
-        widget.date.day, int.parse(time[0]), int.parse(time[1]));
-    return timeToReturn;
-  }
-
+// In this case here, make sure to create a flutter_local_notification for the new timeEntered
   void timeEntry(BuildContext context) async {
     print("Change Time");
-
+    DateTime newTime;
     await showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -346,17 +330,25 @@ class _EntryState extends State<Entry> {
               child: Center(
                   child: CupertinoDatePicker(
                       onDateTimeChanged: (DateTime time) {
-                        Map<String, dynamic> entry =
-                            Map<String, dynamic>.from(widget.entry);
-                        // Specify time of entry
-                        entry['time'] = "${time.hour}:${time.minute} ";
-                        widget.updateEntry(entry, widget.id);
+                        newTime = time;
                       },
                       initialDateTime: widget.entry.containsKey('time')
                           ? getTimeFromString(widget.entry['time'])
                           : widget.date,
                       mode: CupertinoDatePickerMode.time)));
         });
+    Map<String, dynamic> entry = Map<String, dynamic>.from(widget.entry);
+    entry['time'] = "${newTime.hour}:${newTime.minute} ";
+    widget.updateEntry(entry, widget.id);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void dispose() {
+    super.dispose();
   }
 
   Widget build(BuildContext context) {
@@ -399,41 +391,28 @@ class _EntryState extends State<Entry> {
               backgroundColor: Colors.yellow[700],
               foregroundColor: Colors.white,
               icon: Icons.edit,
-              // label: 'Edit',
             ),
             SlidableAction(
               onPressed: timeEntry,
               backgroundColor: Colors.purple,
               foregroundColor: Colors.white,
               icon: Icons.timer,
-              // label: 'Time',
             ),
             SlidableAction(
               onPressed: this.updateColor,
-              backgroundColor: Colors.orange,
+              backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
               icon: Icons.palette,
-              // label: 'Color',
             ),
           ],
         ),
-
-        // onDismissed: (DismissDirection direction) {
-        //   if (direction == DismissDirection.startToEnd) {
-        //     // TODO swipe right to complete item
-        //     // Function to archive checked items
-        //   } else {
-        //     // TODO swipe left to delete item
-        //     widget.deleteEntry(widget.entry, widget.id);
-        //   }
-        //   // What to do based on direction
         child: Card(
             child: ListTile(
           title: this.editing
               ? TextFormField(
                   autofocus: true,
                   style: TextStyle(color: Colors.white),
-                  onFieldSubmitted: this.updateText,
+                  onFieldSubmitted: (this.updateText),
                   textInputAction: TextInputAction.done,
                   controller: this._controller,
                 )

@@ -144,7 +144,7 @@ class Day extends StatelessWidget {
   final Function changeDate;
   const Day(this.date, this.changeDate, this.selected);
 
-  Color ContainerBackgroundColor() {
+  Color containerBackgroundColor() {
     if (selected &&
         date.day == DateTime.now().day &&
         date.month == DateTime.now().month &&
@@ -157,7 +157,7 @@ class Day extends StatelessWidget {
     }
   }
 
-  TextStyle DayTextStyle() {
+  TextStyle dayTextStyle() {
     if (selected &&
         date.day == DateTime.now().day &&
         date.month == DateTime.now().month &&
@@ -190,11 +190,11 @@ class Day extends StatelessWidget {
             height: 22.0,
             width: 22.0,
             decoration: BoxDecoration(
-                color: ContainerBackgroundColor(), shape: BoxShape.circle),
+                color: containerBackgroundColor(), shape: BoxShape.circle),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(date.day.toString(), style: DayTextStyle()),
+                Text(date.day.toString(), style: dayTextStyle()),
               ],
             )));
   }

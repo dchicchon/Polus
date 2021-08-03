@@ -2,6 +2,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+void setUpNotifications() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: true,
+      criticalAlert: false,
+      provisional: false,
+      sound: true);
+
+  // true or false
+  print("User granted permission ${settings.authorizationStatus}");
+}
 
 Future<void> signInWithGoogle() async {
   // Trigger auth flow
@@ -57,6 +73,8 @@ Future<void> createWithEmailAndPassword(email, password) async {
       }
     });
 
+    setUpNotifications();
+    
     return userCredential;
   } on FirebaseAuthException catch (e) {
     if (e.code == 'weak-password') {
