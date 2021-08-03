@@ -57,35 +57,6 @@ class _EntriesListState extends State<EntriesList> {
     }
   }
 
-  void handleEntryMenuClick(List selected) {
-    var type = selected[0];
-    var entry = selected[1];
-    var id = selected[2];
-
-    switch (type) {
-      case 'Delete':
-        deleteEntry(entry, id);
-        break;
-      case 'Edit':
-        editEntry(entry, id);
-        break;
-      case 'Check':
-        checkEntry(entry, id);
-        break;
-      case 'Color':
-        colorEntry(entry, id);
-        break;
-    }
-
-    // Maybe our switch statement will get what kind of edit that we are doing?
-  }
-
-  void editEntry(entry, id) {
-    print("Editing Entry");
-  }
-
-  void updateEntries() {}
-
   void deleteEntry(entry, id) {
     print("Delete Entry By Id");
     String date = '${widget.date.month}-${widget.date.day}-${widget.date.year}';
@@ -100,45 +71,16 @@ class _EntriesListState extends State<EntriesList> {
         .catchError((error) => print("Failed to Delete Entry: $error"));
   }
 
-  void colorEntry(entry, id) async {
-    print("Change Color");
-
-    List colorSheet = ['blue', 'green', 'red', 'orange', 'purple'];
-
-    int index;
-    // https://stackoverflow.com/questions/49874771/flutter-cupertinopicker-bottomsheet-listener-for-onclose
-    await showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return Container(
-              height: 200,
-              color: Colors.white,
-              child: Center(
-                  child: CupertinoPicker(
-                backgroundColor: Colors.white,
-                onSelectedItemChanged: (value) {
-                  index = value;
-                },
-                itemExtent: 50.0,
-                children: [
-                  Text("Blue", style: TextStyle(height: 2)),
-                  Text("Green", style: TextStyle(height: 2)),
-                  Text("Red", style: TextStyle(height: 2)),
-                  Text('Orange', style: TextStyle(height: 2)),
-                  Text('Purple', style: TextStyle(height: 2)),
-                ],
-              )));
-        });
-
-    if (entry['color'] != colorSheet[index]) {
-      String date =
-          '${widget.date.month}-${widget.date.day}-${widget.date.year}';
-      CollectionReference dateRef = FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser.uid)
-          .collection(date);
-      dateRef.doc(id).update({'color': colorSheet[index]});
-    }
+  void updateEntry(entry, id) {
+    print("Update Entry By Id");
+    print("ENTRY");
+    print(entry);
+    String date = '${widget.date.month}-${widget.date.day}-${widget.date.year}';
+    CollectionReference dateRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .collection(date);
+    dateRef.doc(id).update(entry);
   }
 
   void checkEntry(entry, id) {
@@ -163,14 +105,20 @@ class _EntriesListState extends State<EntriesList> {
     if (snapshot.data.docs.length != 0) {
       snapshot.data.docs.map((DocumentSnapshot document) {
         Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-        myList.add(
-            Entry(data, handleEntryMenuClick, document.id, this.deleteEntry));
+        myList.add(Entry(
+          data,
+          widget.date,
+          document.id,
+          this.deleteEntry,
+          this.updateEntry,
+        ));
       }).toList();
     }
 
     // Add in our Text Input Widget after adding all of the entries
     // https://stackoverflow.com/questions/59197602/keyboard-not-being-detected-mediaquery-ofcontext-viewinsets-bottom-always-ret
 
+// Maybe in the future, when we add an entry, we can just make one automatically rather than this
     myList.add(Visibility(
         visible: widget.newEntry,
         child: Card(
@@ -190,7 +138,7 @@ class _EntriesListState extends State<EntriesList> {
                 onFieldSubmitted: this.submitEntry,
                 textInputAction: TextInputAction.done,
                 controller: this.entryTextController, // comes from parent
-                decoration: InputDecoration(hintText: "Go for a walk..."),
+                // decoration: InputDecoration(hintText: "Go for a walk..."),
               ),
               tileColor: Color.fromRGBO(21, 115, 170, 0.80),
             ))));
@@ -260,19 +208,22 @@ class _EntriesListState extends State<EntriesList> {
 // ENTRY
 class Entry extends StatefulWidget {
   final Map entry;
-  final Function handleEntryMenuClick;
+  final DateTime date;
   final Function deleteEntry;
+  final Function updateEntry;
   final String id;
 
-  Entry(this.entry, this.handleEntryMenuClick, this.id, this.deleteEntry);
+  Entry(this.entry, this.date, this.id, this.deleteEntry, this.updateEntry);
 
   @override
   _EntryState createState() => _EntryState();
 }
 
-class _EntryState extends State<Entry> with TickerProviderStateMixin {
+class _EntryState extends State<Entry> {
 // For picking time
 // https://www.youtube.com/watch?v=aPaFalC2a28&ab_channel=JohannesMilke
+  bool editing = false;
+  TextEditingController _controller = TextEditingController();
 
   Color getColor(String color) {
     Color newColor;
@@ -314,56 +265,156 @@ class _EntryState extends State<Entry> with TickerProviderStateMixin {
   }
 
   void archiveEntry(BuildContext context) {
-    print("ARCHIVE ENTRY");
+    // widget.checkEntry(widget.entry, widget.id);
+    // print("ARCHIVE ENTRY");
+  }
+
+  void updateText(string) {
+    if (string != widget.entry['text']) {
+      Map<String, dynamic> entry = {
+        'text': string,
+        'active': widget.entry['active'],
+        'color': widget.entry['color'],
+      };
+      widget.updateEntry(entry, widget.id);
+    }
+    setState(() {
+      editing = false;
+    });
+    // Find this entry on our db and update the text on there
   }
 
   void doNothing(BuildContext context) {}
 
-  void editEntry(BuildContext context) {}
+  void editEntry(BuildContext context) {
+    print("Editing!");
+    setState(() {
+      editing = true;
+    });
+  }
 
-  void timeEntry(BuildContext context) {}
+  void updateColor(BuildContext context) async {
+    print("Change Color");
+
+    List colorSheet = ['blue', 'green', 'red', 'orange', 'purple'];
+
+    // https://stackoverflow.com/questions/49874771/flutter-cupertinopicker-bottomsheet-listener-for-onclose
+    await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+              height: 200,
+              color: Colors.white,
+              child: Center(
+                  child: CupertinoPicker(
+                backgroundColor: Colors.white,
+                onSelectedItemChanged: (value) {
+                  Map<String, dynamic> entry =
+                      Map<String, dynamic>.from(widget.entry);
+                  entry['color'] = colorSheet[value];
+                  widget.updateEntry(entry, widget.id);
+                },
+                itemExtent: 50.0,
+                children: [
+                  Text("Blue", style: TextStyle(height: 2)),
+                  Text("Green", style: TextStyle(height: 2)),
+                  Text("Red", style: TextStyle(height: 2)),
+                  Text('Orange', style: TextStyle(height: 2)),
+                  Text('Purple', style: TextStyle(height: 2)),
+                ],
+              )));
+        });
+  }
+
+  DateTime getTimeFromString(String timeStr) {
+    var time = timeStr.split(':');
+
+    DateTime timeToReturn = DateTime(widget.date.year, widget.date.month,
+        widget.date.day, int.parse(time[0]), int.parse(time[1]));
+    return timeToReturn;
+  }
+
+  void timeEntry(BuildContext context) async {
+    print("Change Time");
+
+    await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+              height: 200,
+              color: Colors.white,
+              child: Center(
+                  child: CupertinoDatePicker(
+                      onDateTimeChanged: (DateTime time) {
+                        Map<String, dynamic> entry =
+                            Map<String, dynamic>.from(widget.entry);
+                        // Specify time of entry
+                        entry['time'] = "${time.hour}:${time.minute} ";
+                        widget.updateEntry(entry, widget.id);
+                      },
+                      initialDateTime: widget.entry.containsKey('time')
+                          ? getTimeFromString(widget.entry['time'])
+                          : widget.date,
+                      mode: CupertinoDatePickerMode.time)));
+        });
+  }
 
   Widget build(BuildContext context) {
     // For each entry, I want to be able to swipe left and be able to peform
     // certain actions
+    // https://pub.dev/packages/flutter_slidable/versions/1.0.0-dev.8/example
     return (Slidable(
         key: ValueKey<String>(widget.id),
         startActionPane: ActionPane(
-          motion: ScrollMotion(), 
-          // dismissible: DismissiblePane(
-          //   onDismissed: () {},
-          // ),
+          motion: ScrollMotion(),
           children: [
             SlidableAction(
-                onPressed: archiveEntry,
-                // flex: 2,
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-                icon: Icons.archive,
-                label: 'Archive'),
+              onPressed: archiveEntry,
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+              icon: Icons.archive,
+              // label: 'Archive',
+            ),
             SlidableAction(
-                onPressed: deleteEntry,
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                icon: Icons.delete,
-                label: 'Delete')
+              onPressed: deleteEntry,
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              icon: Icons.delete,
+              // label: 'Delete',
+            ),
+            // Recurring?
+            //             SlidableAction(
+            //   onPressed: this.updateColor,
+            //   backgroundColor: Colors.orange,
+            //   foregroundColor: Colors.white,
+            //   icon: Icons.palette,
+            // ),
           ],
         ),
         endActionPane: ActionPane(
           motion: ScrollMotion(),
           children: [
             SlidableAction(
-                onPressed: doNothing,
-                backgroundColor: Colors.yellow[700],
-                foregroundColor: Colors.white,
-                icon: Icons.edit,
-                label: 'Edit'),
+              onPressed: editEntry,
+              backgroundColor: Colors.yellow[700],
+              foregroundColor: Colors.white,
+              icon: Icons.edit,
+              // label: 'Edit',
+            ),
             SlidableAction(
-                onPressed: doNothing,
-                backgroundColor: Colors.purple,
-                foregroundColor: Colors.white,
-                icon: Icons.timer,
-                label: 'Time')
+              onPressed: timeEntry,
+              backgroundColor: Colors.purple,
+              foregroundColor: Colors.white,
+              icon: Icons.timer,
+              // label: 'Time',
+            ),
+            SlidableAction(
+              onPressed: this.updateColor,
+              backgroundColor: Colors.orange,
+              foregroundColor: Colors.white,
+              icon: Icons.palette,
+              // label: 'Color',
+            ),
           ],
         ),
 
@@ -378,13 +429,21 @@ class _EntryState extends State<Entry> with TickerProviderStateMixin {
         //   // What to do based on direction
         child: Card(
             child: ListTile(
-          title: Text(
-            widget.entry['text'],
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
+          title: this.editing
+              ? TextFormField(
+                  autofocus: true,
+                  style: TextStyle(color: Colors.white),
+                  onFieldSubmitted: this.updateText,
+                  textInputAction: TextInputAction.done,
+                  controller: this._controller,
+                )
+              : Text(
+                  widget.entry['text'],
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
           tileColor: getColor(widget.entry['color']),
         ))));
   }
