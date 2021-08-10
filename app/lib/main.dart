@@ -1,10 +1,16 @@
+// Flutter
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+// Packages
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:cloud_functions/cloud_functions.dart';
+
+// App Modules
 import 'home.dart';
 import 'auth.dart';
 import 'settings.dart';
@@ -50,6 +56,9 @@ Future<void> main() async {
     badge: true,
     sound: true,
   );
+
+  // FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5000);
+
   runApp(MyApp());
 }
 
@@ -68,7 +77,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
 // If we had an initial message for our app?
     FirebaseMessaging.instance
         .getInitialMessage()
@@ -93,8 +101,6 @@ class _MyAppState extends State<MyApp> {
                 channel.id,
                 channel.name,
                 channel.description,
-                // TODO add a proper drawable resource to android, for now using
-                //      one that already exists in example app.
                 icon: 'launch_background',
               ),
             ));

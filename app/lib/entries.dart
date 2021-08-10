@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 // =================================================================
 // ENTRY LIST
@@ -219,7 +220,8 @@ class _EntryState extends State<Entry> {
 // For picking time
 // https://www.youtube.com/watch?v=aPaFalC2a28&ab_channel=JohannesMilke
   bool editing = false;
-  TextEditingController _controller = TextEditingController();
+  TextEditingController _controller;
+  FirebaseFunctions functions = FirebaseFunctions.instance;
 
   Color getColor(String color) {
     Color newColor;
@@ -318,6 +320,24 @@ class _EntryState extends State<Entry> {
   }
 
 // In this case here, make sure to create a flutter_local_notification for the new timeEntered
+  Future<void> createNotification(Map data) async {
+    print("Creating Notification");
+    try {
+      HttpsCallable callable = functions.httpsCallable('createNotification');
+      HttpsCallableResult result = await callable.call(data);
+      print(result.data);
+    } on FirebaseFunctionsException catch (e) {
+      print('An error occurred while calling createNotification');
+      print(
+          'Error Details: ${e.details}\nMessage: ${e.message}\nPlugin: ${e.plugin}\nStacktrace: ${e.stackTrace}');
+    } catch (e) {
+      print("Uncaught error");
+      print(e);
+    }
+  }
+
+// Here we are updating the entry, but maybe we can create a cloud function that will create a notification with this entry that will
+// execute at a certain time/date/etc.
   void timeEntry(BuildContext context) async {
     print("Change Time");
     DateTime newTime;
@@ -338,13 +358,21 @@ class _EntryState extends State<Entry> {
                       mode: CupertinoDatePickerMode.time)));
         });
     Map<String, dynamic> entry = Map<String, dynamic>.from(widget.entry);
-    entry['time'] = "${newTime.hour}:${newTime.minute} ";
+    // print(newTime.hour);
+    // print(newTime.minute);
+    entry['time'] = "${newTime.hour}:${newTime.minute}";
+    // I should run a check to see if this user allows notifications or not. If not, I will not create a notification
+    createNotification({
+      'time': '${newTime.hour}:${newTime.minute}',
+      'uid': FirebaseAuth.instance.currentUser.uid
+    });
     widget.updateEntry(entry, widget.id);
   }
 
   @override
   void initState() {
     super.initState();
+    _controller = new TextEditingController(text: widget.entry['text']);
   }
 
   void dispose() {
@@ -428,3 +456,25 @@ class _EntryState extends State<Entry> {
   }
 }
 // =================================================================
+
+// class Api {
+//   Api(this.functions);
+//   final FirebaseFunctions functions;
+
+//   static Api init() {
+//     FirebaseFunctions functions = FirebaseFunctions.instance;
+//     return Api(functions);
+//   }
+
+//   Future<ApiResult> call(String name, {Map<String, dynamic> parameters}) async {
+//     try {
+//       HttpsCallable callable = functions.httpsCallable('createNotification');
+//       HttpsCallableResult result = await callable.call(parameters);
+//       return ApiResult(new Map<String, dynamic>.from(result.data));
+//     } on FirebaseFunctionsException catch (e) {
+//       print("error $e");
+//     }
+//   }
+
+//   static String get host =>
+// }

@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'entries.dart';
 import 'nav.dart';
 // https://stackoverflow.com/questions/53572110/flutter-push-notifications-even-if-the-app-is-closed Maybe for implementing this
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class HomePage extends StatefulWidget {
@@ -41,11 +43,20 @@ class _HomePageState extends State<HomePage> {
         duration: Duration(milliseconds: 500), curve: Curves.easeOut);
   }
 
+  Future<void> saveTokenToDatebase(String token) async {}
+
+  Future<void> saveToken([String newToken]) async {
+    String token = await FirebaseMessaging.instance.getToken();
+    String userId = FirebaseAuth.instance.currentUser.uid;
+    await FirebaseFirestore.instance.collection('users').doc(userId).update({
+      'tokens': FieldValue.arrayUnion([token])
+    });
+  }
+
 // ======================================
   @override
   void initState() {
     super.initState();
-
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Got a message while in the foreground!');
       print('Message data: ${message.data}');
@@ -54,6 +65,10 @@ class _HomePageState extends State<HomePage> {
         print('Message also contained a notification: ${message.notification}');
       }
     });
+    // Get the token each time the application loads
+    saveToken();
+    // Any time the token refreshes, store this in the database too.
+    FirebaseMessaging.instance.onTokenRefresh.listen(saveToken);
   }
 
   void didUpdateWidget(old) {
