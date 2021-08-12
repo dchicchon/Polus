@@ -325,7 +325,7 @@ class _EntryState extends State<Entry> {
     try {
       HttpsCallable callable = functions.httpsCallable('createTask');
       HttpsCallableResult result = await callable.call(data);
-      print(result.data);
+      print(result);
     } on FirebaseFunctionsException catch (e) {
       print('An error occurred while calling createNotification');
       print(
@@ -360,17 +360,15 @@ class _EntryState extends State<Entry> {
     Map<String, dynamic> entry = Map<String, dynamic>.from(widget.entry);
     entry['time'] = "${newTime.hour}:${newTime.minute}";
     // I should run a check to see if this user allows notifications or not. If not, I will not create a notification
-    createNotification({
-      'time': [
-        newTime.year,
-        newTime.month - 1,
-        newTime.day,
-        newTime.hour,
-        newTime.minute
-      ],
-      'uid': FirebaseAuth.instance.currentUser.uid,
-      'id': widget.id
-    });
+    print(newTime.toUtc());
+    if (newTime.compareTo(new DateTime.now()) > 0) {
+      createNotification({
+        'time': newTime.toUtc(),
+        // 'date': widget.date,
+        'uid': FirebaseAuth.instance.currentUser.uid,
+        'id': widget.id,
+      });
+    }
     widget.updateEntry(entry, widget.id);
   }
 
