@@ -33,20 +33,20 @@ const join = (t, s) => {
 exports.createTask = functions.https.onCall(async (data, context) => {
     const taskClient = new CloudTasksClient();
     log("create task")
-    let { dateString, uid, id } = data
-    log(dateString)
+    let { time, uid, id } = data
+    log(time)
     log(uid)
     log(id)
     // Check if task already exists in entry
     // Get Date from time in format mm-dd-yyyy
-    let entryDate = new Date(Date.UTC(dateString[0], dateString[1], dateString[2], dateString[3], dateString[4],));
+    let entryDate = new Date(Date.UTC(time[0], time[1], time[2], time[3], time[4],));
     const date = join(entryDate, '-');
     let prevEntry = await admin.firestore().doc(`/users/${uid}/${date}/${id}`).get()
     let prevEntryData = await prevEntry.data()
     log(prevEntryData)
     if (prevEntryData.hasOwnProperty('expirationTask')) {
         // Delete old expiration task
-        await tasksClient.deleteTask({ name: prevEntryData.expirationTask })
+        await taskClient.deleteTask({ name: prevEntryData.expirationTask })
     }
     log(date)
     // This works now! Now I should create a task on google tasks
@@ -82,11 +82,6 @@ exports.createTask = functions.https.onCall(async (data, context) => {
             seconds: expirationAtSeconds
         }
     }
-    // const entry = (await admin.firestore().doc(docPath).get()).data()
-    // // if entry has previous task
-    // if (entry.hasOwnProperty('expirationTask')) {
-    //     await taskClient.deleteTask({ name: expirationTask })
-    // }
     const [response] = await taskClient.createTask({ parent: queuePath, task })
     const expirationTask = response.name;
     const update = { expirationTask }
@@ -115,7 +110,7 @@ exports.firestoreTtlCallback = functions.https.onRequest(async (req, res) => {
         // admin.messaging().sendToDevice('token')
         res.status(200)
     } catch (err) {
-        log(error)
+        log(err)
         res.status(500).send(err)
     }
 })
