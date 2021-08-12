@@ -323,7 +323,7 @@ class _EntryState extends State<Entry> {
   Future<void> createNotification(Map data) async {
     print("Creating Notification");
     try {
-      HttpsCallable callable = functions.httpsCallable('createNotification');
+      HttpsCallable callable = functions.httpsCallable('createTask');
       HttpsCallableResult result = await callable.call(data);
       print(result.data);
     } on FirebaseFunctionsException catch (e) {
@@ -358,13 +358,18 @@ class _EntryState extends State<Entry> {
                       mode: CupertinoDatePickerMode.time)));
         });
     Map<String, dynamic> entry = Map<String, dynamic>.from(widget.entry);
-    // print(newTime.hour);
-    // print(newTime.minute);
     entry['time'] = "${newTime.hour}:${newTime.minute}";
     // I should run a check to see if this user allows notifications or not. If not, I will not create a notification
     createNotification({
-      'time': '${newTime.hour}:${newTime.minute}',
-      'uid': FirebaseAuth.instance.currentUser.uid
+      'time': [
+        newTime.year,
+        newTime.month - 1,
+        newTime.day,
+        newTime.hour,
+        newTime.minute
+      ],
+      'uid': FirebaseAuth.instance.currentUser.uid,
+      'id': widget.id
     });
     widget.updateEntry(entry, widget.id);
   }
@@ -456,25 +461,3 @@ class _EntryState extends State<Entry> {
   }
 }
 // =================================================================
-
-// class Api {
-//   Api(this.functions);
-//   final FirebaseFunctions functions;
-
-//   static Api init() {
-//     FirebaseFunctions functions = FirebaseFunctions.instance;
-//     return Api(functions);
-//   }
-
-//   Future<ApiResult> call(String name, {Map<String, dynamic> parameters}) async {
-//     try {
-//       HttpsCallable callable = functions.httpsCallable('createNotification');
-//       HttpsCallableResult result = await callable.call(parameters);
-//       return ApiResult(new Map<String, dynamic>.from(result.data));
-//     } on FirebaseFunctionsException catch (e) {
-//       print("error $e");
-//     }
-//   }
-
-//   static String get host =>
-// }
