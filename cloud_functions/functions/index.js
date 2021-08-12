@@ -31,6 +31,7 @@ const join = (t, s) => {
 // })
 
 exports.createTask = functions.https.onCall(async (data, context) => {
+    const taskClient = new CloudTasksClient();
     log("create task")
     let { dateString, uid, id } = data
     log(dateString)
@@ -43,7 +44,6 @@ exports.createTask = functions.https.onCall(async (data, context) => {
     let prevEntry = await admin.firestore().doc(`/users/${uid}/${date}/${id}`).get()
     let prevEntryData = await prevEntry.data()
     log(prevEntryData)
-    const taskClient = new CloudTasksClient();
     if (prevEntryData.hasOwnProperty('expirationTask')) {
         // Delete old expiration task
         await tasksClient.deleteTask({ name: prevEntryData.expirationTask })
