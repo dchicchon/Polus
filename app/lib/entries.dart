@@ -256,7 +256,12 @@ class _EntryState extends State<Entry> {
     return timeToReturn;
   }
 
-  void deleteEntry(BuildContext context) {
+  void deleteEntry(BuildContext context) async {
+    // If Entry has time, make sure to delete this notification
+    if (widget.entry.containsKey('time')) {
+      // Delete the time here
+      await deleteNotification();
+    }
     widget.deleteEntry(widget.entry, widget.id);
   }
 
@@ -319,13 +324,32 @@ class _EntryState extends State<Entry> {
         });
   }
 
+  Future<void> deleteNotification() async {
+    print("Deleting Notification");
+    try {
+      HttpsCallable callable = functions.httpsCallable('deleteTask');
+      String dateString =
+          '${widget.date.month}-${widget.date.day}-${widget.date.year}';
+      var data = {
+        'date': dateString,
+        'id': widget.id,
+        'uid': FirebaseAuth.instance.currentUser.uid
+      };
+      HttpsCallableResult result = await callable.call(data);
+      print(result.data);
+    } catch (e) {
+      print(e);
+    }
+  }
+
 // In this case here, make sure to create a flutter_local_notification for the new timeEntered
   Future<void> createNotification(Map data) async {
     print("Creating Notification");
     try {
       HttpsCallable callable = functions.httpsCallable('createTask');
+
       HttpsCallableResult result = await callable.call(data);
-      print(result);
+      print(result.data);
     } on FirebaseFunctionsException catch (e) {
       print('An error occurred while calling createNotification');
       print(
@@ -360,14 +384,17 @@ class _EntryState extends State<Entry> {
     Map<String, dynamic> entry = Map<String, dynamic>.from(widget.entry);
     entry['time'] = "${newTime.hour}:${newTime.minute}";
     // I should run a check to see if this user allows notifications or not. If not, I will not create a notification
-    print(newTime.toUtc());
     if (newTime.compareTo(new DateTime.now()) > 0) {
-      createNotification({
-        'time': newTime.toUtc(),
-        // 'date': widget.date,
+      String dateString =
+          '${widget.date.month}-${widget.date.day}-${widget.date.year}';
+      var notification = {
+        'time': newTime.toUtc().toString(),
+        'date': dateString,
         'uid': FirebaseAuth.instance.currentUser.uid,
         'id': widget.id,
-      });
+      };
+      // print(notification);
+      createNotification(notification);
     }
     widget.updateEntry(entry, widget.id);
   }
