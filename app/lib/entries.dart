@@ -394,7 +394,6 @@ class _EntryState extends State<Entry> {
         'uid': FirebaseAuth.instance.currentUser.uid,
         'id': widget.id,
       };
-      // print(notification);
       createNotification(notification);
     }
     widget.updateEntry(entry, widget.id);
