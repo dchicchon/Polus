@@ -60,6 +60,7 @@ exports.createTask = functions.https.onCall(async (data, context) => {
         docPath,
         uid,
     }
+    log(payload)
     const task = {
         httpRequest: {
             httpMethod: 'POST',
