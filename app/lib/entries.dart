@@ -383,17 +383,17 @@ class _EntryState extends State<Entry> {
         });
     Map<String, dynamic> entry = Map<String, dynamic>.from(widget.entry);
     entry['time'] = "${newTime.hour}:${newTime.minute}";
-    // I should run a check to see if this user allows notifications or not. If not, I will not create a notification
-    if (newTime.compareTo(new DateTime.now()) > 0) {
+    
+    final diff = newTime.difference(new DateTime.now()).inSeconds;
+    if (diff > 0) {
       String dateString =
           '${widget.date.month}-${widget.date.day}-${widget.date.year}';
       var notification = {
-        'time': newTime.toUtc().toString(),
+        'difference': diff,
         'date': dateString,
         'uid': FirebaseAuth.instance.currentUser.uid,
         'id': widget.id,
       };
-      // print(notification);
       createNotification(notification);
     }
     widget.updateEntry(entry, widget.id);

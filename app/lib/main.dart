@@ -15,56 +15,39 @@ import 'home.dart';
 import 'auth.dart';
 import 'settings.dart';
 
-/// Create a [AndroidNotificationChannel] for heads up notifications
-AndroidNotificationChannel channel;
-
-/// Initialize the [FlutterLocalNotificationsPlugin] package.
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
 
-  channel = const AndroidNotificationChannel(
-      'high_importance_channel',
-      'High Importance Notifications',
-      'This channel is used for important notifications');
-  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-  /// default FCM channel to enable heads up notifications.
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
-
-  /// Update the iOS foreground notification presentation options to allow
-  /// heads up notifications.
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-
   print('Handling a background message ${message.messageId}');
-  RemoteNotification notification = message.notification;
-  AndroidNotification android = message.notification?.android;
-  if (notification != null && android != null && !kIsWeb) {
-    flutterLocalNotificationsPlugin.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            channel.id,
-            channel.name,
-            channel.description,
-            icon: 'launch_background',
-          ),
-        ));
-  }
+  print(message.notification.title);
+  print(message.notification.body);
+  flutterLocalNotificationsPlugin.show(
+      message.notification.hashCode,
+      message.notification.title,
+      message.notification.body,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          channel.description,
+          icon: 'launch_background',
+        ),
+      ));
+
   // Create a notification for this
 }
+
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+  'high_importance_channel', // id
+  'High Importance Notifications', // title
+  'This channel is used for important notifications.', // description
+  importance: Importance.high,
+);
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 // Starting FlutterFire through the suggestion found here
 // https://firebase.flutter.dev/docs/overview
@@ -72,11 +55,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  channel = const AndroidNotificationChannel(
-      'high_importance_channel',
-      'High Importance Notifications',
-      'This channel is used for important notifications');
-  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   /// Create an Android Notification Channel.
   ///
