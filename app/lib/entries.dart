@@ -383,7 +383,7 @@ class _EntryState extends State<Entry> {
         });
     Map<String, dynamic> entry = Map<String, dynamic>.from(widget.entry);
     entry['time'] = "${newTime.hour}:${newTime.minute}";
-    
+
     final diff = newTime.difference(new DateTime.now()).inSeconds;
     if (diff > 0) {
       String dateString =
@@ -394,6 +394,7 @@ class _EntryState extends State<Entry> {
         'uid': FirebaseAuth.instance.currentUser.uid,
         'id': widget.id,
       };
+      // print(notification);
       createNotification(notification);
     }
     widget.updateEntry(entry, widget.id);

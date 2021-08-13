@@ -15,6 +15,7 @@ import 'home.dart';
 import 'auth.dart';
 import 'settings.dart';
 
+// For Background Notifications
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
@@ -57,7 +58,6 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   /// Create an Android Notification Channel.
-  ///
   /// We use this channel in the `AndroidManifest.xml` file to override the
   /// default FCM channel to enable heads up notifications.
   await flutterLocalNotificationsPlugin
@@ -72,8 +72,6 @@ Future<void> main() async {
     badge: true,
     sound: true,
   );
-
-  // FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5000);
 
   runApp(MyApp());
 }
@@ -90,10 +88,18 @@ class _MyAppState extends State<MyApp> {
   FirebaseAnalytics analytics;
   bool _error = false;
 
+  void _handleLogin(User user) {
+    // print("Handle Login");
+    setState(() {
+      _user = user;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-// If we had an initial message for our app?
+
+    // If we had an initial message for our app?
     FirebaseMessaging.instance
         .getInitialMessage()
         .then((RemoteMessage message) {
@@ -105,6 +111,7 @@ class _MyAppState extends State<MyApp> {
 
     // Listen for any new messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("On Message Listener!");
       RemoteNotification notification = message.notification;
       AndroidNotification android = message.notification?.android;
       if (notification != null && android != null && !kIsWeb) {
@@ -125,7 +132,8 @@ class _MyAppState extends State<MyApp> {
 
     // if we opened the app through a notification, it will send us via this
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
+      print('On Message Opened!');
+      print(message);
       // Navigator.pushNamed(context, '/message',
       //     arguments: MessageArguments(message, true));
     });
@@ -142,13 +150,6 @@ class _MyAppState extends State<MyApp> {
               scaffoldBackgroundColor: Colors.black),
           home: SomethingWentWrong());
     }
-
-    // if (!_initialized) {
-    //   return MaterialApp(
-    //       title: "loading",
-    //       theme: ThemeData(primarySwatch: Colors.blue),
-    //       home: Loading());
-    // }
 
     return MaterialApp(
         title: "Polus",
@@ -174,13 +175,6 @@ class _MyAppState extends State<MyApp> {
                 ],
                 onPopPage: (route, result) => route.didPop(result),
               ));
-  }
-
-  void _handleLogin(User user) {
-    // print("Handle Login");
-    setState(() {
-      _user = user;
-    });
   }
 }
 
