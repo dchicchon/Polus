@@ -1,8 +1,7 @@
 const functions = require("firebase-functions");
 const admin = require('firebase-admin')
 const { CloudTasksClient } = require('@google-cloud/tasks');
-const config = require('../serviceAccountKey.json')
-admin.initializeApp(config)
+admin.initializeApp()
 const log = functions.logger.log
 
 // This article saved me tons of research by showing how to use Cloud Tasks. I then implemented Cloud Firebase Notifications
@@ -58,10 +57,8 @@ exports.deleteTask = functions.https.onCall(async (data, context) => {
     log("Delete Task")
     try {
         const taskClient = new CloudTasksClient();
-        const { date, uid, id } = data
-        let entry = await admin.firestore().doc(`/users/${uid}/${date}/${id}`).get()
-        let { expirationTask } = entry.data();
-        await taskClient.deleteTask({ name: expirationTask })
+        const { task } = data
+        await taskClient.deleteTask({ name: task })
         return ['Successfully Deleted Data']
     } catch (e) {
         log("Something Went Wrong")
