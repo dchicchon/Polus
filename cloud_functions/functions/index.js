@@ -36,13 +36,12 @@ const join = (t, s) => {
 exports.createTask = functions.https.onCall(async (data, context) => {
     // I should somehow check to users current timezone? just so we know which date they want to edit
     log("Create task")
-    let { time, date, uid, id, } = data
+    let { difference, date, uid, id, } = data
     const taskClient = new CloudTasksClient();
-    // Get Date from time in format mm-dd-yyyy
-    log(time)
-    let entryDate = new Date(time);
-    const expirationAtSeconds = (entryDate.getTime() + Date.now()) / 1000 // offset in seconds
-    log(expirationAtSeconds)
+    log(difference)
+
+    const expirationAtSeconds = difference + Date.now() / 1000 // offset in seconds
+
     let prevEntry = await admin.firestore().doc(`/users/${uid}/${date}/${id}`).get()
     let prevEntryData = await prevEntry.data()
     // log(prevEntryData)
@@ -79,7 +78,7 @@ exports.createTask = functions.https.onCall(async (data, context) => {
     // update the entry with the expiration task name
     await admin.firestore().doc(docPath).update({ expirationTask })
     log("Done with Create Task")
-    return ['Success!', expirationAtSeconds]
+    return [`Success! You will receive message in ${difference} seconds`]
 })
 
 // If entry had a running task, then we will call this function
@@ -114,14 +113,11 @@ exports.firestoreTtlCallback = functions.https.onRequest(async (req, res) => {
         }).then((response) => {
             log('Successfully sent message:')
             log(response)
-            const taskClient = new CloudTasksClient();
-            let { expirationTask } = admin.firestore().doc(payload.docPath).get()
-            await taskClient.deleteTask({ name: expirationTask })
-            admin.firestore().doc(payload.docPath).update({ expirationTask: admin.firestore.FieldValue.delete() })
         }).catch((error) => {
             log('Error in sending Message')
             log(error)
         })
+        await admin.firestore().doc(payload.docPath).update({ expirationTask: admin.firestore.FieldValue.delete() })
         res.status(200)
     } catch (err) {
         log(err)
