@@ -20,22 +20,24 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
-
   print('Handling a background message ${message.messageId}');
-  print(message.notification.title);
-  print(message.notification.body);
-  flutterLocalNotificationsPlugin.show(
-      message.notification.hashCode,
-      message.notification.title,
-      message.notification.body,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          channel.description,
-          icon: 'launch_background',
-        ),
-      ));
+  if (message.notification != null) {
+    print(message.notification.title);
+    print(message.notification.body);
+    flutterLocalNotificationsPlugin.show(
+        message.notification.hashCode,
+        message.notification.title,
+        message.notification.body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            channel.description,
+            icon: 'launch_background',
+          ),
+          iOS: IOSNotificationDetails()
+        ));
+  }
 
   // Create a notification for this
 }
@@ -99,43 +101,10 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-    // If we had an initial message for our app?
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage message) {
-      if (message != null) {
-        print("GOT INITIAL MESSAGE");
-        print(message);
-      }
-    });
-
-    // Listen for any new messages
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print("On Message Listener!");
-      RemoteNotification notification = message.notification;
-      AndroidNotification android = message.notification?.android;
-      if (notification != null && android != null && !kIsWeb) {
-        flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                channel.description,
-                icon: 'launch_background',
-              ),
-            ));
-      }
-    });
-
     // if we opened the app through a notification, it will send us via this
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('On Message Opened!');
       print(message);
-      // Navigator.pushNamed(context, '/message',
-      //     arguments: MessageArguments(message, true));
     });
   }
 

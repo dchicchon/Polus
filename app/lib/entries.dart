@@ -258,9 +258,9 @@ class _EntryState extends State<Entry> {
 
   void deleteEntry(BuildContext context) async {
     // If Entry has time, make sure to delete this notification
-    if (widget.entry.containsKey('time')) {
+    if (widget.entry.containsKey('expirationTask')) {
       // Delete the time here
-      await deleteNotification();
+      await deleteNotification(widget.entry['expirationTask']);
     }
     widget.deleteEntry(widget.entry, widget.id);
   }
@@ -324,17 +324,11 @@ class _EntryState extends State<Entry> {
         });
   }
 
-  Future<void> deleteNotification() async {
+  Future<void> deleteNotification(taskName) async {
     print("Deleting Notification");
     try {
       HttpsCallable callable = functions.httpsCallable('deleteTask');
-      String dateString =
-          '${widget.date.month}-${widget.date.day}-${widget.date.year}';
-      var data = {
-        'date': dateString,
-        'id': widget.id,
-        'uid': FirebaseAuth.instance.currentUser.uid
-      };
+      var data = {'task': taskName};
       HttpsCallableResult result = await callable.call(data);
       print(result.data);
     } catch (e) {
@@ -347,7 +341,6 @@ class _EntryState extends State<Entry> {
     print("Creating Notification");
     try {
       HttpsCallable callable = functions.httpsCallable('createTask');
-
       HttpsCallableResult result = await callable.call(data);
       print(result.data);
     } on FirebaseFunctionsException catch (e) {

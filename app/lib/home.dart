@@ -57,11 +57,13 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    // Listen for any new messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Got a message while in the foreground!');
       print('Message data: ${message.notification}');
       if (message.notification != null) {
-        print('Message also contained a notification: ${message.notification}');
+        print(message.notification.title);
+        print(message.notification.body);
       }
     });
     // Get the token each time the application loads
