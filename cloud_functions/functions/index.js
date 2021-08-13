@@ -23,20 +23,15 @@ exports.createTask = functions.https.onCall(async (data, context) => {
         await taskClient.deleteTask({ name: prevEntryData.expirationTask })
     }
     // This is good, its something wrong with firebase env?
-
     const project = 'polus-cc376'
-    log(project)
     const location = 'us-central1'
     const queue = 'firestore-ttl'
     const queuePath = taskClient.queuePath(project, location, queue)
-    log(queuePath)
     const url = `https://${location}-${project}.cloudfunctions.net/firestoreTtlCallback`
     const payload = {
         docPath,
         uid,
     }
-    log("Payload")
-    log(payload)
     const task = {
         httpRequest: {
             httpMethod: 'POST',
