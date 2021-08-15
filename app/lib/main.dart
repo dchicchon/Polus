@@ -24,33 +24,32 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if (message.notification != null) {
     print(message.notification.title);
     print(message.notification.body);
-    flutterLocalNotificationsPlugin.show(
-        message.notification.hashCode,
-        message.notification.title,
-        message.notification.body,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            channel.id,
-            channel.name,
-            channel.description,
-            icon: 'launch_background',
-          ),
-          iOS: IOSNotificationDetails()
-        ));
+    // flutterLocalNotificationsPlugin.show(
+    //     message.notification.hashCode,
+    //     message.notification.title,
+    //     message.notification.body,
+    //     NotificationDetails(
+    //         android: AndroidNotificationDetails(
+    //           channel.id,
+    //           channel.name,
+    //           channel.description,
+    //           icon: 'launch_background',
+    //         ),
+    //         iOS: IOSNotificationDetails()));
   }
 
   // Create a notification for this
 }
 
-const AndroidNotificationChannel channel = AndroidNotificationChannel(
-  'high_importance_channel', // id
-  'High Importance Notifications', // title
-  'This channel is used for important notifications.', // description
-  importance: Importance.high,
-);
+// const AndroidNotificationChannel channel = AndroidNotificationChannel(
+//   'high_importance_channel', // id
+//   'High Importance Notifications', // title
+//   'This channel is used for important notifications.', // description
+//   importance: Importance.high,
+// );
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//     FlutterLocalNotificationsPlugin();
 
 // Starting FlutterFire through the suggestion found here
 // https://firebase.flutter.dev/docs/overview
@@ -62,18 +61,18 @@ Future<void> main() async {
   /// Create an Android Notification Channel.
   /// We use this channel in the `AndroidManifest.xml` file to override the
   /// default FCM channel to enable heads up notifications.
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
+  // await flutterLocalNotificationsPlugin
+  //     .resolvePlatformSpecificImplementation<
+  //         AndroidFlutterLocalNotificationsPlugin>()
+  //     ?.createNotificationChannel(channel);
 
   /// Update the iOS foreground notification presentation options to allow
   /// heads up notifications.
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
+  // await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+  //   alert: true,
+  //   badge: true,
+  //   sound: true,
+  // );
 
   runApp(MyApp());
 }
@@ -97,9 +96,32 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void requestNotificationPermission() async {
+    NotificationSettings settings = await FirebaseMessaging.instance
+        .requestPermission(
+            alert: true,
+            announcement: true,
+            badge: true,
+            carPlay: false,
+            criticalAlert: false,
+            provisional: false,
+            sound: true);
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print("user granted permission");
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
+      print('user granted provisional permission');
+    } else {
+      print('user declined or has not accepted permission');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    requestNotificationPermission();
 
     // if we opened the app through a notification, it will send us via this
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
