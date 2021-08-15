@@ -375,6 +375,8 @@ class _EntryState extends State<Entry> {
                       mode: CupertinoDatePickerMode.time)));
         });
     Map<String, dynamic> entry = Map<String, dynamic>.from(widget.entry);
+    print(newTime);
+    print(newTime.hour);
     entry['time'] = "${newTime.hour}:${newTime.minute}";
 
     final diff = newTime.difference(new DateTime.now()).inSeconds;
