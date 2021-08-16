@@ -1,7 +1,11 @@
 const functions = require("firebase-functions");
 const admin = require('firebase-admin')
 const { CloudTasksClient } = require('@google-cloud/tasks');
-admin.initializeApp()
+const serviceAccount = require('./serviceAccountKey.json');
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://polus-cc376.firebaseio.com"
+})
 const log = functions.logger.log
 
 // This article saved me tons of research by showing how to use Cloud Tasks. I then implemented Cloud Firebase Notifications
@@ -13,10 +17,10 @@ exports.createTask = functions.https.onCall(async (data, context) => {
     const { difference, date, uid, id, } = data
     const taskClient = new CloudTasksClient();
     const expirationAtSeconds = difference + (Date.now() / 1000) // offset in seconds
-
     const docPath = `/users/${uid}/${date}/${id}`
     let prevEntry = await admin.firestore().doc(docPath).get()
     let prevEntryData = await prevEntry.data()
+    // log("Check Expiration Task")
     if (prevEntryData.hasOwnProperty('expirationTask')) {
         // Delete old expiration task
         await taskClient.deleteTask({ name: prevEntryData.expirationTask })
@@ -44,9 +48,11 @@ exports.createTask = functions.https.onCall(async (data, context) => {
             seconds: expirationAtSeconds
         }
     }
+    // log("Create Task")
     const [response] = await taskClient.createTask({ parent: queuePath, task })
     const expirationTask = response.name;
     // update the entry with the expiration task name
+    // log("Update Task")
     await admin.firestore().doc(docPath).update({ expirationTask })
     log("Done with Create Task")
     return [`Success! You will receive message in ${difference} seconds`]
@@ -73,39 +79,35 @@ exports.firestoreTtlCallback = functions.https.onRequest(async (req, res) => {
         const payload = req.body;
         let entry = await (await admin.firestore().doc(payload.docPath).get()).data();
         let tokens = await (await admin.firestore().doc(`/users/${payload.uid}`).get()).get('tokens')
-        admin.messaging().send
-        await admin.messaging().sendMulticast({
-            tokens,
-            apns: {
-                payload: {
-                    aps: {
-                        contentAvailable: true
-                    }
-                },
-                headers: {
-                    'apns-push-type': 'background',
-                    'apns-priority': '5', // must be 5 when content available is set to true
-                    // 'apns-topic':'io.flutter.plugins.firebase.messaging' // bundle identifier
-                },
-            },
-            android: {
-                priority: 'high'
-            },
+        const notification = {
             notification: {
-                title: "Polus",
+                title: 'Polus',
                 body: entry['text']
             }
-        }).then((response) => {
-            log('Successfully sent message:')
-            log(response)
-        }).catch((error) => {
-            log('Error in sending Message')
-            log(error)
+        }
+        const response = await admin.messaging().sendToDevice(
+            tokens,
+            notification
+        )
+        response.results.forEach((result, index) => {
+            const error = result.error;
+            if (error) {
+                functions.logger.error('Failure sending notification to', tokens[index],
+                    error)
+                if (error.code === 'messaging/invalid-registration-token' || error.code === 'messaging/registration-token-not-registered') {
+                    // remove token here
+
+                }
+            } else {
+                log("Successfully send message!")
+            }
         })
         await admin.firestore().doc(payload.docPath).update({ expirationTask: admin.firestore.FieldValue.delete() })
-        res.send(200)
+        res.sendStatus(200)
+
     } catch (err) {
         log(err)
+        await admin.firestore().doc(payload.docPath).update({ expirationTask: admin.firestore.FieldValue.delete() })
         res.status(500).send(err)
     }
 })
