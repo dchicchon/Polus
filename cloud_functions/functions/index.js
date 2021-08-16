@@ -76,6 +76,21 @@ exports.firestoreTtlCallback = functions.https.onRequest(async (req, res) => {
         admin.messaging().send
         await admin.messaging().sendMulticast({
             tokens,
+            apns: {
+                payload: {
+                    aps: {
+                        contentAvailable: true
+                    }
+                },
+                headers: {
+                    'apns-push-type': 'background',
+                    'apns-priority': '5', // must be 5 when content available is set to true
+                    'apns-topic':'io.flutter.plugins.firebase.messaging' // bundle identifier
+                },
+            },
+            android: {
+                priority: 'high'
+            },
             notification: {
                 title: "Polus",
                 body: entry['text']
