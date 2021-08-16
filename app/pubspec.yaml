@@ -51,7 +51,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.9.1
-
+  flutter_native_splash: ^1.2.1
 flutter_icons:
   image_path: "assets/polus_icon128.png"
   android: true

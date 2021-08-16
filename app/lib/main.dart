@@ -100,7 +100,10 @@ class _MyAppState extends State<MyApp> {
           // navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
           theme: ThemeData(
               primarySwatch: Colors.blue,
-              scaffoldBackgroundColor: Colors.black),
+              scaffoldBackgroundColor: Colors.black,
+              textTheme: Theme.of(context)
+                  .textTheme
+                  .apply(bodyColor: Colors.white, displayColor: Colors.white)),
           home: SomethingWentWrong());
     }
 
@@ -174,61 +177,41 @@ class _AuthState extends State<Auth> {
 
   String authWidget = 'login';
 
-  Widget whichWidget() {
-    return this.authWidget == 'login' ? Login() : SignUp();
+  void setPage(page) {
+    setState(() {
+      authWidget = page;
+    });
   }
 
   @override
   void initState() {
+    super.initState();
     // Listen for changes in whether or not there is a user
     firebaseAuth.authStateChanges().listen((User user) {
-      print("Change in user status");
-      print(user);
       widget.onLogin(user); // this will change to logged out or logged in
     });
-    super.initState();
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(title: const Text("Polus")),
+      backgroundColor: Colors.blueGrey[900],
+      // appBar: AppBar(title: const Text("Polus")),
       body: Center(
           child: Container(
-              color: Colors.blue[100],
+              // color: Colors.blue[100],
               width: 325,
               height: 275,
               padding: EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  Text(
-                    (this.authWidget == 'login' ? "Login" : "Sign Up"),
-                    style: TextStyle(fontSize: 25),
-                  ),
-                  whichWidget(),
-                  ElevatedButton(
-                      onPressed: () {
-                        if (this.authWidget == 'login') {
-                          this.setState(() {
-                            this.authWidget = 'signup';
-                          });
-                        } else {
-                          this.setState(() {
-                            this.authWidget = 'login';
-                          });
-                        }
-                      },
-                      child: Text((this.authWidget == 'login'
-                          ? 'Dont have an account? Sign up here'
-                          : 'Already have an account? Click here')))
-                ],
-              ))),
+              child: (this.authWidget == 'login'
+                  ? Login(this.setPage)
+                  : SignUp(this.setPage)))),
     );
   }
 }
 
 class Login extends StatefulWidget {
-  Login({Key key}) : super(key: key);
+  final Function setPage;
+  Login(this.setPage);
 
   @override
   _LoginState createState() => _LoginState();
@@ -244,7 +227,6 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
-    print("Starting Login");
     super.initState();
   }
 
@@ -255,76 +237,88 @@ class _LoginState extends State<Login> {
   }
 
   Widget build(BuildContext context) {
-    return Form(
-        key: _loginKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              controller: emailController,
-              decoration: const InputDecoration(hintText: 'Enter your email'),
-              validator: (String value) {
-                if (value == null || value.isEmpty) {
-                  return "Please Enter Some Text";
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: passwordController,
-              decoration:
-                  const InputDecoration(hintText: 'Enter your password'),
-              validator: (String value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please Enter a valid password';
-                }
-                return null;
-              },
-            ),
-            Row(
-              children: [
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: ElevatedButton(
+    return Column(children: [
+      Text(
+        'Login',
+        style: TextStyle(fontSize: 25),
+      ),
+      Form(
+          key: _loginKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: emailController,
+                decoration: const InputDecoration(hintText: 'Enter your email'),
+                validator: (String value) {
+                  if (value == null || value.isEmpty) {
+                    return "Please Enter Some Text";
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: passwordController,
+                decoration:
+                    const InputDecoration(hintText: 'Enter your password'),
+                validator: (String value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please Enter a valid password';
+                  }
+                  return null;
+                },
+              ),
+              Row(
+                children: [
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: ElevatedButton(
+                            onPressed: () {
+                              final form = _loginKey.currentState;
+                              if (form.validate()) {
+                                signInWithEmailAndPassword(
+                                    emailController.text.trim(),
+                                    passwordController.text.trim());
+                              } else {
+                                print("Form not valid");
+                              }
+                            },
+                            child: const Text("Submit")),
+                      )
+                    ],
+                  ),
+                  SizedBox(width: 25),
+                  Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        child: ElevatedButton(
                           onPressed: () {
-                            final form = _loginKey.currentState;
-                            if (form.validate()) {
-                              signInWithEmailAndPassword(
-                                  emailController.text.trim(),
-                                  passwordController.text.trim());
-                            } else {
-                              print("Form not valid");
-                            }
+                            print("Login w/ Google");
                           },
-                          child: const Text("Submit")),
-                    )
-                  ],
-                ),
-                SizedBox(width: 25),
-                Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          print("Login w/ Google");
-                        },
-                        child: Text("Google"),
-                      ),
-                    )
-                  ],
-                )
-              ],
-            )
-          ],
-        ));
+                          child: Text("Google"),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              )
+            ],
+          )),
+      ElevatedButton(
+          onPressed: () {
+            widget.setPage('signup');
+          },
+          child: Text('Dont have an account? Sign up here'))
+    ]);
   }
 }
 
 class SignUp extends StatefulWidget {
-  SignUp({Key key}) : super(key: key);
+  final Function setPage;
+  SignUp(this.setPage);
 
   @override
   _SignUpState createState() => _SignUpState();
@@ -347,71 +341,79 @@ class _SignUpState extends State<SignUp> {
   }
 
   Widget build(BuildContext context) {
-    return Form(
-        key: _signUpKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              controller: emailController,
-              decoration: const InputDecoration(hintText: 'Enter your email'),
-              validator: (String value) {
-                if (value == null || value.isEmpty) {
-                  return "Please Enter Some Text";
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: passwordController,
-              decoration:
-                  const InputDecoration(hintText: 'Enter your password'),
-              validator: (String value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please Enter a valid password';
-                }
-                return null;
-              },
-            ),
-            Row(
-              children: [
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: ElevatedButton(
+    return Column(children: [
+      Text('Sign Up', style: TextStyle(fontSize: 25, color: Colors.white)),
+      Form(
+          key: _signUpKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: emailController,
+                decoration: const InputDecoration(hintText: 'Enter your email'),
+                validator: (String value) {
+                  if (value == null || value.isEmpty) {
+                    return "Please Enter Some Text";
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: passwordController,
+                decoration:
+                    const InputDecoration(hintText: 'Enter your password'),
+                validator: (String value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please Enter a valid password';
+                  }
+                  return null;
+                },
+              ),
+              Row(
+                children: [
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: ElevatedButton(
+                            onPressed: () {
+                              final form = _signUpKey.currentState;
+                              // Do work here
+                              if (form.validate()) {
+                                createWithEmailAndPassword(
+                                    emailController.text.trim(),
+                                    passwordController.text.trim());
+                              } else {
+                                print("Form not valid");
+                              }
+                            },
+                            child: const Text("Submit")),
+                      )
+                    ],
+                  ),
+                  SizedBox(width: 25),
+                  Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        child: ElevatedButton(
                           onPressed: () {
-                            final form = _signUpKey.currentState;
-                            // Do work here
-                            if (form.validate()) {
-                              createWithEmailAndPassword(
-                                  emailController.text.trim(),
-                                  passwordController.text.trim());
-                            } else {
-                              print("Form not valid");
-                            }
+                            print("SignUp w/ Google");
                           },
-                          child: const Text("Submit")),
-                    )
-                  ],
-                ),
-                SizedBox(width: 25),
-                Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          print("SignUp w/ Google");
-                        },
-                        child: Text("Google"),
-                      ),
-                    )
-                  ],
-                )
-              ],
-            )
-          ],
-        ));
+                          child: Text("Google"),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              )
+            ],
+          )),
+      ElevatedButton(
+          onPressed: () {
+            widget.setPage('login');
+          },
+          child: Text('Already have an account? Click here'))
+    ]);
   }
 }
