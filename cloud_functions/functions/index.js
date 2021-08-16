@@ -73,6 +73,7 @@ exports.firestoreTtlCallback = functions.https.onRequest(async (req, res) => {
         const payload = req.body;
         let entry = await (await admin.firestore().doc(payload.docPath).get()).data();
         let tokens = await (await admin.firestore().doc(`/users/${payload.uid}`).get()).get('tokens')
+        admin.messaging().send
         await admin.messaging().sendMulticast({
             tokens,
             notification: {
@@ -87,7 +88,7 @@ exports.firestoreTtlCallback = functions.https.onRequest(async (req, res) => {
             log(error)
         })
         await admin.firestore().doc(payload.docPath).update({ expirationTask: admin.firestore.FieldValue.delete() })
-        res.status(200)
+        res.send(200)
     } catch (err) {
         log(err)
         res.status(500).send(err)
