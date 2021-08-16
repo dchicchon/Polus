@@ -85,7 +85,7 @@ exports.firestoreTtlCallback = functions.https.onRequest(async (req, res) => {
                 headers: {
                     'apns-push-type': 'background',
                     'apns-priority': '5', // must be 5 when content available is set to true
-                    'apns-topic':'io.flutter.plugins.firebase.messaging' // bundle identifier
+                    // 'apns-topic':'io.flutter.plugins.firebase.messaging' // bundle identifier
                 },
             },
             android: {
