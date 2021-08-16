@@ -377,21 +377,25 @@ class _EntryState extends State<Entry> {
     Map<String, dynamic> entry = Map<String, dynamic>.from(widget.entry);
     print(newTime);
     print(newTime.hour);
-    entry['time'] = "${newTime.hour}:${newTime.minute}";
+    // entry['time'] = "${newTime.hour}:${newTime.minute}";
+    String timeString = "${newTime.hour}:${newTime.minute}";
 
-    final diff = newTime.difference(new DateTime.now()).inSeconds;
-    if (diff > 0) {
-      String dateString =
-          '${widget.date.month}-${widget.date.day}-${widget.date.year}';
-      var notification = {
-        'difference': diff,
-        'date': dateString,
-        'uid': FirebaseAuth.instance.currentUser.uid,
-        'id': widget.id,
-      };
-      createNotification(notification);
+    // Only run this if time actually changes
+    if (widget.entry['time'] != timeString) {
+      final diff = newTime.difference(new DateTime.now()).inSeconds;
+      if (diff > 0) {
+        String dateString =
+            '${widget.date.month}-${widget.date.day}-${widget.date.year}';
+        var notification = {
+          'difference': diff,
+          'date': dateString,
+          'uid': FirebaseAuth.instance.currentUser.uid,
+          'id': widget.id,
+        };
+        createNotification(notification);
+      }
+      widget.updateEntry(entry, widget.id);
     }
-    widget.updateEntry(entry, widget.id);
   }
 
   @override
