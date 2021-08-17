@@ -26,7 +26,7 @@ class _NavbarState extends State<Navbar> {
         break;
       case 'Settings':
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SettingsPage()));
+            context, MaterialPageRoute(builder: (context) => Settings()));
         break;
     }
   }
@@ -81,14 +81,13 @@ class _NavbarState extends State<Navbar> {
   @override
   void initState() {
     super.initState();
-    print("Start nav");
-    // generateWeekDates();
   }
 
   Widget build(BuildContext context) {
     return Container(
         // Leave margin here for top bar
-        color: Colors.grey[900],
+        // color: Colors.grey[900],
+        color: Theme.of(context).primaryColorDark,
         padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 5.0),
         child: (Column(children: [
           Row(
@@ -149,7 +148,7 @@ class Day extends StatelessWidget {
         date.day == DateTime.now().day &&
         date.month == DateTime.now().month &&
         date.year == DateTime.now().year) {
-      return Colors.red;
+      return Color.fromRGBO(0, 143, 200, 1.0);
     } else if (selected) {
       return Colors.white;
     } else {
@@ -172,7 +171,7 @@ class Day extends StatelessWidget {
         // backgroundColor: Colors.white
       );
     } else if (date.day == DateTime.now().day) {
-      return TextStyle(color: Colors.red);
+      return TextStyle(color: Color.fromRGBO(0, 143, 255, 1.0));
     } else {
       return TextStyle(color: Colors.white);
     }

@@ -10,7 +10,7 @@ const log = functions.logger.log
 
 // This article saved me tons of research by showing how to use Cloud Tasks. I then implemented Cloud Firebase Notifications
 // https://medium.com/firebase-developers/how-to-schedule-a-cloud-function-to-run-in-the-future-in-order-to-build-a-firestore-document-ttl-754f9bf3214a
-
+// Task Related
 exports.createTask = functions.https.onCall(async (data, context) => {
     // I should somehow check to users current timezone? just so we know which date they want to edit
     log("Create task")
@@ -57,7 +57,6 @@ exports.createTask = functions.https.onCall(async (data, context) => {
     log("Done with Create Task")
     return [`Success! You will receive message in ${difference} seconds`]
 })
-
 // If entry had a running task, then we will call this function
 exports.deleteTask = functions.https.onCall(async (data, context) => {
     log("Delete Task")
@@ -72,7 +71,6 @@ exports.deleteTask = functions.https.onCall(async (data, context) => {
         return ['Something Went Wrong!']
     }
 })
-// // on deleting an entry, we should also delete the task as well on googlecloud client
 
 exports.firestoreTtlCallback = functions.https.onRequest(async (req, res) => {
     try {
@@ -111,3 +109,5 @@ exports.firestoreTtlCallback = functions.https.onRequest(async (req, res) => {
         res.status(500).send(err)
     }
 })
+
+// User Related

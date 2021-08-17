@@ -227,22 +227,22 @@ class _EntryState extends State<Entry> {
     Color newColor;
     switch (color) {
       case 'blue':
-        newColor = Color.fromRGBO(21, 115, 170, 0.80);
+        newColor = Color.fromRGBO(1, 115, 170, 1.0);
         break;
       case 'green':
-        newColor = Color.fromRGBO(7, 128, 7, 0.80);
+        newColor = Color.fromRGBO(7, 128, 7, 1.0);
         break;
       case 'purple':
-        newColor = Color.fromRGBO(122, 39, 138, 0.80);
+        newColor = Color.fromRGBO(122, 39, 138, 1.0);
         break;
       case 'gold':
-        newColor = Color.fromRGBO(185, 174, 8, 0.80);
+        newColor = Color.fromRGBO(185, 174, 8, 1.0);
         break;
       case 'orange':
-        newColor = Color.fromRGBO(251, 119, 5, 0.80);
+        newColor = Color.fromRGBO(251, 119, 5, 0.9);
         break;
       case 'red':
-        newColor = Color.fromRGBO(220, 5, 5, 0.75);
+        newColor = Color.fromRGBO(220, 5, 5, 0.85);
         break;
     }
 
@@ -357,7 +357,7 @@ class _EntryState extends State<Entry> {
 // execute at a certain time/date/etc.
   void timeEntry(BuildContext context) async {
     print("Change Time");
-    DateTime newTime;
+    DateTime newTime = DateTime.now();
     await showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -375,9 +375,6 @@ class _EntryState extends State<Entry> {
                       mode: CupertinoDatePickerMode.time)));
         });
     Map<String, dynamic> entry = Map<String, dynamic>.from(widget.entry);
-    print(newTime);
-    print(newTime.hour);
-    // entry['time'] = "${newTime.hour}:${newTime.minute}";
     String timeString = "${newTime.hour}:${newTime.minute}";
 
     // Only run this if time actually changes
