@@ -49,7 +49,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   User _user;
   FirebaseAnalytics analytics;
-  bool _error = false;
+  // bool _error = false;
 
   void _handleLogin(User user) {
     // print("Handle Login");
@@ -82,7 +82,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
     requestNotificationPermission();
 
     // if we opened the app through a notification, it will send us via this
@@ -94,71 +93,41 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    if (_error) {
+    return FutureBuilder(
+        // future: Init.instance.initialize(),
+        builder: (context, AsyncSnapshot snapshot) {
       return MaterialApp(
-          title: "Error",
-          // navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
+          title: "Polus",
+          // https://api.flutter.dev/flutter/material/ThemeData-class.html
           theme: ThemeData(
               primarySwatch: Colors.blue,
-              scaffoldBackgroundColor: Colors.black,
-              textTheme: Theme.of(context)
-                  .textTheme
-                  .apply(bodyColor: Colors.white, displayColor: Colors.white)),
-          home: SomethingWentWrong());
-    }
-
-    return MaterialApp(
-        title: "Polus",
-        // https://api.flutter.dev/flutter/material/ThemeData-class.html
-        theme: ThemeData(primarySwatch: Colors.blue),
-        home: _user == null
-            ? Navigator(
-                // Pages are here, we only go to home page if a user exists
-                pages: [
-                  MaterialPage(
-                      key: ValueKey("Auth Page"),
-                      child: Auth(onLogin: _handleLogin)),
-                  // if (_user != null)
-                  //   MaterialPage(key: ValueKey("Home Page"), child: HomePage()),
-                ],
-                onPopPage: (route, result) => route.didPop(result),
-              )
-            : Navigator(
-                pages: [
-                  MaterialPage(
-                      key: ValueKey("Settings"), child: SettingsPage()),
-                  MaterialPage(key: ValueKey("Home Page"), child: HomePage()),
-                ],
-                onPopPage: (route, result) => route.didPop(result),
-              ));
-  }
-}
-
-class SomethingWentWrong extends StatelessWidget {
-  const SomethingWentWrong({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text(
-          "Error",
-        ),
-      ),
-    );
-  }
-}
-
-class Loading extends StatelessWidget {
-  const Loading({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text("Loading"),
-      ),
-    );
+              textTheme: TextTheme(
+                  headline6: TextStyle(
+                      fontSize: 25,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w300),
+                  bodyText1: TextStyle(color: Colors.white))),
+          home: _user == null
+              ? Navigator(
+                  // Pages are here, we only go to home page if a user exists
+                  pages: [
+                    MaterialPage(
+                        key: ValueKey("Auth Page"),
+                        child: Auth(onLogin: _handleLogin)),
+                    // if (_user != null)
+                    //   MaterialPage(key: ValueKey("Home Page"), child: HomePage()),
+                  ],
+                  onPopPage: (route, result) => route.didPop(result),
+                )
+              : Navigator(
+                  pages: [
+                    MaterialPage(
+                        key: ValueKey("Settings"), child: SettingsPage()),
+                    MaterialPage(key: ValueKey("Home Page"), child: HomePage()),
+                  ],
+                  onPopPage: (route, result) => route.didPop(result),
+                ));
+    });
   }
 }
 
@@ -194,13 +163,12 @@ class _AuthState extends State<Auth> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey[900],
+      backgroundColor: Color.fromARGB(255, 24, 71, 107),
       // appBar: AppBar(title: const Text("Polus")),
       body: Center(
           child: Container(
-              // color: Colors.blue[100],
               width: 325,
-              height: 275,
+              height: 500,
               padding: EdgeInsets.all(10),
               child: (this.authWidget == 'login'
                   ? Login(this.setPage)
@@ -237,10 +205,13 @@ class _LoginState extends State<Login> {
   }
 
   Widget build(BuildContext context) {
-    return Column(children: [
+    return (Column(children: [
+      Padding(
+          padding: EdgeInsets.only(bottom: 15.0, top: 30.0),
+          child: Image.asset('assets/polus_icon48.png')),
       Text(
         'Login',
-        style: TextStyle(fontSize: 25),
+        style: Theme.of(context).textTheme.headline6,
       ),
       Form(
           key: _loginKey,
@@ -249,7 +220,10 @@ class _LoginState extends State<Login> {
             children: [
               TextFormField(
                 controller: emailController,
-                decoration: const InputDecoration(hintText: 'Enter your email'),
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  labelStyle: TextStyle(color: Colors.white),
+                ),
                 validator: (String value) {
                   if (value == null || value.isEmpty) {
                     return "Please Enter Some Text";
@@ -259,8 +233,10 @@ class _LoginState extends State<Login> {
               ),
               TextFormField(
                 controller: passwordController,
-                decoration:
-                    const InputDecoration(hintText: 'Enter your password'),
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  labelStyle: TextStyle(color: Colors.white),
+                ),
                 validator: (String value) {
                   if (value == null || value.isEmpty) {
                     return 'Please Enter a valid password';
@@ -268,51 +244,37 @@ class _LoginState extends State<Login> {
                   return null;
                 },
               ),
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              final form = _loginKey.currentState;
-                              if (form.validate()) {
-                                signInWithEmailAndPassword(
-                                    emailController.text.trim(),
-                                    passwordController.text.trim());
-                              } else {
-                                print("Form not valid");
-                              }
-                            },
-                            child: const Text("Submit")),
-                      )
-                    ],
-                  ),
-                  SizedBox(width: 25),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            print("Login w/ Google");
-                          },
-                          child: Text("Google"),
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              )
             ],
           )),
+      Row(
+        children: [
+          // padding: const EdgeInsets.symmetric(vertical: 16.0),
+          ElevatedButton(
+              onPressed: () {
+                final form = _loginKey.currentState;
+                if (form.validate()) {
+                  signInWithEmailAndPassword(emailController.text.trim(),
+                      passwordController.text.trim());
+                } else {
+                  print("Form not valid");
+                }
+              },
+              child: const Text("Submit")),
+          SizedBox(width: 25),
+          ElevatedButton(
+            onPressed: () {
+              print("Login w/ Google");
+            },
+            child: Text("Google"),
+          ),
+        ],
+      ),
       ElevatedButton(
           onPressed: () {
             widget.setPage('signup');
           },
           child: Text('Dont have an account? Sign up here'))
-    ]);
+    ]));
   }
 }
 
@@ -329,6 +291,7 @@ class _SignUpState extends State<SignUp> {
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   String email = '';
   String password = '';
@@ -341,8 +304,11 @@ class _SignUpState extends State<SignUp> {
   }
 
   Widget build(BuildContext context) {
-    return Column(children: [
-      Text('Sign Up', style: TextStyle(fontSize: 25, color: Colors.white)),
+    return (Column(children: [
+      Padding(
+          padding: EdgeInsets.only(bottom: 15.0, top: 30.0),
+          child: Image.asset('assets/polus_icon48.png')),
+      Text('Sign Up', style: Theme.of(context).textTheme.headline6),
       Form(
           key: _signUpKey,
           child: Column(
@@ -350,18 +316,22 @@ class _SignUpState extends State<SignUp> {
             children: [
               TextFormField(
                 controller: emailController,
-                decoration: const InputDecoration(hintText: 'Enter your email'),
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  labelStyle: TextStyle(color: Colors.white),
+                ),
                 validator: (String value) {
                   if (value == null || value.isEmpty) {
-                    return "Please Enter Some Text";
+                    return "Email Must not be empty";
                   }
                   return null;
                 },
               ),
               TextFormField(
                 controller: passwordController,
-                decoration:
-                    const InputDecoration(hintText: 'Enter your password'),
+                decoration: InputDecoration(
+                    labelText: 'Password',
+                    labelStyle: TextStyle(color: Colors.white)),
                 validator: (String value) {
                   if (value == null || value.isEmpty) {
                     return 'Please Enter a valid password';
@@ -369,51 +339,48 @@ class _SignUpState extends State<SignUp> {
                   return null;
                 },
               ),
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              final form = _signUpKey.currentState;
-                              // Do work here
-                              if (form.validate()) {
-                                createWithEmailAndPassword(
-                                    emailController.text.trim(),
-                                    passwordController.text.trim());
-                              } else {
-                                print("Form not valid");
-                              }
-                            },
-                            child: const Text("Submit")),
-                      )
-                    ],
-                  ),
-                  SizedBox(width: 25),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            print("SignUp w/ Google");
-                          },
-                          child: Text("Google"),
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              )
+              TextFormField(
+                controller: confirmPasswordController,
+                decoration: InputDecoration(
+                    labelText: 'Confirm Password',
+                    labelStyle: TextStyle(color: Colors.white)),
+                validator: (String value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Must not be empty';
+                  }
+                  return null;
+                },
+              ),
             ],
           )),
+      Row(
+        children: [
+          ElevatedButton(
+              onPressed: () {
+                final form = _signUpKey.currentState;
+                // Do work here
+                if (form.validate()) {
+                  createWithEmailAndPassword(emailController.text.trim(),
+                      passwordController.text.trim());
+                } else {
+                  print("Form not valid");
+                }
+              },
+              child: const Text("Submit")),
+          SizedBox(width: 25),
+          ElevatedButton(
+            onPressed: () {
+              print("SignUp w/ Google");
+            },
+            child: Text("Google"),
+          ),
+        ],
+      ),
       ElevatedButton(
           onPressed: () {
             widget.setPage('login');
           },
           child: Text('Already have an account? Click here'))
-    ]);
+    ]));
   }
 }

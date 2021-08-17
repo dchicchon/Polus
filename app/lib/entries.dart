@@ -468,18 +468,14 @@ class _EntryState extends State<Entry> {
           title: this.editing
               ? TextFormField(
                   autofocus: true,
-                  style: TextStyle(color: Colors.white),
+                  style: Theme.of(context).textTheme.bodyText1,
                   onFieldSubmitted: (this.updateText),
                   textInputAction: TextInputAction.done,
                   controller: this._controller,
                 )
-              : Text(
-                  widget.entry['text'],
+              : Text(widget.entry['text'],
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
+                  style: Theme.of(context).textTheme.bodyText1),
           tileColor: getColor(widget.entry['color']),
         ))));
   }
