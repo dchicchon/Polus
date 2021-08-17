@@ -142,7 +142,7 @@ class _SignUpState extends State<SignUp> {
                               if (value.isEmpty) {
                                 return 'Please confirm password';
                               }
-                              if (value != passwordController.text) {
+                              if (value != passwordController.text.trim()) {
                                 return "Passwords do not match";
                               }
                               return null;

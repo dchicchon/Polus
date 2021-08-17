@@ -99,8 +99,8 @@ class _MyAppState extends State<MyApp> {
           // https://api.flutter.dev/flutter/material/ThemeData-class.html
           theme: ThemeData(
               errorColor: Colors.white,
-              primaryColorLight: Color.fromARGB(255, 24, 71, 107),
-              primaryColorDark: Color.fromARGB(100, 24, 71, 107),
+              primaryColorLight: Color.fromRGBO(20, 70, 107, 1.0),
+              primaryColorDark: Color.fromRGBO(0, 28, 43, 1.0),
               textTheme: TextTheme(
                   headline5: TextStyle(
                       fontSize: 20.0,

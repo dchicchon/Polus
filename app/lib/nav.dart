@@ -21,7 +21,7 @@ class _NavbarState extends State<Navbar> {
   void handleMenuClick(String value) {
     // https://stackoverflow.com/questions/58144948/easiest-way-to-add-3-dot-pop-up-menu-appbar-in-flutter
     switch (value) {
-      case 'Logout':
+      case 'Log Out':
         FirebaseAuth.instance.signOut();
         break;
       case 'Settings':
@@ -85,15 +85,21 @@ class _NavbarState extends State<Navbar> {
 
   Widget build(BuildContext context) {
     return Container(
-        // Leave margin here for top bar
-        // color: Colors.grey[900],
         color: Theme.of(context).primaryColorDark,
-        padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 5.0),
+        padding: EdgeInsets.fromLTRB(15.0, 20.0, 10.0, 5.0),
         child: (Column(children: [
           Row(
             children: [
-              // Image(height: 30.0, image: AssetImage('assets/polus_icon48.png')),
-              Spacer(),
+              Spacer(flex: 2),
+              Spacer(flex: 1),
+              InkWell(
+                onTap: () {
+                  widget.changeDate(DateTime.now());
+                },
+                child: Image(
+                    height: 30.0, image: AssetImage('assets/polus_icon48.png')),
+              ),
+              Spacer(flex: 2),
               GestureDetector(
                 onTap: widget.addEntry,
                 child: Icon(Icons.add, color: Colors.white),
@@ -102,7 +108,7 @@ class _NavbarState extends State<Navbar> {
                   onSelected: handleMenuClick,
                   icon: Icon(Icons.more_vert, color: Colors.white),
                   itemBuilder: (BuildContext context) {
-                    return {'Logout', 'Settings'}.map((String choice) {
+                    return {'Settings', 'Log Out'}.map((String choice) {
                       return PopupMenuItem<String>(
                         value: choice,
                         child: Text(choice),
