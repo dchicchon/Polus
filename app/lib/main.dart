@@ -39,7 +39,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({Key key}) : super(key: key);
+  MyApp();
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -113,16 +113,11 @@ class _MyAppState extends State<MyApp> {
                   bodyText1: TextStyle(fontSize: 16.0, color: Colors.white))),
           home: _user == null
               ? Navigator(
-                  // Pages are here, we only go to home page if a user exists
                   pages: [
-                    // MaterialPage(
-                    //     key: ValueKey("Auth Page"),
-                    //     child: Auth(onLogin: _handleLogin)),
                     MaterialPage(key: ValueKey("Login"), child: Login()),
                     MaterialPage(key: ValueKey("SignUp"), child: SignUp()),
                     MaterialPage(key: ValueKey('Welcome'), child: Welcome()),
                   ],
-
                   onPopPage: (route, result) => route.didPop(result),
                 )
               : Navigator(
