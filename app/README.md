@@ -54,10 +54,6 @@ This part of the app took the most time to develop. The main portions of develop
 <hr>
 <!-- Insert API used here and how to use -->
 
-### Google Analytics
-<!-- Check this to confirm if i should use google analytics -->
-<!-- https://firebase.google.com/policies/analytics -->
-
 ### Firebase Authentication
 
 ### Firebase Firestore
@@ -65,6 +61,8 @@ This part of the app took the most time to develop. The main portions of develop
 ### Firebase Cloud Functions
 
 ### Firebase Cloud Messaging
+
+### Google Cloud Tasks
 
 ## Flutter Packages
 <hr>
