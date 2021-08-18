@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 // Packages
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 // App Modules
@@ -47,7 +46,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   User _user;
-  FirebaseAnalytics analytics;
 
   void _handleLogin(User user) {
     setState(() {

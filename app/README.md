@@ -27,9 +27,36 @@ I want to provide the users who use the Polus Chrome Extension an app so that th
 <hr>
 <!-- Insert instructions here how to run project -->
 
+## Development Cycle
+<hr>
+<!-- Explain what steps you took to develop this app -->
+
+### Summary
+I knew that to develop this app, there were 4 main tasks that I needed to complete
+- Front End Framework : interface for users
+- Cloud Server : handle private information and computationally intensive tasks
+- Register App on Apple App Store
+- Register App on Google Play Store
+
+#### Front End Framework
+
+This part of the app took the most time to develop. The main portions of developing this were
+
+- 
+- 
+- 
+
+#### Cloud Server
+#### Register App on Apple App Store
+#### Register App on Google Play Store
+
 ## Firebase API
 <hr>
 <!-- Insert API used here and how to use -->
+
+### Google Analytics
+<!-- Check this to confirm if i should use google analytics -->
+<!-- https://firebase.google.com/policies/analytics -->
 
 ### Firebase Authentication
 
