@@ -1,6 +1,5 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener(() => {
-  console.log("INSTALLING POLUS");
   // 1. On installed, we will check to see if they have anything from previous version in storage
   // 2. If so, we will check every valid date for a storage item and change each item that was altered for the new update
   chrome.contextMenus.create({
@@ -24,20 +23,18 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.runtime.setUninstallURL(
-  "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit",
-  () => {}
+  "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit"
 );
 
 // Check Alarm
 chrome.alarms.get("changeBackground", (alarm) => {
   // If no alarm, create one that executes at midnight
   if (!alarm) {
-    let date = new Date();
     let midnight = new Date();
     midnight.setHours(23, 59, 59);
-    let ms = midnight.getTime() - date.getTime();
+    // Create alarm that executes every 25 hours
     chrome.alarms.create("changeBackground", {
-      when: Date.now() + ms,
+      when: midnight.getTime(),
       periodInMinutes: 60 * 24,
     });
   }
@@ -47,7 +44,6 @@ chrome.alarms.get("changeBackground", (alarm) => {
 // 1. User toggles off new tab
 // 2. Clicks on 'Open'
 // 3. Opens index.html
-
 chrome.permissions.contains(
   {
     permissions: ["notifications"],
@@ -61,7 +57,7 @@ chrome.permissions.contains(
   }
 );
 
-chrome.contextMenus.onClicked.addListener(function (result) {
+chrome.contextMenus.onClicked.addListener(function(result) {
   if (result["menuItemId"] === "open-sesame") {
     chrome.storage.sync.get("userSettings", (result) => {
       let { userSettings } = result;

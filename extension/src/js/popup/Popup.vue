@@ -1,27 +1,28 @@
 <template>
-  <div>
+  <div class="main">
     <div class="container">
-      <div v-if="tab === 'options'">
-        <Options />
-      </div>
-      <div v-if="tab === 'updates'">
-        <Updates />
-      </div>
-      <div v-if="tab === 'account'">
-        <Account />
-      </div>
+      <component :is="currentTabComponent"></component>
     </div>
-    <ul id="popup-links">
-      <li :class="activeOptions">
-        <a @click="($event) => changeTab($event, 'options')" href="">Options</a>
-      </li>
-      <li :class="activeUpdates">
-        <a @click="($event) => changeTab($event, 'updates')" href="">Updates</a>
-      </li>
-      <li :class="activeAccount">
-        <a @click="($event) => changeTab($event, 'account')" href="">Account</a>
-      </li>
-    </ul>
+    <md-bottom-bar class="blue" md-type="shift">
+      <md-bottom-bar-item
+        @click="($event) => changeTab($event, 'options')"
+        id="bottom-bar-item-options"
+        md-label="Options"
+        md-icon="/assets/popup_icons/options.svg"
+      />
+      <md-bottom-bar-item
+        @click="($event) => changeTab($event, 'updates')"
+        id="bottom-bar-item-updates"
+        md-label="Updates"
+        md-icon="/assets/popup_icons/updates.svg"
+      />
+      <md-bottom-bar-item
+        @click="($event) => changeTab($event, 'account')"
+        id="bottom-bar-item-account"
+        md-label="Account"
+        md-icon="/assets/popup_icons/account.svg"
+      />
+    </md-bottom-bar>
   </div>
 </template>
 
@@ -31,72 +32,76 @@ import Updates from "./components/Updates";
 import Account from "./components/Account";
 
 export default {
+  // components in the popup
   components: {
     Options,
     Updates,
     Account,
   },
+
+  // state of the app
   data() {
     return {
       tab: "options",
     };
   },
-  created() {
-    //   On created, get all the items from storage relating to the thing
-  },
+
+  // on create
+  created() {},
+
+  // methods in app
   methods: {
     changeTab(event, name) {
       event.preventDefault();
       this.tab = name;
     },
   },
+
+  // computed in app, costs less than using methods
   computed: {
-    activeOptions() {
-      if (this.tab === "options") return "active-popup";
-    },
-    activeUpdates() {
-      if (this.tab === "updates") return "active-popup";
-    },
-    activeAccount() {
-      if (this.tab === "account") return "active-popup";
+    currentTabComponent() {
+      console.log("Current Tab Component");
+      let component = this.tab.charAt(0).toUpperCase() + this.tab.slice(1);
+      return component;
     },
   },
 };
 </script>
 
-<style lang="scss" >
+<style lang="scss">
+html {
+  height: 0px !important;
+}
+
+.blue {
+  background-color: #1197d4 !important;
+}
+</style>
+
+<style lang="scss" scoped>
+.main {
+  height: 100%;
+}
+
 .container {
-  margin: 10px;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 200;
-}
-
-#popup-links {
-  position: absolute;
-  bottom: 0;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-  .active-popup {
-    border-bottom: 5px solid rgb(17, 151, 212);
+  margin: 10px 10px 0px 10px;
+  height: 90%;
+  overflow: auto;
+  &::-webkit-scrollbar {
+    width: 3px;
+    height: 2px;
   }
-  li {
-    display: block;
-    width: calc(100% / 3);
-    height: 30px;
-    flex: 0 1 auto;
-    list-style-type: none;
-    display: inline-flex;
-    justify-content: center;
-    a {
-      text-decoration: none;
-      color: rgb(0, 0, 0);
-    }
+  &::-webkit-scrollbar-track {
+    background: none;
+  }
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <h2 class="page-title">Options</h2>
     <Toggle
       :key="1"
@@ -36,7 +36,6 @@
       <option value="60">1 hour before</option>
     </select>
     <br />
-    <br />
     <div>
       Select Photo from
       <span>
@@ -53,18 +52,24 @@
         placeholder="https://unsplash.com/photos/NuBvAE6VfSM"
         v-model="photoLink"
       />
-      <button class="button" @click="submitPhoto">Submit</button>
+      <md-button @click="submitPhoto" class="blue md-primary md-raised md-dense"
+        >Submit</md-button
+      >
     </div>
-    <br />
     <div>
-      Select a photo from your computer (< 5MB)
-      <button class="button" @click="uploadPhoto">Upload</button>
+      Select a photo from your computer ({{ "<" }} 5MB)
+      <md-button @click="uploadPhoto" class="blue md-primary md-raised md-dense"
+        >Upload</md-button
+      >
     </div>
     <p class="error">{{ error }}</p>
   </div>
 </template>
 <script>
+import Vue from "vue";
+import { MdButton } from "vue-material/dist/components";
 import Toggle from "./Toggle";
+Vue.use(MdButton);
 export default {
   components: {
     Toggle,
@@ -223,7 +228,7 @@ export default {
       let reader = new FileReader();
       reader.addEventListener(
         "load",
-        function () {
+        function() {
           // USE INDEXED DB INSTEAD
           chrome.storage.sync.set({ background: false }, () => {
             chrome.storage.local.set({ image: reader.result }, () => {
@@ -279,16 +284,6 @@ export default {
 #photoURL {
   width: 95%;
   outline: none;
-}
-
-.button {
-  outline: none;
-  border: none;
-  cursor: pointer;
-  margin: 5px 0;
-  padding: 0.5rem 1rem;
-  color: white;
-  background: rgb(17, 151, 212);
 }
 
 .error {
