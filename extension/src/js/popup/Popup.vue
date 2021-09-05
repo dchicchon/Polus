@@ -31,6 +31,7 @@ import Options from "./components/Options";
 import Updates from "./components/Updates";
 import Account from "./components/Account";
 
+// Popup Entry Point. Should create a check to see if user is logged in with firebase
 export default {
   // components in the popup
   components: {
@@ -39,17 +40,16 @@ export default {
     Account,
   },
 
-  // state of the app
   data() {
     return {
       tab: "options",
     };
   },
 
-  // on create
-  created() {},
+  created() {
 
-  // methods in app
+  },
+
   methods: {
     changeTab(event, name) {
       event.preventDefault();

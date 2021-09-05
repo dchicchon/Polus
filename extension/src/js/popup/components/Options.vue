@@ -66,10 +66,7 @@
   </div>
 </template>
 <script>
-import Vue from "vue";
-import { MdButton } from "vue-material/dist/components";
 import Toggle from "./Toggle";
-Vue.use(MdButton);
 export default {
   components: {
     Toggle,
@@ -82,8 +79,8 @@ export default {
     };
   },
   created() {
+    //   On created, get all the items from storage
     this.getSettings();
-    //   On created, get all the items from storage relating to the thing
   },
   methods: {
     editNotificationTime(newTime) {
@@ -161,7 +158,6 @@ export default {
       this.userSettings[name] = !this.userSettings[name];
       this.updateStorage();
     },
-
 
     getSettings() {
       chrome.storage.sync.get("userSettings", (result) => {

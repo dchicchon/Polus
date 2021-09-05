@@ -5,15 +5,15 @@
     <!-- Based on page -->
     <div v-if="page === ''">
       <div class="account-container">
-        <h3 class="signup-text">Login to a Polus Account</h3>
+        <h3 class="signup-text">Sign In to a Polus Account</h3>
         <div class="email-btn-container">
           <button
-            @click="($event) => changePage($event, 'login')"
+            @click="($event) => changePage($event, 'signin')"
             class="email-btn"
           >
             <div class="btn-content-container">
               <div class="email-btn-icon"></div>
-              <div class="email-btn-text">Login</div>
+              <div class="email-btn-text">Sign In</div>
             </div>
           </button>
         </div>
@@ -54,8 +54,8 @@
         </div>
       </div>
     </div>
-    <div v-else-if="page === 'login'">
-      <h3>Login</h3>
+    <div v-else-if="page === 'signin'">
+      <h3>Sign In</h3>
       <md-field>
         <label for="email"></label>
         <md-input v-model="email" placeholder="Email Address"></md-input>
@@ -68,21 +68,18 @@
           placeholder="Password"
         ></md-input>
       </md-field>
-      <div v-if="error">
-        <span>{{ error }}</span>
-        <br />
-      </div>
+      <ErrorText v-if="error" :error="error" />
+      <md-button @click="signin" class="md-primary md-raised blue"
+        >Submit</md-button
+      >
       <md-button
         @click="($event) => (page = '')"
         class="md-primary md-raised blue"
         >Back
       </md-button>
-      <md-button @click="login" class="md-primary md-raised blue"
-        >Submit</md-button
-      >
     </div>
     <div v-else-if="page === 'signup'">
-      <h3>Signup</h3>
+      <h3>Sign Up</h3>
       <md-field>
         <label for="email"></label>
         <md-input v-model="email" placeholder="Email Address"></md-input>
@@ -100,27 +97,43 @@
         <md-input
           type="password"
           v-model="confirmPassword"
-          placeholder="confirmPassword"
+          placeholder="Confirm password"
         ></md-input>
       </md-field>
-
-      <div v-if="error">
-        <span>{{ error }}</span>
-        <br />
-      </div>
-
+      <ErrorText v-if="error" :error="error" />
+      <md-button @click="signup" class="md-primary md-raised blue"
+        >Submit</md-button
+      >
       <md-button
         @click="($event) => (page = '')"
         class="md-primary md-raised blue"
         >Back
       </md-button>
-      <md-button class="md-primary md-raised blue">Submit</md-button>
+    </div>
+    <div v-else-if="page === 'summary'">
+      <!-- Include here how much data they have stored? -->
+
+      <md-button @click="signout" class="md-primary md-raised blue"
+        >Log Out</md-button
+      >
+      <!-- Somehow ask user if they are sure they want to delete this account -->
+      <md-button class="md-primary md-raised blue">Delete Account</md-button>
     </div>
   </div>
 </template>
 
 <script>
+import ErrorText from "./ErrorText.vue";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 export default {
+  components: {
+    ErrorText,
+  },
   data() {
     return {
       email: "",
@@ -131,17 +144,79 @@ export default {
     };
   },
 
-  // created() {},
+  created() {
+    if (this.$firebase.auth().currentUser) {
+      this.page = "summary";
+      console.log("User is signed in. Display summary page");
+      // if this is the case, then we already have access to the users info to display here
+    }
+  },
 
   methods: {
     changePage(event, name) {
       event.preventDefault();
+      this.email = "";
+      this.password = "";
+      this.confirmPassword = "";
+      this.error = "";
       this.page = name;
     },
-    login() {
-      console.log("Logging In...");
+
+    deleteAccount() {
+      console.log("Deleting Account");
+      // Show are you sure you want to delete account? All user data will be lost. And show user yes or no option
     },
-    signup() {},
+    signin() {
+      const auth = getAuth();
+      console.log("Logging In...");
+      // use firebase signin system
+      auth
+        .signInWithEmailAndPassword(this.email, this.password)
+        .then((userCredential) => {
+          console.log("User Credential");
+          console.log(userCredential);
+          this.page = "summary";
+
+          // Here I then need to get some user info using firebase firestore methods
+        })
+        .catch((error) => {
+          console.log("Error in signin");
+          this.error = error.message;
+        });
+    },
+    signup() {
+      console.log("Signing in...");
+      if (this.password !== this.confirmPassword) {
+        this.error = "Passwords must match";
+        return;
+      }
+      const auth = getAuth();
+      auth
+        .createUserWithEmailAndPassword(this.email, this.password)
+        .then((userCredential) => {
+          console.log("User Credential");
+          console.log(userCredential);
+          this.page = "summary";
+
+          // this.$firebase.firestore().collection("users").doc()
+        })
+        .catch((error) => {
+          console.log("Error in Sign Up");
+          this.error = error.message;
+        });
+    },
+    signout() {
+      const auth = getAuth();
+      auth
+        .signOut()
+        .then(() => {
+          console.log("Sign Out successful");
+          this.page = "";
+        })
+        .catch((error) => {
+          this.error = error;
+        });
+    },
   },
 
   computed: {},
@@ -240,12 +315,12 @@ export default {
   }
 }
 
-.login {
+.signin {
   color: #212121;
   font-size: 14px;
   margin-top: 16px;
   text-align: left;
-  .login-btn {
+  .signin-btn {
     font: inherit;
     color: #3d68fb;
     border: none;
