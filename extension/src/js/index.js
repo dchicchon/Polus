@@ -5,28 +5,12 @@ import "firebase/auth";
 import "firebase/firestore";
 Vue.prototype.$firebase = firebase;
 
-const updateStorageVersion = () => {
-  let userSettings = {
-    changePhoto: true,
-    indexOpen: false,
-    newTab: true,
-    notifications: false,
-    notificationTime: "0",
-    pmode: false,
-    view: "week",
-  };
-  chrome.storage.sync.set({ userSettings });
-  return userSettings;
-};
-
-const checkOptions = () => {
+const start = () => {
   chrome.storage.sync.get("userSettings", (result) => {
     // If not updated to the current version of the app
-    let userSettings = result.hasOwnProperty("userSettings")
-      ? result.userSettings
-      : updateStorageVersion();
+    let { userSettings } = result
 
-    // if new tab is neabled
+    // if new tab is enabled
     if (userSettings.newTab || userSettings.indexOpen) {
       userSettings.indexOpen = false;
       chrome.storage.sync.set({ userSettings });
@@ -35,15 +19,13 @@ const checkOptions = () => {
         render: (createElement) => createElement(App),
       });
 
-      // if user disabled new tab
-    } else {
+    }
+    else {
       chrome.tabs.update({
         url: "chrome-search://local-ntp/local-ntp.html",
       });
     }
   });
-
-  // If new tab is turned off
 };
 
 window.onload = () => {
@@ -62,8 +44,9 @@ window.onload = () => {
   if (firebase.auth().currentUser) {
     console.log("User is logged in");
     console.log(firebase.auth().currentUser);
+    start(); // instead use firebase to check stuff
   } else {
     console.log("User is not logged in");
-    checkOptions();
+    start();
   }
 };

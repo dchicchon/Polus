@@ -11,7 +11,7 @@ mix
   .js("src/js/popup.js", "dist/js")
   .vue()
   .version()
-  .js("src/js/background.js", "dist/js")
+  .js("src/js/background.js", "dist")
   .version()
   .sass("src/css/main.scss", "dist/css")
   .sass("src/css/popup.scss", "dist/css")

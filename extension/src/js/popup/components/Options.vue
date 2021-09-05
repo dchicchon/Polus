@@ -162,14 +162,11 @@ export default {
       this.updateStorage();
     },
 
+
     getSettings() {
       chrome.storage.sync.get("userSettings", (result) => {
         //   Do this if a user does not have the right storage version of polus
-        if (Object.keys(result).length === 0) {
-          this.updateStorageVersion();
-        } else {
-          this.userSettings = result["userSettings"];
-        }
+        this.userSettings = result["userSettings"];
       });
     },
 
@@ -228,7 +225,7 @@ export default {
       let reader = new FileReader();
       reader.addEventListener(
         "load",
-        function() {
+        function () {
           // USE INDEXED DB INSTEAD
           chrome.storage.sync.set({ background: false }, () => {
             chrome.storage.local.set({ image: reader.result }, () => {
@@ -256,19 +253,6 @@ export default {
     },
 
     // Do this if user doesnt have the updated storage
-    updateStorageVersion() {
-      this.userSettings = {
-        changePhoto: true,
-        indexOpen: false,
-        newTab: true,
-        notifications: false,
-        notificationTime: "0",
-        pmode: false,
-        view: "week",
-      };
-      this.updateStorage();
-    },
-
     updateStorage() {
       chrome.storage.sync.set({ userSettings: this.userSettings });
     },
