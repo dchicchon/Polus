@@ -1,17 +1,14 @@
 <template>
   <!-- New Entry -->
-  <!-- <transition name="fade" v-if="entry.text.length === 0"> -->
   <textarea
     v-model="newText"
     class="newEntry entry"
     :class="[entry.color, { checked: entry.active }]"
     v-if="entry.text.length === 0"
     ref="newEntry"
-    v-on:blur="submitEntry(newText, entry.key)"
-    v-on:keypress.enter="submitEntry(newText, entry.key)"
+    v-on:blur="submitEntry(newText)"
   >
   </textarea>
-  <!-- </transition> -->
   <!-- Not Active -->
   <li
     v-else-if="!active"
@@ -37,6 +34,8 @@
       <p class="text" v-if="mode !== 'edit'" :class="{ checked: entry.active }">
         {{ entry.text }}
       </p>
+
+      <!-- This is for a new entry?" -->
       <textarea
         v-model="newText"
         :class="textClass"
@@ -92,11 +91,7 @@
           />
         </button>
         <!-- Edit -->
-        <button
-          v-if="mode === 'edit'"
-          @click="submitEdit(newText, entry.key)"
-          class="entryBtn"
-        >
+        <button v-if="mode === 'edit'" @click="submitEdit()" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/save.png"
@@ -112,14 +107,14 @@
           />
         </button>
 
-        <button @click="() => checkEntry(entry.key)" class="entryBtn">
+        <button @click="() => checkEntry(entry.text)" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/done.png"
             alt="done"
           />
         </button>
-        <button @click="() => deleteEntry(entry.key)" class="entryBtn">
+        <button @click="() => deleteEntry(entry.text)" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/delete.png"
@@ -148,6 +143,10 @@ export default {
     dragStart: {
       required: false,
       type: Function,
+    },
+    entryIndex: {
+      type: Number,
+      required: true,
     },
     entry: {
       required: true,
@@ -266,7 +265,8 @@ export default {
 
     submitEdit() {
       this.mode = "";
-      this.submitEntry(this.newText, this.entry.key);
+      this.newText !== this.entry.text &&
+        this.submitEntry(this.newText, this.entry.text);
     },
   },
 

@@ -21,6 +21,7 @@ window.onload = () => {
     measurementId: "G-VRXQZDBLBF",
   };
   const firebaseApp = initializeApp(config)
+  Vue.prototype.$firebaseApp = firebaseApp
 
   const popup = new Vue({
     el: "#popup",

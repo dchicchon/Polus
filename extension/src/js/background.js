@@ -3,6 +3,7 @@ chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason == 'install') {
 
   } else if (details.reason == 'update') {
+    // Change each key in storage to dashes instead of slashes
 
   }
   // 1. On installed, we will check to see if they have anything from previous version in storage
@@ -27,7 +28,6 @@ chrome.runtime.onInstalled.addListener((details) => {
   chrome.runtime.setUninstallURL(
     "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit"
   );
-
 
   // Check Alarm
   chrome.alarms.get("changeBackground", (alarm) => {

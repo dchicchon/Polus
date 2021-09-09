@@ -46,10 +46,6 @@ export default {
     };
   },
 
-  created() {
-
-  },
-
   methods: {
     changeTab(event, name) {
       event.preventDefault();

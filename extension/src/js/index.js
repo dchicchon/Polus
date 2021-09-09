@@ -3,9 +3,10 @@ import App from "./app/App.vue";
 import { initializeApp } from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
-Vue.prototype.$firebase = firebase;
 
 const start = () => {
+
+  // Do a check here to see if a user is signed in perhaps
   chrome.storage.sync.get("userSettings", (result) => {
     // If not updated to the current version of the app
     let { userSettings } = result
@@ -40,4 +41,6 @@ window.onload = () => {
     measurementId: "G-VRXQZDBLBF",
   };
   const firebaseApp = initializeApp(config);
+  Vue.prototype.$firebaseApp = firebaseApp
+  start()
 };

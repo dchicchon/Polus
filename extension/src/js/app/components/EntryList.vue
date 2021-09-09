@@ -16,9 +16,10 @@
         :deleteEntry="deleteEntry"
         :dragStart="dragStart"
         :entry="entry"
+        :key="index"
+        :entryIndex="index"
         :checkEntry="checkEntry"
         :colorEntry="colorEntry"
-        :key="index"
         :listDate="listDate"
         :submitEntry="submitEntry"
         :timeEntry="timeEntry"
@@ -30,7 +31,6 @@
 
 <script>
 import Entry from "./Entry";
-import shortId from "shortid"; // unique ids that dont add too much space
 
 // https://stackoverflow.com/questions/18548465/prevent-scroll-bar-from-adding-up-to-the-width-of-page-on-chrome
 export default {
@@ -84,26 +84,24 @@ export default {
     addEntry() {
       // Add to entries state and to chrome storage
       let newEntry = {
-        key: shortId.generate(),
         text: "",
         color: "blue",
         active: false,
       };
       this.entries.push(newEntry);
     },
-    checkEntry(key) {
-      let index = this.entries.map((entry) => entry.key).indexOf(key);
+    checkEntry(text) {
+      let index = this.entries.map((entry) => entry.text).indexOf(text);
       let currentState = this.entries[index].active;
       this.entries[index].active = !currentState;
       this.updateStorage();
     },
-
     colorEntry() {
       this.updateStorage();
     },
-    deleteEntry(key) {
+    deleteEntry(text) {
       // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
-      let index = this.entries.map((entry) => entry.key).indexOf(key);
+      let index = this.entries.map((entry) => entry.text).indexOf(text);
       if (this.entries[index].hasOwnProperty("time")) {
         chrome.alarms.clear(key); // clearing alarm if it has time
       }
@@ -165,11 +163,14 @@ export default {
       this.updateStorage();
     },
 
-    submitEntry(text, key) {
+    submitEntry(text, oldText = false) {
+      console.log("Submit Entry");
       if (text.length === 0) {
-        this.deleteEntry(key);
+        this.entries.pop();
       } else {
-        let index = this.entries.map((entry) => entry.key).indexOf(key);
+        let index = oldText
+          ? this.entries.map((entry) => entry.text).indexOf(oldText)
+          : this.entries.length - 1;
         this.entries[index].text = text;
         this.updateStorage();
       }

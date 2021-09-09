@@ -130,6 +130,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
+import { doc, setDoc, getFirestore } from "firebase/firestore";
 export default {
   components: {
     ErrorText,
@@ -143,9 +144,9 @@ export default {
       error: "",
     };
   },
-
   created() {
-    if (this.$firebase.auth().currentUser) {
+    const auth = getAuth();
+    if (auth.currentUser) {
       this.page = "summary";
       console.log("User is signed in. Display summary page");
       // if this is the case, then we already have access to the users info to display here
@@ -170,8 +171,7 @@ export default {
       const auth = getAuth();
       console.log("Logging In...");
       // use firebase signin system
-      auth
-        .signInWithEmailAndPassword(this.email, this.password)
+      signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
           console.log("User Credential");
           console.log(userCredential);
@@ -184,21 +184,38 @@ export default {
           this.error = error.message;
         });
     },
+    async transferToFirestore() {
+      const db = getFirestore();
+      const { uid } = getAuth().currentUser;
+      await chrome.storage.sync.get(null, (result) => {
+        const documentData = {};
+        // We do not want background or userSetting data here
+        for (let key in result) {
+          if (key === "userSettings" || key === "background") continue;
+          const data = result[key];
+          if (key.includes("/")) {
+            key = key.replaceAll("/", "-");
+          }
+          documentData[key] = data;
+        }
+        setDoc(doc(db, "users", uid), documentData);
+      });
+    },
+
     signup() {
       console.log("Signing in...");
       if (this.password !== this.confirmPassword) {
         this.error = "Passwords must match";
         return;
       }
-      const auth = getAuth();
-      auth
-        .createUserWithEmailAndPassword(this.email, this.password)
-        .then((userCredential) => {
-          console.log("User Credential");
-          console.log(userCredential);
-          this.page = "summary";
 
-          // this.$firebase.firestore().collection("users").doc()
+      const auth = getAuth();
+      createUserWithEmailAndPassword(auth, this.email, this.password)
+        .then((userCredential) => {
+          console.log("User Successfully logged in");
+          // Get all items from storage sync
+          this.transferToFirestore();
+          this.page = "summary";
         })
         .catch((error) => {
           console.log("Error in Sign Up");
@@ -207,8 +224,7 @@ export default {
     },
     signout() {
       const auth = getAuth();
-      auth
-        .signOut()
+      signOut(auth)
         .then(() => {
           console.log("Sign Out successful");
           this.page = "";
@@ -216,6 +232,10 @@ export default {
         .catch((error) => {
           this.error = error;
         });
+    },
+
+    async testFirestore() {
+      await addDoc(collection(this.$firebaseApp, "users"), "booger");
     },
   },
 
