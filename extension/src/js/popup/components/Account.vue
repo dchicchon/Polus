@@ -117,7 +117,9 @@
         >Log Out</md-button
       >
       <!-- Somehow ask user if they are sure they want to delete this account -->
-      <md-button class="md-primary md-raised blue">Delete Account</md-button>
+      <md-button @click="deleteAccount" class="md-primary md-raised blue"
+        >Delete Account</md-button
+      >
     </div>
   </div>
 </template>
@@ -144,12 +146,11 @@ export default {
       error: "",
     };
   },
+
   created() {
     const auth = getAuth();
     if (auth.currentUser) {
       this.page = "summary";
-      console.log("User is signed in. Display summary page");
-      // if this is the case, then we already have access to the users info to display here
     }
   },
 
@@ -162,10 +163,9 @@ export default {
       this.error = "";
       this.page = name;
     },
-
     deleteAccount() {
-      console.log("Deleting Account");
       // Show are you sure you want to delete account? All user data will be lost. And show user yes or no option
+      console.log("Deleting Account");
     },
     signin() {
       const auth = getAuth();
@@ -201,7 +201,6 @@ export default {
         setDoc(doc(db, "users", uid), documentData);
       });
     },
-
     signup() {
       console.log("Signing in...");
       if (this.password !== this.confirmPassword) {
@@ -232,10 +231,6 @@ export default {
         .catch((error) => {
           this.error = error;
         });
-    },
-
-    async testFirestore() {
-      await addDoc(collection(this.$firebaseApp, "users"), "booger");
     },
   },
 

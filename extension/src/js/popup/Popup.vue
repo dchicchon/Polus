@@ -30,6 +30,7 @@
 import Options from "./components/Options";
 import Updates from "./components/Updates";
 import Account from "./components/Account";
+import { getAuth } from "firebase/auth";
 
 // Popup Entry Point. Should create a check to see if user is logged in with firebase
 export default {
@@ -44,6 +45,10 @@ export default {
     return {
       tab: "options",
     };
+  },
+
+  created() {
+    const auth = getAuth(); // do this to begin checking authentication
   },
 
   methods: {

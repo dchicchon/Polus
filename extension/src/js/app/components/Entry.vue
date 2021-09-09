@@ -1,48 +1,55 @@
 <template>
   <!-- New Entry -->
   <textarea
-    v-model="newText"
+    v-model="entry.text"
     class="newEntry entry"
     :class="[entry.color, { checked: entry.active }]"
-    v-if="entry.text.length === 0"
+    v-if="entry.new"
     ref="newEntry"
-    v-on:blur="submitEntry(newText)"
+    v-on:blur="createEntry(entry, entryKey)"
+    v-on:keydown.enter="$event.target.blur()"
   >
   </textarea>
-  <!-- Not Active -->
+  <!-- End New Entry -->
+
+  <!-- Inactive Entry -->
   <li
-    v-else-if="!active"
+    v-else-if="mode === ''"
     class="entry"
     :class="[entry.color, { checked: entry.active }]"
-    @click="changeActive"
+    @click="changeMode('menu')"
     draggable
-    @dragstart="dragStart($event, entry, $parent._uid)"
+    @dragstart="dragStart($event, entryKey, entry, $parent._uid)"
   >
     <!-- @dragend="dragEnd($event, entry.key)" -->
     {{ entry.text }}
   </li>
+  <!-- End Inactive Entry -->
+
   <!-- Active -->
   <li
     v-else
     class="entry"
-    :class="entry.color"
+    :class="[entry.color]"
     @click="(e) => altChangeActive(e)"
     draggable
-    @dragstart="dragStart($event, entry, $parent._uid)"
+    @dragstart="dragStart($event, entryKey, entry, $parent._uid)"
   >
     <div class="entry-container">
       <p class="text" v-if="mode !== 'edit'" :class="{ checked: entry.active }">
-        {{ entry.text }}
+        {{ text }}
       </p>
 
-      <!-- This is for a new entry?" -->
+      <!-- Begin Edit Entry TextArea -->
       <textarea
         v-model="newText"
         :class="textClass"
         ref="textarea"
         class="editEntry"
       ></textarea>
-      <!-- There is space here -->
+      <!-- Begin Edit Entry TextArea -->
+
+      <!-- Button Container -->
       <div class="entryBtnContainer">
         <!-- Color -->
         <button
@@ -82,7 +89,7 @@
             alt="clock"
           />
           <input
-            v-model="time"
+            v-model="entry.time"
             @blur="blur()"
             @input="selectTime()"
             placeholder="none"
@@ -90,7 +97,7 @@
             type="time"
           />
         </button>
-        <!-- Edit -->
+        <!-- Save Edit -->
         <button v-if="mode === 'edit'" @click="submitEdit()" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
@@ -98,7 +105,7 @@
             alt="save"
           />
         </button>
-
+        <!-- Begin Edit -->
         <button v-if="mode !== 'edit'" @click="editEntry" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
@@ -107,14 +114,16 @@
           />
         </button>
 
-        <button @click="() => checkEntry(entry.text)" class="entryBtn">
+        <!-- Check Entry -->
+        <button @click="() => checkEntry()" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/done.png"
             alt="done"
           />
         </button>
-        <button @click="() => deleteEntry(entry.text)" class="entryBtn">
+        <!-- Delete Entry -->
+        <button @click="() => deleteEntry(entryKey)" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/delete.png"
@@ -122,20 +131,14 @@
           />
         </button>
       </div>
+      <!-- End Button Container -->
     </div>
   </li>
+  <!-- End Active Entry -->
 </template>
 <script>
 export default {
   props: {
-    checkEntry: {
-      required: true,
-      type: Function,
-    },
-    colorEntry: {
-      required: true,
-      type: Function,
-    },
     deleteEntry: {
       required: true,
       type: Function,
@@ -144,8 +147,8 @@ export default {
       required: false,
       type: Function,
     },
-    entryIndex: {
-      type: Number,
+    entryKey: {
+      type: String,
       required: true,
     },
     entry: {
@@ -156,31 +159,26 @@ export default {
       type: Date,
       required: true,
     },
-    submitEntry: {
-      required: true,
+    createEntry: {
       type: Function,
+      required: true,
     },
-    timeEntry: {
-      required: true,
+    updateEntry: {
       type: Function,
+      required: true,
     },
   },
   data() {
     return {
-      active: false,
+      ...this.entry,
+      newTime: "",
       newText: "",
       mode: "",
-      time: "",
     };
   },
 
-  // One of the first functions to execute on the render method
-  created() {
-    this.time = this.entry.time ? this.entry.time : "12:00";
-  },
-  // This will execute when the component is built on the DOM
   mounted() {
-    if (this.$refs.newEntry) this.$refs.newEntry.focus();
+    if (this.$refs.newEntry) this.$refs.newEntry.focus(); // add focus on new entry textarea
   },
   methods: {
     altChangeActive(e) {
@@ -190,7 +188,6 @@ export default {
         e.target.classList.contains("entry-container") ||
         e.target.classList.contains("entryBtnContainer")
       ) {
-        this.active = false;
         this.mode = "";
       }
     },
@@ -206,14 +203,6 @@ export default {
       } else if (this.mode === type) this.mode = "";
       else this.mode = type;
     },
-    changeActive() {
-      this.active = true;
-    },
-    editEntry() {
-      this.mode = "edit";
-      this.$refs.textarea.focus();
-      this.newText = this.entry.text;
-    },
 
     hideTime() {
       if (this.mode === "") {
@@ -224,12 +213,13 @@ export default {
     selectColor(color) {
       if (color !== this.entry.color) {
         this.entry.color = color;
-        this.colorEntry();
+        this.updateEntry(this.entryKey);
       }
     },
 
     selectTime() {
-      if (this.time !== this.entry.time) {
+      this.newTime = this.time ? this.time : "12:00";
+      if (this.newTime !== this.time) {
         this.entry.time = this.time;
         let eventDate = new Date(this.listDate);
         let hours = parseInt(this.time[0] + this.time[1]);
@@ -248,7 +238,7 @@ export default {
             (result) => {
               // If allowed, create an alarm for this entry
               if (result) {
-                chrome.alarms.create(this.entry.key, {
+                chrome.alarms.create(this.entryKey, {
                   when: eventDate.getTime(),
                 });
               }
@@ -256,17 +246,30 @@ export default {
           );
         }
         // We can use this to check if notifications have been enabled so that we can show the user
-
-        this.timeEntry();
+        this.updateEntry(this.entryKey);
       }
 
       // Add this.timeEntry() later
     },
 
+    checkEntry() {
+      this.entry.active = !this.entry.active;
+      this.updateEntry(this.entryKey);
+    },
+
+    editEntry() {
+      this.mode = "edit";
+      this.$refs.textarea.focus();
+      this.newText = this.entry.text;
+    },
+
     submitEdit() {
       this.mode = "";
-      this.newText !== this.entry.text &&
-        this.submitEntry(this.newText, this.entry.text);
+      if (this.newText !== this.entry.text) {
+        this.entry.text = this.newText;
+        this.newText = "";
+        this.updateEntry(this.entryKey);
+      }
     },
   },
 
@@ -462,11 +465,8 @@ select option {
 }
 
 .newEntry {
-  // width: 10% !important;
   transition: none;
   margin: 0.25rem auto;
-  // margin-block-start: 1em;
-  // margin-block-end: 1em;
   float: left;
 
   animation-name: "grow";

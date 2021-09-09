@@ -6,32 +6,34 @@
     @dragover.prevent
     ref="details"
   >
-    <!-- @dragenter="isOver = true" -->
     <div v-if="dateTitle" :style="todayDate" class="dateTitle">
       {{ dayNumber }}
     </div>
+
     <ul ref="entryList" class="entryList">
       <Entry
-        v-for="(entry, index) in entries"
-        :deleteEntry="deleteEntry"
-        :dragStart="dragStart"
-        :entry="entry"
+        v-for="(entry, key, index) in entries"
         :key="index"
-        :entryIndex="index"
-        :checkEntry="checkEntry"
-        :colorEntry="colorEntry"
+        :entryKey="key"
+        :entry="entry"
+        :createEntry="createEntry"
+        :updateEntry="updateEntry"
+        :deleteEntry="deleteEntry"
         :listDate="listDate"
-        :submitEntry="submitEntry"
-        :timeEntry="timeEntry"
+        :dragStart="dragStart"
       />
     </ul>
-    <button @click="addEntry" :value="dateStamp" class="addButton">+</button>
+
+    <button @click="initEntry" :value="dateStamp" class="addButton">+</button>
   </div>
 </template>
 
 <script>
 import Entry from "./Entry";
-
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { state, actions } from "../utils/store";
+import shortid from "shortid";
+import Vue from "vue";
 // https://stackoverflow.com/questions/18548465/prevent-scroll-bar-from-adding-up-to-the-width-of-page-on-chrome
 export default {
   components: {
@@ -54,19 +56,21 @@ export default {
   },
   data() {
     return {
-      entries: [],
+      entries: {},
       isOver: false,
     };
   },
+
   created() {
-    // We do this to get the entries for the date
-    this.getEntries();
+    // this.getEntries();
+    const auth = getAuth();
+    onAuthStateChanged(auth, this.readEntries); // this watches to see if a user logs in or logs off
   },
 
   watch: {
     // do this if we change the date
     listDate(newValue) {
-      this.getEntries();
+      this.readEntries();
     },
   },
 
@@ -81,37 +85,25 @@ export default {
   },
 
   methods: {
-    addEntry() {
+    initEntry() {
+      console.log("Init Entry");
       // Add to entries state and to chrome storage
       let newEntry = {
         text: "",
         color: "blue",
         active: false,
+        new: true,
       };
-      this.entries.push(newEntry);
-    },
-    checkEntry(text) {
-      let index = this.entries.map((entry) => entry.text).indexOf(text);
-      let currentState = this.entries[index].active;
-      this.entries[index].active = !currentState;
-      this.updateStorage();
-    },
-    colorEntry() {
-      this.updateStorage();
-    },
-    deleteEntry(text) {
-      // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
-      let index = this.entries.map((entry) => entry.text).indexOf(text);
-      if (this.entries[index].hasOwnProperty("time")) {
-        chrome.alarms.clear(key); // clearing alarm if it has time
-      }
-      this.entries.splice(index, 1);
-      this.updateStorage();
-    },
 
+      // Need to use Vue.set in order to have reactivity for objects
+      Vue.set(this.entries, shortid.generate(), newEntry);
+    },
+    //===============
+    // DRAG FUNCTIONS
+    //===============
     // https://learnvue.co/2020/01/how-to-add-drag-and-drop-to-your-vuejs-project/
     // Start of drag
-    dragStart(evt, entry, parentId) {
+    dragStart(evt, key, entry, parentId) {
       // We need a callback so we can remove from the original data and entries list
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
@@ -119,25 +111,14 @@ export default {
       // https://stackoverflow.com/questions/9533585/drag-drop-html-5-jquery-e-datatransfer-setdata-with-json
       evt.dataTransfer.setData("text/plain", JSON.stringify(entry));
       evt.dataTransfer.setData("parentId", parentId);
+      evt.dataTransfer.setData("key", key);
     },
-
-    getEntries() {
-      let dateStamp = this.listDate.toLocaleDateString();
-      chrome.storage.sync.get([dateStamp], (result) => {
-        if (Object.keys(result).length > 0) {
-          this.entries = result[dateStamp];
-        } else {
-          this.entries = [];
-        }
-      });
-    },
-
     // On drop, we will add to our list and delete from old one
     onDrop(evt) {
       this.isOver = false;
-
       // get original parent id
       const parentId = parseInt(evt.dataTransfer.getData("parentId"));
+      const key = evt.dataTransfer.getData("key");
 
       // If in the same list, exit the function
       if (parentId === this._uid) return;
@@ -151,43 +132,63 @@ export default {
         (list) => list._uid === parentId
       )[0];
 
-      // Call the original parent function deleteEntry and pass in the key
-      originalParent.deleteEntry(entry.key);
-
-      // Add to our new list
-      this.entries.push(entry); // might change it back to push later, unsure
-      this.updateStorage();
+      originalParent.deleteEntry(key);
+      Vue.set(this.entries, key, entry);
+      this.createEntry(entry, key);
     },
 
-    timeEntry() {
-      this.updateStorage();
-    },
+    //===============
+    // END DRAG FUNCTIONS
+    //===============
 
-    submitEntry(text, oldText = false) {
-      console.log("Submit Entry");
-      if (text.length === 0) {
-        this.entries.pop();
+    //===============
+    // CRUD FUNCTIONS
+    //===============
+    createEntry(entry, key) {
+      if (entry.text.length === 0) {
+        Vue.delete(this.entries, key);
       } else {
-        let index = oldText
-          ? this.entries.map((entry) => entry.text).indexOf(oldText)
-          : this.entries.length - 1;
-        this.entries[index].text = text;
-        this.updateStorage();
+        if (entry.hasOwnProperty("new")) delete entry.new;
+        let date = this.listDate.toLocaleDateString().replaceAll("/", "-");
+        actions.create(date, entry, key);
+        // can optionally add a .then() resolver here if need to execute afterwards
       }
     },
-
-    updateStorage() {
-      let currentDate = this.listDate.toLocaleDateString();
-      if (this.entries.length > 0) {
-        chrome.storage.sync.set({ [currentDate]: this.entries });
-      } else {
-        chrome.storage.sync.remove([currentDate]); // remove from storage if there are no entries for this date
-      }
+    readEntries() {
+      let date = this.listDate.toLocaleDateString().replaceAll("/", "-");
+      actions
+        .read(date)
+        .then((result) => {
+          this.entries = result;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
+
+    updateEntry(key) {
+      // check if entry is any different than before
+      Vue.set(this.entries, key, this.entries[key]);
+      actions.update(this.dateStamp, this.entries[key], key);
+    },
+
+    //   // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
+    deleteEntry(key) {
+      if (this.entries[key].hasOwnProperty("time")) {
+        chrome.alarms.clear(key); // clearing alarm if it has time
+      }
+      Vue.delete(this.entries, key);
+      const date = this.listDate.toLocaleDateString().replaceAll("/", "-");
+      actions.delete(date, key);
+    },
+
+    //===============
+    // END CRUD FUNCTIONS
+    //===============
   },
   computed: {
     dateStamp() {
-      return this.listDate.toLocaleDateString();
+      return this.listDate.toLocaleDateString().replaceAll("/", "-");
     },
     dayNumber() {
       return this.listDate.getDate();

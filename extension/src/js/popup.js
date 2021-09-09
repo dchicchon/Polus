@@ -4,7 +4,6 @@ import { initializeApp } from "firebase/app";
 import "vue-material/dist/vue-material.min.css";
 import "vue-material/dist/theme/default.css";
 import { MdField, MdButton, MdBottomBar } from "vue-material/dist/components";
-// Vue.prototype.$firebase = firebase
 Vue.use(MdField);
 Vue.use(MdButton);
 Vue.use(MdBottomBar);

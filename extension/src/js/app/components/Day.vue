@@ -35,7 +35,7 @@
 
 <script>
 import EntryList from "./EntryList";
-
+import { actions } from "../utils/store";
 export default {
   components: {
     EntryList,
@@ -45,15 +45,13 @@ export default {
       date: new Date(),
     };
   },
-  created() {
-    // this.date = new Date();
-  },
+  created() {},
   methods: {
     // Change Date here
     changeDay(amount) {
       let changeDate = new Date(this.date); // had to do this because computed couldn't see that it was updating
       changeDate.setDate(this.date.getDate() + amount);
-      this.date = changeDate;
+      actions.setDate(changeDate);
     },
   },
 

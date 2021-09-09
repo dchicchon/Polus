@@ -1,11 +1,10 @@
 import Vue from "vue";
 import App from "./app/App.vue";
 import { initializeApp } from "firebase/app";
-import "firebase/auth";
+import { getAuth } from "firebase/auth";
 import "firebase/firestore";
 
 const start = () => {
-
   // Do a check here to see if a user is signed in perhaps
   chrome.storage.sync.get("userSettings", (result) => {
     // If not updated to the current version of the app
@@ -15,11 +14,12 @@ const start = () => {
     if (userSettings.newTab || userSettings.indexOpen) {
       userSettings.indexOpen = false; // need to do this if I want functionality for new open tab
       chrome.storage.sync.set({ userSettings });
+
+      // Here maybe I could 
       new Vue({
         el: "#app",
         render: (createElement) => createElement(App),
       });
-
     }
     else {
       chrome.tabs.update({
@@ -42,5 +42,7 @@ window.onload = () => {
   };
   const firebaseApp = initializeApp(config);
   Vue.prototype.$firebaseApp = firebaseApp
+  const auth = getAuth()
+  // Maybe check auth here?
   start()
 };
