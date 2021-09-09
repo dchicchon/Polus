@@ -131,6 +131,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  deleteUser,
 } from "firebase/auth";
 import { doc, setDoc, getFirestore } from "firebase/firestore";
 export default {
@@ -166,6 +167,12 @@ export default {
     deleteAccount() {
       // Show are you sure you want to delete account? All user data will be lost. And show user yes or no option
       console.log("Deleting Account");
+      const auth = getAuth();
+      const user = auth.currentUser;
+      deleteUser(user).then((user) => {
+        console.log("User has been deleted");
+        this.page = "";
+      });
     },
     signin() {
       const auth = getAuth();
@@ -184,21 +191,21 @@ export default {
           this.error = error.message;
         });
     },
-    async transferToFirestore() {
+    transferToFirestore() {
       const db = getFirestore();
       const { uid } = getAuth().currentUser;
-      await chrome.storage.sync.get(null, (result) => {
-        const documentData = {};
+
+      chrome.storage.sync.get(null, (result) => {
+        // const documentData = {};
         // We do not want background or userSetting data here
-        for (let key in result) {
+        for (const key in result) {
           if (key === "userSettings" || key === "background") continue;
           const data = result[key];
           if (key.includes("/")) {
             key = key.replaceAll("/", "-");
           }
-          documentData[key] = data;
+          setDoc(doc(db, `users/${uid}/${key}`), data);
         }
-        setDoc(doc(db, "users", uid), documentData);
       });
     },
     signup() {

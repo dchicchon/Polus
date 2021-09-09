@@ -23,6 +23,8 @@ export const actions = {
   create: async (date, entry, key) => {
     if (state.signedIn) {
       // Create in firestore
+
+      // 
     } else {
       chrome.storage.sync.get([date], (result) => {
         if (Object.keys(result).length > 0) {
@@ -35,23 +37,14 @@ export const actions = {
     }
   },
   read: async (date) => {
-    const getChromeStorage = new Promise((resolve, reject) => {
-      chrome.storage.sync.get([date], function (result) {
-        if (Object.keys(result).length > 0) {
-          resolve(result[date])
-        } else {
-          resolve({})
-        }
-      })
-    })
-
 
     let entryObject = {}
     if (state.signedIn) {
       console.log("From Firebase")
       // Get entries from firebase
       const db = getFirestore();
-      const q = query(collection(db, 'entries'), where('uid', '==', uid))
+      // Might need to include the date for each entry if we store in firebase
+      const q = query(collection(db, 'entries'), where('uid', '==', state.uid))
       const querySnapshot = await getDocs(q).catch(error => console.error(error));
       // querySnapshot.forEach((doc) => {
       //   console.log(doc.id, '=>', doc.data())
@@ -60,6 +53,16 @@ export const actions = {
       // This is where we replace everything with a dash
 
     } else {
+      const getChromeStorage = new Promise((resolve, reject) => {
+        chrome.storage.sync.get([date], function (result) {
+          if (Object.keys(result).length > 0) {
+            resolve(result[date])
+          } else {
+            resolve({})
+          }
+        })
+      })
+
       entryObject = await getChromeStorage
     }
     return entryObject
