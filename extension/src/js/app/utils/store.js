@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { getFirestore, doc, setDoc, getDocs, getDoc, collection, query, where } from 'firebase/firestore'
+import { getFirestore, doc, setDoc, getDocs, deleteDoc, collection, query, updateDoc } from 'firebase/firestore'
 // https://stackoverflow.com/questions/57710800/when-should-i-use-vuex
 // https://vuejs.org/v2/guide/reactivity.html
 
@@ -20,11 +20,16 @@ export const actions = {
   },
 
 
+  // ==================
+  // CREATE
+  // ==================
   create: async (date, entry, key) => {
+    console.log("Create Data")
     if (state.signedIn) {
       // Create in firestore
-
-      // 
+      // Add doc to a collection of date
+      const db = getFirestore()
+      await setDoc(doc(db, 'users', state.uid, date, key), entry)
     } else {
       chrome.storage.sync.get([date], (result) => {
         if (Object.keys(result).length > 0) {
@@ -36,21 +41,23 @@ export const actions = {
       })
     }
   },
-  read: async (date) => {
+  // END CREATE
 
+  // ==================
+  // READ DATA
+  // ==================
+  // https://firebase.google.com/docs/firestore/query-data/get-data
+  read: async (date) => {
+    console.log("Read Data")
     let entryObject = {}
     if (state.signedIn) {
-      console.log("From Firebase")
       // Get entries from firebase
       const db = getFirestore();
-      // Might need to include the date for each entry if we store in firebase
-      const q = query(collection(db, 'entries'), where('uid', '==', state.uid))
-      const querySnapshot = await getDocs(q).catch(error => console.error(error));
-      // querySnapshot.forEach((doc) => {
-      //   console.log(doc.id, '=>', doc.data())
-      // })
-      // I think I should pass in the id as well to the entries class
-      // This is where we replace everything with a dash
+      const q = query(collection(db, 'users', state.uid, date))
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        entryObject[doc.id] = doc.data()
+      })
 
     } else {
       const getChromeStorage = new Promise((resolve, reject) => {
@@ -65,14 +72,20 @@ export const actions = {
 
       entryObject = await getChromeStorage
     }
+    console.log("Entry Object")
+    console.log(entryObject)
     return entryObject
   },
+  // END READ
 
-  // Chrome no need to worry about collections
-  // Firebase everybody around so we need to worry about that
+  // ==================
+  // UPDATE 
+  // ==================
   update: async (date, entry, key) => {
+    console.log("Update Data")
     if (state.signedIn) {
-      // firebase things
+      const db = getFirestore()
+      await updateDoc(doc(db, 'users', state.uid, date, key), entry);
     } else {
       chrome.storage.sync.get([date], result => {
         result[date][key] = entry
@@ -81,9 +94,15 @@ export const actions = {
       // I want to update an item in my storage
     }
   },
+  // END UPDATE
+
+  // ==================
+  // DELETE
+  // ==================
   delete: async (date, key) => {
     if (state.signedIn) {
-      // 
+      const db = getFirestore()
+      await deleteDoc(doc(db, 'users', state.uid, date, key))
     } else {
       chrome.storage.sync.get([date], (result) => {
         delete result[date][key]
@@ -95,5 +114,7 @@ export const actions = {
       })
     }
   },
+  // END DELETE
+
 
 };

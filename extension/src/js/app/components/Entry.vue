@@ -98,7 +98,7 @@
           />
         </button>
         <!-- Save Edit -->
-        <button v-if="mode === 'edit'" @click="submitEdit()" class="entryBtn">
+        <button v-if="mode === 'edit'" @click="submitEdit" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/save.png"
@@ -115,7 +115,7 @@
         </button>
 
         <!-- Check Entry -->
-        <button @click="() => checkEntry()" class="entryBtn">
+        <button @click="checkEntry" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/done.png"

@@ -191,7 +191,7 @@ export default {
           this.error = error.message;
         });
     },
-    transferToFirestore() {
+    async transferToFirestore() {
       const db = getFirestore();
       const { uid } = getAuth().currentUser;
 
@@ -204,7 +204,7 @@ export default {
           if (key.includes("/")) {
             key = key.replaceAll("/", "-");
           }
-          setDoc(doc(db, `users/${uid}/${key}`), data);
+          addDoc(collection(db, "users", uid, key), data);
         }
       });
     },

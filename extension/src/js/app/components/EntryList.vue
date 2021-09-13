@@ -31,7 +31,7 @@
 <script>
 import Entry from "./Entry";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { state, actions } from "../utils/store";
+import { actions } from "../utils/store";
 import shortid from "shortid";
 import Vue from "vue";
 // https://stackoverflow.com/questions/18548465/prevent-scroll-bar-from-adding-up-to-the-width-of-page-on-chrome
@@ -136,15 +136,13 @@ export default {
       Vue.set(this.entries, key, entry);
       this.createEntry(entry, key);
     },
-
-    //===============
     // END DRAG FUNCTIONS
-    //===============
 
     //===============
     // CRUD FUNCTIONS
     //===============
     createEntry(entry, key) {
+      console.log("Create Entry");
       if (entry.text.length === 0) {
         Vue.delete(this.entries, key);
       } else {
@@ -155,10 +153,11 @@ export default {
       }
     },
     readEntries() {
-      let date = this.listDate.toLocaleDateString().replaceAll("/", "-");
+      console.log("Read Entries");
       actions
-        .read(date)
+        .read(this.dateStamp)
         .then((result) => {
+          console.log("Result");
           this.entries = result;
         })
         .catch((error) => {
@@ -167,13 +166,14 @@ export default {
     },
 
     updateEntry(key) {
+      console.log("Update Entry");
       // check if entry is any different than before
       Vue.set(this.entries, key, this.entries[key]);
       actions.update(this.dateStamp, this.entries[key], key);
     },
 
-    //   // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
-    deleteEntry(key) {
+deleteEntry(key) {
+      console.log("Delete Entry");
       if (this.entries[key].hasOwnProperty("time")) {
         chrome.alarms.clear(key); // clearing alarm if it has time
       }
