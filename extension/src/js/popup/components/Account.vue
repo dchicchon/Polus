@@ -133,7 +133,7 @@ import {
   signOut,
   deleteUser,
 } from "firebase/auth";
-import { doc, setDoc, getFirestore } from "firebase/firestore";
+import { doc, setDoc, getFirestore, updateDoc } from "firebase/firestore";
 export default {
   components: {
     ErrorText,
@@ -169,6 +169,8 @@ export default {
       console.log("Deleting Account");
       const auth = getAuth();
       const user = auth.currentUser;
+      // show user a page are you sure?
+      // then finally use cloud functions to delete their account. let them know it should take awhile
       deleteUser(user).then((user) => {
         console.log("User has been deleted");
         this.page = "";
@@ -191,22 +193,31 @@ export default {
           this.error = error.message;
         });
     },
-    async transferToFirestore() {
+    // await getting our items from storage
+    getSyncStorageEntries: async () => {
+      chrome.storage.sync.get(null, (result) => {
+        delete result.userSettings;
+        delete result.background;
+        return result;
+      });
+    },
+    // Should work now
+    transferToFirestore: async () => {
       const db = getFirestore();
       const { uid } = getAuth().currentUser;
-
-      chrome.storage.sync.get(null, (result) => {
-        // const documentData = {};
-        // We do not want background or userSetting data here
-        for (const key in result) {
-          if (key === "userSettings" || key === "background") continue;
-          const data = result[key];
-          if (key.includes("/")) {
-            key = key.replaceAll("/", "-");
-          }
-          addDoc(collection(db, "users", uid, key), data);
+      const dateObject = await this.getSyncStorageEntries();
+      for (let date in dateObject) {
+        const dateObject = dateObject[date];
+        if (date.includes("/")) {
+          date = date.replaceAll("/", "-");
         }
-      });
+        // Get each entry from our date collection and set to our subcollection date
+        for (let key in dateObject) {
+          const entry = dateObject[key];
+          await setDoc(doc(db, "users", uid, date, key), entry);
+        }
+      }
+      await updateDoc(doc(db, "users"));
     },
     signup() {
       console.log("Signing in...");

@@ -13,7 +13,7 @@ import Navbar from "./components/Navbar.vue";
 import Clock from "./components/Clock.vue";
 import Calendar from "./components/Calendar.vue";
 import { actions } from "./utils/store";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default {
   components: {
@@ -22,24 +22,20 @@ export default {
     Calendar,
   },
 
+  beforeCreate() {
+    onAuthStateChanged(this.$auth, (user) => {
+      if (user) {
+        actions.setSignedIn(true);
+        actions.setUid(user.uid);
+      }
+    });
+  },
+
   created() {
-    const auth = getAuth();
-    onAuthStateChanged(auth, this.checkForUser);
     this.setBackground();
   },
 
   methods: {
-    checkForUser(user) {
-      // If this is the case, be sure to set user as signed in
-      if (user) {
-        console.log(user);
-        actions.setSignedIn(true);
-        actions.setUid(user.uid);
-      } else {
-        console.log("No user present");
-      }
-    },
-
     //   Work on the background transition to load on page
     setBackground() {
       let page = document.getElementsByTagName("html");

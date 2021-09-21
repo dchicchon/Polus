@@ -10,7 +10,7 @@
       {{ dayNumber }}
     </div>
 
-    <ul ref="entryList" class="entryList">
+    <ul v-if="Object.keys(entries).length" ref="entryList" class="entryList">
       <Entry
         v-for="(entry, key, index) in entries"
         :key="index"
@@ -23,6 +23,7 @@
         :dragStart="dragStart"
       />
     </ul>
+    <ul v-else ref="entryList" class="entryList"></ul>
 
     <button @click="initEntry" :value="dateStamp" class="addButton">+</button>
   </div>
@@ -30,7 +31,7 @@
 
 <script>
 import Entry from "./Entry";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { actions } from "../utils/store";
 import shortid from "shortid";
 import Vue from "vue";
@@ -62,9 +63,8 @@ export default {
   },
 
   created() {
-    // this.getEntries();
-    const auth = getAuth();
-    onAuthStateChanged(auth, this.readEntries); // this watches to see if a user logs in or logs off
+    this.readEntries();
+    onAuthStateChanged(this.$auth, this.readEntries); // this watches to see if a user logs in or logs off
   },
 
   watch: {
@@ -142,44 +142,44 @@ export default {
     // CRUD FUNCTIONS
     //===============
     createEntry(entry, key) {
-      console.log("Create Entry");
       if (entry.text.length === 0) {
         Vue.delete(this.entries, key);
       } else {
-        if (entry.hasOwnProperty("new")) delete entry.new;
-        let date = this.listDate.toLocaleDateString().replaceAll("/", "-");
-        actions.create(date, entry, key);
-        // can optionally add a .then() resolver here if need to execute afterwards
+        Vue.delete(this.entries[key], "new");
+        actions
+          .create({ date: this.dateStamp, entry, key })
+          .catch((e) => console.error(e));
       }
     },
+
     readEntries() {
-      console.log("Read Entries");
+      // console.log("Read Entries");
       actions
-        .read(this.dateStamp)
+        .read({ date: this.dateStamp })
         .then((result) => {
-          console.log("Result");
           this.entries = result;
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch((e) => console.error(e));
     },
 
     updateEntry(key) {
-      console.log("Update Entry");
       // check if entry is any different than before
+      // Instead of doing just this i should specify what is being changed maybe?
       Vue.set(this.entries, key, this.entries[key]);
-      actions.update(this.dateStamp, this.entries[key], key);
+      actions
+        .update({ date: this.dateStamp, entry: this.entries[key], key })
+        .catch((e) => console.error(e));
     },
 
-deleteEntry(key) {
+    deleteEntry(key) {
       console.log("Delete Entry");
       if (this.entries[key].hasOwnProperty("time")) {
         chrome.alarms.clear(key); // clearing alarm if it has time
       }
       Vue.delete(this.entries, key);
-      const date = this.listDate.toLocaleDateString().replaceAll("/", "-");
-      actions.delete(date, key);
+      actions
+        .delete({ date: this.dateStamp, key })
+        .catch((e) => console.error(e));
     },
 
     //===============

@@ -42,6 +42,8 @@ chrome.runtime.onInstalled.addListener((details) => {
       });
     }
   });
+
+  // Maybe make an alarm here that will execute after awhile?
 });
 
 chrome.contextMenus.onClicked.addListener(function (result) {
@@ -90,6 +92,13 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     });
   }
 });
+
+// Maybe here I can execute firebase code where i can update my storage later on
+// chrome.storage.onChanged.addListener(function (changes, namespace) {
+//   console.log(changes)
+//   console.log(namespace)
+// })
+
 
 const clearNotifications = () => {
   chrome.notifications.getAll((result) => {

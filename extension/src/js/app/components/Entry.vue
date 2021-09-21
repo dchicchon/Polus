@@ -12,7 +12,7 @@
   </textarea>
   <!-- End New Entry -->
 
-  <!-- Inactive Entry -->
+  <!-- Inactive Entry (fade-in  was added previously but it looked a little funny) -->
   <li
     v-else-if="mode === ''"
     class="entry"
@@ -26,6 +26,7 @@
   </li>
   <!-- End Inactive Entry -->
 
+  <!-- Its the fact that it's getting rerendered -->
   <!-- Active -->
   <li
     v-else
@@ -37,7 +38,7 @@
   >
     <div class="entry-container">
       <p class="text" v-if="mode !== 'edit'" :class="{ checked: entry.active }">
-        {{ text }}
+        {{ entry.text }}
       </p>
 
       <!-- Begin Edit Entry TextArea -->
@@ -79,7 +80,7 @@
         <!-- Time -->
         <button
           @mousedown="changeMode('time')"
-          @mouseup="hideTime()"
+          @mouseup="hideTime"
           :class="[mode === 'time' ? 'activeBtn' : '', 'entryBtn']"
         >
           <!-- only activates clock on mouseup -->
@@ -90,8 +91,8 @@
           />
           <input
             v-model="entry.time"
-            @blur="blur()"
-            @input="selectTime()"
+            @blur="blur"
+            @input="selectTime"
             placeholder="none"
             ref="time"
             type="time"
@@ -178,6 +179,7 @@ export default {
   },
 
   mounted() {
+    console.log("Mounted");
     if (this.$refs.newEntry) this.$refs.newEntry.focus(); // add focus on new entry textarea
   },
   methods: {
@@ -509,6 +511,21 @@ select option {
   }
   to {
     width: 90%;
+  }
+}
+
+.fade-in {
+  animation-name: "fadeIn";
+  animation-fill-mode: forwards;
+  animation-duration: 0.25s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.75;
   }
 }
 
