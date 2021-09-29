@@ -117,9 +117,26 @@
         >Log Out</md-button
       >
       <!-- Somehow ask user if they are sure they want to delete this account -->
-      <md-button @click="deleteAccount" class="md-primary md-raised blue"
-        >Delete Account</md-button
-      >
+      <md-button
+        @click="priorAccountDeletion = true"
+        class="md-primary md-raised blue"
+        >Delete Account
+      </md-button>
+      <div v-if="priorAccountDeletion">
+        <p>
+          Are you sure you want to delete your account? By deleting your
+          account, all your entries and account information will be deleted but
+          you will still have your entries on your machine and Google Account.
+        </p>
+        <md-button class="md-error md-raised red" @click="deleteAccount"
+          >Yes</md-button
+        >
+        <md-button
+          class="md-primary md-raised blue"
+          @click="priorAccountDeletion = false"
+          >No</md-button
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -142,6 +159,7 @@ export default {
     return {
       email: "",
       password: "",
+      priorAccountDeletion: false,
       confirmPassword: "",
       page: "",
       error: "",
@@ -176,23 +194,7 @@ export default {
         this.page = "";
       });
     },
-    signin() {
-      const auth = getAuth();
-      console.log("Logging In...");
-      // use firebase signin system
-      signInWithEmailAndPassword(auth, this.email, this.password)
-        .then((userCredential) => {
-          console.log("User Credential");
-          console.log(userCredential);
-          this.page = "summary";
 
-          // Here I then need to get some user info using firebase firestore methods
-        })
-        .catch((error) => {
-          console.log("Error in signin");
-          this.error = error.message;
-        });
-    },
     // await getting our items from storage
     getSyncStorageEntries: async () => {
       chrome.storage.sync.get(null, (result) => {
@@ -219,6 +221,31 @@ export default {
       }
       await updateDoc(doc(db, "users"));
     },
+    signin() {
+      const auth = getAuth();
+      console.log("Logging In...");
+      // use firebase signin system
+      signInWithEmailAndPassword(auth, this.email, this.password)
+        .then((userCredential) => {
+          console.log("User Credential");
+          console.log(userCredential);
+
+          let nextWeek = new Date();
+          nextWeek.setDate(nextWeek.getDate() + 6);
+          // Create the recurring alarm here to double check
+          chrome.alarms.create("reloadFirestore", {
+            when: nextWeek.getTime(),
+            periodInMinutes: 60 * 24 * 7, // make this every 7 days?
+          });
+          this.page = "summary";
+
+          // Here I then need to get some user info using firebase firestore methods
+        })
+        .catch((error) => {
+          console.log("Error in signin");
+          this.error = error.message;
+        });
+    },
     signup() {
       console.log("Signing in...");
       if (this.password !== this.confirmPassword) {
@@ -241,9 +268,12 @@ export default {
     },
     signout() {
       const auth = getAuth();
+
+      // Delete the alarm here if it exists
       signOut(auth)
         .then(() => {
           console.log("Sign Out successful");
+          chrome.alarms.clear("reloadFirestore");
           this.page = "";
         })
         .catch((error) => {

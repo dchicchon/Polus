@@ -1,38 +1,7 @@
 // On extension installation
 chrome.runtime.onInstalled.addListener((details) => {
-  if (details.reason == 'install') {
-
-  } else if (details.reason == 'update') {
-    // Change each key in storage to dashes instead of slashes
-
-  }
-  // 1. On installed, we will check to see if they have anything from previous version in storage
-  // 2. If so, we will check every valid date for a storage item and change each item that was altered for the new update
-
-  const userSettings = {
-    changePhoto: true,
-    indexOpen: false,
-    newTab: true,
-    notifications: false,
-    notificationTime: "0",
-    pmode: false,
-    view: "week",
-  };
-  chrome.contextMenus.create({
-    title: "Open",
-    contexts: ["action"],
-    id: "open-sesame",
-  });
-  chrome.storage.sync.set({ userSettings });
-  getPhoto();
-  chrome.runtime.setUninstallURL(
-    "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit"
-  );
-
-  // Check Alarm
-  chrome.alarms.get("changeBackground", (alarm) => {
-    // If no alarm, create one that executes at midnight
-    if (!alarm) {
+  if (details.reason == "install") {
+    const createBackgroundAlarm = () => {
       let midnight = new Date();
       midnight.setHours(23, 59, 59);
       // Create alarm that executes every 25 hours
@@ -40,13 +9,64 @@ chrome.runtime.onInstalled.addListener((details) => {
         when: midnight.getTime(),
         periodInMinutes: 60 * 24,
       });
-    }
-  });
+    };
+    createBackgroundAlarm();
+    chrome.runtime.setUninstallURL(
+      "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit"
+    );
+    const userSettings = {
+      changePhoto: true,
+      indexOpen: false,
+      newTab: true,
+      notifications: false,
+      notificationTime: "0",
+      pmode: false,
+      view: "week",
+    };
+    chrome.contextMenus.create({
+      title: "Open",
+      contexts: ["action"],
+      id: "open-sesame",
+    });
+    chrome.storage.sync.set({ userSettings });
+  } else if (details.reason == "update") {
+    // Change each key in storage to dashes instead of slashes,
+    // also were turning each item into an object vs an array
+
+    chrome.storage.sync.get(null, (result) => {
+      for (const key in result) {
+        if (key.includes("/")) {
+          const dateArray = result[key];
+          // conver to object
+          const dateObject = {};
+          for (const entry of dateArray) {
+            const entryKey = entry.key;
+            delete entry.key;
+            dateObject[entryKey] = entry;
+          }
+
+          const newDate = key.replaceAll("/", "-");
+          chrome.storage.sync.set({ [newDate]: dateObject }, () => {
+            chrome.storage.sync.remove([key]);
+          });
+          // now save the object to our chrome storage
+        }
+      }
+    });
+  }
+  // 1. On installed, we will check to see if they have anything from previous version in storage
+  // 2. If so, we will check every valid date for a storage item and change each item that was altered for the new update
+
+  // maybe try changing all of the store to use - instead of /
+
+  getPhoto();
+
+  // Check Alarm
 
   // Maybe make an alarm here that will execute after awhile?
 });
 
-chrome.contextMenus.onClicked.addListener(function (result) {
+chrome.contextMenus.onClicked.addListener(function(result) {
   if (result["menuItemId"] === "open-sesame") {
     chrome.storage.sync.get("userSettings", (result) => {
       let { userSettings } = result;
@@ -88,7 +108,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
       chrome.notifications.create(entry.key, notificationObj);
       chrome.notifications.onClicked.addListener((notificationId) => {
         clearNotifications();
-      })
+      });
     });
   }
 });
@@ -98,7 +118,6 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 //   console.log(changes)
 //   console.log(namespace)
 // })
-
 
 const clearNotifications = () => {
   chrome.notifications.getAll((result) => {

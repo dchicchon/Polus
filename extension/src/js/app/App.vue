@@ -14,6 +14,9 @@ import Clock from "./components/Clock.vue";
 import Calendar from "./components/Calendar.vue";
 import { actions } from "./utils/store";
 import { onAuthStateChanged } from "firebase/auth";
+// import { initializeApp } from "firebase/app";
+// import { getFirestore, } from "firebase/firestore";
+// import { getAuth, } from "firebase/auth";
 
 export default {
   components: {
