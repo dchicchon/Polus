@@ -233,10 +233,16 @@ export default {
           let nextWeek = new Date();
           nextWeek.setDate(nextWeek.getDate() + 6);
           // Create the recurring alarm here to double check
-          chrome.alarms.create("reloadFirestore", {
-            when: nextWeek.getTime(),
-            periodInMinutes: 60 * 24 * 7, // make this every 7 days?
+          // Check if the alarm exists already
+          chrome.alarms.get("reloadFirestore", (alarm) => {
+            if (!alarm) {
+              chrome.alarms.create("reloadFirestore", {
+                when: nextWeek.getTime(),
+                periodInMinutes: 60 * 24 * 7, // make this every 7 days?
+              });
+            }
           });
+
           this.page = "summary";
 
           // Here I then need to get some user info using firebase firestore methods
@@ -273,7 +279,11 @@ export default {
       signOut(auth)
         .then(() => {
           console.log("Sign Out successful");
-          chrome.alarms.clear("reloadFirestore");
+          chrome.alarms.get("reloadFirestore", (alarm) => {
+            if (alarm) {
+              chrome.alarms.clear("reloadFirestore");
+            }
+          });
           this.page = "";
         })
         .catch((error) => {
