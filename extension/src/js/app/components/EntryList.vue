@@ -63,6 +63,9 @@ export default {
   },
 
   created() {
+    // Create an event listener for if the alarm of reloadFirestore
+    // goes off
+    // chrome.storage.onChanged.addListener(this.checkChanges);
     this.readEntries();
     onAuthStateChanged(this.$auth, this.readEntries); // this watches to see if a user logs in or logs off
   },
@@ -97,6 +100,16 @@ export default {
 
       // Need to use Vue.set in order to have reactivity for objects
       Vue.set(this.entries, shortid.generate(), newEntry);
+    },
+
+    checkChanges(changes, namespace) {
+      if (namespace === "sync") {
+        if (changes.reload.newValue) {
+          console.log("Reloading our cloud firestore"); // maybe only do this once at the parent level?
+          chrome.storage.sync.set({ reload: false });
+        }
+        // set it back to false once we have ran this item
+      }
     },
     //===============
     // DRAG FUNCTIONS
@@ -163,6 +176,7 @@ export default {
     },
 
     updateEntry(key) {
+      console.log("Read Entries");
       // check if entry is any different than before
       // Instead of doing just this i should specify what is being changed maybe?
       Vue.set(this.entries, key, this.entries[key]);

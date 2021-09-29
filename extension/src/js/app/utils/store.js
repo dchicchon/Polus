@@ -53,6 +53,19 @@ const removeChromeStorage = async ({ date }) => {
   });
 };
 
+const clearChromeStorage = async ({ }) => {
+  return new Promise((resolve, reject) => {
+    // remove everything from storage besides background info and userSettings
+    chrome.storage.sync.get(null, result => {
+      delete result.userSettings;
+      delete result.background;
+      for (const key in result) {
+        removeChromeStorage({ key })
+      }
+    })
+  })
+}
+
 export const actions = {
   setSignedIn: (bool) => (state.signedIn = bool),
   setUid: (uid) => (state.uid = uid),
@@ -60,7 +73,10 @@ export const actions = {
     state.date = date;
   },
 
-  // Potentially, is there a way for me to combine chrome sync and firebase? YES! lets try it
+  // Reload Database
+  resetSyncDatabase: async () => {
+    await clearChromeStorage()
+  },
 
   // ==================
   // CREATE

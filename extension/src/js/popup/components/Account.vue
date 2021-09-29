@@ -203,6 +203,22 @@ export default {
         return result;
       });
     },
+    createReloadAlarm: () => {
+      chrome.storage.sync.set({ reload: false }, () => {
+        let nextWeek = new Date();
+        nextWeek.setDate(nextWeek.getDate() + 6);
+        // Create the recurring alarm here to double check
+        // Check if the alarm exists already
+        chrome.alarms.get("reloadFirestore", (alarm) => {
+          if (!alarm) {
+            chrome.alarms.create("reloadFirestore", {
+              when: nextWeek.getTime(),
+              periodInMinutes: 60 * 24 * 7, // make this every 7 days?
+            });
+          }
+        });
+      });
+    },
     // Should work now
     transferToFirestore: async () => {
       const db = getFirestore();
@@ -227,22 +243,9 @@ export default {
       // use firebase signin system
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
-          console.log("User Credential");
-          console.log(userCredential);
-
-          let nextWeek = new Date();
-          nextWeek.setDate(nextWeek.getDate() + 6);
-          // Create the recurring alarm here to double check
-          // Check if the alarm exists already
-          chrome.alarms.get("reloadFirestore", (alarm) => {
-            if (!alarm) {
-              chrome.alarms.create("reloadFirestore", {
-                when: nextWeek.getTime(),
-                periodInMinutes: 60 * 24 * 7, // make this every 7 days?
-              });
-            }
-          });
-
+          // console.log("User Credential");
+          // console.log(userCredential);
+          this.createReloadAlarm();
           this.page = "summary";
 
           // Here I then need to get some user info using firebase firestore methods
@@ -265,6 +268,7 @@ export default {
           console.log("User Successfully logged in");
           // Get all items from storage sync
           this.transferToFirestore();
+          this.createReloadAlarm();
           this.page = "summary";
         })
         .catch((error) => {

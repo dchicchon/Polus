@@ -22,6 +22,12 @@
         md-label="Account"
         md-icon="/assets/popup_icons/account.svg"
       />
+      <md-bottom-bar-item
+        @click="($event) => changeTab($event, 'dev')"
+        id="bottom-bar-item-account"
+        md-label="Dev"
+        md-icon="/assets/popup_icons/account.svg"
+      />
     </md-bottom-bar>
   </div>
 </template>
@@ -30,6 +36,7 @@
 import Options from "./components/Options";
 import Updates from "./components/Updates";
 import Account from "./components/Account";
+import Dev from "./components/Dev";
 
 // Popup Entry Point. Should create a check to see if user is logged in with firebase
 export default {
@@ -38,6 +45,7 @@ export default {
     Options,
     Updates,
     Account,
+    Dev,
   },
 
   data() {

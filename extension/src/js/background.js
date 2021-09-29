@@ -66,7 +66,7 @@ chrome.runtime.onInstalled.addListener((details) => {
   // Maybe make an alarm here that will execute after awhile?
 });
 
-chrome.contextMenus.onClicked.addListener(function(result) {
+chrome.contextMenus.onClicked.addListener(function (result) {
   if (result["menuItemId"] === "open-sesame") {
     chrome.storage.sync.get("userSettings", (result) => {
       let { userSettings } = result;
@@ -87,6 +87,10 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         getPhoto();
       }
     });
+  } else if (alarm.name === 'reloadFirestore') {
+    chrome.storage.sync.set({ reload: true })
+    // Delete all items in storage sync and then grab them from Firestore
+
   }
 
   // If we want custom alarms later on, add them here

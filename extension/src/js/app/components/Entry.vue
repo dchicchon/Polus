@@ -51,22 +51,19 @@
       <!-- Begin Edit Entry TextArea -->
 
       <!-- Button Container -->
-      <div class="entryBtnContainer">
+      <div class="button-container">
         <!-- Color -->
         <button
           @click="changeMode('color')"
-          :class="[mode === 'color' ? 'activeBtn' : '', 'entryBtn']"
+          :disabled="mode === 'color'"
+          class="entryBtn"
         >
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/palette.png"
             alt="color"
           />
-          <select
-            style="cursor: pointer"
-            :value="''"
-            @input="selectColor($event.target.value)"
-          >
+          <select :value="''" @input="selectColor($event.target.value)">
             <option
               v-for="(option, index) in colorOptions"
               :value="option"
@@ -77,27 +74,28 @@
             </option>
           </select>
         </button>
-        <!-- Time -->
-        <button
-          @mousedown="changeMode('time')"
-          @mouseup="hideTime"
-          :class="[mode === 'time' ? 'activeBtn' : '', 'entryBtn']"
-        >
-          <!-- only activates clock on mouseup -->
+
+        <!-- Begin Time -->
+        <!-- Superimpose time and input on top of each other -->
+        <div id="time-section">
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/clock.png"
             alt="clock"
           />
           <input
+            class="entryBtn"
             v-model="entry.time"
-            @blur="blur"
+            @mouseup="changeTimeMode"
             @input="selectTime"
             placeholder="none"
             ref="time"
             type="time"
           />
-        </button>
+        </div>
+
+        <!-- End Time -->
+
         <!-- Save Edit -->
         <button v-if="mode === 'edit'" @click="submitEdit" class="entryBtn">
           <img
@@ -179,7 +177,6 @@ export default {
   },
 
   mounted() {
-    console.log("Mounted");
     if (this.$refs.newEntry) this.$refs.newEntry.focus(); // add focus on new entry textarea
   },
   methods: {
@@ -190,37 +187,41 @@ export default {
         e.target.classList.contains("entry-container") ||
         e.target.classList.contains("entryBtnContainer")
       ) {
-        this.mode = "";
+        this.changeMode("");
       }
     },
 
-    blur() {
-      this.mode = "";
-    },
-
-    changeMode(type) {
-      if (type === "time" && this.mode === "time") {
+    changeTimeMode() {
+      if (this.mode !== "time") {
+        this.changeMode("time");
+      } else {
         this.$refs.time.style.display = "none";
-        this.mode = "";
-      } else if (this.mode === type) this.mode = "";
-      else this.mode = type;
-    },
-
-    hideTime() {
-      if (this.mode === "") {
-        this.$refs.time.style.display = "inline-block";
+        this.changeMode("menu");
+        setTimeout(() => (this.$refs.time.style.display = "block"), 1);
       }
+    },
+    changeMode(type) {
+      this.mode = type;
     },
 
     selectColor(color) {
       if (color !== this.entry.color) {
         this.entry.color = color;
+        this.changeMode("menu");
         this.updateEntry(this.entryKey);
       }
     },
 
-    selectTime() {
-      this.newTime = this.time ? this.time : "12:00";
+    selectTime(time) {
+      console.log("Time Selected:", time);
+    },
+
+    submitTime() {
+      this.changeMode("menu");
+    },
+
+    saveTime() {
+      this.newTime = this.entry.time ? this.entry.time : "12:00";
       if (this.newTime !== this.time) {
         this.entry.time = this.time;
         let eventDate = new Date(this.listDate);
@@ -273,6 +274,7 @@ export default {
         this.updateEntry(this.entryKey);
       }
     },
+
   },
 
   computed: {
@@ -295,6 +297,11 @@ export default {
 <style scoped lang="scss">
 $brightness: 100%;
 
+#startTime {
+}
+
+#endTime {
+}
 // Modify semantic tags here
 textarea {
   font-family: "Segoe UI", Tahoma, sans-serif;
@@ -320,12 +327,15 @@ textarea {
 }
 
 input[type="time"] {
+  display: block;
+  position: absolute;
+  padding-inline-start: 0px;
   border: none;
   background: none;
   color: white;
   width: 25px;
   height: 25px;
-  transform: translateY(-25px);
+  transform: translateY(-28px);
 
   // clock
   &::-webkit-calendar-picker-indicator {
@@ -388,6 +398,7 @@ second, second and am/pm */
 }
 
 select {
+  color: transparent;
   -webkit-appearance: none;
   -moz-appearance: none;
   text-indent: 1px;
@@ -501,8 +512,8 @@ select option {
 }
 
 .button-container {
-  display: inline-block;
-  position: relative;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 @keyframes grow {
