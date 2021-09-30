@@ -88,6 +88,7 @@ export const actions = {
     if (state.signedIn) {
       const db = getFirestore();
       await setDoc(doc(db, "users", state.uid, date, key), entry);
+      // await setDoc(doc(db, 'users', state.uid,))
     }
   },
   // END CREATE
