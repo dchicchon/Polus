@@ -14,9 +14,6 @@ import Clock from "./components/Clock.vue";
 import Calendar from "./components/Calendar.vue";
 import { actions } from "./utils/store";
 import { onAuthStateChanged } from "firebase/auth";
-// import { initializeApp } from "firebase/app";
-// import { getFirestore, } from "firebase/firestore";
-// import { getAuth, } from "firebase/auth";
 
 export default {
   components: {
@@ -30,12 +27,20 @@ export default {
       if (user) {
         actions.setSignedIn(true);
         actions.setUid(user.uid);
+      } else {
+        actions.setSignedIn(false);
+        actions.setUid(null);
       }
     });
   },
 
   created() {
     this.setBackground();
+
+    // chrome.storage.onChanged.addListener((changes, namespace) => {
+    // if (changes.maxItemsReached)
+    // showModal()
+    // })
   },
 
   methods: {
@@ -43,9 +48,9 @@ export default {
     setBackground() {
       let page = document.getElementsByTagName("html");
       chrome.storage.sync.get(["background", "userSettings"], (result) => {
-        chrome.storage.local.get("image", (localRes) => {
-          if (Object.keys(localRes).length > 0) {
-            let image = localRes.image;
+        chrome.storage.sync.get("image", (syncRes) => {
+          if (Object.keys(syncRes).length > 0) {
+            let image = syncRes.image;
             page[0].style.background = `url(${image})`;
           } else {
             let image = result.background.url;
@@ -58,6 +63,19 @@ export default {
           ? "none"
           : "block";
       });
+    },
+
+    showMaxModal() {
+      // here display a modal on the page that will inform the user
+      // that they have reached the max amount of items alloted to them
+      // for the extension! If they would like to add more, they must
+      // delete items  or they can join Polus as a user
+      // which will host their data for them.
+      // To delete Items, enable option to automatically delete
+      // old entries in the options menu or they can manually
+      // delete old entries
+      // would you like more space? Click this to delete X amount of older entries
+      // "Delete All Entries Before: X = adds Xkb of space"
     },
   },
 };

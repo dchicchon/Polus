@@ -28,7 +28,8 @@
   "permissions": [
     "alarms",
     "contextMenus",
-    "storage"
+    "storage",
+    "unlimitedStorage"
   ],
   "short_name": "Polus"
 }

@@ -56,12 +56,14 @@
         >Submit</md-button
       >
     </div>
-    <div>
+
+    <!-- In order to save on user space, we will remove this item -->
+    <!-- <div>
       Select a photo from your computer ({{ "<" }} 5MB)
       <md-button @click="uploadPhoto" class="blue md-primary md-raised md-dense"
         >Upload</md-button
       >
-    </div>
+    </div> -->
     <p class="error">{{ error }}</p>
   </div>
 </template>
@@ -192,7 +194,7 @@ export default {
             downloadLink,
           };
           chrome.storage.sync.set({ background }, () => {
-            chrome.storage.local.remove("image");
+            chrome.storage.sync.remove("image");
             chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
               chrome.tabs.reload(tabs[0].id);
             });
@@ -224,7 +226,7 @@ export default {
         function () {
           // USE INDEXED DB INSTEAD
           chrome.storage.sync.set({ background: false }, () => {
-            chrome.storage.local.set({ image: reader.result }, () => {
+            chrome.storage.sync.set({ image: reader.result }, () => {
               chrome.tabs.query(
                 { active: true, currentWindow: true },
                 (tabs) => {

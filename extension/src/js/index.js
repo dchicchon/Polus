@@ -40,7 +40,7 @@ const start = () => {
       });
     } else {
       chrome.tabs.update({
-        url: "chrome-search://local-ntp/local-ntp.html",
+        url: "chrome-search://sync-ntp/sync-ntp.html",
       });
     }
   });

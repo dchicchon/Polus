@@ -31,7 +31,7 @@ export default {
             if (key === "scheduledTime") {
               const ms = alarm[key];
               const scheduledDate = new Date(ms);
-              text = scheduledDate.toLocaleString();
+              text = scheduledDate.tosynceString();
             } else {
               text = alarm[key];
             }
@@ -45,7 +45,27 @@ export default {
     reloadFirestore() {
       console.log("Reloading Firestore");
       chrome.storage.sync.set({ reload: true });
+      // maybe here we can set some things to local?
     },
+
+    addMaxItemsTosync() {
+      // check the amount of items in storage
+      chrome.storage.sync.get(null, (result) => {
+        console.log(Object.keys(result).length);
+
+        // Go until 360 items in storage
+        let currentLength = Object.keys(result).length;
+        while (currentLength < 360) {
+          const keyName = `TestItem${currentLength}}`;
+          chrome.storage.sync.set({ keyName: 1 });
+          currentLength++;
+        }
+        // Now show the popup modal
+        // chrome.storage.sync.set({maxItemsReached: true})
+      });
+    },
+
+
   },
 };
 </script>

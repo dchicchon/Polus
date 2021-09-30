@@ -34,7 +34,6 @@
 import Day from "./Day";
 import Week from "./Week";
 import Month from "./Month";
-import { getAuth } from "firebase/auth";
 import { actions } from "../utils/store";
 export default {
   components: {
@@ -49,7 +48,7 @@ export default {
   },
 
   created() {
-    chrome.storage.onChanged.addListener(this.checkChanges);
+    chrome.storage.onChanged.addListener(this.checkChanges); // waiting for reload to happen
     chrome.storage.sync.get("userSettings", (result) => {
       let { userSettings } = result;
       this.userSettings = userSettings;
@@ -63,8 +62,8 @@ export default {
         if (changes.reload.newValue) {
           console.log("Reload all child elements"); // should we do this? probably
           // Also consider users that are currently not logged in
-          // 1. Delete All the data in storage sync
-          // actions.resetSyncDatabase();
+          // 1. Delete All the data in storage sync and place some items in localstorage
+          actions.resetSyncDatabase();
           // 2. Trigger readEntries Functions in all children that have
           const entryListArr = this.$children[0].$children;
           for (const list of entryListArr) {

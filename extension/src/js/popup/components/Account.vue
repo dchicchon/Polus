@@ -191,6 +191,7 @@ export default {
       // then finally use cloud functions to delete their account. let them know it should take awhile
       deleteUser(user).then((user) => {
         console.log("User has been deleted");
+        // remove alarm
         this.page = "";
       });
     },
@@ -219,11 +220,16 @@ export default {
         });
       });
     },
+
+    checkFirebaseForData: () => {
+      chrome.storage.sync.set({ checkFirebase: true });
+    },
+
     // Should work now
     transferToFirestore: async () => {
       const db = getFirestore();
       const { uid } = getAuth().currentUser;
-      const dateObject = await this.getSyncStorageEntries();
+      const dateObject = await this.getsyncStorageEntries();
       for (let date in dateObject) {
         const dateObject = dateObject[date];
         if (date.includes("/")) {
@@ -237,6 +243,7 @@ export default {
       }
       await updateDoc(doc(db, "users"));
     },
+
     signin() {
       const auth = getAuth();
       console.log("Logging In...");
@@ -246,6 +253,7 @@ export default {
           // console.log("User Credential");
           // console.log(userCredential);
           this.createReloadAlarm();
+          this.checkFirebaseForData();
           this.page = "summary";
 
           // Here I then need to get some user info using firebase firestore methods

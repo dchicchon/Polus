@@ -28,11 +28,19 @@ chrome.runtime.onInstalled.addListener((details) => {
       contexts: ["action"],
       id: "open-sesame",
     });
+
+    // Add an alarm that will check if the user has data from X amount of months
+    // ago. If I
+
+    createSyncToLocalAlarm()
+
     chrome.storage.sync.set({ userSettings });
+    getPhoto();
+
   } else if (details.reason == "update") {
     // Change each key in storage to dashes instead of slashes,
     // also were turning each item into an object vs an array
-
+    createSyncToLocalAlarm()
     chrome.storage.sync.get(null, (result) => {
       for (const key in result) {
         if (key.includes("/")) {
@@ -53,17 +61,9 @@ chrome.runtime.onInstalled.addListener((details) => {
         }
       }
     });
+
+
   }
-  // 1. On installed, we will check to see if they have anything from previous version in storage
-  // 2. If so, we will check every valid date for a storage item and change each item that was altered for the new update
-
-  // maybe try changing all of the store to use - instead of /
-
-  getPhoto();
-
-  // Check Alarm
-
-  // Maybe make an alarm here that will execute after awhile?
 });
 
 chrome.contextMenus.onClicked.addListener(function (result) {
@@ -87,10 +87,12 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         getPhoto();
       }
     });
+
   } else if (alarm.name === 'reloadFirestore') {
     chrome.storage.sync.set({ reload: true })
     // Delete all items in storage sync and then grab them from Firestore
-
+  } else if (alarm.name === 'moveToLocal') {
+    moveToLocal()
   }
 
   // If we want custom alarms later on, add them here
@@ -99,6 +101,8 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   else {
     // have the alarm occur, look at the alarm name for the key of the entry
     let dateStamp = new Date().toLocaleDateString();
+    // replace with the -
+    dateStamp = dateStamp.replaceAll("/", '-')
     chrome.storage.sync.get([dateStamp], (result) => {
       let entries = result[dateStamp];
       let entry = entries.find((entry) => entry.key === alarm.name);
@@ -117,11 +121,47 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   }
 });
 
-// Maybe here I can execute firebase code where i can update my storage later on
-// chrome.storage.onChanged.addListener(function (changes, namespace) {
-//   console.log(changes)
-//   console.log(namespace)
-// })
+/**
+ * Create a recurring alarm for function @function moveToLocal
+ */
+
+const createSyncToLocalAlarm = () => {
+  let nextWeek = new Date();
+  nextWeek.setDate(nextWeek.getDate() + 7)
+  chrome.alarms.create("moveToLocal", {
+    when: nextWeek.getTime(),
+    periodInMinutes: 60 * 24 * 7
+  })
+}
+
+/**
+  Move all chrome.storage.sync entry dates that are older than 1 month 
+  to chrome.storage.local to avoid going over the storage limit in 
+  chrome.storage.sync
+*/
+
+const moveToLocal = () => {
+  // Move all entryDates from X months ago to localstorage
+  chrome.storage.sync.get(null, (result) => {
+    delete result.userSettings;
+    delete result.background;
+    // go through our items
+    for (const date in result) {
+      const today = new Date()
+      const entryDate = new Date(date)
+      // check if its older than a month old
+      const oneMonthMs = 1000 * 60 * 60 * 24 * 30
+      if (today.getTime() - entryDate.getTime() > oneMonthMs) {
+        // place the date inside of localStorage and deletefrom syncStorage
+        chrome.storage.local.set({ [date]: result[date] }, () => {
+          chrome.storage.sync.remove([date])
+        })
+      }
+
+    }
+  })
+
+}
 
 const clearNotifications = () => {
   chrome.notifications.getAll((result) => {
@@ -131,7 +171,6 @@ const clearNotifications = () => {
     }
   });
 };
-
 // Get new photo from collection https://unsplash.com/documentation
 const getPhoto = () => {
   // This url hits an api endpoint to get a random photo and saves it to user's chrome storage

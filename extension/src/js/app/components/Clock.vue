@@ -37,11 +37,11 @@ export default {
   created() {
     this.updateTime();
     let timer = setInterval(this.updateTime, 1000);
-    chrome.storage.sync.addListener;
+    // chrome.storage.sync.addListener;
   },
 
   methods: {
-    // the format will chnage depending on the locale using the extension
+    // the format will chnage depending on the synce using the extension
     // British English uses day-month-year order
     // Korean uses year-month-day order
     updateTime() {

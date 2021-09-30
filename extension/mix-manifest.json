@@ -1,7 +1,7 @@
 {
-    "/dist/js/index.js": "/dist/js/index.js?id=e4fa7e86bd3687610a73",
-    "/dist/js/popup.js": "/dist/js/popup.js?id=19fd6bbbdf5ca9d648fb",
-    "/dist/background.js": "/dist/background.js?id=37764eed0b8b3b033bf8",
+    "/dist/js/index.js": "/dist/js/index.js?id=85e90a060106fefe6e15",
+    "/dist/js/popup.js": "/dist/js/popup.js?id=745aedef61cf6a203735",
+    "/dist/background.js": "/dist/background.js?id=07505eef53fe7cc0cc85",
     "/dist/css/popup.css": "/dist/css/popup.css?id=11e67149a0023e17087d",
     "/dist/css/main.css": "/dist/css/main.css?id=b04f1040f7ad31ac7d1c",
     "/dist/assets/favicon.ico": "/dist/assets/favicon.ico?id=f74ebe79100fe8a38047",
@@ -11,5 +11,5 @@
     "/dist/assets/polus_tab_icon.png": "/dist/assets/polus_tab_icon.png?id=1480a06ea3d2a06681ef",
     "/dist/html/index.html": "/dist/html/index.html?id=b71e9f985539fbb2e85c",
     "/dist/html/popup.html": "/dist/html/popup.html?id=53434b559a48903eca05",
-    "/dist/manifest.json": "/dist/manifest.json?id=c9b600df161080648a40"
+    "/dist/manifest.json": "/dist/manifest.json?id=9ae9d7bf94a4900c8305"
 }

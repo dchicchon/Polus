@@ -34,7 +34,7 @@
 </style>
 
 <script>
-import EntryList from "./EntryList";
+import EntryList from "./EntryList/index.vue";
 import { actions } from "../utils/store";
 export default {
   components: {
@@ -67,7 +67,7 @@ export default {
       return `${this.date.toLocaleString(
         undefined,
         options
-      )} ${this.date.toLocaleDateString()}`;
+      )} ${this.date.toLocaleeDateString()}`;
     },
   },
 };

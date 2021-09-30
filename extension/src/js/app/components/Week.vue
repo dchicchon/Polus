@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import EntryList from "./EntryList";
+import EntryList from "./EntryList/index.vue";
 export default {
   components: {
     EntryList,
