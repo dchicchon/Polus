@@ -14,7 +14,7 @@ import Clock from "./components/Clock.vue";
 import Calendar from "./components/Calendar.vue";
 import { actions } from "./utils/store";
 import { onAuthStateChanged } from "firebase/auth";
-
+import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 export default {
   components: {
     Navbar,
@@ -23,13 +23,34 @@ export default {
   },
 
   beforeCreate() {
-    onAuthStateChanged(this.$auth, (user) => {
+    onAuthStateChanged(this.$auth, async (user) => {
       if (user) {
+        const db = getFirestore();
         actions.setSignedIn(true);
         actions.setUid(user.uid);
+        // also bring this up too
+        // Check here if there are items I need to update
+        const userRef = doc(db, "users", user.uid);
+        const userDocument = await getDoc(userRef);
+        const { update: updateList, hasExtension } = userDocument.data(); // update should only be changed if we added items from our mobile device
+        actions.setUpdateList(updateList);
+
+        // this will be set when user to ensure that the mobile
+        // will be updating dates to update
+        if (!hasExtension) {
+          // Then lets go ahead and update our local and sync database
+          // with the info here
+          await updateDoc(userRef, {
+            hasExtension: true,
+          }).catch((error) => {
+            console.error(error);
+          });
+          await actions.readFromFirebase();
+        }
       } else {
         actions.setSignedIn(false);
         actions.setUid(null);
+        actions.setUpdateList([]);
       }
     });
   },

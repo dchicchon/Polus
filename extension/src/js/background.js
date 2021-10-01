@@ -1,15 +1,8 @@
-// On extension installation
+
+// Runtime OnInstalled Listeners
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason == "install") {
-    const createBackgroundAlarm = () => {
-      let midnight = new Date();
-      midnight.setHours(23, 59, 59);
-      // Create alarm that executes every 25 hours
-      chrome.alarms.create("changeBackground", {
-        when: midnight.getTime(),
-        periodInMinutes: 60 * 24,
-      });
-    };
+
     createBackgroundAlarm();
     chrome.runtime.setUninstallURL(
       "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit"
@@ -66,6 +59,7 @@ chrome.runtime.onInstalled.addListener((details) => {
   }
 });
 
+// Context Menu Click Listeners
 chrome.contextMenus.onClicked.addListener(function (result) {
   if (result["menuItemId"] === "open-sesame") {
     chrome.storage.sync.get("userSettings", (result) => {
@@ -78,7 +72,7 @@ chrome.contextMenus.onClicked.addListener(function (result) {
   }
 });
 
-// Alarm to execute getPhoto()
+// Alarm Listeners
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "changeBackground") {
     chrome.storage.sync.get("userSettings", (result) => {
@@ -95,12 +89,10 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     moveToLocal()
   }
 
-  // If we want custom alarms later on, add them here
-
-  // Alarm from Notifications
+  // Notification Alarms
   else {
     // have the alarm occur, look at the alarm name for the key of the entry
-    let dateStamp = new Date().toLocaleDateString();
+    let dateStamp = new Date().toLocaleDateString('en-US');
     // replace with the -
     dateStamp = dateStamp.replaceAll("/", '-')
     chrome.storage.sync.get([dateStamp], (result) => {
@@ -127,10 +119,10 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
 const createSyncToLocalAlarm = () => {
   let nextWeek = new Date();
-  nextWeek.setDate(nextWeek.getDate() + 7)
+  nextWeek.setDate(nextWeek.getDate() + 14)
   chrome.alarms.create("moveToLocal", {
     when: nextWeek.getTime(),
-    periodInMinutes: 60 * 24 * 7
+    periodInMinutes: 60 * 24 * 14
   })
 }
 
@@ -150,8 +142,8 @@ const moveToLocal = () => {
       const today = new Date()
       const entryDate = new Date(date)
       // check if its older than a month old
-      const oneMonthMs = 1000 * 60 * 60 * 24 * 30
-      if (today.getTime() - entryDate.getTime() > oneMonthMs) {
+      const monthMS = 1000 * 60 * 60 * 24 * 30
+      if (today.getTime() - entryDate.getTime() > monthMS) {
         // place the date inside of localStorage and deletefrom syncStorage
         chrome.storage.local.set({ [date]: result[date] }, () => {
           chrome.storage.sync.remove([date])
@@ -163,6 +155,9 @@ const moveToLocal = () => {
 
 }
 
+/**
+ * Clears all notifications from the system tray
+ */
 const clearNotifications = () => {
   chrome.notifications.getAll((result) => {
     let notifications = Object.keys(result);
@@ -171,7 +166,26 @@ const clearNotifications = () => {
     }
   });
 };
-// Get new photo from collection https://unsplash.com/documentation
+
+/**
+ * Create an alarm for changing the background photo. Calls getPhoto()
+ */
+const createBackgroundAlarm = () => {
+  let midnight = new Date();
+  midnight.setHours(23, 59, 59);
+  // Create alarm that executes every 25 hours
+  chrome.alarms.create("changeBackground", {
+    when: midnight.getTime(),
+    periodInMinutes: 60 * 24,
+  });
+};
+
+/**
+ * 
+ * Get new photo from collection https://unsplash.com/documentation and will
+ * store it in the users chrome storage sync . Gets called whenever the alarm 
+ * changeBackground is fired
+ */
 const getPhoto = () => {
   // This url hits an api endpoint to get a random photo and saves it to user's chrome storage
   let url =

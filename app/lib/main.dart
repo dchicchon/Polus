@@ -100,15 +100,16 @@ class _MyAppState extends State<MyApp> {
               primaryColorLight: Color.fromRGBO(20, 70, 107, 1.0),
               primaryColorDark: Color.fromRGBO(0, 28, 43, 1.0),
               textTheme: TextTheme(
-                  headline5: TextStyle(
-                      fontSize: 20.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w300),
-                  headline6: TextStyle(
-                      fontSize: 25.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w300),
-                  bodyText1: TextStyle(fontSize: 16.0, color: Colors.white))),
+                headline5: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w300),
+                headline6: TextStyle(
+                    fontSize: 25.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w300),
+                bodyText1: TextStyle(fontSize: 16.0, color: Colors.white),
+              )),
           home: _user == null
               ? Navigator(
                   pages: [

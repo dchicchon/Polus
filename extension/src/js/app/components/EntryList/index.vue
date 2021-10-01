@@ -35,7 +35,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import { actions } from "../../utils/store";
 import shortid from "shortid";
 import Vue from "vue";
-// import './style.scss'
 // https://stackoverflow.com/questions/18548465/prevent-scroll-bar-from-adding-up-to-the-width-of-page-on-chrome
 export default {
   components: {
@@ -90,7 +89,7 @@ export default {
 
   methods: {
     initEntry() {
-      console.log("Init Entry");
+      // console.log("Init Entry");
       // Add to entries state and to chrome storage
       let newEntry = {
         text: "",
@@ -103,15 +102,6 @@ export default {
       Vue.set(this.entries, shortid.generate(), newEntry);
     },
 
-    checkChanges(changes, namespace) {
-      if (namespace === "sync") {
-        if (changes.reload.newValue) {
-          console.log("Reloading our cloud firestore"); // maybe only do this once at the parent level?
-          chrome.storage.sync.set({ reload: false });
-        }
-        // set it back to false once we have ran this item
-      }
-    },
     //===============
     // DRAG FUNCTIONS
     //===============
@@ -162,6 +152,9 @@ export default {
         Vue.delete(this.entries[key], "new");
         actions
           .create({ date: this.dateStamp, entry, key })
+          .then((result) => {
+            // console.log(result);
+          })
           .catch((e) => console.error(e));
       }
     },
@@ -181,6 +174,9 @@ export default {
       Vue.set(this.entries, key, this.entries[key]);
       actions
         .update({ date: this.dateStamp, entry: this.entries[key], key })
+        .then((result) => {
+          // console.log(result);
+        })
         .catch((e) => console.error(e));
     },
 
@@ -192,6 +188,9 @@ export default {
       Vue.delete(this.entries, key);
       actions
         .delete({ date: this.dateStamp, key })
+        .then((result) => {
+          // console.log(result);
+        })
         .catch((e) => console.error(e));
     },
 
@@ -201,14 +200,15 @@ export default {
   },
   computed: {
     dateStamp() {
-      return this.listDate.toLocaleDateString().replaceAll("/", "-");
+      return this.listDate.toLocaleDateString("en-US").replaceAll("/", "-");
     },
     dayNumber() {
       return this.listDate.getDate();
     },
     todayDate() {
       if (
-        this.listDate.toLocaleDateString() === new Date().toLocaleDateString()
+        this.listDate.toLocaleDateString("en-US") ===
+        new Date().toLocaleDateString("en-US")
       ) {
         return {
           background: "rgba(5,80,123,0.992)",

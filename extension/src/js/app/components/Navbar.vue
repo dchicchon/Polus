@@ -119,10 +119,9 @@ export default {
 }
 
 #app-info {
-  padding: 0.5rem 1rem 0;
+  // padding: 0.5rem 1rem 0;
   display: grid;
   font-size: 1.5rem;
-
   &:hover {
     #app-title {
       display: none;

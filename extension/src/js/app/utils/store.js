@@ -10,6 +10,7 @@ import {
   query,
   updateDoc,
   where,
+  arrayRemove
 } from "firebase/firestore";
 // https://stackoverflow.com/questions/57710800/when-should-i-use-vuex
 // https://vuejs.org/v2/guide/reactivity.html
@@ -18,6 +19,7 @@ export const state = Vue.observable({
   signedIn: false,
   uid: 0,
   date: new Date(),
+  updateList: []
 });
 
 // Local storage manipulation
@@ -35,6 +37,14 @@ const getChromeStorageLocal = async ({ date }) => {
     });
   });
 }
+const setChromeStorageLocal = async ({ date, dateObject }) => {
+  // maybe use sync instead if the user is logged in?
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.set({ [date]: dateObject }, (result) => {
+      resolve(result);
+    });
+  });
+};
 const removeChromeStorageLocal = async ({ date }) => {
   return new Promise((resolve, reject) => {
     chrome.storage.local.remove([date], (result) => {
@@ -49,14 +59,12 @@ const clearChromeStorageLocal = async ({ }) => {
       delete result.userSettings;
       delete result.background;
       for (const key in result) {
-        removeChromeStorageSync({ key })
+        removeChromeStorageLocal({ key })
       }
     })
   })
 }
 // end local storage manipulation
-
-
 
 // Sync Storage Manipulation
 
@@ -126,6 +134,11 @@ export const actions = {
   setDate: (date) => {
     state.date = date;
   },
+  setUpdateList: (arr) => {
+    console.log("Setting update list")
+    console.log(arr)
+    state.updateList = arr
+  },
 
   // Reload Database
   resetSyncDatabase: async () => {
@@ -147,47 +160,14 @@ export const actions = {
   },
   // END CREATE
 
-  // This will read the firebase database when the user logs in and it will sync it with the sync storage
-  onSignInRead: async () => {
-    const db = getFirestore();
-    // const dateObject = await getChromeStorageSync({ date });
-    const userDocument = await getDoc(doc(db, "users", state.uid));
-    if (Object.keys(dateObject).length > 0) {
-      // Get all items that are currently not in our storage sync and set them
-      const q = query(
-        collection(db, "users", state.uid, date),
-        where("__name__", "not-in", Object.keys(dateObject))
-      );
-      // maybe for user, add a check to see if they have any documents to get from the database
-      const querySnapshot = await getDocs(q);
-      if (querySnapshot.size !== 0) {
-        querySnapshot.forEach((doc) => {
-          // dateObject[doc.id] = doc.data(); // not only are we adding it here, but we will set it to chrome storage sync
-        });
-        const results = await setChromeStorageSync({ date, dateObject });
-        // Set them all to this object
-      }
-      // Add all items from firestore to your chrome sync
-    } else {
-      const querySnapshot = await getDocs(
-        collection(db, "users", state.uid, date)
-      );
-      if (querySnapshot.size !== 0) {
-        querySnapshot.forEach((doc) => {
-          dateObject[doc.id] = doc.data();
-        });
-        // Should be setting them here too
-        console.log("Date Object to set after read");
-        console.log(dateObject);
-        const results = await setChromeStorageSync({ date, dateObject });
-      }
-    }
-  },
+
 
   // ==================
   // READ DATA
   // ==================
   // https://firebase.google.com/docs/firestore/query-data/get-data
+
+
 
   /**
    * Read items from our chrome.storage.sync, chrome.storage.local, and/or Firestore.
@@ -195,76 +175,160 @@ export const actions = {
    */
 
   read: async ({ date }) => {
+    // Get all items
     let dateObject = await getChromeStorageSync({ date });
-    // If dateObject is empty
-    // console.log(dateObject)
+    // Check if dateObject is empty
     if (Object.keys(dateObject).length === 0) {
+      // Get time items in order to check if this was about a month ago
       const todayDate = new Date();
       const entryListDate = new Date(date);
-      const monthAgoMs = 1000 * 60 * 60 * 24 * 30
+      const monthMS = 1000 * 60 * 60 * 24 * 30
       // If entryListDate is from ago, then lets check our local storage
-
-      // console.log(todayDate.getTime() - entryListDate.getTime() > monthAgoMs);
-      if (todayDate.getTime() - entryListDate.getTime() > monthAgoMs) {
+      if (todayDate.getTime() - entryListDate.getTime() > monthMS) {
         // then lets check the local storage instead
         dateObject = await getChromeStorageLocal({ date })
+
+        // cant really think that anyone would add something 
+        // from the past
       }
     }
-
-    // if a user is signed in, check if their storage sync needs to get updated
-    if (state.signedIn) {
+    // if a user is signed in and if our updateList includes this date
+    if (state.signedIn && state.updateList.includes(date)) {
       const db = getFirestore();
-      // Check here if there are items I need to update
-      const userDocument = await getDoc(doc(db, "users", state.uid));
-      const { update } = userDocument.data(); // update should only be changed if we added items from our mobile device
-      // let { checkFirebase } = await getCheckFirebase();
-      // console.log(checkFirebase)
-      // If there is an update, we must grab new data. Otherwise no.
-      if (update) {
-        if (Object.keys(dateObject).length > 0) {
-          // Get all items that are currently not in our storage sync and set them
-          const q = query(
-            collection(db, "users", state.uid, date),
-            where("__name__", "not-in", Object.keys(dateObject))
-          );
-          // maybe for user, add a check to see if they have any documents to get from the database
-          const querySnapshot = await getDocs(q);
-          if (querySnapshot.size !== 0) {
-            querySnapshot.forEach((doc) => {
-              dateObject[doc.id] = doc.data(); // not only are we adding it here, but we will set it to chrome storage sync
-            });
-            const results = await setChromeStorageSync({ date, dateObject });
-            // Set them all to this object
+      if (Object.keys(dateObject).length > 0) {
+        // Get all items that are currently not in our storage sync and set them
+        const q = query(
+          // pointer to this collection
+          collection(db, "users", state.uid, date),
+          // get all where id doesnt match dateObject keys
+          where("__name__", "not-in", Object.keys(dateObject))
+        );
+        // maybe for user, add a check to see if they have any documents to get from the database
+        const querySnapshot = await getDocs(q);
+        // if they arent equal to each other
+        if (querySnapshot.size !== Object.keys(dateObject).length) {
+          querySnapshot.forEach((doc) => {
+            dateObject[doc.id] = doc.data(); // not only are we adding it here, but we will set it to chrome storage sync
+          });
+          const todayDate = new Date();
+          const entryListDate = new Date(date);
+          const twoWeeksMS = 1000 * 60 * 60 * 24 * 14
+          if (todayDate.getTime() - entryListDate.getTime() > twoWeeksMS) {
+            await setChromeStorageLocal({ date, dateObject });
+          } else {
+            await setChromeStorageSync({ date, dateObject });
+
           }
-          // Add all items from firestore to your chrome sync
-        } else {
-          const querySnapshot = await getDocs(
-            collection(db, "users", state.uid, date)
-          );
-          if (querySnapshot.size !== 0) {
-            querySnapshot.forEach((doc) => {
-              dateObject[doc.id] = doc.data();
-            });
-            // Should be setting them here too
-            console.log("Date Object to set after read");
-            console.log(dateObject);
-            const results = await setChromeStorageSync({ date, dateObject });
+
+          // Set them all to this object
+        }
+        // Add all items from firestore to your chrome sync
+      } else {
+        const querySnapshot = await getDocs(
+          collection(db, "users", state.uid, date)
+        );
+        if (querySnapshot.size !== 0) {
+          querySnapshot.forEach((doc) => {
+            dateObject[doc.id] = doc.data();
+          });
+          // Should be setting them here too
+          console.log("Date Object to set after read");
+          console.log(dateObject);
+          const todayDate = new Date();
+          const entryListDate = new Date(date);
+          const twoWeeksMS = 1000 * 60 * 60 * 24 * 14
+          if (todayDate.getTime() - entryListDate.getTime() > twoWeeksMS) {
+            await setChromeStorageLocal({ date, dateObject });
+          } else {
+            await setChromeStorageSync({ date, dateObject });
           }
         }
       }
+      // finally update the updateList and remove 
+      console.log("Removing date from updateList")
+      state.updateList.splice(state.updateList.indexOf(date), 1)
+
+      await updateDoc(doc(db, 'users', state.uid), { update: arrayRemove(date) })
+        .then(result => console.log("Updated array"))
+        .catch(err => {
+          console.error(err)
+        })
     }
     return dateObject;
+  },
+
+
+  /**
+   * Read items and set them to our machine if this is the first time they have the extension
+   */
+  readFromFirebase: async () => {
+    // reading from firebase, shouldn't take too long
+    // do a local read, then do a read from the 
+    // read from firebase first actually
+
+    // read everything from the updateList in state
+    for (const date of state.updateList) {
+      const db = getFirestore();
+      const collectionRef = collection(db, 'users', state.uid, date)
+      const q = query(collectionRef)
+      const querySnapshot = await getDocs(q);
+
+      // if its greater than 0, continue!
+      if (querySnapshot.size > 0) {
+        // check if date is older than a month
+        const collectionDate = new Date(date)
+        const todayDate = new Date()
+        const monthMS = 1000 * 60 * 60 * 24 * 30
+
+        // if its older than a month then add items from firestore to local
+        if (todayDate.getTime() - collectionDate.getTime() > monthMS) {
+          const dateObject = await getChromeStorageLocal({ date })
+          // lets add our firestore items to local
+          querySnapshot.forEach((doc) => {
+            dateObject[doc.id] = doc.data()
+          })
+          await setChromeStorageLocal({ date, dateObject });
+
+        }
+        // else, add items to sync. In sync, now the user will have the info available on all computers where logged in
+        else {
+          const dateObject = await getChromeStorageSync({ date });
+          querySnapshot.forEach((doc) => {
+            dateObject[doc.id] = doc.data()
+          })
+          await setChromeStorageSync({ date, dateObject });
+        }
+      }
+
+      // else, dont bother and move onto the next item
+
+    }
+    // get all collections from user ref
+
+
   },
   // END READ
 
   // ==================
   // UPDATE
   // ==================
+
+  /**
+   * Update an existing entry with new properties
+   * @returns entry
+   */
   update: async ({ date, entry, key }) => {
     // console.log("Update in storage");
-    const dateObject = await getChromeStorageSync({ date });
-    dateObject[key] = entry;
-    const result = await setChromeStorageSync({ date, dateObject });
+    let dateObject = await getChromeStorageSync({ date });
+    let result;
+    if (key in dateObject) {
+      dateObject[key] = entry;
+      result = await setChromeStorageSync({ date, dateObject });
+    } else {
+      dateObject = await getChromeStorageLocal({ date })
+      dateObject[key] = entry;
+      result = await setChromeStorageLocal({ date, dateObject });
+    }
     if (state.signedIn) {
       // maybe create a batch object in firestore and also create an alarm if there is no alarm at the moment
       // Maybe this can send to my firebase functions instead?
@@ -280,15 +344,29 @@ export const actions = {
   // ==================
   // DELETE
   // ==================
+  /**
+   * Deletes an item in 
+   */
   delete: async ({ date, key }) => {
-    const dateObject = await getChromeStorageSync({ date });
+    let dateObject = await getChromeStorageSync({ date });
     let results;
-    delete dateObject[key];
-    if (Object.keys(dateObject).length === 0) {
-      results = await removeChromeStorageSync({ date });
+    if (key in dateObject) {
+      delete dateObject[key];
+      if (Object.keys(dateObject).length === 0) {
+        results = await removeChromeStorageSync({ date });
+      } else {
+        results = await setChromeStorageSync({ date, dateObject });
+      }
     } else {
-      results = await setChromeStorageSync({ date, dateObject });
+      dateObject = await getChromeStorageLocal({ date })
+      delete dateObject[key]
+      if (Object.keys(dateObject).length === 0) {
+        results = await removeChromeStorageLocal({ date })
+      } else {
+        results = await setChromeStorageLocal({ date, dateObject })
+      }
     }
+
     // If the user is signed in, be sure to delete the document. In cloud functions, delete the collection if possible
     if (state.signedIn) {
       // Check if there is a batching alarm

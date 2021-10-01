@@ -50,18 +50,8 @@ Future<String> createWithEmailAndPassword(email, password) async {
   await FirebaseFirestore.instance
       .collection('users')
       .doc(FirebaseAuth.instance.currentUser.uid)
-      .set({
-    'userSettings': {
-      'changePhoto': true,
-      'indexOpen': false,
-      'newTab': true,
-      'notifications': false,
-      'notificationTime': "0",
-      'pmode': false,
-      'view': "week",
-    }
-  });
-  return errorText;
+      .set({'update': [], 'hasExtension': false, 'tokens': []});
+  return errorText; 
 
   // setUpNotifications();
 }

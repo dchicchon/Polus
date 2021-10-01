@@ -222,6 +222,7 @@ export default {
     },
 
     checkFirebaseForData: () => {
+      console.log("Check Firebase for data");
       chrome.storage.sync.set({ checkFirebase: true });
     },
 
@@ -250,10 +251,11 @@ export default {
       // use firebase signin system
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
-          // console.log("User Credential");
-          // console.log(userCredential);
-          this.createReloadAlarm();
+          // check the
+
           this.checkFirebaseForData();
+          // make a check here saying hey, if hasExtension is false then update
+          // our desktop to have the firebase stuff
           this.page = "summary";
 
           // Here I then need to get some user info using firebase firestore methods
@@ -276,7 +278,7 @@ export default {
           console.log("User Successfully logged in");
           // Get all items from storage sync
           this.transferToFirestore();
-          this.createReloadAlarm();
+          // this.createReloadAlarm();
           this.page = "summary";
         })
         .catch((error) => {
@@ -291,11 +293,11 @@ export default {
       signOut(auth)
         .then(() => {
           console.log("Sign Out successful");
-          chrome.alarms.get("reloadFirestore", (alarm) => {
-            if (alarm) {
-              chrome.alarms.clear("reloadFirestore");
-            }
-          });
+          // chrome.alarms.get("reloadFirestore", (alarm) => {
+          //   if (alarm) {
+          //     chrome.alarms.clear("reloadFirestore");
+          //   }
+          // });
           this.page = "";
         })
         .catch((error) => {
