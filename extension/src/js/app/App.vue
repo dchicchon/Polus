@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Navbar from "./components/Navbar.vue";
+import Navbar from "./components/Navbar";
 import Clock from "./components/Clock.vue";
 import Calendar from "./components/Calendar.vue";
 import { actions } from "./utils/store";
@@ -75,9 +75,8 @@ export default {
             page[0].style.background = `url(${image})`;
           } else {
             let image = result.background.url;
-            page[0].style.background = `rgba(0,0,0,0.9) url(${
-              image + `&w=${window.innerWidth}`
-            }) no-repeat fixed`;
+            page[0].style.background = `rgba(0,0,0,0.9) url(${image +
+              `&w=${window.innerWidth}`}) no-repeat fixed`;
           }
         });
         this.$refs.main.style.display = result.userSettings.pmode

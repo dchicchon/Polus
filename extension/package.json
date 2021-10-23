@@ -4,6 +4,7 @@
   "description": "Plan your day with Polus. Includes daily, weekly, monthly calendars that syncs with your chrome storage",
   "author": "",
   "scripts": {
+    "prebuild": "npx rimraf dist",
     "build": "mix",
     "watch": "mix watch",
     "watch-poll": "mix watch -- --watch-options-poll=1000",
