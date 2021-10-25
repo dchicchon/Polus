@@ -159,6 +159,7 @@ export default {
       }
     },
     readEntries() {
+      console.log("read entries");
       actions
         .read({ date: this.dateStamp })
         .then((result) => {
@@ -168,7 +169,6 @@ export default {
     },
 
     updateEntry(key) {
-      console.log("Read Entries");
       // check if entry is any different than before
       // Instead of doing just this i should specify what is being changed maybe?
       Vue.set(this.entries, key, this.entries[key]);

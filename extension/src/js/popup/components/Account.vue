@@ -204,6 +204,7 @@ export default {
         return result;
       });
     },
+
     createReloadAlarm: () => {
       chrome.storage.sync.set({ reload: false }, () => {
         let nextWeek = new Date();
@@ -219,11 +220,6 @@ export default {
           }
         });
       });
-    },
-
-    checkFirebaseForData: () => {
-      console.log("Check Firebase for data");
-      chrome.storage.sync.set({ checkFirebase: true });
     },
 
     // Should work now
@@ -252,8 +248,7 @@ export default {
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
           // check the
-
-          this.checkFirebaseForData();
+          chrome.storage.sync.set({ signedIn: true });
           // make a check here saying hey, if hasExtension is false then update
           // our desktop to have the firebase stuff
           this.page = "summary";
@@ -271,14 +266,13 @@ export default {
         this.error = "Passwords must match";
         return;
       }
-
       const auth = getAuth();
       createUserWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
           console.log("User Successfully logged in");
           // Get all items from storage sync
           this.transferToFirestore();
-          // this.createReloadAlarm();
+          chrome.storage.sync.set({ signedIn: true });
           this.page = "summary";
         })
         .catch((error) => {
@@ -286,18 +280,14 @@ export default {
           this.error = error.message;
         });
     },
+
     signout() {
       const auth = getAuth();
-
       // Delete the alarm here if it exists
       signOut(auth)
         .then(() => {
           console.log("Sign Out successful");
-          // chrome.alarms.get("reloadFirestore", (alarm) => {
-          //   if (alarm) {
-          //     chrome.alarms.clear("reloadFirestore");
-          //   }
-          // });
+          chrome.storage.sync.set({ signedIn: false });
           this.page = "";
         })
         .catch((error) => {

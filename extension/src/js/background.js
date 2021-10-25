@@ -1,8 +1,6 @@
-
 // Runtime OnInstalled Listeners
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason == "install") {
-
     createBackgroundAlarm();
     chrome.runtime.setUninstallURL(
       "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit"
@@ -25,15 +23,17 @@ chrome.runtime.onInstalled.addListener((details) => {
     // Add an alarm that will check if the user has data from X amount of months
     // ago. If I
 
-    createSyncToLocalAlarm()
+    createSyncToLocalAlarm();
 
     chrome.storage.sync.set({ userSettings });
     getPhoto();
-
   } else if (details.reason == "update") {
+
+    // add signed in to userSettings
+    
     // Change each key in storage to dashes instead of slashes,
     // also were turning each item into an object vs an array
-    createSyncToLocalAlarm()
+    createSyncToLocalAlarm();
     chrome.storage.sync.get(null, (result) => {
       for (const key in result) {
         if (key.includes("/")) {
@@ -54,13 +54,11 @@ chrome.runtime.onInstalled.addListener((details) => {
         }
       }
     });
-
-
   }
 });
 
 // Context Menu Click Listeners
-chrome.contextMenus.onClicked.addListener(function (result) {
+chrome.contextMenus.onClicked.addListener(function(result) {
   if (result["menuItemId"] === "open-sesame") {
     chrome.storage.sync.get("userSettings", (result) => {
       let { userSettings } = result;
@@ -81,20 +79,19 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         getPhoto();
       }
     });
-
-  } else if (alarm.name === 'reloadFirestore') {
-    chrome.storage.sync.set({ reload: true })
+  } else if (alarm.name === "reloadFirestore") {
+    chrome.storage.sync.set({ reload: true });
     // Delete all items in storage sync and then grab them from Firestore
-  } else if (alarm.name === 'moveToLocal') {
-    moveToLocal()
+  } else if (alarm.name === "moveToLocal") {
+    moveToLocal();
   }
 
   // Notification Alarms
   else {
     // have the alarm occur, look at the alarm name for the key of the entry
-    let dateStamp = new Date().toLocaleDateString('en-US');
+    let dateStamp = new Date().toLocaleDateString("en-US");
     // replace with the -
-    dateStamp = dateStamp.replaceAll("/", '-')
+    dateStamp = dateStamp.replaceAll("/", "-");
     chrome.storage.sync.get([dateStamp], (result) => {
       let entries = result[dateStamp];
       let entry = entries.find((entry) => entry.key === alarm.name);
@@ -119,12 +116,12 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
 const createSyncToLocalAlarm = () => {
   let nextWeek = new Date();
-  nextWeek.setDate(nextWeek.getDate() + 14)
+  nextWeek.setDate(nextWeek.getDate() + 14);
   chrome.alarms.create("moveToLocal", {
     when: nextWeek.getTime(),
-    periodInMinutes: 60 * 24 * 14
-  })
-}
+    periodInMinutes: 60 * 24 * 14,
+  });
+};
 
 /**
   Move all chrome.storage.sync entry dates that are older than 1 month 
@@ -139,21 +136,19 @@ const moveToLocal = () => {
     delete result.background;
     // go through our items
     for (const date in result) {
-      const today = new Date()
-      const entryDate = new Date(date)
+      const today = new Date();
+      const entryDate = new Date(date);
       // check if its older than a month old
-      const monthMS = 1000 * 60 * 60 * 24 * 30
+      const monthMS = 1000 * 60 * 60 * 24 * 30;
       if (today.getTime() - entryDate.getTime() > monthMS) {
         // place the date inside of localStorage and deletefrom syncStorage
         chrome.storage.local.set({ [date]: result[date] }, () => {
-          chrome.storage.sync.remove([date])
-        })
+          chrome.storage.sync.remove([date]);
+        });
       }
-
     }
-  })
-
-}
+  });
+};
 
 /**
  * Clears all notifications from the system tray
@@ -181,9 +176,9 @@ const createBackgroundAlarm = () => {
 };
 
 /**
- * 
+ *
  * Get new photo from collection https://unsplash.com/documentation and will
- * store it in the users chrome storage sync . Gets called whenever the alarm 
+ * store it in the users chrome storage sync . Gets called whenever the alarm
  * changeBackground is fired
  */
 const getPhoto = () => {

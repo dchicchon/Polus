@@ -15,6 +15,9 @@ import {
 // https://stackoverflow.com/questions/57710800/when-should-i-use-vuex
 // https://vuejs.org/v2/guide/reactivity.html
 
+// anytime the user logs in for the first time, we need to get all the most recently added stuff?
+// mmmmmmmmmmmm i need to think about this prob
+
 export const state = Vue.observable({
   signedIn: false,
   uid: 0,
@@ -64,6 +67,8 @@ const clearChromeStorageLocal = async ({ }) => {
     })
   })
 }
+
+
 // end local storage manipulation
 
 // Sync Storage Manipulation

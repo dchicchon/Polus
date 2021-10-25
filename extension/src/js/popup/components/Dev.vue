@@ -2,7 +2,7 @@
   <div>
     <h3>Dev</h3>
     <button @click="checkAlarms">Check Alarms</button>
-    <button @click="reloadFirestore">Reload Firestore</button>
+    <button @click="moveToLocal">moveToLocal</button>
     <h4>Logs</h4>
     <div id="logs"></div>
   </div>
@@ -13,7 +13,7 @@ export default {
   data() {
     return {};
   },
-  mounted() {
+  mounted() { 
     // chrome.storage.sync.get(["reload"], (result) => {
     //   console.log("Current State");
     //   console.log(result);
@@ -24,14 +24,16 @@ export default {
       chrome.alarms.getAll((result) => {
         const logs = document.getElementById("logs");
         logs.innerHTML = "";
+        console.log(result);
         for (const alarm of result) {
           for (const key in alarm) {
+            console.log(key);
             const textElm = document.createElement("p");
             let text = "";
             if (key === "scheduledTime") {
               const ms = alarm[key];
               const scheduledDate = new Date(ms);
-              text = scheduledDate.tosynceString();
+              text = scheduledDate.toLocaleString();
             } else {
               text = alarm[key];
             }
@@ -39,13 +41,27 @@ export default {
             logs.append(textElm);
           }
         }
-        console.log(result);
       });
     },
-    reloadFirestore() {
-      console.log("Reloading Firestore");
-      chrome.storage.sync.set({ reload: true });
-      // maybe here we can set some things to local?
+
+    moveToLocal() {
+      chrome.storage.sync.get(null, (result) => {
+        delete result.userSettings;
+        delete result.background;
+        // go through our items
+        for (const date in result) {
+          const today = new Date();
+          const entryDate = new Date(date);
+          // check if its older than a month old
+          const monthMS = 1000 * 60 * 60 * 24 * 30;
+          if (today.getTime() - entryDate.getTime() > monthMS) {
+            // place the date inside of localStorage and deletefrom syncStorage
+            chrome.storage.local.set({ [date]: result[date] }, () => {
+              chrome.storage.sync.remove([date]);
+            });
+          }
+        }
+      });
     },
 
     addMaxItemsTosync() {
@@ -64,8 +80,6 @@ export default {
         // chrome.storage.sync.set({maxItemsReached: true})
       });
     },
-
-
   },
 };
 </script>
