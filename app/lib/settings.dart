@@ -81,20 +81,12 @@ class _SettingsState extends State<Settings> {
                                                         .primaryColorDark),
                                                 onPressed: () async {
                                                   print("Delete Account");
-                                                  await FirebaseFirestore
-                                                      .instance
-                                                      .collection('users')
-                                                      .doc(FirebaseAuth.instance
-                                                          .currentUser.uid)
-                                                      .delete()
-                                                      .then((result) {
-                                                    FirebaseAuth
+                                                  await FirebaseAuth
                                                         .instance.currentUser
                                                         .delete()
                                                         .then((result2) {
                                                       Navigator.pop(context);
                                                     });
-                                                  });
                                                 },
                                                 child: Text("Yes")),
                                             ElevatedButton(

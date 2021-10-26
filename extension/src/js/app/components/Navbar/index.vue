@@ -7,32 +7,32 @@
           <img class="app-icon" src="/assets/polus_icon.png" alt="App icon" />
         </div>
         <div id="app-items" ref="items">
-          <div id="site">
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://danielchicchon.io/polus"
-              >Site</a
-            >
-          </div>
-          <div id="contact">
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://docs.google.com/forms/d/e/1FAIpQLSdHcPhbcAWeWFvEFqF6qzmPUD0UtNn9e7pn_eLUukGLudMy1A/viewform"
-            >
-              Feedback</a
-            >
-          </div>
-          <div>
-            <a
-              id="pmode"
-              @click="photoMode"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Photo Mode</a
-            >
-          </div>
+          <a href="https://mail.google.com/mail/u/0/">
+            Gmail
+          </a>
+          <a href="https://drive.google.com/drive/u/0/">
+            Drive
+          </a>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://danielchicchon.io/polus"
+            >Site</a
+          >
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdHcPhbcAWeWFvEFqF6qzmPUD0UtNn9e7pn_eLUukGLudMy1A/viewform"
+          >
+            Feedback</a
+          >
+          <a
+            id="pmode"
+            @click="photoMode"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Photo Mode</a
+          >
         </div>
       </div>
     </li>

@@ -23,10 +23,10 @@ export default {
   },
 
   beforeCreate() {
-    console.log("app started")
+    console.log("app started");
     onAuthStateChanged(this.$auth, async (user) => {
       if (user) {
-        console.log("user logged in")
+        console.log("user logged in");
         const db = getFirestore();
         actions.setSignedIn(true);
         actions.setUid(user.uid);
@@ -34,8 +34,14 @@ export default {
         const userDocument = await getDoc(userRef); // get the user document
 
         // get the updateList and hasExtension values in our user document data
-        const { update: updateList, hasExtension } = userDocument.data();
-        actions.setUpdateList(updateList); // add all the dates that need to be updated to our store
+        // dont assume they have update list?
+        // const { update: updateList, hasExtension } = userDocument.data();
+        const userData = userDocument.data();
+        console.log(userData);
+        if (userData.hasOwnProperty("update")) {
+          const { update: updateList } = userData;
+          actions.setUpdateList(updateList); // add all the dates that need to be updated to our store
+        }
 
         // this will be set when user to ensure that the mobile
         // will be updating dates to update
@@ -45,8 +51,12 @@ export default {
          * @param hasExtension of our user document to true
          * so that the mobile app will add dates to be updated to the updateList
          */
+        let hasExtension;
+        if ("hasExtension" in userData) {
+          hasExtension = userData.hasExtension;
+        }
         if (!hasExtension) {
-          console.log("does not have extension, read firebase")
+          console.log("does not have extension, read firebase");
           // Then lets go ahead and update our local and sync database
           // with our firestore database
           await actions.readFirebase();
@@ -57,7 +67,7 @@ export default {
             // read everything from the firebase
           });
         } else {
-          console.log("has firebase, update list")
+          console.log("has firebase, update list");
           await actions.readUpdateList();
         }
       } else {
@@ -88,9 +98,8 @@ export default {
             page[0].style.background = `url(${image})`;
           } else {
             let image = result.background.url;
-            page[0].style.background = `rgba(0,0,0,0.9) url(${
-              image + `&w=${window.innerWidth}`
-            }) no-repeat fixed`;
+            page[0].style.background = `rgba(0,0,0,0.9) url(${image +
+              `&w=${window.innerWidth}`}) no-repeat fixed`;
           }
         });
         this.$refs.main.style.display = result.userSettings.pmode

@@ -287,6 +287,10 @@ export default {
           console.log("User Successfully logged in");
           // Get all items from storage sync
           this.transferToFirestore();
+          // make sure to add an update parameter to the user too
+          const db = getFirestore();
+          const userRef = doc(db, "users", userCredential.user.uid);
+          setDoc(userRef, { update: [], hasExtension: true });
           this.page = "summary";
         })
         .catch((error) => {

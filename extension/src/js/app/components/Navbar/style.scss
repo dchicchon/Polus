@@ -10,14 +10,15 @@
     display: block;
     a {
       text-decoration: none;
+    
     }
   }
 }
 
 #app-info {
-  // padding: 0.5rem 1rem 0;
   display: grid;
   font-size: 1.5rem;
+  height: 45px;
   &:hover {
     #app-title {
       display: none;
@@ -50,19 +51,20 @@
 
   #app-items {
     display: none;
-    background: rgba(15,15,15,0.60);
+    background: rgba(15, 15, 15, 0.6);
     border-bottom-right-radius: 8px;
     grid-column: 1;
     grid-row: 1;
-    animation-name: fadeIn; 
+    animation-name: fadeIn;
     animation-duration: 0.75s;
     animation-fill-mode: forwards;
 
     // eventually remove this please
-    div {
+    a {
       transition: background 0.25s;
-      font-size: 60%;
-      padding: 0.5rem;
+      font-size: 15px;
+      padding: 10px;
+      height: 100%;
       cursor: pointer;
       display: inline-block;
       &:hover {
@@ -103,7 +105,7 @@
     padding: 0.5rem;
     font-size: 1rem;
     border-bottom-left-radius: 8px;
-    background: rgba(15,15,15,0.60);
+    background: rgba(15, 15, 15, 0.6);
     grid-column: 1;
     grid-row: 1;
     // opacity: 0;
@@ -128,4 +130,22 @@
     text-decoration: none;
     color: white;
   }
+}
+
+.google-dropdown-btn {
+  cursor: none;
+  background: none;
+}
+.google-dropdown {
+  position: relative;
+  &:hover {
+    .google-dropdown-content {
+      display: block;
+    }
+  }
+}
+.google-dropdown-content {
+  display: none;
+  position: absolute;
+  background: rgba(15, 15, 15, 0.6);
 }
