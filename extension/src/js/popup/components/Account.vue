@@ -290,7 +290,7 @@ export default {
           // make sure to add an update parameter to the user too
           const db = getFirestore();
           const userRef = doc(db, "users", userCredential.user.uid);
-          setDoc(userRef, { update: [], hasExtension: true });
+          setDoc(userRef, { update: [], tokens: [], hasExtension: true });
           this.page = "summary";
         })
         .catch((error) => {

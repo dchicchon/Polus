@@ -135,27 +135,34 @@ exports.getSubcollections = functions.https.onCall(async (data, context) => {
 
 exports.deleteUserData = functions.auth.user().onDelete(async (user) => {
   // delete all user information
-  console.log(user.uid);
+  log(user.uid);
   const subCollections = await admin
     .firestore()
     .doc(`users/${user.uid}`)
-    .listCollections()
-    .map((collection) => collection.id);
-  if (subCollections.length > 0) {
-    for (const collection of subCollections) {
+    .listCollections();
+  log(subCollections);
+  const subCollectionNames = subCollections.map((col) => col.id);
+  log(subCollectionNames);
+  if (subCollectionNames.length > 0) {
+    for (const col of subCollections) {
       const collectionRef = admin
         .firestore()
-        .collection(`users/${user.uid}/${collection}`);
-      deleteBatch(collectionRef);
+        .collection(`users/${user.uid}/${col}`);
+      await deleteBatch(collectionRef);
     }
   }
+
   // finally, delete the user document
   admin.firestore().doc(`users/${user.uid}`).delete();
 });
 
 const deleteBatch = async (collectionRef) => {
+  log("in delete batch");
+  log(collectionRef);
+  log("getting snapshot");
   const snapshot = await collectionRef.get();
-  const batchSize = snapshot.size();
+  log(snapshot);
+  const batchSize = snapshot.size;
   if (batchSize === 0) {
     return;
   }
