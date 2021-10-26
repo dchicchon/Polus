@@ -297,11 +297,6 @@ export default {
 <style scoped lang="scss">
 $brightness: 100%;
 
-#startTime {
-}
-
-#endTime {
-}
 // Modify semantic tags here
 textarea {
   font-family: "Segoe UI", Tahoma, sans-serif;
@@ -450,23 +445,16 @@ select option {
     .editEntry {
       font-family: "Segoe UI", Tahoma, sans-serif !important;
       border: none;
-      // width: 100%;
       padding: 0;
       margin-block-start: 1em;
       margin-block-end: 1em;
-      // margin-block-start: 1em;
-      // margin-block-end: 1em;
       float: left;
       background: none;
       color: white;
       text-overflow: ellipsis;
-      text-align: center;
+      height:60px;
       &.show {
         opacity: 1;
-        // height: fit-content;
-        // margin: 0 auto;
-        // padding-block-start: 1em;
-        // padding-block-end: 1em;
       }
       &.no-show {
         margin: 0 auto;

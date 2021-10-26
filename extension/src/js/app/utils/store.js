@@ -276,13 +276,19 @@ export const actions = {
     // check everything in Firestore from now until next 3 months
     const db = getFirestore();
     const functions = getFunctions();
+    
     const getSubcollections = httpsCallable(functions, 'getSubcollections')
+    console.log("getting subcollections")
     const subcollectionArray = await getSubcollections({ uid: state.uid })
-    for (const collection of subcollectionArray) {
-
+    console.log(subcollectionArray)
+    for (const collectionName of subcollectionArray.data) {
       // check if collection is old or new
-      const collectionRef = collection(db, "users", state.uid, collection);
+      console.log("collection ref")
+      console.log(collectionName)
+      const collectionRef = collection(db, "users", state.uid, collectionName);
+      console.log(collectionRef)
       const q = query(collectionRef);
+      console.log('get docs')
       const querySnapshot = await getDocs(q);
       console.log(querySnapshot);
       if (querySnapshot.length > 0) {

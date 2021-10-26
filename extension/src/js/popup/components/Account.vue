@@ -154,6 +154,7 @@ import {
   doc,
   setDoc,
   getDocs,
+  getDoc,
   getFirestore,
   updateDoc,
   collection,
@@ -204,7 +205,7 @@ export default {
       });
     },
 
-    createReloadAlarm: () => {
+    createReloadAlarm() {
       chrome.storage.sync.set({ reload: false }, () => {
         let nextWeek = new Date();
         nextWeek.setDate(nextWeek.getDate() + 6);
@@ -222,7 +223,7 @@ export default {
     },
 
     // await getting our items from storage
-    getSyncStorageEntries: async () => {
+    async getSyncStorageEntries() {
       return new Promise((resolve, reject) => {
         chrome.storage.sync.get(null, (result) => {
           delete result.userSettings;
@@ -233,14 +234,14 @@ export default {
     },
 
     // transfer data from sync to firestore
-    transferToFirestore: async () => {
+    async transferToFirestore() {
+      console.log("Transfer to firestore");
       const db = getFirestore();
       const { uid } = getAuth().currentUser;
-      const dateObject = await this.getSyncStorageEntries(); // our entries for that date
+      const allDates = await this.getSyncStorageEntries(); // our entries for that date
       // maybe we should do a check if data already exists in firestore
-
-      for (let date in dateObject) {
-        const dateObject = dateObject[date];
+      for (let date in allDates) {
+        const dateObject = allDates[date];
         if (date.includes("/")) {
           date = date.replaceAll("/", "-");
         }
@@ -255,10 +256,7 @@ export default {
           }
         }
       }
-      await updateDoc(doc(db, "users")); // what is this for? might not need this
     },
-
- 
 
     // not only do I need to transfer To Firestore, but I should also be transfering back
     // to our sync items from Firestore too once I sign in.

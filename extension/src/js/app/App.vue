@@ -23,8 +23,10 @@ export default {
   },
 
   beforeCreate() {
+    console.log("app started")
     onAuthStateChanged(this.$auth, async (user) => {
       if (user) {
+        console.log("user logged in")
         const db = getFirestore();
         actions.setSignedIn(true);
         actions.setUid(user.uid);
@@ -44,6 +46,7 @@ export default {
          * so that the mobile app will add dates to be updated to the updateList
          */
         if (!hasExtension) {
+          console.log("does not have extension, read firebase")
           // Then lets go ahead and update our local and sync database
           // with our firestore database
           await actions.readFirebase();
@@ -54,6 +57,7 @@ export default {
             // read everything from the firebase
           });
         } else {
+          console.log("has firebase, update list")
           await actions.readUpdateList();
         }
       } else {
