@@ -111,3 +111,10 @@ exports.firestoreTtlCallback = functions.https.onRequest(async (req, res) => {
 })
 
 // User Related
+// get all subcollections for a user and return them to the user
+exports.getSubcollections = functions.https.onCall(async (data, context) => {
+    // we will get userUid from data variable
+    const { uid } = data
+    const subCollections = await admin.firestore().doc(`users/${uid}`).listCollections();
+    return subCollections.map(collection => collection.id)
+})

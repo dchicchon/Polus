@@ -150,7 +150,15 @@ import {
   signOut,
   deleteUser,
 } from "firebase/auth";
-import { doc, setDoc, getFirestore, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDocs,
+  getFirestore,
+  updateDoc,
+  collection,
+  query,
+} from "firebase/firestore";
 export default {
   components: {
     ErrorText,
@@ -196,15 +204,6 @@ export default {
       });
     },
 
-    // await getting our items from storage
-    getSyncStorageEntries: async () => {
-      chrome.storage.sync.get(null, (result) => {
-        delete result.userSettings;
-        delete result.background;
-        return result;
-      });
-    },
-
     createReloadAlarm: () => {
       chrome.storage.sync.set({ reload: false }, () => {
         let nextWeek = new Date();
@@ -222,11 +221,24 @@ export default {
       });
     },
 
-    // Should work now
+    // await getting our items from storage
+    getSyncStorageEntries: async () => {
+      return new Promise((resolve, reject) => {
+        chrome.storage.sync.get(null, (result) => {
+          delete result.userSettings;
+          delete result.background;
+          resolve(result);
+        });
+      });
+    },
+
+    // transfer data from sync to firestore
     transferToFirestore: async () => {
       const db = getFirestore();
       const { uid } = getAuth().currentUser;
-      const dateObject = await this.getsyncStorageEntries();
+      const dateObject = await this.getSyncStorageEntries(); // our entries for that date
+      // maybe we should do a check if data already exists in firestore
+
       for (let date in dateObject) {
         const dateObject = dateObject[date];
         if (date.includes("/")) {
@@ -235,11 +247,21 @@ export default {
         // Get each entry from our date collection and set to our subcollection date
         for (let key in dateObject) {
           const entry = dateObject[key];
-          await setDoc(doc(db, "users", uid, date, key), entry);
+          const entryRef = doc(db, "users", uid, date, key);
+          const entryDoc = await getDoc(entryRef);
+          // if it doesn't exist, set it in the datbase
+          if (!entryDoc.exists()) {
+            await setDoc(doc(db, "users", uid, date, key), entry);
+          }
         }
       }
-      await updateDoc(doc(db, "users"));
+      await updateDoc(doc(db, "users")); // what is this for? might not need this
     },
+
+ 
+
+    // not only do I need to transfer To Firestore, but I should also be transfering back
+    // to our sync items from Firestore too once I sign in.
 
     signin() {
       const auth = getAuth();
@@ -247,13 +269,8 @@ export default {
       // use firebase signin system
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
-          // check the
-          chrome.storage.sync.set({ signedIn: true });
-          // make a check here saying hey, if hasExtension is false then update
-          // our desktop to have the firebase stuff
+          this.transferToFirestore(); // transfer sync data to firestore
           this.page = "summary";
-
-          // Here I then need to get some user info using firebase firestore methods
         })
         .catch((error) => {
           console.log("Error in signin");
@@ -272,7 +289,6 @@ export default {
           console.log("User Successfully logged in");
           // Get all items from storage sync
           this.transferToFirestore();
-          chrome.storage.sync.set({ signedIn: true });
           this.page = "summary";
         })
         .catch((error) => {

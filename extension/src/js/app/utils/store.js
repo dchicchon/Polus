@@ -12,18 +12,13 @@ import {
   where,
   arrayRemove
 } from "firebase/firestore";
+
+import {
+  getFunctions, httpsCallable
+} from 'firebase/functions'
 // https://stackoverflow.com/questions/57710800/when-should-i-use-vuex
 // https://vuejs.org/v2/guide/reactivity.html
 
-// anytime the user logs in for the first time, we need to get all the most recently added stuff?
-// mmmmmmmmmmmm i need to think about this prob
-
-export const state = Vue.observable({
-  signedIn: false,
-  uid: 0,
-  date: new Date(),
-  updateList: []
-});
 
 // Local storage manipulation
 /** 
@@ -127,6 +122,14 @@ const clearChromeStorageSync = async ({ }) => {
 // End Sync Storage Manipulation
 
 
+// What is update list?
+export const state = Vue.observable({
+  signedIn: false,
+  uid: 0,
+  date: new Date(),
+  updateList: []
+});
+
 // CRUD Functions
 
 /**
@@ -140,14 +143,17 @@ export const actions = {
     state.date = date;
   },
   setUpdateList: (arr) => {
-    console.log("Setting update list")
-    console.log(arr)
     state.updateList = arr
   },
 
   // Reload Database
   resetSyncDatabase: async () => {
     await clearChromeStorageSync()
+  },
+
+  test: () => {
+    console.log("hello")
+
   },
 
   // ==================
@@ -160,12 +166,9 @@ export const actions = {
     if (state.signedIn) {
       const db = getFirestore();
       await setDoc(doc(db, "users", state.uid, date, key), entry);
-      // await setDoc(doc(db, 'users', state.uid,))
     }
   },
   // END CREATE
-
-
 
   // ==================
   // READ DATA
@@ -264,16 +267,48 @@ export const actions = {
 
 
   /**
+   * Read everything from Firestore rather than just looking at updateList
+   * 
+   */
+
+  // call our cloud Function getSubcollections
+  readFirebase: async () => {
+    // check everything in Firestore from now until next 3 months
+    const db = getFirestore();
+    const functions = getFunctions();
+    const getSubcollections = httpsCallable(functions, 'getSubcollections')
+    const subcollectionArray = await getSubcollections({ uid: state.uid })
+    for (const collection of subcollectionArray) {
+
+      // check if collection is old or new
+      const collectionRef = collection(db, "users", state.uid, collection);
+      const q = query(collectionRef);
+      const querySnapshot = await getDocs(q);
+      console.log(querySnapshot);
+      if (querySnapshot.length > 0) {
+        // for everything in the snapshot, lets save it to chrome.storage.sync
+        const dateObject = await getChromeStorageSync({ dateStamp });
+        querySnapshot.forEach((doc) => {
+          dateObject[doc.id] = doc.data()
+        })
+        await setChromeStorageSync({ date, dateObject });
+      }
+    }
+
+  },
+
+  /**
    * Read items and set them to our machine if this is the first time they have the extension
    */
-  readFromFirebase: async () => {
+  readUpdateList: async () => {
     // reading from firebase, shouldn't take too long
     // do a local read, then do a read from the 
     // read from firebase first actually
 
     // read everything from the updateList in state
+    if (state.updateList.length === 0) return
+    const db = getFirestore();
     for (const date of state.updateList) {
-      const db = getFirestore();
       const collectionRef = collection(db, 'users', state.uid, date)
       const q = query(collectionRef)
       const querySnapshot = await getDocs(q);
@@ -308,6 +343,11 @@ export const actions = {
       // else, dont bother and move onto the next item
 
     }
+
+    // finally, update our user data with update list of nothing
+    updateDoc(doc(db, 'users', state.uid), {
+      update: []
+    })
     // get all collections from user ref
 
 

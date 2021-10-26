@@ -28,24 +28,33 @@ export default {
         const db = getFirestore();
         actions.setSignedIn(true);
         actions.setUid(user.uid);
-        // also bring this up too
-        // Check here if there are items I need to update
         const userRef = doc(db, "users", user.uid);
-        const userDocument = await getDoc(userRef);
-        const { update: updateList, hasExtension } = userDocument.data(); // update should only be changed if we added items from our mobile device
-        actions.setUpdateList(updateList);
+        const userDocument = await getDoc(userRef); // get the user document
+
+        // get the updateList and hasExtension values in our user document data
+        const { update: updateList, hasExtension } = userDocument.data();
+        actions.setUpdateList(updateList); // add all the dates that need to be updated to our store
 
         // this will be set when user to ensure that the mobile
         // will be updating dates to update
+
+        /**
+         * If user does not have extension go ahead and update the
+         * @param hasExtension of our user document to true
+         * so that the mobile app will add dates to be updated to the updateList
+         */
         if (!hasExtension) {
           // Then lets go ahead and update our local and sync database
-          // with the info here
+          // with our firestore database
+          await actions.readFirebase();
           await updateDoc(userRef, {
             hasExtension: true,
           }).catch((error) => {
             console.error(error);
+            // read everything from the firebase
           });
-          await actions.readFromFirebase();
+        } else {
+          await actions.readUpdateList();
         }
       } else {
         actions.setSignedIn(false);
@@ -75,8 +84,9 @@ export default {
             page[0].style.background = `url(${image})`;
           } else {
             let image = result.background.url;
-            page[0].style.background = `rgba(0,0,0,0.9) url(${image +
-              `&w=${window.innerWidth}`}) no-repeat fixed`;
+            page[0].style.background = `rgba(0,0,0,0.9) url(${
+              image + `&w=${window.innerWidth}`
+            }) no-repeat fixed`;
           }
         });
         this.$refs.main.style.display = result.userSettings.pmode

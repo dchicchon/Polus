@@ -34,14 +34,17 @@ class _EntriesListState extends State<EntriesList> {
         .doc(FirebaseAuth.instance.currentUser.uid);
 
     var updateValue = await userRef.get();
-    // print("Getting Update Value here");
-    // print(updateValue.data());
     UserDocument userData = UserDocument.fromJson(updateValue.data());
     // if false, make this into something else
     // if date already in userData.update then skip over it
+    // If it doesnt contain it, then lets check
 
-// If it doesnt contain it, then lets check
-    if (!(userData.update.contains(date))) {
+    /** 
+     * 
+     * If @param hasExtension is false, then we can skip over this
+     * 
+     */
+    if (!(userData.update.contains(date)) && userData.hasExtension) {
       userData.update.add(date);
       userRef
           .update({'update': FieldValue.arrayUnion(userData.update)})

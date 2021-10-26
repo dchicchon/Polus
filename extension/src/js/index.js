@@ -3,6 +3,7 @@ import App from "./app/App.vue";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getFunctions } from 'firebase/functions'
 
 const config = {
   apiKey: "AIzaSyC-jyQX_JbQnJAjADK3ApS1gyemkr-AqW8",
@@ -20,6 +21,7 @@ const initPolus = () => {
   const firebaseApp = initializeApp(config);
   Vue.prototype.$auth = getAuth(firebaseApp);
   Vue.prototype.$firestore = getFirestore(firebaseApp);
+  Vue.prototype.$functions = getFunctions(firebaseApp)
 };
 
 const start = () => {
