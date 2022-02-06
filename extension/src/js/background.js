@@ -1,7 +1,8 @@
 // Runtime OnInstalled Listeners
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason == "install") {
-    createBackgroundAlarm();
+    createBackgroundAlarm(); // change background photo
+    createSyncToLocalAlarm(); // bring sync to local
     chrome.runtime.setUninstallURL(
       "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit"
     );
@@ -20,45 +21,15 @@ chrome.runtime.onInstalled.addListener((details) => {
       id: "open-sesame",
     });
 
-    // Add an alarm that will check if the user has data from X amount of months
-    // ago. If I
-
-    createSyncToLocalAlarm();
-
     chrome.storage.sync.set({ userSettings });
-    getPhoto();
+    getPhoto(); // get background photo
   } else if (details.reason == "update") {
-
-    // add signed in to userSettings
-    
-    // Change each key in storage to dashes instead of slashes,
-    // also were turning each item into an object vs an array
     createSyncToLocalAlarm();
-    chrome.storage.sync.get(null, (result) => {
-      for (const key in result) {
-        if (key.includes("/")) {
-          const dateArray = result[key];
-          // conver to object
-          const dateObject = {};
-          for (const entry of dateArray) {
-            const entryKey = entry.key;
-            delete entry.key;
-            dateObject[entryKey] = entry;
-          }
-
-          const newDate = key.replaceAll("/", "-");
-          chrome.storage.sync.set({ [newDate]: dateObject }, () => {
-            chrome.storage.sync.remove([key]);
-          });
-          // now save the object to our chrome storage
-        }
-      }
-    });
   }
 });
 
 // Context Menu Click Listeners
-chrome.contextMenus.onClicked.addListener(function(result) {
+chrome.contextMenus.onClicked.addListener(function (result) {
   if (result["menuItemId"] === "open-sesame") {
     chrome.storage.sync.get("userSettings", (result) => {
       let { userSettings } = result;
@@ -79,19 +50,14 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         getPhoto();
       }
     });
-  } else if (alarm.name === "reloadFirestore") {
-    chrome.storage.sync.set({ reload: true });
-    // Delete all items in storage sync and then grab them from Firestore
   } else if (alarm.name === "moveToLocal") {
     moveToLocal();
   }
-
   // Notification Alarms
   else {
     // have the alarm occur, look at the alarm name for the key of the entry
     let dateStamp = new Date().toLocaleDateString("en-US");
     // replace with the -
-    dateStamp = dateStamp.replaceAll("/", "-");
     chrome.storage.sync.get([dateStamp], (result) => {
       let entries = result[dateStamp];
       let entry = entries.find((entry) => entry.key === alarm.name);
@@ -112,16 +78,31 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
 /**
  * Create a recurring alarm for function @function moveToLocal
+ * Chnage every 2 weeks
  */
 
 const createSyncToLocalAlarm = () => {
   let nextWeek = new Date();
-  nextWeek.setDate(nextWeek.getDate() + 14);
+  nextWeek.setDate(nextWeek.getDate() + 14); 
   chrome.alarms.create("moveToLocal", {
     when: nextWeek.getTime(),
     periodInMinutes: 60 * 24 * 14,
   });
 };
+
+/**
+ * Create an alarm for changing the background photo. Calls getPhoto()
+ */
+ const createBackgroundAlarm = () => {
+  let midnight = new Date();
+  midnight.setHours(23, 59, 59);
+  // Create alarm that executes every 25 hours
+  chrome.alarms.create("changeBackground", {
+    when: midnight.getTime(),
+    periodInMinutes: 60 * 24,
+  });
+};
+
 
 /**
   Move all chrome.storage.sync entry dates that are older than 1 month 
@@ -159,19 +140,6 @@ const clearNotifications = () => {
     for (let notification of notifications) {
       chrome.notifications.clear(notification);
     }
-  });
-};
-
-/**
- * Create an alarm for changing the background photo. Calls getPhoto()
- */
-const createBackgroundAlarm = () => {
-  let midnight = new Date();
-  midnight.setHours(23, 59, 59);
-  // Create alarm that executes every 25 hours
-  chrome.alarms.create("changeBackground", {
-    when: midnight.getTime(),
-    periodInMinutes: 60 * 24,
   });
 };
 
