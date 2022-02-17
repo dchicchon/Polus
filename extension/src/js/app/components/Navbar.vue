@@ -101,6 +101,155 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-@import "./style.scss";
+<style lang="scss" scoped>
+#nav {
+  list-style-type: none;
+  top: 0;
+  height: 3rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  li {
+    float: left;
+    display: block;
+    a {
+      text-decoration: none;
+    
+    }
+  }
+}
+
+#app-info {
+  display: grid;
+  font-size: 1.5rem;
+  height: 45px;
+  &:hover {
+    #app-title {
+      display: none;
+    }
+    #app-items {
+      display: inline-block;
+    }
+  }
+  // Default Display
+  #app-title {
+    padding: 10px;
+    grid-column: 1;
+    grid-row: 1;
+    display: inline-block;
+    animation-name: fadeIn;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
+    .app-icon {
+      width: 35px;
+      height: 35px;
+    }
+    .app-sub {
+      display: inline-block;
+      font-weight: 200;
+      letter-spacing: 0.1rem;
+      text-shadow: 0 0 15px rgba(0, 0, 0, 1);
+      transform: translateY(-25%);
+    }
+  }
+
+  #app-items {
+    display: none;
+    background: rgba(15, 15, 15, 0.6);
+    border-bottom-right-radius: 8px;
+    grid-column: 1;
+    grid-row: 1;
+    animation-name: fadeIn;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
+
+    // eventually remove this please
+    a {
+      transition: background 0.25s;
+      font-size: 15px;
+      padding: 10px;
+      cursor: pointer;
+      display: inline-block;
+      &:hover {
+        background-color: rgba($color: white, $alpha: 0.1);
+      }
+    }
+  }
+}
+
+#background-info {
+  // padding: 1rem;
+  display: grid;
+  text-align: center;
+  font-size: 1rem;
+  background-blend-mode: screen;
+  // background: none;
+  &:hover {
+    #background-location {
+      display: none;
+    }
+    #background-source {
+      display: inline-block;
+    }
+  }
+  // Default Display
+
+  #background-location {
+    grid-column: 1;
+    grid-row: 1;
+    padding: 0.75rem;
+    display: inline-block;
+    animation-name: fadeIn;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
+  }
+  #background-source {
+    display: none;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-bottom-left-radius: 8px;
+    background: rgba(15, 15, 15, 0.6);
+    grid-column: 1;
+    grid-row: 1;
+    // opacity: 0;
+    animation-name: fadeIn;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
+    a {
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    #download {
+      margin-left: 0.5rem;
+      color: white;
+      cursor: pointer;
+    }
+  }
+
+  #background-link {
+    position: relative;
+    text-decoration: none;
+    color: white;
+  }
+}
+
+.google-dropdown-btn {
+  cursor: none;
+  background: none;
+}
+.google-dropdown {
+  position: relative;
+  &:hover {
+    .google-dropdown-content {
+      display: block;
+    }
+  }
+}
+.google-dropdown-content {
+  display: none;
+  position: absolute;
+  background: rgba(15, 15, 15, 0.6);
+}
 </style>

@@ -30,9 +30,9 @@
 </template>
 
 <script>
-import Entry from "../Entry.vue";
-import { onAuthStateChanged } from "firebase/auth";
-import { actions } from "../../utils/store";
+import Entry from "./Entry.vue";
+// import { onAuthStateChanged } from "firebase/auth";
+import { actions } from "../utils/store";
 import shortid from "shortid";
 import Vue from "vue";
 // https://stackoverflow.com/questions/18548465/prevent-scroll-bar-from-adding-up-to-the-width-of-page-on-chrome
@@ -67,7 +67,7 @@ export default {
     // goes off
     // chrome.storage.onChanged.addListener(this.checkChanges);
     this.readEntries();
-    onAuthStateChanged(this.$auth, this.readEntries); // this watches to see if a user logs in or logs off
+    // onAuthStateChanged(this.$auth, this.readEntries); // this watches to see if a user logs in or logs off
   },
 
   watch: {
@@ -229,6 +229,88 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-@import "./style.scss";
+<style lang="scss" scoped>
+.over {
+    background: rgba(37, 37, 37, 0.329) !important;
+}
+
+.details {
+    overflow: auto;
+    height: 20rem;
+
+    .dateTitle {
+        font-weight: 0;
+        border-radius: 12px;
+        margin-bottom: 0.25rem;
+        width: 20px;
+        height: 20px;
+        min-width: 16px;
+        // padding: 4px 3px 0 3px;
+        text-align: center;
+    }
+    .entryList {
+        list-style-type: none;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
+    .addButton {
+        background: none;
+        width: 1.5rem;
+        font-size: 1.25rem;
+        border-radius: 100%;
+        opacity: 0;
+        transition: background 0.5s, opacity 0.5s;
+        padding: 0 0.4rem;
+    }
+
+    // CANT USE THIS YET, looks bad over a light background
+    // For scrollbar hover over
+    // mask-image: linear-gradient(to top, transparent, black),
+    //   linear-gradient(to left, transparent 17px, black 17px);
+    // mask-size: 100% 20000px;
+    // mask-position: left bottom;
+    // transition: mask-position 0.5s;
+    // //
+
+    &::-webkit-scrollbar {
+        width: 10px;
+    }
+    &::-webkit-scrollbar-thumb {
+        // height: 6px;
+        width: 10px;
+        border: 4px solid rgba(0, 0, 0, 0);
+        background-clip: padding-box;
+        background-color: #888;
+        // background-color: #888;
+        // background-color: none;
+        background-color: none;
+
+        transition: background 0.5s;
+        box-shadow: inset -1px -1px 0px rgb(0 0 0 / 5%), inset 1px 1px 0px rgb(0 0 0 / 5%);
+        border-radius: 25px;
+    }
+    &::-webkit-scrollbar-button {
+        width: 0;
+        height: 0;
+        display: none;
+    }
+    &:hover {
+        mask-position: left top;
+        // &::-webkit-scrollbar-thumb {
+        // height: 6px;
+        // width: 10px;
+        // border: 4px solid rgba(0, 0, 0, 0);
+        // background-clip: padding-box;
+        // background-color: #888;
+        // box-shadow: inset -1px -1px 0px rgb(0 0 0 / 5%),
+        // inset 1px 1px 0px rgb(0 0 0 / 5%);
+        // border-radius: 25px;
+        // }
+        .addButton {
+            opacity: 1;
+        }
+    }
+}
 </style>

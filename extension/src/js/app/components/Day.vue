@@ -1,14 +1,11 @@
 <template>
   <div id="daily">
-    <div id="nav">
-      <div class="nav">
-        <button @click="changeDay(-1)" class="arrow">←</button>
-
-        <h5 class="dayTitle" :style="checkDay">
-          {{ dayTitle }}
-        </h5>
-        <button @click="changeDay(1)" class="arrow">→</button>
-      </div>
+    <div class="nav">
+      <button @click="changeDay(-1)" class="arrow">←</button>
+      <h5 class="dayTitle" :style="checkDay">
+        {{ dayTitle }}
+      </h5>
+      <button @click="changeDay(1)" class="arrow">→</button>
     </div>
     <div class="dayDiv">
       <!-- We use v-bind to attach state item to component--->
@@ -17,7 +14,60 @@
   </div>
 </template>
 
-<style lang="scss">
+  
+<script>
+import EntryList from "./EntryList.vue";
+import { actions } from "../utils/store";
+export default {
+  components: {
+    EntryList,
+  },
+  data() {
+    return {
+      date: new Date(),
+    };
+  },
+  created() {},
+
+  methods: {
+    // Change Date here
+    changeDay(amount) {
+      console.log("change day");
+      console.log(this.date);
+      let changeDate = new Date(this.date); // had to do this because computed couldn't see that it was updating
+      changeDate.setDate(this.date.getDate() + amount);
+      console.log(changeDate);
+      actions.setDate(changeDate);
+    },
+  },
+
+  computed: {
+    checkDay() {
+      let date = new Date();
+      return date.getDay() === this.date.getDay()
+        ? "background: rgba(5, 80, 123, 0.992);"
+        : "background:none";
+    },
+
+    dayTitle() {
+      let options = { weekday: "short" };
+      console.log("computing day");
+      return `${this.date.toLocaleString(
+        undefined,
+        options
+      )} ${this.date.toLocaleDateString()}`;
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.nav {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
+}
 #daily {
   display: flex;
   flex-direction: column;
@@ -32,43 +82,3 @@
   }
 }
 </style>
-
-<script>
-import EntryList from "./EntryList/index.vue";
-import { actions } from "../utils/store";
-export default {
-  components: {
-    EntryList,
-  },
-  data() {
-    return {
-      date: new Date(),
-    };
-  },
-  created() {},
-  methods: {
-    // Change Date here
-    changeDay(amount) {
-      let changeDate = new Date(this.date); // had to do this because computed couldn't see that it was updating
-      changeDate.setDate(this.date.getDate() + amount);
-      actions.setDate(changeDate);
-    },
-  },
-
-  computed: {
-    checkDay() {
-      let date = new Date();
-      return date.getDay() === this.date.getDay()
-        ? "background: rgba(5, 80, 123, 0.992);"
-        : "background:none";
-    },
-    dayTitle() {
-      let options = { weekday: "short" };
-      return `${this.date.toLocaleString(
-        undefined,
-        options
-      )} ${this.date.toLocaleeDateString()}`;
-    },
-  },
-};
-</script>

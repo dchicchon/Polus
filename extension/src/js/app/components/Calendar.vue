@@ -47,7 +47,7 @@ export default {
   },
 
   created() {
-    chrome.storage.onChanged.addListener(this.checkChanges); // waiting for reload to happen
+    // console.log("created")
     chrome.storage.sync.get("userSettings", (result) => {
       let { userSettings } = result;
       this.userSettings = userSettings;
@@ -55,21 +55,9 @@ export default {
   },
 
   methods: {
-    checkChanges: async (changes, namespace) => {
-      // If just signed in, go ahead and check firebase for updates
-      if (namespace === "sync" && "checkFirebase" in changes) {
-        if (changes.checkFirebase.newValue) {
-          const entryListArr = this.$children[0].$children;
-          for (const list of entryListArr) {
-            console.log("List");
-            console.log(list); // here we can access the list component functions
-            list.readEntries();
-          }
-          chrome.storage.sync.set({ checkFirebase: false });
-        }
-      }
-    },
-    changeView: (type) => {
+    changeView: function(type) {
+      console.log("Change View")
+      console.log(this.userSettings)
       this.userSettings.view = type;
       let userSettings = this.userSettings;
       chrome.storage.sync.set({ userSettings });
