@@ -1,65 +1,69 @@
 <template>
   <!-- New Entry -->
-  <!-- <transition name="fade" v-if="entry.text.length === 0"> -->
   <textarea
-    v-model="newText"
+    v-model="entry.text"
     class="newEntry entry"
     :class="[entry.color, { checked: entry.active }]"
-    v-if="entry.text.length === 0"
+    v-if="entry.new"
     ref="newEntry"
-    v-on:blur="submitEntry(newText, entry.key)"
-    v-on:keypress.enter="submitEntry(newText, entry.key)"
+    v-on:blur="createEntry(entry, entryKey)"
+    v-on:keydown.enter="$event.target.blur()"
   >
   </textarea>
-  <!-- </transition> -->
-  <!-- Not Active -->
+  <!-- End New Entry -->
+
+  <!-- Inactive Entry (fade-in  was added previously but it looked a little funny) -->
   <li
-    v-else-if="!active"
+    v-else-if="mode === ''"
     class="entry"
     :class="[entry.color, { checked: entry.active }]"
-    @click="changeActive"
+    @click="changeMode('menu')"
     draggable
-    @dragstart="dragStart($event, entry, $parent._uid)"
+    @dragstart="dragStart($event, entryKey, entry, $parent._uid)"
   >
     <!-- @dragend="dragEnd($event, entry.key)" -->
     {{ entry.text }}
   </li>
+  <!-- End Inactive Entry -->
+
+  <!-- Its the fact that it's getting rerendered -->
   <!-- Active -->
   <li
     v-else
     class="entry"
-    :class="entry.color"
+    :class="[entry.color]"
     @click="(e) => altChangeActive(e)"
     draggable
-    @dragstart="dragStart($event, entry, $parent._uid)"
+    @dragstart="dragStart($event, entryKey, entry, $parent._uid)"
   >
     <div class="entry-container">
       <p class="text" v-if="mode !== 'edit'" :class="{ checked: entry.active }">
         {{ entry.text }}
       </p>
+
+      <!-- Begin Edit Entry TextArea -->
       <textarea
         v-model="newText"
         :class="textClass"
         ref="textarea"
         class="editEntry"
       ></textarea>
-      <!-- There is space here -->
-      <div class="entryBtnContainer">
+      <!-- Begin Edit Entry TextArea -->
+
+      <!-- Button Container -->
+      <div class="button-container">
         <!-- Color -->
         <button
           @click="changeMode('color')"
-          :class="[mode === 'color' ? 'activeBtn' : '', 'entryBtn']"
+          :disabled="mode === 'color'"
+          class="entryBtn"
         >
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/palette.png"
             alt="color"
           />
-          <select
-            style="cursor: pointer"
-            :value="''"
-            @input="selectColor($event.target.value)"
-          >
+          <select :value="''" @input="selectColor($event.target.value)">
             <option
               v-for="(option, index) in colorOptions"
               :value="option"
@@ -70,40 +74,37 @@
             </option>
           </select>
         </button>
-        <!-- Time -->
-        <button
-          @mousedown="changeMode('time')"
-          @mouseup="hideTime()"
-          :class="[mode === 'time' ? 'activeBtn' : '', 'entryBtn']"
-        >
-          <!-- only activates clock on mouseup -->
+
+        <!-- Begin Time -->
+        <!-- Superimpose time and input on top of each other -->
+        <div id="time-section">
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/clock.png"
             alt="clock"
           />
           <input
-            v-model="time"
-            @blur="blur()"
-            @input="selectTime()"
+            class="entryBtn"
+            v-model="entry.time"
+            @mouseup="changeTimeMode"
+            @input="selectTime"
             placeholder="none"
             ref="time"
             type="time"
           />
-        </button>
-        <!-- Edit -->
-        <button
-          v-if="mode === 'edit'"
-          @click="submitEdit(newText, entry.key)"
-          class="entryBtn"
-        >
+        </div>
+
+        <!-- End Time -->
+
+        <!-- Save Edit -->
+        <button v-if="mode === 'edit'" @click="submitEdit" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/save.png"
             alt="save"
           />
         </button>
-
+        <!-- Begin Edit -->
         <button v-if="mode !== 'edit'" @click="editEntry" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
@@ -112,14 +113,16 @@
           />
         </button>
 
-        <button @click="() => checkEntry(entry.key)" class="entryBtn">
+        <!-- Check Entry -->
+        <button @click="checkEntry" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/done.png"
             alt="done"
           />
         </button>
-        <button @click="() => deleteEntry(entry.key)" class="entryBtn">
+        <!-- Delete Entry -->
+        <button @click="() => deleteEntry(entryKey)" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
             src="/assets/entry_icons/delete.png"
@@ -127,20 +130,14 @@
           />
         </button>
       </div>
+      <!-- End Button Container -->
     </div>
   </li>
+  <!-- End Active Entry -->
 </template>
 <script>
 export default {
   props: {
-    checkEntry: {
-      required: true,
-      type: Function,
-    },
-    colorEntry: {
-      required: true,
-      type: Function,
-    },
     deleteEntry: {
       required: true,
       type: Function,
@@ -148,6 +145,10 @@ export default {
     dragStart: {
       required: false,
       type: Function,
+    },
+    entryKey: {
+      type: String,
+      required: true,
     },
     entry: {
       required: true,
@@ -157,31 +158,26 @@ export default {
       type: Date,
       required: true,
     },
-    submitEntry: {
-      required: true,
+    createEntry: {
       type: Function,
+      required: true,
     },
-    timeEntry: {
-      required: true,
+    updateEntry: {
       type: Function,
+      required: true,
     },
   },
   data() {
     return {
-      active: false,
+      ...this.entry,
+      newTime: "",
       newText: "",
       mode: "",
-      time: "",
     };
   },
 
-  // One of the first functions to execute on the render method
-  created() {
-    this.time = this.entry.time ? this.entry.time : "12:00";
-  },
-  // This will execute when the component is built on the DOM
   mounted() {
-    if (this.$refs.newEntry) this.$refs.newEntry.focus();
+    if (this.$refs.newEntry) this.$refs.newEntry.focus(); // add focus on new entry textarea
   },
   methods: {
     altChangeActive(e) {
@@ -191,46 +187,42 @@ export default {
         e.target.classList.contains("entry-container") ||
         e.target.classList.contains("entryBtnContainer")
       ) {
-        this.active = false;
-        this.mode = "";
+        this.changeMode("");
       }
     },
 
-    blur() {
-      this.mode = "";
-    },
-
-    changeMode(type) {
-      if (type === "time" && this.mode === "time") {
+    changeTimeMode() {
+      if (this.mode !== "time") {
+        this.changeMode("time");
+      } else {
         this.$refs.time.style.display = "none";
-        this.mode = "";
-      } else if (this.mode === type) this.mode = "";
-      else this.mode = type;
-    },
-    changeActive() {
-      this.active = true;
-    },
-    editEntry() {
-      this.mode = "edit";
-      this.$refs.textarea.focus();
-      this.newText = this.entry.text;
-    },
-
-    hideTime() {
-      if (this.mode === "") {
-        this.$refs.time.style.display = "inline-block";
+        this.changeMode("menu");
+        setTimeout(() => (this.$refs.time.style.display = "block"), 1);
       }
+    },
+    changeMode(type) {
+      this.mode = type;
     },
 
     selectColor(color) {
       if (color !== this.entry.color) {
         this.entry.color = color;
-        this.colorEntry();
+        this.changeMode("menu");
+        this.updateEntry(this.entryKey);
       }
     },
 
-    selectTime() {
-      if (this.time !== this.entry.time) {
+    selectTime(time) {
+      console.log("Time Selected:", time);
+    },
+
+    submitTime() {
+      this.changeMode("menu");
+    },
+
+    saveTime() {
+      this.newTime = this.entry.time ? this.entry.time : "12:00";
+      if (this.newTime !== this.time) {
         this.entry.time = this.time;
         let eventDate = new Date(this.listDate);
         let hours = parseInt(this.time[0] + this.time[1]);
@@ -249,7 +241,7 @@ export default {
             (result) => {
               // If allowed, create an alarm for this entry
               if (result) {
-                chrome.alarms.create(this.entry.key, {
+                chrome.alarms.create(this.entryKey, {
                   when: eventDate.getTime(),
                 });
               }
@@ -257,17 +249,32 @@ export default {
           );
         }
         // We can use this to check if notifications have been enabled so that we can show the user
-
-        this.timeEntry();
+        this.updateEntry(this.entryKey);
       }
 
       // Add this.timeEntry() later
     },
 
+    checkEntry() {
+      this.entry.active = !this.entry.active;
+      this.updateEntry(this.entryKey);
+    },
+
+    editEntry() {
+      this.mode = "edit";
+      this.$refs.textarea.focus();
+      this.newText = this.entry.text;
+    },
+
     submitEdit() {
       this.mode = "";
-      this.submitEntry(this.newText, this.entry.key);
+      if (this.newText !== this.entry.text) {
+        this.entry.text = this.newText;
+        this.newText = "";
+        this.updateEntry(this.entryKey);
+      }
     },
+
   },
 
   computed: {
@@ -315,12 +322,15 @@ textarea {
 }
 
 input[type="time"] {
+  display: block;
+  position: absolute;
+  padding-inline-start: 0px;
   border: none;
   background: none;
   color: white;
   width: 25px;
   height: 25px;
-  transform: translateY(-25px);
+  transform: translateY(-28px);
 
   // clock
   &::-webkit-calendar-picker-indicator {
@@ -383,6 +393,7 @@ second, second and am/pm */
 }
 
 select {
+  color: transparent;
   -webkit-appearance: none;
   -moz-appearance: none;
   text-indent: 1px;
@@ -434,23 +445,16 @@ select option {
     .editEntry {
       font-family: "Segoe UI", Tahoma, sans-serif !important;
       border: none;
-      // width: 100%;
       padding: 0;
       margin-block-start: 1em;
       margin-block-end: 1em;
-      // margin-block-start: 1em;
-      // margin-block-end: 1em;
       float: left;
       background: none;
       color: white;
       text-overflow: ellipsis;
-      text-align: center;
+      height:60px;
       &.show {
         opacity: 1;
-        // height: fit-content;
-        // margin: 0 auto;
-        // padding-block-start: 1em;
-        // padding-block-end: 1em;
       }
       &.no-show {
         margin: 0 auto;
@@ -462,11 +466,8 @@ select option {
 }
 
 .newEntry {
-  // width: 10% !important;
   transition: none;
   margin: 0.25rem auto;
-  // margin-block-start: 1em;
-  // margin-block-end: 1em;
   float: left;
 
   animation-name: "grow";
@@ -499,8 +500,8 @@ select option {
 }
 
 .button-container {
-  display: inline-block;
-  position: relative;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 @keyframes grow {
@@ -509,6 +510,21 @@ select option {
   }
   to {
     width: 90%;
+  }
+}
+
+.fade-in {
+  animation-name: "fadeIn";
+  animation-fill-mode: forwards;
+  animation-duration: 0.25s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.75;
   }
 }
 

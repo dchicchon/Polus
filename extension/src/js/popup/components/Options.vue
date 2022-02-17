@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <h2 class="page-title">Options</h2>
     <Toggle
       :key="1"
@@ -36,7 +36,6 @@
       <option value="60">1 hour before</option>
     </select>
     <br />
-    <br />
     <div>
       Select Photo from
       <span>
@@ -53,13 +52,18 @@
         placeholder="https://unsplash.com/photos/NuBvAE6VfSM"
         v-model="photoLink"
       />
-      <button class="button" @click="submitPhoto">Submit</button>
+      <md-button @click="submitPhoto" class="blue md-primary md-raised md-dense"
+        >Submit</md-button
+      >
     </div>
-    <br />
-    <div>
-      Select a photo from your computer (< 5MB)
-      <button class="button" @click="uploadPhoto">Upload</button>
-    </div>
+
+    <!-- In order to save on user space, we will remove this item -->
+    <!-- <div>
+      Select a photo from your computer ({{ "<" }} 5MB)
+      <md-button @click="uploadPhoto" class="blue md-primary md-raised md-dense"
+        >Upload</md-button
+      >
+    </div> -->
     <p class="error">{{ error }}</p>
   </div>
 </template>
@@ -77,8 +81,8 @@ export default {
     };
   },
   created() {
+    //   On created, get all the items from storage
     this.getSettings();
-    //   On created, get all the items from storage relating to the thing
   },
   methods: {
     editNotificationTime(newTime) {
@@ -160,11 +164,7 @@ export default {
     getSettings() {
       chrome.storage.sync.get("userSettings", (result) => {
         //   Do this if a user does not have the right storage version of polus
-        if (Object.keys(result).length === 0) {
-          this.updateStorageVersion();
-        } else {
-          this.userSettings = result["userSettings"];
-        }
+        this.userSettings = result["userSettings"];
       });
     },
 
@@ -194,7 +194,7 @@ export default {
             downloadLink,
           };
           chrome.storage.sync.set({ background }, () => {
-            chrome.storage.local.remove("image");
+            chrome.storage.sync.remove("image");
             chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
               chrome.tabs.reload(tabs[0].id);
             });
@@ -226,7 +226,7 @@ export default {
         function () {
           // USE INDEXED DB INSTEAD
           chrome.storage.sync.set({ background: false }, () => {
-            chrome.storage.local.set({ image: reader.result }, () => {
+            chrome.storage.sync.set({ image: reader.result }, () => {
               chrome.tabs.query(
                 { active: true, currentWindow: true },
                 (tabs) => {
@@ -251,19 +251,6 @@ export default {
     },
 
     // Do this if user doesnt have the updated storage
-    updateStorageVersion() {
-      this.userSettings = {
-        changePhoto: true,
-        indexOpen: false,
-        newTab: true,
-        notifications: false,
-        notificationTime: "0",
-        pmode: false,
-        view: "week",
-      };
-      this.updateStorage();
-    },
-
     updateStorage() {
       chrome.storage.sync.set({ userSettings: this.userSettings });
     },
@@ -279,16 +266,6 @@ export default {
 #photoURL {
   width: 95%;
   outline: none;
-}
-
-.button {
-  outline: none;
-  border: none;
-  cursor: pointer;
-  margin: 5px 0;
-  padding: 0.5rem 1rem;
-  color: white;
-  background: rgb(17, 151, 212);
 }
 
 .error {

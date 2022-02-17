@@ -5,6 +5,40 @@
   </div>
 </template>
 
+<script>
+export default {
+  data() {
+    return {
+      clock: "",
+      date: "",
+    };
+  },
+
+  created() {
+    this.updateTime();
+    let timer = setInterval(this.updateTime, 1000);
+    // chrome.storage.sync.addListener;
+  },
+
+  methods: {
+    // the format will chnage depending on the synce using the extension
+    // British English uses day-month-year order
+    // Korean uses year-month-day order
+    updateTime() {
+      let currentDate = new Date();
+      let options = {
+        weekday: "long",
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+      };
+      this.date = currentDate.toLocaleDateString(undefined, options);
+      this.clock = currentDate.toLocaleTimeString();
+    },
+  },
+};
+</script>
+
 <style lang="scss">
 #clock {
   display: flex;
@@ -24,37 +58,3 @@
   text-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
 }
 </style>
-
-<script>
-export default {
-  data() {
-    return {
-      clock: "",
-      date: "",
-    };
-  },
-
-  created() {
-    this.updateTime();
-    let timer = setInterval(this.updateTime, 1000);
-    chrome.storage.sync.addListener;
-  },
-
-  methods: {
-    // the format will chnage depending on the locale using the extension
-    // British English uses day-month-year order
-    // Korean uses year-month-day order
-    updateTime() {
-      let currentDate = new Date();
-      let options = {
-        weekday: "long",
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-      };
-      this.date = currentDate.toLocaleDateString(undefined, options);
-      this.clock = currentDate.toLocaleTimeString();
-    },
-  },
-};
-</script>

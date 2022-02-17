@@ -7,32 +7,32 @@
           <img class="app-icon" src="/assets/polus_icon.png" alt="App icon" />
         </div>
         <div id="app-items" ref="items">
-          <div id="site">
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://danielchicchon.io/polus"
-              >Site</a
-            >
-          </div>
-          <div id="contact">
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://docs.google.com/forms/d/e/1FAIpQLSdHcPhbcAWeWFvEFqF6qzmPUD0UtNn9e7pn_eLUukGLudMy1A/viewform"
-            >
-              Feedback</a
-            >
-          </div>
-          <div>
-            <a
-              id="pmode"
-              @click="photoMode"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Photo Mode</a
-            >
-          </div>
+          <a href="https://mail.google.com/mail/u/0/">
+            Gmail
+          </a>
+          <a href="https://drive.google.com/drive/u/0/">
+            Drive
+          </a>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://danielchicchon.io/polus"
+            >Site</a
+          >
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdHcPhbcAWeWFvEFqF6qzmPUD0UtNn9e7pn_eLUukGLudMy1A/viewform"
+          >
+            Feedback</a
+          >
+          <a
+            id="pmode"
+            @click="photoMode"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Photo Mode</a
+          >
         </div>
       </div>
     </li>
@@ -101,7 +101,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 #nav {
   list-style-type: none;
   top: 0;
@@ -114,15 +114,15 @@ export default {
     display: block;
     a {
       text-decoration: none;
+    
     }
   }
 }
 
 #app-info {
-  padding: 0.5rem 1rem 0;
   display: grid;
   font-size: 1.5rem;
-
+  height: 45px;
   &:hover {
     #app-title {
       display: none;
@@ -133,6 +133,7 @@ export default {
   }
   // Default Display
   #app-title {
+    padding: 10px;
     grid-column: 1;
     grid-row: 1;
     display: inline-block;
@@ -154,7 +155,8 @@ export default {
 
   #app-items {
     display: none;
-    background-blend-mode: screen;
+    background: rgba(15, 15, 15, 0.6);
+    border-bottom-right-radius: 8px;
     grid-column: 1;
     grid-row: 1;
     animation-name: fadeIn;
@@ -162,10 +164,10 @@ export default {
     animation-fill-mode: forwards;
 
     // eventually remove this please
-    div {
+    a {
       transition: background 0.25s;
-      font-size: 60%;
-      padding: 0.5rem;
+      font-size: 15px;
+      padding: 10px;
       cursor: pointer;
       display: inline-block;
       &:hover {
@@ -176,7 +178,7 @@ export default {
 }
 
 #background-info {
-  padding: 1rem;
+  // padding: 1rem;
   display: grid;
   text-align: center;
   font-size: 1rem;
@@ -195,6 +197,7 @@ export default {
   #background-location {
     grid-column: 1;
     grid-row: 1;
+    padding: 0.75rem;
     display: inline-block;
     animation-name: fadeIn;
     animation-duration: 0.75s;
@@ -202,7 +205,10 @@ export default {
   }
   #background-source {
     display: none;
+    padding: 0.5rem;
     font-size: 1rem;
+    border-bottom-left-radius: 8px;
+    background: rgba(15, 15, 15, 0.6);
     grid-column: 1;
     grid-row: 1;
     // opacity: 0;
@@ -218,6 +224,7 @@ export default {
     #download {
       margin-left: 0.5rem;
       color: white;
+      cursor: pointer;
     }
   }
 
@@ -226,5 +233,23 @@ export default {
     text-decoration: none;
     color: white;
   }
+}
+
+.google-dropdown-btn {
+  cursor: none;
+  background: none;
+}
+.google-dropdown {
+  position: relative;
+  &:hover {
+    .google-dropdown-content {
+      display: block;
+    }
+  }
+}
+.google-dropdown-content {
+  display: none;
+  position: absolute;
+  background: rgba(15, 15, 15, 0.6);
 }
 </style>

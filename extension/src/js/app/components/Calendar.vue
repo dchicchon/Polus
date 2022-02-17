@@ -29,12 +29,11 @@
   </div>
 </template>
 
-
 <script>
 import Day from "./Day";
 import Week from "./Week";
 import Month from "./Month";
-
+// import { actions } from "../utils/store";
 export default {
   components: {
     Day,
@@ -44,10 +43,11 @@ export default {
   data() {
     return {
       userSettings: {},
-     };
+    };
   },
 
   created() {
+    // console.log("created")
     chrome.storage.sync.get("userSettings", (result) => {
       let { userSettings } = result;
       this.userSettings = userSettings;
@@ -55,7 +55,9 @@ export default {
   },
 
   methods: {
-    changeView(type) {
+    changeView: function(type) {
+      console.log("Change View")
+      console.log(this.userSettings)
       this.userSettings.view = type;
       let userSettings = this.userSettings;
       chrome.storage.sync.set({ userSettings });
@@ -64,5 +66,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

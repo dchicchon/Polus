@@ -1,66 +1,34 @@
-// On extension installation
-chrome.runtime.onInstalled.addListener(() => {
-  console.log("INSTALLING POLUS");
-  // 1. On installed, we will check to see if they have anything from previous version in storage
-  // 2. If so, we will check every valid date for a storage item and change each item that was altered for the new update
-  chrome.contextMenus.create({
-    title: "Open",
-    contexts: ["browser_action"],
-    id: "open-sesame",
-  });
-
-  let userSettings = {
-    changePhoto: true,
-    indexOpen: false,
-    newTab: true,
-    notifications: false,
-    notificationTime: "0",
-    pmode: false,
-    view: "week",
-  };
-
-  chrome.storage.sync.set({ userSettings });
-  getPhoto();
-});
-
-chrome.runtime.setUninstallURL(
-  "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit",
-  () => {}
-);
-
-// Check Alarm
-chrome.alarms.get("changeBackground", (alarm) => {
-  // If no alarm, create one that executes at midnight
-  if (!alarm) {
-    let date = new Date();
-    let midnight = new Date();
-    midnight.setHours(23, 59, 59);
-    let ms = midnight.getTime() - date.getTime();
-    chrome.alarms.create("changeBackground", {
-      when: Date.now() + ms,
-      periodInMinutes: 60 * 24,
+// Runtime OnInstalled Listeners
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason == "install") {
+    createBackgroundAlarm(); // change background photo
+    createSyncToLocalAlarm(); // bring sync to local
+    chrome.runtime.setUninstallURL(
+      "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit"
+    );
+    const userSettings = {
+      changePhoto: true,
+      indexOpen: false,
+      newTab: true,
+      notifications: false,
+      notificationTime: "0",
+      pmode: false,
+      view: "week",
+    };
+    chrome.contextMenus.create({
+      title: "Open",
+      contexts: ["action"],
+      id: "open-sesame",
     });
+
+    chrome.storage.sync.set({ userSettings });
+    getPhoto(); // get background photo
+  } else if (details.reason == "update") {
+    createSyncToLocalAlarm();
   }
 });
 
-// CONTEXT MENUS
-// 1. User toggles off new tab
-// 2. Clicks on 'Open'
-// 3. Opens index.html
-
-chrome.permissions.contains(
-  {
-    permissions: ["notifications"],
-  },
-  (result) => {
-    if (result) {
-      chrome.notifications.onClicked.addListener((notificationId) => {
-        clearNotifications();
-      });
-    }
-  }
-);
-
+// Context Menu Click Listeners
 chrome.contextMenus.onClicked.addListener(function (result) {
   if (result["menuItemId"] === "open-sesame") {
     chrome.storage.sync.get("userSettings", (result) => {
@@ -73,7 +41,7 @@ chrome.contextMenus.onClicked.addListener(function (result) {
   }
 });
 
-// Alarm to execute getPhoto()
+// Alarm Listeners
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "changeBackground") {
     chrome.storage.sync.get("userSettings", (result) => {
@@ -82,15 +50,14 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         getPhoto();
       }
     });
+  } else if (alarm.name === "moveToLocal") {
+    moveToLocal();
   }
-
-  // If we want custom alarms later on, add them here
-
-  // Alarm from Notifications
+  // Notification Alarms
   else {
     // have the alarm occur, look at the alarm name for the key of the entry
-    clearNotifications();
-    let dateStamp = new Date().toLocaleDateString();
+    let dateStamp = new Date().toLocaleDateString("en-US");
+    // replace with the -
     chrome.storage.sync.get([dateStamp], (result) => {
       let entries = result[dateStamp];
       let entry = entries.find((entry) => entry.key === alarm.name);
@@ -102,10 +69,71 @@ chrome.alarms.onAlarm.addListener((alarm) => {
       };
       // Clear all other notification before this
       chrome.notifications.create(entry.key, notificationObj);
+      chrome.notifications.onClicked.addListener((notificationId) => {
+        clearNotifications();
+      });
     });
   }
 });
 
+/**
+ * Create a recurring alarm for function @function moveToLocal
+ * Chnage every 2 weeks
+ */
+
+const createSyncToLocalAlarm = () => {
+  let nextWeek = new Date();
+  nextWeek.setDate(nextWeek.getDate() + 14); 
+  chrome.alarms.create("moveToLocal", {
+    when: nextWeek.getTime(),
+    periodInMinutes: 60 * 24 * 14,
+  });
+};
+
+/**
+ * Create an alarm for changing the background photo. Calls getPhoto()
+ */
+ const createBackgroundAlarm = () => {
+  let midnight = new Date();
+  midnight.setHours(23, 59, 59);
+  // Create alarm that executes every 25 hours
+  chrome.alarms.create("changeBackground", {
+    when: midnight.getTime(),
+    periodInMinutes: 60 * 24,
+  });
+};
+
+
+/**
+  Move all chrome.storage.sync entry dates that are older than 1 month 
+  to chrome.storage.local to avoid going over the storage limit in 
+  chrome.storage.sync
+*/
+
+const moveToLocal = () => {
+  // Move all entryDates from X months ago to localstorage
+  chrome.storage.sync.get(null, (result) => {
+    delete result.userSettings;
+    delete result.background;
+    // go through our items
+    for (const date in result) {
+      const today = new Date();
+      const entryDate = new Date(date);
+      // check if its older than a month old
+      const monthMS = 1000 * 60 * 60 * 24 * 30;
+      if (today.getTime() - entryDate.getTime() > monthMS) {
+        // place the date inside of localStorage and deletefrom syncStorage
+        chrome.storage.local.set({ [date]: result[date] }, () => {
+          chrome.storage.sync.remove([date]);
+        });
+      }
+    }
+  });
+};
+
+/**
+ * Clears all notifications from the system tray
+ */
 const clearNotifications = () => {
   chrome.notifications.getAll((result) => {
     let notifications = Object.keys(result);
@@ -115,7 +143,12 @@ const clearNotifications = () => {
   });
 };
 
-// Get new photo from collection https://unsplash.com/documentation
+/**
+ *
+ * Get new photo from collection https://unsplash.com/documentation and will
+ * store it in the users chrome storage sync . Gets called whenever the alarm
+ * changeBackground is fired
+ */
 const getPhoto = () => {
   // This url hits an api endpoint to get a random photo and saves it to user's chrome storage
   let url =

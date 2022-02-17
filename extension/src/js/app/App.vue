@@ -19,20 +19,24 @@ export default {
     Clock,
     Calendar,
   },
-
+  beforeCreate() {
+    // console.log("app started");
+  },
   created() {
-    // This is where I should check if I have it set as default new tab or not
+    window.addEventListener("resize", this.setBackground);
     this.setBackground();
   },
-
+  destroyed() {
+    window.removeEventListener("resize", this.setBackground);
+  },
   methods: {
     //   Work on the background transition to load on page
     setBackground() {
       let page = document.getElementsByTagName("html");
       chrome.storage.sync.get(["background", "userSettings"], (result) => {
-        chrome.storage.local.get("image", (localRes) => {
-          if (Object.keys(localRes).length > 0) {
-            let image = localRes.image;
+        chrome.storage.sync.get("image", (syncRes) => {
+          if (Object.keys(syncRes).length > 0) {
+            let image = syncRes.image;
             page[0].style.background = `url(${image})`;
           } else {
             let image = result.background.url;
@@ -46,8 +50,6 @@ export default {
           : "block";
       });
     },
-
-    // checkLogin() {},
   },
 };
 </script>
@@ -57,8 +59,5 @@ main {
   margin: 1rem auto;
   justify-content: center;
   width: 100%;
-  animation-name: fadeIn;
-  animation-duration: 0.4s;
-  animation-fill-mode: forwards;
 }
 </style>

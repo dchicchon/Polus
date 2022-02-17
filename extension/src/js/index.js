@@ -1,52 +1,45 @@
 import Vue from "vue";
-import App from "./app/App.vue"; // vue
-
-function updateStorageVersion() {
-    let userSettings = {
-        changePhoto: true,
-        indexOpen: false,
-        newTab: true,
-        notifications: false,
-        notificationTime: "0",
-        pmode: false,
-        view: "week",
-    };
-    chrome.storage.sync.set({ userSettings }, () => {
-        checkOptions()
-    });
-
-}
-
-function checkOptions() {
-    chrome.storage.sync.get('userSettings', result => {
-        // If not updated to the current version of the app
-        if (Object.keys(result).length === 0) {
-            updateStorageVersion();
-        }
-        // If we can have this as our new tab
-        else {
-            let { userSettings } = result
-            if (userSettings.newTab || userSettings.indexOpen) {
-                userSettings.indexOpen = false
-                chrome.storage.sync.set({ userSettings })
-                new Vue({
-                    el: "#app",
-                    render: (createElement) => createElement(App)
-                });
-            } else {
-                chrome.tabs.update({
-                    url: "chrome-search://local-ntp/local-ntp.html",
-                });
-            }
-        }
-    })
-
-    // If new tab is turned off
-}
-
-window.onload = () => {
-    // check if we have a new tab or not
-    checkOptions()
+import App from "./app/App.vue";
 
 
+// Script initialized
+const initPolus = () => {
+  // const firebaseApp = initializeApp(config);
+  // Vue.prototype.$auth = getAuth(firebaseApp);
+  // Vue.prototype.$firestore = getFirestore(firebaseApp);
+  // Vue.prototype.$functions = getFunctions(firebaseApp)
 };
+
+const start = () => {
+  // Do a check here to see if a user is signed in perhaps
+  chrome.storage.sync.get("userSettings", (result) => {
+    // If not updated to the current version of the app
+    let { userSettings } = result;
+    // if new tab is enabled
+    if (userSettings.newTab || userSettings.indexOpen) {
+      userSettings.indexOpen = false; // need to do this if I want functionality for new open tab
+      chrome.storage.sync.set({ userSettings });
+
+      // Here maybe I could
+      new Vue({
+        el: "#app",
+        render: (createElement) => createElement(App),
+        // Maybe find out later on how to pass in authstatechanged
+      });
+    } else {
+      chrome.tabs.update({
+        url: "chrome-search://sync-ntp/sync-ntp.html",
+      });
+    }
+  });
+};
+
+// Window Loaded
+window.onload = () => {
+  // Vue.prototype.$firebaseApp = firebaseApp
+  start();
+};
+
+// Will execute before the window loads. In the future if there is any
+// code i need to load beforehand, i can run it here
+initPolus();

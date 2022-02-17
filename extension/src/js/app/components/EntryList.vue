@@ -6,32 +6,35 @@
     @dragover.prevent
     ref="details"
   >
-    <!-- @dragenter="isOver = true" -->
     <div v-if="dateTitle" :style="todayDate" class="dateTitle">
       {{ dayNumber }}
     </div>
-    <ul ref="entryList" class="entryList">
+
+    <ul v-if="Object.keys(entries).length" ref="entryList" class="entryList">
       <Entry
-        v-for="(entry, index) in entries"
-        :deleteEntry="deleteEntry"
-        :dragStart="dragStart"
-        :entry="entry"
-        :checkEntry="checkEntry"
-        :colorEntry="colorEntry"
+        v-for="(entry, key, index) in entries"
         :key="index"
+        :entryKey="key"
+        :entry="entry"
+        :createEntry="createEntry"
+        :updateEntry="updateEntry"
+        :deleteEntry="deleteEntry"
         :listDate="listDate"
-        :submitEntry="submitEntry"
-        :timeEntry="timeEntry"
+        :dragStart="dragStart"
       />
     </ul>
-    <button @click="addEntry" :value="dateStamp" class="addButton">+</button>
+    <ul v-else ref="entryList" class="entryList"></ul>
+
+    <button @click="initEntry" :value="dateStamp" class="addButton">+</button>
   </div>
 </template>
 
 <script>
-import Entry from "./Entry";
-import shortId from "shortid"; // unique ids that dont add too much space
-
+import Entry from "./Entry.vue";
+// import { onAuthStateChanged } from "firebase/auth";
+import { actions } from "../utils/store";
+import shortid from "shortid";
+import Vue from "vue";
 // https://stackoverflow.com/questions/18548465/prevent-scroll-bar-from-adding-up-to-the-width-of-page-on-chrome
 export default {
   components: {
@@ -54,19 +57,23 @@ export default {
   },
   data() {
     return {
-      entries: [],
+      entries: {},
       isOver: false,
     };
   },
+
   created() {
-    // We do this to get the entries for the date
-    this.getEntries();
+    // Create an event listener for if the alarm of reloadFirestore
+    // goes off
+    // chrome.storage.onChanged.addListener(this.checkChanges);
+    this.readEntries();
+    // onAuthStateChanged(this.$auth, this.readEntries); // this watches to see if a user logs in or logs off
   },
 
   watch: {
     // do this if we change the date
     listDate(newValue) {
-      this.getEntries();
+      this.readEntries();
     },
   },
 
@@ -81,39 +88,26 @@ export default {
   },
 
   methods: {
-    addEntry() {
+    initEntry() {
+      // console.log("Init Entry");
       // Add to entries state and to chrome storage
       let newEntry = {
-        key: shortId.generate(),
         text: "",
         color: "blue",
         active: false,
+        new: true,
       };
-      this.entries.push(newEntry);
-    },
-    checkEntry(key) {
-      let index = this.entries.map((entry) => entry.key).indexOf(key);
-      let currentState = this.entries[index].active;
-      this.entries[index].active = !currentState;
-      this.updateStorage();
+
+      // Need to use Vue.set in order to have reactivity for objects
+      Vue.set(this.entries, shortid.generate(), newEntry);
     },
 
-    colorEntry() {
-      this.updateStorage();
-    },
-    deleteEntry(key) {
-      // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
-      let index = this.entries.map((entry) => entry.key).indexOf(key);
-      if (this.entries[index].hasOwnProperty("time")) {
-        chrome.alarms.clear(key); // clearing alarm if it has time
-      }
-      this.entries.splice(index, 1);
-      this.updateStorage();
-    },
-
+    //===============
+    // DRAG FUNCTIONS
+    //===============
     // https://learnvue.co/2020/01/how-to-add-drag-and-drop-to-your-vuejs-project/
     // Start of drag
-    dragStart(evt, entry, parentId) {
+    dragStart(evt, key, entry, parentId) {
       // We need a callback so we can remove from the original data and entries list
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
@@ -121,25 +115,14 @@ export default {
       // https://stackoverflow.com/questions/9533585/drag-drop-html-5-jquery-e-datatransfer-setdata-with-json
       evt.dataTransfer.setData("text/plain", JSON.stringify(entry));
       evt.dataTransfer.setData("parentId", parentId);
+      evt.dataTransfer.setData("key", key);
     },
-
-    getEntries() {
-      let dateStamp = this.listDate.toLocaleDateString();
-      chrome.storage.sync.get([dateStamp], (result) => {
-        if (Object.keys(result).length > 0) {
-          this.entries = result[dateStamp];
-        } else {
-          this.entries = [];
-        }
-      });
-    },
-
     // On drop, we will add to our list and delete from old one
     onDrop(evt) {
       this.isOver = false;
-
       // get original parent id
       const parentId = parseInt(evt.dataTransfer.getData("parentId"));
+      const key = evt.dataTransfer.getData("key");
 
       // If in the same list, exit the function
       if (parentId === this._uid) return;
@@ -153,47 +136,79 @@ export default {
         (list) => list._uid === parentId
       )[0];
 
-      // Call the original parent function deleteEntry and pass in the key
-      originalParent.deleteEntry(entry.key);
-
-      // Add to our new list
-      this.entries.push(entry); // might change it back to push later, unsure
-      this.updateStorage();
+      originalParent.deleteEntry(key);
+      Vue.set(this.entries, key, entry);
+      this.createEntry(entry, key);
     },
+    // END DRAG FUNCTIONS
 
-    timeEntry() {
-      this.updateStorage();
-    },
-
-    submitEntry(text, key) {
-      if (text.length === 0) {
-        this.deleteEntry(key);
+    //===============
+    // CRUD FUNCTIONS
+    //===============
+    createEntry(entry, key) {
+      if (entry.text.length === 0) {
+        Vue.delete(this.entries, key);
       } else {
-        let index = this.entries.map((entry) => entry.key).indexOf(key);
-        this.entries[index].text = text;
-        this.updateStorage();
+        Vue.delete(this.entries[key], "new");
+        actions
+          .create({ date: this.dateStamp, entry, key })
+          .then((result) => {
+            // console.log(result);
+          })
+          .catch((e) => console.error(e));
       }
     },
-
-    updateStorage() {
-      let currentDate = this.listDate.toLocaleDateString();
-      if (this.entries.length > 0) {
-        chrome.storage.sync.set({ [currentDate]: this.entries });
-      } else {
-        chrome.storage.sync.remove([currentDate]); // remove from storage if there are no entries for this date
-      }
+    readEntries() {
+      console.log("read entries");
+      actions
+        .read({ date: this.dateStamp })
+        .then((result) => {
+          this.entries = result;
+        })
+        .catch((e) => console.error(e));
     },
+
+    updateEntry(key) {
+      // check if entry is any different than before
+      // Instead of doing just this i should specify what is being changed maybe?
+      Vue.set(this.entries, key, this.entries[key]);
+      actions
+        .update({ date: this.dateStamp, entry: this.entries[key], key })
+        .then((result) => {
+          // console.log(result);
+        })
+        .catch((e) => console.error(e));
+    },
+
+    deleteEntry(key) {
+      console.log("Delete Entry");
+      if (this.entries[key].hasOwnProperty("time")) {
+        chrome.alarms.clear(key); // clearing alarm if it has time
+      }
+      Vue.delete(this.entries, key);
+      actions
+        .delete({ date: this.dateStamp, key })
+        .then((result) => {
+          // console.log(result);
+        })
+        .catch((e) => console.error(e));
+    },
+
+    //===============
+    // END CRUD FUNCTIONS
+    //===============
   },
   computed: {
     dateStamp() {
-      return this.listDate.toLocaleDateString();
+      return this.listDate.toLocaleDateString("en-US").replaceAll("/", "-");
     },
     dayNumber() {
       return this.listDate.getDate();
     },
     todayDate() {
       if (
-        this.listDate.toLocaleDateString() === new Date().toLocaleDateString()
+        this.listDate.toLocaleDateString("en-US") ===
+        new Date().toLocaleDateString("en-US")
       ) {
         return {
           background: "rgba(5,80,123,0.992)",
@@ -213,91 +228,89 @@ export default {
   },
 };
 </script>
-<style scoped lang="scss">
-// https://css-tricks.com/almanac/properties/b/backdrop-filter/
 
+<style lang="scss" scoped>
 .over {
-  background: rgba(37, 37, 37, 0.329) !important;
+    background: rgba(37, 37, 37, 0.329) !important;
 }
 
 .details {
-  overflow: auto;
-  height: 20rem;
+    overflow: auto;
+    height: 20rem;
 
-  .dateTitle {
-    font-weight: 0;
-    border-radius: 12px;
-    margin-bottom: 0.25rem;
-    width: 20px;
-    height: 20px;
-    min-width: 16px;
-    // padding: 4px 3px 0 3px;
-    text-align: center;
-  }
-  .entryList {
-    list-style-type: none;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-  }
-  .addButton {
-    background: none;
-    width: 1.5rem;
-    font-size: 1.25rem;
-    border-radius: 100%;
-    opacity: 0;
-    transition: background 0.5s, opacity 0.5s;
-    padding: 0 0.4rem;
-  }
-
-  // CANT USE THIS YET, looks bad over a light background
-  // For scrollbar hover over
-  // mask-image: linear-gradient(to top, transparent, black),
-  //   linear-gradient(to left, transparent 17px, black 17px);
-  // mask-size: 100% 20000px;
-  // mask-position: left bottom;
-  // transition: mask-position 0.5s;
-  // //
-
-  &::-webkit-scrollbar {
-    width: 10px;
-  }
-  &::-webkit-scrollbar-thumb {
-    // height: 6px;
-    width: 10px;
-    border: 4px solid rgba(0, 0, 0, 0);
-    background-clip: padding-box;
-    background-color: #888;
-    // background-color: #888;
-    // background-color: none;
-    background-color: none;
-
-    transition: background 0.5s;
-    box-shadow: inset -1px -1px 0px rgb(0 0 0 / 5%),
-      inset 1px 1px 0px rgb(0 0 0 / 5%);
-    border-radius: 25px;
-  }
-  &::-webkit-scrollbar-button {
-    width: 0;
-    height: 0;
-    display: none;
-  }
-  &:hover {
-    mask-position: left top;
-    // &::-webkit-scrollbar-thumb {
-    // height: 6px;
-    // width: 10px;
-    // border: 4px solid rgba(0, 0, 0, 0);
-    // background-clip: padding-box;
-    // background-color: #888;
-    // box-shadow: inset -1px -1px 0px rgb(0 0 0 / 5%),
-    // inset 1px 1px 0px rgb(0 0 0 / 5%);
-    // border-radius: 25px;
-    // }
-    .addButton {
-      opacity: 1;
+    .dateTitle {
+        font-weight: 0;
+        border-radius: 12px;
+        margin-bottom: 0.25rem;
+        width: 20px;
+        height: 20px;
+        min-width: 16px;
+        // padding: 4px 3px 0 3px;
+        text-align: center;
     }
-  }
+    .entryList {
+        list-style-type: none;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
+    .addButton {
+        background: none;
+        width: 1.5rem;
+        font-size: 1.25rem;
+        border-radius: 100%;
+        opacity: 0;
+        transition: background 0.5s, opacity 0.5s;
+        padding: 0 0.4rem;
+    }
+
+    // CANT USE THIS YET, looks bad over a light background
+    // For scrollbar hover over
+    // mask-image: linear-gradient(to top, transparent, black),
+    //   linear-gradient(to left, transparent 17px, black 17px);
+    // mask-size: 100% 20000px;
+    // mask-position: left bottom;
+    // transition: mask-position 0.5s;
+    // //
+
+    &::-webkit-scrollbar {
+        width: 10px;
+    }
+    &::-webkit-scrollbar-thumb {
+        // height: 6px;
+        width: 10px;
+        border: 4px solid rgba(0, 0, 0, 0);
+        background-clip: padding-box;
+        background-color: #888;
+        // background-color: #888;
+        // background-color: none;
+        background-color: none;
+
+        transition: background 0.5s;
+        box-shadow: inset -1px -1px 0px rgb(0 0 0 / 5%), inset 1px 1px 0px rgb(0 0 0 / 5%);
+        border-radius: 25px;
+    }
+    &::-webkit-scrollbar-button {
+        width: 0;
+        height: 0;
+        display: none;
+    }
+    &:hover {
+        mask-position: left top;
+        // &::-webkit-scrollbar-thumb {
+        // height: 6px;
+        // width: 10px;
+        // border: 4px solid rgba(0, 0, 0, 0);
+        // background-clip: padding-box;
+        // background-color: #888;
+        // box-shadow: inset -1px -1px 0px rgb(0 0 0 / 5%),
+        // inset 1px 1px 0px rgb(0 0 0 / 5%);
+        // border-radius: 25px;
+        // }
+        .addButton {
+            opacity: 1;
+        }
+    }
 }
 </style>

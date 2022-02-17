@@ -62,7 +62,8 @@
 }
 </style>
 <script>
-import EntryList from "./EntryList";
+
+import EntryList from "./EntryList.vue";
 export default {
   components: {
     EntryList,
