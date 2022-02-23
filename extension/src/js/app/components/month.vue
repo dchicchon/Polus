@@ -31,36 +31,6 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
-#month {
-  flex-direction: column;
-  justify-content: center;
-  .weekdayNames {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(50px, 1fr));
-    width: 98%;
-    margin: 0 auto;
-  }
-  .monthDays {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(50px, 1fr));
-    width: 98%;
-    margin: 0 auto;
-
-    .monthDay {
-      text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
-      height: 13rem;
-      padding: 0.75rem;
-      // border: 0.5px solid $border-color;
-      border: 0.5px solid rgba(32, 32, 32, 0.555);
-      float: left;
-      // background: $day-background;
-      background: rgba(0, 0, 0, 0.15);
-      transition: background 0.5s;
-    }
-  }
-}
-</style>
 <script>
 
 import EntryList from "./EntryList.vue";
@@ -129,3 +99,43 @@ export default {
   },
 };
 </script>
+
+
+<style lang="scss" scoped>
+.nav {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
+}
+#month {
+
+  flex-direction: column;
+  justify-content: center;
+  .weekdayNames {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(50px, 1fr));
+    width: 98%;
+    margin: 0 auto;
+  }
+  .monthDays {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(50px, 1fr));
+    width: 98%;
+    margin: 0 auto;
+
+    .monthDay {
+      text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
+      height: 13rem;
+      padding: 0.75rem;
+      // border: 0.5px solid $border-color;
+      border: 0.5px solid rgba(32, 32, 32, 0.555);
+      float: left;
+      // background: $day-background;
+      background: rgba(0, 0, 0, 0.15);
+      transition: background 0.5s;
+    }
+  }
+}
+</style>

@@ -1,0 +1,180 @@
+import Vue from "vue";
+// Local storage manipulation
+/** 
+  Get entryDate objects from chrome.storage.local asynchronously and return them 
+  to use on our Entry Lists
+*/
+const getLocal = async ({ key }) => {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get([key], (result) => {
+      if (Object.keys(result).length > 0) {
+        resolve(result[key]); // this should return everything
+      }
+      resolve({});
+    });
+  });
+}
+const setLocal = async ({ key, value }) => {
+  // maybe use sync instead if the user is logged in?
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.set({ [key]: value }, (result) => {
+      resolve(result);
+    });
+  });
+};
+const removeLocal = async ({ key }) => {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.remove([key], (result) => {
+      resolve(result);
+    });
+  });
+};
+
+const clearLocal = async ({ }) => {
+  return new Promise((resolve, reject) => {
+    // remove everything from storage besides background info and userSettings
+    chrome.storage.local.get(null, result => {
+      delete result.userSettings;
+      delete result.background;
+      for (const key in result) {
+        removeLocal({ key })
+      }
+      resolve()
+    })
+
+  })
+}
+
+// SYNC
+const getSync = async ({ key }) => {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get([key], (result) => {
+      if (Object.keys(result).length > 0) {
+        resolve(result[key]); // this should return everything
+      }
+      resolve(null);
+    });
+  });
+};
+
+const setSync = async ({ key, value }) => {
+  // maybe use sync instead if the user is logged in?
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.set({ [key]: value }, (result) => {
+      resolve(result);
+    });
+  });
+};
+
+const removeSync = async ({ key }) => {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.remove([key], (result) => {
+      resolve(result);
+    });
+  });
+};
+
+const clearSync = async ({ }) => {
+  return new Promise((resolve, reject) => {
+    // remove everything from storage besides background info and userSettings
+    chrome.storage.sync.get(null, result => {
+      delete result.userSettings;
+      delete result.background;
+      for (const key in result) {
+        removeSync({ key })
+      }
+      resolve()
+    })
+  })
+}
+
+export const state = Vue.observable({
+  key: new Date(),
+  userSettings: {},
+  background: {}
+});
+
+export const actions = {
+  initUserSettings: async () => {
+    let userSettings = await getSync({ key: 'userSettings' }) 
+    actions.setUserSettings(userSettings)
+  },
+  initBackground: async () => {
+    let background = await getSync({ key: 'background' })
+    if (!background) return;
+    actions.setBackground(background)
+  },
+  setBackground: (background) => {
+    state.background = background;
+    setSync({ key: 'background', value: background })
+  },
+  setUserSettings: (userSettings) => {
+    state.userSettings = userSettings
+    setSync({ key: 'userSettings', value: userSettings })
+  },
+  setDate: (key) => {
+    state.date = date;
+  },
+  resetSyncDatabase: async () => {
+    await clearSync()
+  },
+  create: async ({ date, entry, key }) => {
+    const dateObject = await getSync({ key: date });
+    dateObject[key] = entry;
+    const results = await setSync({ key: date, value: dateObject });
+  },
+  read: async ({ date }) => {
+    // Get all items
+    let dateObject = await getSync({ key: date });
+    // Check if dateObject is empty
+    if (Object.keys(dateObject).length === 0) {
+      // Get time items in order to check if this was about a month ago
+      const todayDate = new Date();
+      const entryListDate = new Date(date);
+      const monthMS = 1000 * 60 * 60 * 24 * 30
+      // If entryListDate is from ago, then lets check our local storage
+      if (todayDate.getTime() - entryListDate.getTime() > monthMS) {
+        // then lets check the local storage instead
+        dateObject = await getLocal({ key: date })
+
+        // cant really think that anyone would add something 
+        // from the past
+      }
+    }
+    return dateObject;
+  },
+  update: async ({ date, entry, key }) => {
+    let dateObject = await getSync({ key: date });
+    let result;
+    if (key in dateObject) {
+      dateObject[key] = entry;
+      result = await setSync({ key: date, value: dateObject });
+    } else {
+      dateObject = await getLocal({ date })
+      dateObject[key] = entry;
+      result = await setLocal({ key: date, value: dateObject });
+    }
+    return result;
+  },
+  delete: async ({ date, key }) => {
+    let dateObject = await getSync({ key: date });
+    let results;
+    if (key in dateObject) {
+      delete dateObject[key];
+      if (Object.keys(dateObject).length === 0) {
+        results = await removeChromeStorageSync({ key: date });
+      } else {
+        results = await setChromeStorageSync({ key: date, value: dateObject });
+      }
+    } else {
+      dateObject = await getChromeStorageLocal({ key: date })
+      delete dateObject[key]
+      if (Object.keys(dateObject).length === 0) {
+        results = await removeChromeStorageLocal({ key: date })
+      } else {
+        results = await setChromeStorageLocal({ key: date, value: dateObject })
+      }
+    }
+    return results;
+  },
+};

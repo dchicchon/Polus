@@ -83,7 +83,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
 const createSyncToLocalAlarm = () => {
   let nextWeek = new Date();
-  nextWeek.setDate(nextWeek.getDate() + 14); 
+  nextWeek.setDate(nextWeek.getDate() + 14);
   chrome.alarms.create("moveToLocal", {
     when: nextWeek.getTime(),
     periodInMinutes: 60 * 24 * 14,
@@ -93,7 +93,7 @@ const createSyncToLocalAlarm = () => {
 /**
  * Create an alarm for changing the background photo. Calls getPhoto()
  */
- const createBackgroundAlarm = () => {
+const createBackgroundAlarm = () => {
   let midnight = new Date();
   midnight.setHours(23, 59, 59);
   // Create alarm that executes every 25 hours
@@ -102,7 +102,6 @@ const createSyncToLocalAlarm = () => {
     periodInMinutes: 60 * 24,
   });
 };
-
 
 /**
   Move all chrome.storage.sync entry dates that are older than 1 month 
@@ -150,6 +149,7 @@ const clearNotifications = () => {
  * changeBackground is fired
  */
 const getPhoto = () => {
+  console.log("Getting Photo")
   // This url hits an api endpoint to get a random photo and saves it to user's chrome storage
   let url =
     "https://api.unsplash.com/photos/random/?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&collections=8974511";
@@ -159,9 +159,15 @@ const getPhoto = () => {
       if (!response.ok) throw response.statusText;
       return response;
     })
+    .catch((err) => {
+      throw err
+    })
     .then((response) => response.json())
+    .catch((err) => {
+      throw err
+    })
     .then((photo) => {
-      // console.log(photo);
+      console.log("third then")
       let url = photo.urls.raw;
       let location = photo.location.name ? `${photo.location.name}` : "Unknown";
       let author = photo.user.name ? `${photo.user.name}` : "Unknown";
@@ -176,5 +182,8 @@ const getPhoto = () => {
       };
       chrome.storage.sync.set({ background });
     })
-    .catch((err) => console.log(`Fetch failed: ${err}`));
+    .catch((err) => {
+      console.log("Final error")
+      throw err
+    });
 };

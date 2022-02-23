@@ -2,16 +2,12 @@
   <div class="main">
     <h2 class="page-title">Updates</h2>
     <div class="update-details">
+      <!-- add 2.0.0 update here -->
       <div>
         <h4 style="margin: 0%">Update 2.0</h4>
-        <ul style="margin-top: 0; padding-inline-start: 20px">
-          <li>Polus App now available on Android and iOS [links here]</li>
-          <li>
-            Connect to your Polus app through creating an account on the Account
-            page
-          </li>
-        </ul>
+        <ul style="margin-top: 0; padding-inline-start: 20px"></ul>
       </div>
+      <!-- end update -->
       <div>
         <h4 style="margin: 0%">Update 1.7.1</h4>
         <ul style="margin-top: 0; padding-inline-start: 20px">

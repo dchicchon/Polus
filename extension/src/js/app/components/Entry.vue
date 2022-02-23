@@ -136,6 +136,8 @@
   <!-- End Active Entry -->
 </template>
 <script>
+// import { state, actions } from "../utils/store";
+
 export default {
   props: {
     deleteEntry: {
@@ -156,7 +158,7 @@ export default {
     },
     listDate: {
       type: Date,
-      required: true,
+      // required: true,
     },
     createEntry: {
       type: Function,
@@ -175,7 +177,6 @@ export default {
       mode: "",
     };
   },
-
   mounted() {
     if (this.$refs.newEntry) this.$refs.newEntry.focus(); // add focus on new entry textarea
   },
@@ -274,7 +275,6 @@ export default {
         this.updateEntry(this.entryKey);
       }
     },
-
   },
 
   computed: {
@@ -452,7 +452,7 @@ select option {
       background: none;
       color: white;
       text-overflow: ellipsis;
-      height:60px;
+      height: 60px;
       &.show {
         opacity: 1;
       }

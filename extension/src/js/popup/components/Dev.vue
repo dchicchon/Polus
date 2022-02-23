@@ -13,7 +13,7 @@ export default {
   data() {
     return {};
   },
-  mounted() { 
+  mounted() {
     // chrome.storage.sync.get(["reload"], (result) => {
     //   console.log("Current State");
     //   console.log(result);
@@ -22,12 +22,9 @@ export default {
   methods: {
     checkAlarms() {
       chrome.alarms.getAll((result) => {
-        const logs = document.getElementById("logs");
-        logs.innerHTML = "";
-        console.log(result);
+        let textList = [];
         for (const alarm of result) {
           for (const key in alarm) {
-            console.log(key);
             const textElm = document.createElement("p");
             let text = "";
             if (key === "scheduledTime") {
@@ -37,19 +34,20 @@ export default {
             } else {
               text = alarm[key];
             }
-            textElm.textContent = `${key} : ${text}`;
-            logs.append(textElm);
+            textList.push(`${key} : ${text}`);
           }
         }
+        this.addToLog(textList);
       });
     },
-
     moveToLocal() {
+      let textList = [];
+      textList.push("Moving to local");
       chrome.storage.sync.get(null, (result) => {
         delete result.userSettings;
         delete result.background;
-        // go through our items
         for (const date in result) {
+          textList.push(`Checking ${date.toLocaleString()}...`);
           const today = new Date();
           const entryDate = new Date(date);
           // check if its older than a month old
@@ -57,32 +55,29 @@ export default {
           if (today.getTime() - entryDate.getTime() > monthMS) {
             // place the date inside of localStorage and deletefrom syncStorage
             chrome.storage.local.set({ [date]: result[date] }, () => {
+              textList.push(`${date.toLocaleString()} added to localStorage`);
+
               chrome.storage.sync.remove([date]);
             });
           }
         }
       });
+      this.addToLog(textList);
     },
 
-    addMaxItemsTosync() {
-      // check the amount of items in storage
-      chrome.storage.sync.get(null, (result) => {
-        console.log(Object.keys(result).length);
-
-        // Go until 360 items in storage
-        let currentLength = Object.keys(result).length;
-        while (currentLength < 360) {
-          const keyName = `TestItem${currentLength}}`;
-          chrome.storage.sync.set({ keyName: 1 });
-          currentLength++;
-        }
-        // Now show the popup modal
-        // chrome.storage.sync.set({maxItemsReached: true})
-      });
+    addToLog(textArr) {
+      const logs = document.getElementById("logs");
+      logs.innerHTML = "";
+      for (let text of textArr) {
+        let textElm = document.createElement("p");
+        textElm.textContent = text;
+        logs.append(textElm);
+      }
     },
   },
 };
 </script>
+
 <style lang="scss" scoped>
 #logs {
   padding: 5px;

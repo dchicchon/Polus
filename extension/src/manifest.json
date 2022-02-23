@@ -3,6 +3,7 @@
   "name": "Polus",
   "version": "2.0.0",
   "description": "An online planner to help make you more efficient!",
+  "author": "dchicchon",
   "icons": {
     "16": "assets/polus_tab_icon.png",
     "48": "assets/polus_icon48.png",
@@ -13,12 +14,11 @@
     "default_icon": "assets/polus_tab_icon.png",
     "default_popup": "html/popup.html"
   },
-  "author": "dchicchon",
   "background": {
     "service_worker": "background.js"
   },
   "chrome_url_overrides": {
-    "newtab": "html/index.html"
+    "newtab": "html/app.html"
   },
   "incognito": "not_allowed",
   "offline_enabled": true,

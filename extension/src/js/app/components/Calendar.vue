@@ -33,7 +33,6 @@
 import Day from "./Day";
 import Week from "./Week";
 import Month from "./Month";
-// import { actions } from "../utils/store";
 export default {
   components: {
     Day,
@@ -45,7 +44,6 @@ export default {
       userSettings: {},
     };
   },
-
   created() {
     // console.log("created")
     chrome.storage.sync.get("userSettings", (result) => {
@@ -55,9 +53,7 @@ export default {
   },
 
   methods: {
-    changeView: function(type) {
-      console.log("Change View")
-      console.log(this.userSettings)
+    changeView: function (type) {
       this.userSettings.view = type;
       let userSettings = this.userSettings;
       chrome.storage.sync.set({ userSettings });
@@ -66,4 +62,19 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+#view {
+  display: flex;
+  justify-content: center;
+  width: 15%;
+  margin: 0.5rem auto;
+  font-weight: 100;
+  .view-btn {
+    background: rgba(90, 90, 90, 0.329);
+    transition: background 0.5s;
+  }
+  .view-btn:hover {
+    background: rgba(43, 42, 42, 0.329);
+  }
+}
+</style>

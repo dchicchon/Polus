@@ -16,13 +16,20 @@
         md-label="Updates"
         md-icon="/assets/popup_icons/updates.svg"
       />
+      <md-bottom-bar-item
+        @click="($event) => changeTab($event, 'dev')"
+        id="bottom-bar-item-updates"
+        md-label="Updates"
+        md-icon="/assets/popup_icons/updates.svg"
+      />
     </md-bottom-bar>
   </div>
 </template>
-
 <script>
-import Options from "./components/Options";
-import Updates from "./components/Updates";
+import Options from "./components/Options.vue";
+import Updates from "./components/Updates.vue";
+// in dev environment
+import Dev from "./components/Dev.vue";
 
 // Popup Entry Point. Should create a check to see if user is logged in with firebase
 export default {
@@ -30,6 +37,7 @@ export default {
   components: {
     Options,
     Updates,
+    Dev,
   },
 
   data() {
@@ -48,25 +56,28 @@ export default {
   // computed in app, costs less than using methods
   computed: {
     currentTabComponent() {
-      console.log("Current Tab Component");
+      // console.log("Current Tab Component");
       let component = this.tab.charAt(0).toUpperCase() + this.tab.slice(1);
       return component;
     },
   },
 };
 </script>
-
-<style lang="scss">
+<style lang="scss" >
+// not scoped
 html {
   height: 0px !important;
+}
+body {
+  width: 300px;
+  height: 350px;
+  margin: 0;
 }
 
 .blue {
   background-color: #1197d4 !important;
 }
-</style>
 
-<style lang="scss" scoped>
 .main {
   height: 100%;
 }

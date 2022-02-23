@@ -19,8 +19,8 @@
         :createEntry="createEntry"
         :updateEntry="updateEntry"
         :deleteEntry="deleteEntry"
-        :listDate="listDate"
         :dragStart="dragStart"
+        :listDate="listDate"
       />
     </ul>
     <ul v-else ref="entryList" class="entryList"></ul>
@@ -31,8 +31,7 @@
 
 <script>
 import Entry from "./Entry.vue";
-// import { onAuthStateChanged } from "firebase/auth";
-import { actions } from "../utils/store";
+import { state, actions } from "../../utils/store";
 import shortid from "shortid";
 import Vue from "vue";
 // https://stackoverflow.com/questions/18548465/prevent-scroll-bar-from-adding-up-to-the-width-of-page-on-chrome
@@ -63,11 +62,7 @@ export default {
   },
 
   created() {
-    // Create an event listener for if the alarm of reloadFirestore
-    // goes off
-    // chrome.storage.onChanged.addListener(this.checkChanges);
     this.readEntries();
-    // onAuthStateChanged(this.$auth, this.readEntries); // this watches to see if a user logs in or logs off
   },
 
   watch: {
@@ -104,9 +99,7 @@ export default {
 
     //===============
     // DRAG FUNCTIONS
-    //===============
     // https://learnvue.co/2020/01/how-to-add-drag-and-drop-to-your-vuejs-project/
-    // Start of drag
     dragStart(evt, key, entry, parentId) {
       // We need a callback so we can remove from the original data and entries list
       evt.dataTransfer.dropEffect = "move";
@@ -140,26 +133,24 @@ export default {
       Vue.set(this.entries, key, entry);
       this.createEntry(entry, key);
     },
-    // END DRAG FUNCTIONS
 
     //===============
     // CRUD FUNCTIONS
-    //===============
     createEntry(entry, key) {
       if (entry.text.length === 0) {
         Vue.delete(this.entries, key);
-      } else {
-        Vue.delete(this.entries[key], "new");
-        actions
-          .create({ date: this.dateStamp, entry, key })
-          .then((result) => {
-            // console.log(result);
-          })
-          .catch((e) => console.error(e));
+        return;
       }
+
+      Vue.delete(this.entries[key], "new");
+      actions
+        .create({ date: this.dateStamp, entry, key })
+        .then((result) => {
+          console.log(result);
+        })
+        .catch((e) => console.error(e));
     },
     readEntries() {
-      console.log("read entries");
       actions
         .read({ date: this.dateStamp })
         .then((result) => {
@@ -167,7 +158,6 @@ export default {
         })
         .catch((e) => console.error(e));
     },
-
     updateEntry(key) {
       // check if entry is any different than before
       // Instead of doing just this i should specify what is being changed maybe?
@@ -179,7 +169,6 @@ export default {
         })
         .catch((e) => console.error(e));
     },
-
     deleteEntry(key) {
       console.log("Delete Entry");
       if (this.entries[key].hasOwnProperty("time")) {
@@ -193,10 +182,6 @@ export default {
         })
         .catch((e) => console.error(e));
     },
-
-    //===============
-    // END CRUD FUNCTIONS
-    //===============
   },
   computed: {
     dateStamp() {
@@ -231,86 +216,87 @@ export default {
 
 <style lang="scss" scoped>
 .over {
-    background: rgba(37, 37, 37, 0.329) !important;
+  background: rgba(37, 37, 37, 0.329) !important;
 }
 
 .details {
-    overflow: auto;
-    height: 20rem;
+  overflow: auto;
+  height: 20rem;
 
-    .dateTitle {
-        font-weight: 0;
-        border-radius: 12px;
-        margin-bottom: 0.25rem;
-        width: 20px;
-        height: 20px;
-        min-width: 16px;
-        // padding: 4px 3px 0 3px;
-        text-align: center;
-    }
-    .entryList {
-        list-style-type: none;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-    }
+  .dateTitle {
+    font-weight: 0;
+    border-radius: 12px;
+    margin-bottom: 0.25rem;
+    width: 20px;
+    height: 20px;
+    min-width: 16px;
+    // padding: 4px 3px 0 3px;
+    text-align: center;
+  }
+  .entryList {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  .addButton {
+    background: none;
+    width: 1.5rem;
+    font-size: 1.25rem;
+    border-radius: 100%;
+    opacity: 0;
+    transition: background 0.5s, opacity 0.5s;
+    padding: 0 0.4rem;
+  }
+
+  // CANT USE THIS YET, looks bad over a light background
+  // For scrollbar hover over
+  // mask-image: linear-gradient(to top, transparent, black),
+  //   linear-gradient(to left, transparent 17px, black 17px);
+  // mask-size: 100% 20000px;
+  // mask-position: left bottom;
+  // transition: mask-position 0.5s;
+  // //
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    // height: 6px;
+    width: 10px;
+    border: 4px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    background-color: #888;
+    // background-color: #888;
+    // background-color: none;
+    background-color: none;
+
+    transition: background 0.5s;
+    box-shadow: inset -1px -1px 0px rgb(0 0 0 / 5%),
+      inset 1px 1px 0px rgb(0 0 0 / 5%);
+    border-radius: 25px;
+  }
+  &::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+  &:hover {
+    mask-position: left top;
+    // &::-webkit-scrollbar-thumb {
+    // height: 6px;
+    // width: 10px;
+    // border: 4px solid rgba(0, 0, 0, 0);
+    // background-clip: padding-box;
+    // background-color: #888;
+    // box-shadow: inset -1px -1px 0px rgb(0 0 0 / 5%),
+    // inset 1px 1px 0px rgb(0 0 0 / 5%);
+    // border-radius: 25px;
+    // }
     .addButton {
-        background: none;
-        width: 1.5rem;
-        font-size: 1.25rem;
-        border-radius: 100%;
-        opacity: 0;
-        transition: background 0.5s, opacity 0.5s;
-        padding: 0 0.4rem;
+      opacity: 1;
     }
-
-    // CANT USE THIS YET, looks bad over a light background
-    // For scrollbar hover over
-    // mask-image: linear-gradient(to top, transparent, black),
-    //   linear-gradient(to left, transparent 17px, black 17px);
-    // mask-size: 100% 20000px;
-    // mask-position: left bottom;
-    // transition: mask-position 0.5s;
-    // //
-
-    &::-webkit-scrollbar {
-        width: 10px;
-    }
-    &::-webkit-scrollbar-thumb {
-        // height: 6px;
-        width: 10px;
-        border: 4px solid rgba(0, 0, 0, 0);
-        background-clip: padding-box;
-        background-color: #888;
-        // background-color: #888;
-        // background-color: none;
-        background-color: none;
-
-        transition: background 0.5s;
-        box-shadow: inset -1px -1px 0px rgb(0 0 0 / 5%), inset 1px 1px 0px rgb(0 0 0 / 5%);
-        border-radius: 25px;
-    }
-    &::-webkit-scrollbar-button {
-        width: 0;
-        height: 0;
-        display: none;
-    }
-    &:hover {
-        mask-position: left top;
-        // &::-webkit-scrollbar-thumb {
-        // height: 6px;
-        // width: 10px;
-        // border: 4px solid rgba(0, 0, 0, 0);
-        // background-clip: padding-box;
-        // background-color: #888;
-        // box-shadow: inset -1px -1px 0px rgb(0 0 0 / 5%),
-        // inset 1px 1px 0px rgb(0 0 0 / 5%);
-        // border-radius: 25px;
-        // }
-        .addButton {
-            opacity: 1;
-        }
-    }
+  }
 }
 </style>

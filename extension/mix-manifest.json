@@ -1,15 +1,13 @@
 {
-    "/dist/js/index.js": "/dist/js/index.js?id=0b61ece7bd77956e6b7a",
-    "/dist/js/popup.js": "/dist/js/popup.js?id=fd580b5eb55ff8b39ccd",
-    "/dist/background.js": "/dist/background.js?id=9148a67a327f684d03ee",
-    "/dist/css/popup.css": "/dist/css/popup.css?id=11e67149a0023e17087d",
-    "/dist/css/main.css": "/dist/css/main.css?id=16c036c14ed3c771d1e5",
+    "/dist/js/app.js": "/dist/js/app.js?id=ba54174a56fee9c44860",
+    "/dist/js/popup.js": "/dist/js/popup.js?id=7834dc991a21cba45dc6",
+    "/dist/background.js": "/dist/background.js?id=6a6d6ac210ffc99e513f",
     "/dist/assets/favicon.ico": "/dist/assets/favicon.ico?id=f74ebe79100fe8a38047",
     "/dist/assets/polus_icon.png": "/dist/assets/polus_icon.png?id=2e7eb6688e5655199a93",
     "/dist/assets/polus_icon128.png": "/dist/assets/polus_icon128.png?id=d9c529da72ae0664d81b",
     "/dist/assets/polus_icon48.png": "/dist/assets/polus_icon48.png?id=950dc4867bc04e23d296",
     "/dist/assets/polus_tab_icon.png": "/dist/assets/polus_tab_icon.png?id=1480a06ea3d2a06681ef",
-    "/dist/html/index.html": "/dist/html/index.html?id=8f29210614454d41fbd8",
-    "/dist/html/popup.html": "/dist/html/popup.html?id=aaf58103ef70846b3203",
-    "/dist/manifest.json": "/dist/manifest.json?id=232bb57a9561e991972f"
+    "/dist/html/app.html": "/dist/html/app.html?id=07356554ae8cbe00b9f2",
+    "/dist/html/popup.html": "/dist/html/popup.html?id=1d5ed64bba6c75921d1d",
+    "/dist/manifest.json": "/dist/manifest.json?id=c85ae7c9e0b025a6545b"
 }

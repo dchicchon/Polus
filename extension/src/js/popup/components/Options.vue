@@ -68,6 +68,7 @@
   </div>
 </template>
 <script>
+import { actions, state } from "../../utils/store";
 import Toggle from "./Toggle";
 export default {
   components: {
@@ -86,7 +87,7 @@ export default {
   },
   methods: {
     editNotificationTime(newTime) {
-      let oldTime = this.userSettings["notificationTime"];
+      let oldTime = this.userSettings.notificationTime;
       // if they are using notifications, please update all alarms for notifications
       chrome.permissions.contains(
         { permissions: ["notifications"] },
@@ -126,7 +127,7 @@ export default {
 
     modifyNotificationPermission(event, name) {
       // get the current setting for notifications from user settings
-      if (this.userSettings["notifications"]) {
+      if (this.userSettings.notifications) {
         // ask if user wants to disable notifications
         chrome.permissions.remove(
           {
@@ -135,7 +136,7 @@ export default {
           (removed) => {
             if (removed) {
               // The permissions have been removed.
-              this.userSettings["notifications"] = false;
+              this.userSettings.notifications = false;
               this.updateStorage();
             }
           }
@@ -158,14 +159,10 @@ export default {
 
     toggleItem(event, name) {
       this.userSettings[name] = !this.userSettings[name];
-      this.updateStorage();
+      actions.setUserSettings(this.userSettings);
     },
-
     getSettings() {
-      chrome.storage.sync.get("userSettings", (result) => {
-        //   Do this if a user does not have the right storage version of polus
-        this.userSettings = result["userSettings"];
-      });
+      this.userSettings = state.userSettings;
     },
 
     submitPhoto() {
@@ -205,55 +202,50 @@ export default {
         });
     },
 
-    // Allow user to submit photo from os
-    async handleFile() {
-      const options = {
-        types: [
-          {
-            description: "Image",
-            accept: {
-              "image/*": [".jpg"],
-            },
-          },
-        ],
-      };
-      let [fileHandle] = await window.showOpenFilePicker(options);
-      const file = await fileHandle.getFile(); // once a user picks an image return the path of that image
-      //  Lets let the user do the reader on the load
-      let reader = new FileReader();
-      reader.addEventListener(
-        "load",
-        function () {
-          // USE INDEXED DB INSTEAD
-          chrome.storage.sync.set({ background: false }, () => {
-            chrome.storage.sync.set({ image: reader.result }, () => {
-              chrome.tabs.query(
-                { active: true, currentWindow: true },
-                (tabs) => {
-                  chrome.tabs.reload(tabs[0].id);
-                }
-              );
-            });
-          });
-        },
-        false
-      );
-      if (file.size < 4500000) {
-        reader.readAsDataURL(file);
-        this.error = "";
-      } else {
-        this.error = "File Size is too large";
-      }
-    },
+    // // Allow user to submit photo from os
+    // async handleFile() {
+    //   const options = {
+    //     types: [
+    //       {
+    //         description: "Image",
+    //         accept: {
+    //           "image/*": [".jpg"],
+    //         },
+    //       },
+    //     ],
+    //   };
+    //   let [fileHandle] = await window.showOpenFilePicker(options);
+    //   const file = await fileHandle.getFile(); // once a user picks an image return the path of that image
+    //   //  Lets let the user do the reader on the load
+    //   let reader = new FileReader();
+    //   reader.addEventListener(
+    //     "load",
+    //     function () {
+    //       // USE INDEXED DB INSTEAD
+    //       chrome.storage.sync.set({ background: false }, () => {
+    //         chrome.storage.sync.set({ image: reader.result }, () => {
+    //           chrome.tabs.query(
+    //             { active: true, currentWindow: true },
+    //             (tabs) => {
+    //               chrome.tabs.reload(tabs[0].id);
+    //             }
+    //           );
+    //         });
+    //       });
+    //     },
+    //     false
+    //   );
+    //   if (file.size < 4500000) {
+    //     reader.readAsDataURL(file);
+    //     this.error = "";
+    //   } else {
+    //     this.error = "File Size is too large";
+    //   }
+    // },
 
-    uploadPhoto() {
-      this.handleFile();
-    },
-
-    // Do this if user doesnt have the updated storage
-    updateStorage() {
-      chrome.storage.sync.set({ userSettings: this.userSettings });
-    },
+    // uploadPhoto() {
+    //   this.handleFile();
+    // },
   },
 };
 </script>

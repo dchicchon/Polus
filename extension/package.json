@@ -2,7 +2,7 @@
   "name": "polus",
   "version": "2.0.0",
   "description": "Plan your day with Polus. Includes daily, weekly, monthly calendars that syncs with your chrome storage",
-  "author": "",
+  "author": "dchicchon",
   "scripts": {
     "prebuild": "npx rimraf dist",
     "build": "mix",
@@ -17,7 +17,6 @@
     "eslint": "^7.32.0",
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-vue": "^7.16.0",
-    "firebase": "^9.0.1",
     "laravel-mix": "^6.0.28",
     "material-design-icons": "^3.0.1",
     "node-sass": "^6.0.1",

@@ -17,34 +17,30 @@
   
 <script>
 import EntryList from "./EntryList.vue";
-import { actions } from "../utils/store";
+import { state, actions } from "../../utils/store";
 export default {
   components: {
     EntryList,
   },
   data() {
     return {
-      date: new Date(),
+      date: state.date,
     };
   },
-  created() {},
 
   methods: {
-    // Change Date here
     changeDay(amount) {
-      console.log("change day");
-      console.log(this.date);
-      let changeDate = new Date(this.date); // had to do this because computed couldn't see that it was updating
-      changeDate.setDate(this.date.getDate() + amount);
-      console.log(changeDate);
+      let changeDate = new Date(state.date);
+      changeDate.setDate(state.date.getDate() + amount);
       actions.setDate(changeDate);
+      this.date = state.date;
     },
   },
 
   computed: {
     checkDay() {
       let date = new Date();
-      return date.getDay() === this.date.getDay()
+      return date.getDay() === state.date.getDay()
         ? "background: rgba(5, 80, 123, 0.992);"
         : "background:none";
     },
@@ -52,10 +48,10 @@ export default {
     dayTitle() {
       let options = { weekday: "short" };
       console.log("computing day");
-      return `${this.date.toLocaleString(
+      return `${state.date.toLocaleString(
         undefined,
         options
-      )} ${this.date.toLocaleDateString()}`;
+      )} ${state.date.toLocaleDateString()}`;
     },
   },
 };
@@ -63,6 +59,7 @@ export default {
 
 <style lang="scss" scoped>
 .nav {
+  width: 100%;
   display: flex;
   justify-content: center;
   margin-bottom: 0.5rem;
