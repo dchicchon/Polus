@@ -24,23 +24,23 @@ export default {
   },
   data() {
     return {
-      date: state.date,
+      date: new Date()
     };
   },
 
   methods: {
     changeDay(amount) {
-      let changeDate = new Date(state.date);
-      changeDate.setDate(state.date.getDate() + amount);
-      actions.setDate(changeDate);
-      this.date = state.date;
+      console.log("Change date")
+      let changeDate = new Date(this.date);
+      changeDate.setDate(changeDate.getDate() + amount);
+      this.date = changeDate
     },
   },
 
   computed: {
     checkDay() {
       let date = new Date();
-      return date.getDay() === state.date.getDay()
+      return date.getDay() === this.date.getDay()
         ? "background: rgba(5, 80, 123, 0.992);"
         : "background:none";
     },
@@ -48,7 +48,7 @@ export default {
     dayTitle() {
       let options = { weekday: "short" };
       console.log("computing day");
-      return `${state.date.toLocaleString(
+      return `${this.date.toLocaleString(
         undefined,
         options
       )} ${state.date.toLocaleDateString()}`;

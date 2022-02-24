@@ -84,7 +84,6 @@ export default {
 
   methods: {
     initEntry() {
-      // console.log("Init Entry");
       // Add to entries state and to chrome storage
       let newEntry = {
         text: "",
@@ -92,7 +91,6 @@ export default {
         active: false,
         new: true,
       };
-
       // Need to use Vue.set in order to have reactivity for objects
       Vue.set(this.entries, shortid.generate(), newEntry);
     },
@@ -141,7 +139,6 @@ export default {
         Vue.delete(this.entries, key);
         return;
       }
-
       Vue.delete(this.entries[key], "new");
       actions
         .create({ date: this.dateStamp, entry, key })
@@ -185,15 +182,14 @@ export default {
   },
   computed: {
     dateStamp() {
-      return this.listDate.toLocaleDateString("en-US").replaceAll("/", "-");
+      return this.listDate.toLocaleDateString();
     },
     dayNumber() {
       return this.listDate.getDate();
     },
     todayDate() {
       if (
-        this.listDate.toLocaleDateString("en-US") ===
-        new Date().toLocaleDateString("en-US")
+        this.listDate.toLocaleDateString() === new Date().toLocaleDateString()
       ) {
         return {
           background: "rgba(5,80,123,0.992)",

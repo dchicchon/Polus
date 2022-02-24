@@ -20,10 +20,9 @@ export default {
     Calendar,
   },
   // here we retrieve the information via store
-  beforeCreate() {
-    window.addEventListener("resize", this.setBackground);
-  },
+  beforeCreate() {},
   mounted() {
+    window.addEventListener("resize", this.setBackground);
     this.setBackground();
   },
   destroyed() {

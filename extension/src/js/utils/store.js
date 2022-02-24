@@ -1,4 +1,11 @@
 import Vue from "vue";
+
+const useLocal = (date) => {
+  const todayDate = new Date();
+  const entryListDate = new Date(date);
+  const monthMS = 1000 * 60 * 60 * 24 * 30
+  return todayDate.getTime() - entryListDate.getTime() > monthMS
+}
 // Local storage manipulation
 /** 
   Get entryDate objects from chrome.storage.local asynchronously and return them 
@@ -39,7 +46,7 @@ const clearLocal = async ({ }) => {
       for (const key in result) {
         removeLocal({ key })
       }
-      resolve()
+      resolve({})
     })
 
   })
@@ -52,7 +59,7 @@ const getSync = async ({ key }) => {
       if (Object.keys(result).length > 0) {
         resolve(result[key]); // this should return everything
       }
-      resolve(null);
+      resolve({});
     });
   });
 };
@@ -83,20 +90,20 @@ const clearSync = async ({ }) => {
       for (const key in result) {
         removeSync({ key })
       }
-      resolve()
+      resolve({})
     })
   })
 }
 
 export const state = Vue.observable({
-  key: new Date(),
+  date: new Date(),
   userSettings: {},
   background: {}
 });
 
 export const actions = {
   initUserSettings: async () => {
-    let userSettings = await getSync({ key: 'userSettings' }) 
+    let userSettings = await getSync({ key: 'userSettings' })
     actions.setUserSettings(userSettings)
   },
   initBackground: async () => {
@@ -119,29 +126,34 @@ export const actions = {
     await clearSync()
   },
   create: async ({ date, entry, key }) => {
-    const dateObject = await getSync({ key: date });
-    dateObject[key] = entry;
-    const results = await setSync({ key: date, value: dateObject });
+    try {
+      if (useLocal(date)) {
+        const dateObject = await getLocal({ key: date });
+        dateObject[key] = entry;
+        await setLocal({ key: date, value: dateObject });
+      } else {
+        const dateObject = await getSync({ key: date });
+        dateObject[key] = entry;
+        await setSync({ key: date, value: dateObject });
+
+      }
+    } catch (e) {
+      console.error(e)
+    }
+
   },
   read: async ({ date }) => {
-    // Get all items
-    let dateObject = await getSync({ key: date });
-    // Check if dateObject is empty
-    if (Object.keys(dateObject).length === 0) {
-      // Get time items in order to check if this was about a month ago
-      const todayDate = new Date();
-      const entryListDate = new Date(date);
-      const monthMS = 1000 * 60 * 60 * 24 * 30
-      // If entryListDate is from ago, then lets check our local storage
-      if (todayDate.getTime() - entryListDate.getTime() > monthMS) {
-        // then lets check the local storage instead
+    try {
+      let dateObject
+      if (useLocal(date)) {
         dateObject = await getLocal({ key: date })
-
-        // cant really think that anyone would add something 
-        // from the past
+      } else {
+        dateObject = await getSync({ key: date });
       }
+      return dateObject
+    } catch (e) {
+      console.error(e)
     }
-    return dateObject;
   },
   update: async ({ date, entry, key }) => {
     let dateObject = await getSync({ key: date });
@@ -162,9 +174,9 @@ export const actions = {
     if (key in dateObject) {
       delete dateObject[key];
       if (Object.keys(dateObject).length === 0) {
-        results = await removeChromeStorageSync({ key: date });
+        results = await removeSync({ key: date });
       } else {
-        results = await setChromeStorageSync({ key: date, value: dateObject });
+        results = await setSync({ key: date, value: dateObject });
       }
     } else {
       dateObject = await getChromeStorageLocal({ key: date })
