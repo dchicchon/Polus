@@ -3,7 +3,7 @@
     <div class="container">
       <component :is="currentTabComponent"></component>
     </div>
-    <md-bottom-bar class="blue" md-type="shift">
+    <!-- <md-bottom-bar class="blue" md-type="shift">
       <md-bottom-bar-item
         @click="($event) => changeTab($event, 'options')"
         id="bottom-bar-item-options"
@@ -22,7 +22,7 @@
         md-label="Updates"
         md-icon="/assets/popup_icons/updates.svg"
       />
-    </md-bottom-bar>
+    </md-bottom-bar> -->
   </div>
 </template>
 <script>

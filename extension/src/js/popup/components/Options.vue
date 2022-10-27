@@ -52,9 +52,9 @@
         placeholder="https://unsplash.com/photos/NuBvAE6VfSM"
         v-model="photoLink"
       />
-      <md-button @click="submitPhoto" class="blue md-primary md-raised md-dense"
+      <!-- <md-button @click="submitPhoto" class="blue md-primary md-raised md-dense"
         >Submit</md-button
-      >
+      > -->
     </div>
 
     <!-- In order to save on user space, we will remove this item -->
@@ -69,7 +69,7 @@
 </template>
 <script>
 import { actions, state } from "../../utils/store";
-import Toggle from "./Toggle";
+import Toggle from "./Toggle.vue";
 export default {
   components: {
     Toggle,

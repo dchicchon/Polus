@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Polus",
   "version": "2.0.1",
-  "description": "An new extension planner",
+  "description": "An new tab extension planner",
   "author": "dchicchon",
   "icons": {
     "16": "assets/polus_tab_icon.png",
@@ -15,7 +15,7 @@
     "default_popup": "html/popup.html"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "js/background.js"
   },
   "chrome_url_overrides": {
     "newtab": "html/app.html"

@@ -1,18 +1,15 @@
+
 <template>
   <ul id="nav">
     <li id="app-info-box">
       <div id="app-info">
         <div id="app-title" ref="title">
           <!-- To bring in the img, we must use "/assets" in order to create a relative path for the compiler to find -->
-          <img class="app-icon" src="/assets/polus_icon.png" alt="App icon" />
+          <!-- <img class="app-icon" src="assets/polus_icon.png" alt="App icon" /> -->
         </div>
         <div id="app-items" ref="items">
-          <a href="https://mail.google.com/mail/u/0/">
-            Gmail
-          </a>
-          <a href="https://drive.google.com/drive/u/0/">
-            Drive
-          </a>
+          <a href="https://mail.google.com/mail/u/0/"> Gmail </a>
+          <a href="https://drive.google.com/drive/u/0/"> Drive </a>
           <a
             target="_blank"
             rel="noopener noreferrer"
@@ -114,7 +111,6 @@ export default {
     display: block;
     a {
       text-decoration: none;
-    
     }
   }
 }
