@@ -12,9 +12,4 @@ export default defineConfig({
     vue(),
     crx({ manifest })
   ],
-  build: {
-    rollupOptions: {
-      input: 'src/manifest.json'
-    }
-  }
 })
