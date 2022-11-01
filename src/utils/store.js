@@ -1,4 +1,4 @@
-import Vue from "vue";
+import { reactive } from "vue";
 
 const useLocal = (date) => {
   const todayDate = new Date();
@@ -6,6 +6,7 @@ const useLocal = (date) => {
   const monthMS = 1000 * 60 * 60 * 24 * 30
   return todayDate.getTime() - entryListDate.getTime() > monthMS
 }
+
 // Local storage manipulation
 /** 
   Get entryDate objects from chrome.storage.local asynchronously and return them 
@@ -95,7 +96,7 @@ const clearSync = async ({ }) => {
   })
 }
 
-export const state = Vue.observable({
+export const state = reactive({
   date: new Date(),
   userSettings: {},
   background: {}

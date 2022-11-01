@@ -55,7 +55,10 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+
+@use 'App.scss';
+
 main {
   margin: 1rem auto;
   justify-content: center;

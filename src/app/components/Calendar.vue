@@ -30,9 +30,9 @@
 </template>
 
 <script>
-import Day from "./Day";
-import Week from "./Week";
-import Month from "./Month";
+import Day from "./Day.vue";
+import Week from "./Week.vue";
+import Month from "./Month.vue";
 export default {
   components: {
     Day,

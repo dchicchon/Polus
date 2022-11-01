@@ -58,11 +58,8 @@
           :disabled="mode === 'color'"
           class="entryBtn"
         >
-          <img
-            :style="{ filter: 'invert(1)' }"
-            src="/assets/entry_icons/palette.png"
-            alt="color"
-          />
+          <img :style="{ filter: 'invert(1)' }" alt="color" />
+          <!-- src="/assets/entry_icons/palette.png" -->
           <select :value="''" @input="selectColor($event.target.value)">
             <option
               v-for="(option, index) in colorOptions"
@@ -78,11 +75,8 @@
         <!-- Begin Time -->
         <!-- Superimpose time and input on top of each other -->
         <div id="time-section">
-          <img
-            :style="{ filter: 'invert(1)' }"
-            src="/assets/entry_icons/clock.png"
-            alt="clock"
-          />
+          <img :style="{ filter: 'invert(1)' }" alt="clock" />
+          <!-- src="/assets/entry_icons/clock.png" -->
           <input
             class="entryBtn"
             v-model="entry.time"
@@ -98,36 +92,27 @@
 
         <!-- Save Edit -->
         <button v-if="mode === 'edit'" @click="submitEdit" class="entryBtn">
-          <img
-            :style="{ filter: 'invert(1)' }"
-            src="/assets/entry_icons/save.png"
-            alt="save"
-          />
+          <img :style="{ filter: 'invert(1)' }" alt="save" />
+          <!-- src="/assets/entry_icons/save.png" -->
         </button>
         <!-- Begin Edit -->
         <button v-if="mode !== 'edit'" @click="editEntry" class="entryBtn">
-          <img
-            :style="{ filter: 'invert(1)' }"
-            src="/assets/entry_icons/edit.png"
-            alt="edit"
-          />
+          <img :style="{ filter: 'invert(1)' }" alt="edit" />
+          <!-- src="/assets/entry_icons/edit.png" -->
         </button>
 
         <!-- Check Entry -->
         <button @click="checkEntry" class="entryBtn">
-          <img
-            :style="{ filter: 'invert(1)' }"
-            src="/assets/entry_icons/done.png"
-            alt="done"
-          />
+          <img :style="{ filter: 'invert(1)' }" alt="done" />
+          <!-- src="/assets/entry_icons/done.png" -->
         </button>
         <!-- Delete Entry -->
         <button @click="() => deleteEntry(entryKey)" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
-            src="/assets/entry_icons/delete.png"
             alt="delete"
           />
+            <!-- src="/assets/entry_icons/delete.png" -->
         </button>
       </div>
       <!-- End Button Container -->

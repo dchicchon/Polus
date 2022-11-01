@@ -33,7 +33,7 @@
 import Entry from "./Entry.vue";
 import { state, actions } from "../../utils/store";
 import shortid from "shortid";
-import Vue from "vue";
+// import Vue from "vue";
 // https://stackoverflow.com/questions/18548465/prevent-scroll-bar-from-adding-up-to-the-width-of-page-on-chrome
 export default {
   components: {
@@ -128,7 +128,7 @@ export default {
       )[0];
 
       originalParent.deleteEntry(key);
-      Vue.set(this.entries, key, entry);
+      this.entries[key] = entry;
       this.createEntry(entry, key);
     },
 
@@ -136,10 +136,11 @@ export default {
     // CRUD FUNCTIONS
     createEntry(entry, key) {
       if (entry.text.length === 0) {
-        Vue.delete(this.entries, key);
+        delete this.entries[key];
+        // Vue.delete(this.entries, key);
         return;
       }
-      Vue.delete(this.entries[key], "new");
+      delete this.entries[key]["new"];
       actions
         .create({ date: this.dateStamp, entry, key })
         .then((result) => {
@@ -158,7 +159,8 @@ export default {
     updateEntry(key) {
       // check if entry is any different than before
       // Instead of doing just this i should specify what is being changed maybe?
-      Vue.set(this.entries, key, this.entries[key]);
+      this.entries[key] = this.entries[key]
+      // Vue.set(this.entries, key, this.entries[key]);
       actions
         .update({ date: this.dateStamp, entry: this.entries[key], key })
         .then((result) => {
@@ -171,7 +173,8 @@ export default {
       if (this.entries[key].hasOwnProperty("time")) {
         chrome.alarms.clear(key); // clearing alarm if it has time
       }
-      Vue.delete(this.entries, key);
+      delete this.entries[key]
+      // Vue.delete(this.entries, key);
       actions
         .delete({ date: this.dateStamp, key })
         .then((result) => {

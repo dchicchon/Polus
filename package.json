@@ -1,0 +1,39 @@
+{
+  "name": "polus",
+  "version": "2.0.1",
+  "description": "A new tab planner extension",
+  "author": "dchicchon",
+  "type": "module",
+  "scripts": {
+    "prebuild": "npx rimraf dist",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^1.0.14",
+    "@vitejs/plugin-vue": "^2.3.3",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-vue": "^9.7.0",
+    "material-design-icons": "^3.0.1",
+    "prettier": "^2.7.1",
+    "sass": "^1.55.0",
+    "shortid": "^2.2.16",
+    "vite": "^2.9.0"
+  },
+  "bugs": {
+    "url": "https://github.com/dchicchon/Polus/issues"
+  },
+  "homepage": "https://github.com/dchicchon/Polus#readme",
+  "keywords": [],
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dchicchon/Polus.git"
+  },
+  "dependencies": {
+    "vue": "^3.2.41"
+  }
+}

@@ -12,13 +12,13 @@
   "action": {
     "default_title": "Polus",
     "default_icon": "assets/polus_tab_icon.png",
-    "default_popup": "html/popup.html"
+    "default_popup": "src/popup.html"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background.js"
   },
   "chrome_url_overrides": {
-    "newtab": "html/app.html"
+    "newtab": "src/index.html"
   },
   "incognito": "not_allowed",
   "offline_enabled": true,
