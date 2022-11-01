@@ -4,7 +4,7 @@ import { actions } from "../utils/store";
 
 const start = async () => {
   await actions.initUserSettings()
-  const popup = createApp(Popup).mount('#popup')
+  const popup = createApp(Popup).mount('#app')
 };
 
 window.onload = () => {

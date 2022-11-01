@@ -9,9 +9,9 @@
 </template>
 
 <script>
-import Navbar from "./components/Navbar.vue";
-import Clock from "./components/Clock.vue";
-import Calendar from "./components/Calendar.vue";
+import Navbar from "../components/Navbar.vue";
+import Clock from "../components/Clock.vue";
+import Calendar from "../components/Calendar.vue";
 import { state } from "../utils/store";
 export default {
   components: {

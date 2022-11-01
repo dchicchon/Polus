@@ -58,8 +58,11 @@
           :disabled="mode === 'color'"
           class="entryBtn"
         >
-          <img :style="{ filter: 'invert(1)' }" alt="color" />
-          <!-- src="/assets/entry_icons/palette.png" -->
+          <img
+            :style="{ filter: 'invert(1)' }"
+            alt="color"
+            src="/assets/entry_icons/palette.png"
+          />
           <select :value="''" @input="selectColor($event.target.value)">
             <option
               v-for="(option, index) in colorOptions"
@@ -75,8 +78,11 @@
         <!-- Begin Time -->
         <!-- Superimpose time and input on top of each other -->
         <div id="time-section">
-          <img :style="{ filter: 'invert(1)' }" alt="clock" />
-          <!-- src="/assets/entry_icons/clock.png" -->
+          <img
+            :style="{ filter: 'invert(1)' }"
+            alt="clock"
+            src="/assets/entry_icons/clock.png"
+          />
           <input
             class="entryBtn"
             v-model="entry.time"
@@ -92,27 +98,36 @@
 
         <!-- Save Edit -->
         <button v-if="mode === 'edit'" @click="submitEdit" class="entryBtn">
-          <img :style="{ filter: 'invert(1)' }" alt="save" />
-          <!-- src="/assets/entry_icons/save.png" -->
+          <img
+            :style="{ filter: 'invert(1)' }"
+            alt="save"
+            src="/assets/entry_icons/save.png"
+          />
         </button>
         <!-- Begin Edit -->
         <button v-if="mode !== 'edit'" @click="editEntry" class="entryBtn">
-          <img :style="{ filter: 'invert(1)' }" alt="edit" />
-          <!-- src="/assets/entry_icons/edit.png" -->
+          <img
+            :style="{ filter: 'invert(1)' }"
+            alt="edit"
+            src="/assets/entry_icons/edit.png"
+          />
         </button>
 
         <!-- Check Entry -->
         <button @click="checkEntry" class="entryBtn">
-          <img :style="{ filter: 'invert(1)' }" alt="done" />
-          <!-- src="/assets/entry_icons/done.png" -->
+          <img
+            :style="{ filter: 'invert(1)' }"
+            alt="done"
+            src="/assets/entry_icons/done.png"
+          />
         </button>
         <!-- Delete Entry -->
         <button @click="() => deleteEntry(entryKey)" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
             alt="delete"
+            src="/assets/entry_icons/delete.png"
           />
-            <!-- src="/assets/entry_icons/delete.png" -->
         </button>
       </div>
       <!-- End Button Container -->
@@ -121,8 +136,6 @@
   <!-- End Active Entry -->
 </template>
 <script>
-// import { state, actions } from "../utils/store";
-
 export default {
   props: {
     deleteEntry: {
@@ -176,7 +189,6 @@ export default {
         this.changeMode("");
       }
     },
-
     changeTimeMode() {
       if (this.mode !== "time") {
         this.changeMode("time");
@@ -189,7 +201,6 @@ export default {
     changeMode(type) {
       this.mode = type;
     },
-
     selectColor(color) {
       if (color !== this.entry.color) {
         this.entry.color = color;
@@ -197,15 +208,12 @@ export default {
         this.updateEntry(this.entryKey);
       }
     },
-
     selectTime(time) {
-      console.log("Time Selected:", time);
+      // console.log("Time Selected:", time);
     },
-
     submitTime() {
       this.changeMode("menu");
     },
-
     saveTime() {
       this.newTime = this.entry.time ? this.entry.time : "12:00";
       if (this.newTime !== this.time) {
@@ -240,18 +248,15 @@ export default {
 
       // Add this.timeEntry() later
     },
-
     checkEntry() {
       this.entry.active = !this.entry.active;
       this.updateEntry(this.entryKey);
     },
-
     editEntry() {
       this.mode = "edit";
       this.$refs.textarea.focus();
       this.newText = this.entry.text;
     },
-
     submitEdit() {
       this.mode = "";
       if (this.newText !== this.entry.text) {
@@ -269,7 +274,6 @@ export default {
       },
     },
 
-    btnClass() {},
     colorOptions: {
       get() {
         return ["blue", "green", "gold", "purple", "orange", "red"];

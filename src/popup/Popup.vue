@@ -26,10 +26,10 @@
   </div>
 </template>
 <script>
-import Options from "./components/Options.vue";
-import Updates from "./components/Updates.vue";
+import Options from "../components/Options.vue";
+import Updates from "../components/Updates.vue";
 // in dev environment
-import Dev from "./components/Dev.vue";
+import Dev from "../components/Dev.vue";
 
 // Popup Entry Point. Should create a check to see if user is logged in with firebase
 export default {

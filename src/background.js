@@ -149,7 +149,7 @@ const clearNotifications = () => {
  * changeBackground is fired
  */
 const getPhoto = () => {
-  console.log("Getting Photo")
+  // console.log("Getting Photo")
   // This url hits an api endpoint to get a random photo and saves it to user's chrome storage
   let url =
     "https://api.unsplash.com/photos/random/?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&collections=8974511";
@@ -167,7 +167,7 @@ const getPhoto = () => {
       throw err
     })
     .then((photo) => {
-      console.log("third then")
+      // console.log("third then")
       let url = photo.urls.raw;
       let location = photo.location.name ? `${photo.location.name}` : "Unknown";
       let author = photo.user.name ? `${photo.user.name}` : "Unknown";
@@ -183,7 +183,7 @@ const getPhoto = () => {
       chrome.storage.sync.set({ background });
     })
     .catch((err) => {
-      console.log("Final error")
+      // console.log("Final error")
       throw err
     });
 };

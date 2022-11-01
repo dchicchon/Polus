@@ -17,7 +17,7 @@
   
 <script>
 import EntryList from "./EntryList.vue";
-import { state, actions } from "../../utils/store";
+import { state, actions } from "../utils/store";
 export default {
   components: {
     EntryList,
@@ -30,7 +30,7 @@ export default {
 
   methods: {
     changeDay(amount) {
-      console.log("Change date")
+      // console.log("Change date")
       let changeDate = new Date(this.date);
       changeDate.setDate(changeDate.getDate() + amount);
       this.date = changeDate
@@ -47,7 +47,7 @@ export default {
 
     dayTitle() {
       let options = { weekday: "short" };
-      console.log("computing day");
+      // console.log("computing day");
       return `${this.date.toLocaleString(
         undefined,
         options

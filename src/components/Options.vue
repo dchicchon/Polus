@@ -68,7 +68,7 @@
   </div>
 </template>
 <script>
-import { actions, state } from "../../utils/store";
+import { actions, state } from "../utils/store";
 import Toggle from "./Toggle.vue";
 export default {
   components: {

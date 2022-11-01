@@ -23,6 +23,7 @@
   },
   "incognito": "not_allowed",
   "offline_enabled": true,
+  "options_page": "options.html",
   "optional_permissions": ["notifications"],
   "permissions": [
     "alarms",

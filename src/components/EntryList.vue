@@ -31,9 +31,8 @@
 
 <script>
 import Entry from "./Entry.vue";
-import { state, actions } from "../../utils/store";
+import { actions } from "../utils/store";
 import shortid from "shortid";
-// import Vue from "vue";
 // https://stackoverflow.com/questions/18548465/prevent-scroll-bar-from-adding-up-to-the-width-of-page-on-chrome
 export default {
   components: {
@@ -84,6 +83,7 @@ export default {
 
   methods: {
     initEntry() {
+      console.log("Init entry");
       // Add to entries state and to chrome storage
       let newEntry = {
         text: "",
@@ -92,7 +92,8 @@ export default {
         new: true,
       };
       // Need to use Vue.set in order to have reactivity for objects
-      Vue.set(this.entries, shortid.generate(), newEntry);
+      const key = shortid.generate();
+      this.entries[key] = newEntry;
     },
 
     //===============
@@ -123,9 +124,9 @@ export default {
       const entry = JSON.parse(entryJSON);
 
       // find the original parent component by reference of this parent
-      let originalParent = this.$parent.$children.filter(
+      let originalParent = this.$parent.$children.find(
         (list) => list._uid === parentId
-      )[0];
+      );
 
       originalParent.deleteEntry(key);
       this.entries[key] = entry;
@@ -144,7 +145,7 @@ export default {
       actions
         .create({ date: this.dateStamp, entry, key })
         .then((result) => {
-          console.log(result);
+          // console.log(result);
         })
         .catch((e) => console.error(e));
     },
@@ -159,7 +160,7 @@ export default {
     updateEntry(key) {
       // check if entry is any different than before
       // Instead of doing just this i should specify what is being changed maybe?
-      this.entries[key] = this.entries[key]
+      this.entries[key] = this.entries[key];
       // Vue.set(this.entries, key, this.entries[key]);
       actions
         .update({ date: this.dateStamp, entry: this.entries[key], key })
@@ -169,11 +170,11 @@ export default {
         .catch((e) => console.error(e));
     },
     deleteEntry(key) {
-      console.log("Delete Entry");
+      // console.log("Delete Entry");
       if (this.entries[key].hasOwnProperty("time")) {
         chrome.alarms.clear(key); // clearing alarm if it has time
       }
-      delete this.entries[key]
+      delete this.entries[key];
       // Vue.delete(this.entries, key);
       actions
         .delete({ date: this.dateStamp, key })
