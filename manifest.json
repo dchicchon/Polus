@@ -12,19 +12,18 @@
   "action": {
     "default_title": "Polus",
     "default_icon": "assets/polus_tab_icon.png",
-    "default_popup": "src/popup.html"
+    "default_popup": "popup.html"
   },
   "background": {
-    "service_worker": "src/background.js"
+    "service_worker": "src/background.js",
+    "type": "module"
   },
   "chrome_url_overrides": {
-    "newtab": "src/index.html"
+    "newtab": "index.html"
   },
   "incognito": "not_allowed",
   "offline_enabled": true,
-  "optional_permissions": [
-    "notifications"
-  ],
+  "optional_permissions": ["notifications"],
   "permissions": [
     "alarms",
     "contextMenus",
