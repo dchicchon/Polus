@@ -17,7 +17,7 @@
   
 <script>
 import EntryList from "./EntryList.vue";
-import { state, actions } from "../utils/store";
+import { state, actions } from "../utils";
 export default {
   components: {
     EntryList,

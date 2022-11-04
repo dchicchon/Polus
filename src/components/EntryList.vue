@@ -31,7 +31,7 @@
 
 <script>
 import Entry from "./Entry.vue";
-import { actions } from "../utils/store";
+import { actions } from "../utils";
 import shortid from "shortid";
 // https://stackoverflow.com/questions/18548465/prevent-scroll-bar-from-adding-up-to-the-width-of-page-on-chrome
 export default {
@@ -136,6 +136,9 @@ export default {
     //===============
     // CRUD FUNCTIONS
     createEntry(entry, key) {
+      console.log("CreateEntry");
+      console.log(entry);
+      console.log(key);
       if (entry.text.length === 0) {
         delete this.entries[key];
         // Vue.delete(this.entries, key);

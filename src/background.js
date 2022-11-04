@@ -11,7 +11,6 @@ chrome.runtime.onInstalled.addListener((details) => {
       indexOpen: false,
       newTab: true,
       notifications: false,
-      notificationTime: "0",
       pmode: false,
       view: "week",
     };
@@ -20,10 +19,11 @@ chrome.runtime.onInstalled.addListener((details) => {
       contexts: ["action"],
       id: "open-sesame",
     });
-
     chrome.storage.sync.set({ userSettings });
     getPhoto(); // get background photo
   } else if (details.reason == "update") {
+    // also immediately run a sync to local
+    moveToLocal();
     createSyncToLocalAlarm();
   }
 });

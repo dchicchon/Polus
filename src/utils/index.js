@@ -1,5 +1,57 @@
 import { reactive } from "vue";
 
+class Container {
+  constructor() {
+    this.storage = {}
+  }
+  /**
+   * Retrieve value
+   * @param key 
+   */
+  get(key, cb) {
+    if (!key) {
+      return cb(this.storage)
+    }
+    // check if keys is array
+    if (Array.isArray(key)) {
+      // find all the items listed in key
+      let arr = [];
+      key.forEach(item => {
+        if (this.storage[item]) {
+          arr.push(this.storage[item])
+        }
+      })
+      cb(arr);
+    }
+
+    return cb(this.storage[key])
+  }
+
+  remove(cb) {
+    delete this.storage[key]
+    return cb(true);
+  }
+
+  set(obj, cb) {
+    // bring object into storage
+    this.storage = {
+      ...this.storage,
+      ...obj
+    }
+    return cb(true);
+  }
+}
+class Store {
+  constructor() {
+    this.sync = new Container();
+    this.local = new Container();
+  }
+}
+
+
+const store = chrome.storage || new Store();
+
+
 const useLocal = (date) => {
   const todayDate = new Date();
   const entryListDate = new Date(date);
@@ -14,7 +66,7 @@ const useLocal = (date) => {
 */
 const getLocal = async ({ key }) => {
   return new Promise((resolve, reject) => {
-    chrome.storage.local.get([key], (result) => {
+    store.local.get([key], (result) => {
       if (Object.keys(result).length > 0) {
         resolve(result[key]); // this should return everything
       }
@@ -25,14 +77,14 @@ const getLocal = async ({ key }) => {
 const setLocal = async ({ key, value }) => {
   // maybe use sync instead if the user is logged in?
   return new Promise((resolve, reject) => {
-    chrome.storage.local.set({ [key]: value }, (result) => {
+    store.local.set({ [key]: value }, (result) => {
       resolve(result);
     });
   });
 };
 const removeLocal = async ({ key }) => {
   return new Promise((resolve, reject) => {
-    chrome.storage.local.remove([key], (result) => {
+    store.local.remove([key], (result) => {
       resolve(result);
     });
   });
@@ -41,7 +93,7 @@ const removeLocal = async ({ key }) => {
 const clearLocal = async ({ }) => {
   return new Promise((resolve, reject) => {
     // remove everything from storage besides background info and userSettings
-    chrome.storage.local.get(null, result => {
+    store.local.get(null, result => {
       delete result.userSettings;
       delete result.background;
       for (const key in result) {
@@ -56,7 +108,7 @@ const clearLocal = async ({ }) => {
 // SYNC
 const getSync = async ({ key }) => {
   return new Promise((resolve, reject) => {
-    chrome.storage.sync.get([key], (result) => {
+    store.sync.get([key], (result) => {
       if (Object.keys(result).length > 0) {
         resolve(result[key]); // this should return everything
       }
@@ -68,7 +120,7 @@ const getSync = async ({ key }) => {
 const setSync = async ({ key, value }) => {
   // maybe use sync instead if the user is logged in?
   return new Promise((resolve, reject) => {
-    chrome.storage.sync.set({ [key]: value }, (result) => {
+    store.sync.set({ [key]: value }, (result) => {
       resolve(result);
     });
   });
@@ -76,7 +128,7 @@ const setSync = async ({ key, value }) => {
 
 const removeSync = async ({ key }) => {
   return new Promise((resolve, reject) => {
-    chrome.storage.sync.remove([key], (result) => {
+    store.sync.remove([key], (result) => {
       resolve(result);
     });
   });
@@ -85,7 +137,7 @@ const removeSync = async ({ key }) => {
 const clearSync = async ({ }) => {
   return new Promise((resolve, reject) => {
     // remove everything from storage besides background info and userSettings
-    chrome.storage.sync.get(null, result => {
+    store.sync.get(null, result => {
       delete result.userSettings;
       delete result.background;
       for (const key in result) {
@@ -105,20 +157,19 @@ export const state = reactive({
 export const actions = {
   initUserSettings: async () => {
     let userSettings = await getSync({ key: 'userSettings' })
-    actions.setUserSettings(userSettings)
+    if (!userSettings) return;
+    state.userSettings = userSettings
   },
   initBackground: async () => {
     let background = await getSync({ key: 'background' })
     if (!background) return;
-    actions.setBackground(background)
-  },
-  setBackground: (background) => {
     state.background = background;
-    setSync({ key: 'background', value: background })
   },
-  setUserSettings: (userSettings) => {
-    state.userSettings = userSettings
-    setSync({ key: 'userSettings', value: userSettings })
+  setBackground: () => {
+    setSync({ key: 'background', value: state.background })
+  },
+  setUserSettings: () => {
+    setSync({ key: 'userSettings', value: state.userSettings })
   },
   setDate: (key) => {
     state.date = date;
@@ -169,6 +220,7 @@ export const actions = {
     }
     return result;
   },
+
   delete: async ({ date, key }) => {
     let dateObject = await getSync({ key: date });
     let results;
@@ -180,14 +232,39 @@ export const actions = {
         results = await setSync({ key: date, value: dateObject });
       }
     } else {
-      dateObject = await getChromeStorageLocal({ key: date })
+      dateObject = await getLocal({ key: date })
       delete dateObject[key]
       if (Object.keys(dateObject).length === 0) {
-        results = await removeChromeStorageLocal({ key: date })
+        results = await removeLocal({ key: date })
       } else {
-        results = await setChromeStorageLocal({ key: date, value: dateObject })
+        results = await setLocal({ key: date, value: dateObject })
       }
     }
     return results;
   },
+  /**
+  * Creates an alarm in chrome 
+  * @param name - name of alarm
+  * @param time - time for alarm to go off
+  * @returns void
+  * @type {{name: String, time: Number}} 
+  */
+  createAlarm: ({ name, time }) => {
+    chrome.permissions.contains({ permissions: ["notifications"] }, (result) => {
+      // If allowed, create an alarm for this entry
+      if (result) {
+        chrome.alarms.create(name, {
+          when: time,
+        });
+      }
+    })
+  },
+
+  showDefaultTab: () => {
+    chrome.tabs.update({
+      url: "chrome-search://local-ntp/local-ntp.html",
+    });
+  }
+
+
 };

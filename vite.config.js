@@ -4,12 +4,35 @@ import vue from '@vitejs/plugin-vue'
 import { crx } from '@crxjs/vite-plugin'
 const require = createRequire(import.meta.url);
 const manifest = require('./manifest.json')
-// import manifest from './manifest.json' // Node 14 & 16
+
+const mode = process.env.APP_ENV;
+console.log(mode);
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [
-    vue(),
-    crx({ manifest })
-  ],
-})
+
+const getConfig = () => {
+  if (mode === 'development') {
+    return defineConfig({
+      plugins: [
+        vue(),
+        crx({ manifest })
+      ],
+    })
+  } else {
+    return defineConfig({
+      esbuild: {
+        drop: ['console', 'debugger']
+      },
+      plugins: [
+        vue(),
+        crx({ manifest })
+      ],
+    })
+
+  }
+
+}
+
+const config = getConfig();
+
+export default config;

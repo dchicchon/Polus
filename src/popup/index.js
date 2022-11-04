@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import Popup from "./Popup.vue";
-import { actions } from "../utils/store";
+import { actions } from "../utils";
 
 const start = async () => {
   await actions.initUserSettings()

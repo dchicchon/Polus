@@ -12,7 +12,7 @@
 import Navbar from "../components/Navbar.vue";
 import Clock from "../components/Clock.vue";
 import Calendar from "../components/Calendar.vue";
-import { state } from "../utils/store";
+import { state } from "../utils";
 export default {
   components: {
     Navbar,
@@ -22,15 +22,15 @@ export default {
   // here we retrieve the information via store
   beforeCreate() {},
   mounted() {
-    window.addEventListener("resize", this.setBackground);
-    this.setBackground();
+    window.addEventListener("resize", this.mountBackground);
+    this.mountBackground();
   },
   destroyed() {
-    window.removeEventListener("resize", this.setBackground);
+    window.removeEventListener("resize", this.mountBackground);
   },
   methods: {
     //   Work on the background transition to load on page
-    setBackground() {
+    mountBackground() {
       if (!state.userSettings || !state.background) return;
       let page = document.getElementsByTagName("html");
       let image = state.background.url;

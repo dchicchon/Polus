@@ -21,7 +21,7 @@
     draggable
     @dragstart="dragStart($event, entryKey, entry, $parent._uid)"
   >
-    <!-- @dragend="dragEnd($event, entry.key)" -->
+    <!-- @dragend="dragEnd($event, key)" -->
     {{ entry.text }}
   </li>
   <!-- End Inactive Entry -->
@@ -136,6 +136,7 @@
   <!-- End Active Entry -->
 </template>
 <script>
+import { actions } from "../utils";
 export default {
   props: {
     deleteEntry: {
@@ -169,11 +170,20 @@ export default {
   },
   data() {
     return {
-      ...this.entry,
+      // ...this.entry,
       newTime: "",
       newText: "",
       mode: "",
     };
+  },
+  created() {
+    console.log('Created');
+    // console.log(this.entry);
+    // this.newEntry = this.entry.new || false;
+    // this.text = this.entry.text;
+    // this.color = this.entry.color;
+    // this.active = this.entry.active;
+    // this.time = this.entry.time || "";
   },
   mounted() {
     if (this.$refs.newEntry) this.$refs.newEntry.focus(); // add focus on new entry textarea
@@ -208,8 +218,25 @@ export default {
         this.updateEntry(this.entryKey);
       }
     },
-    selectTime(time) {
-      // console.log("Time Selected:", time);
+    selectTime() {
+      if (this.time !== this.entry.time) {
+        this.entry.time = this.time;
+        let eventDate = new Date(this.listDate);
+        let hours = parseInt(this.time[0] + this.time[1]);
+        let minutes = parseInt(this.time[3] + this.time[4]);
+        eventDate.setSeconds(0);
+        eventDate.setHours(hours);
+        eventDate.setMinutes(minutes);
+        const ms = eventDate.getTime() - Date.now();
+        if (ms > 0) {
+          actions.createAlarm({
+            name: this.entry.key,
+            time: eventDate.getTime(),
+          });
+        }
+        // we should remove the previous alarm set
+        // We can use this to check if notifications have been enabled so that we can show the user
+      }
     },
     submitTime() {
       this.changeMode("menu");

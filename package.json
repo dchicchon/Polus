@@ -7,7 +7,9 @@
   "scripts": {
     "prebuild": "npx rimraf dist",
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run build:dev",
+    "build:dev": "APP_ENV=development vite build",
+    "build:prod": "APP_ENV=production vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
