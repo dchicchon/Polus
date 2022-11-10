@@ -10,16 +10,16 @@
       {{ dayNumber }}
     </div>
 
-    <ul v-if="Object.keys(entries).length" ref="entryList" class="entryList">
+    <ul v-if="entries.length" ref="entryList" class="entryList">
       <Entry
-        v-for="(entry, key, index) in entries"
+        v-for="(entry, index) in entries"
         :key="index"
-        :entryKey="key"
         :entry="entry"
+        draggable="true"
+        @dragstart="dragStart($event, entry.key, entry, id)"
         :createEntry="createEntry"
         :updateEntry="updateEntry"
         :deleteEntry="deleteEntry"
-        :dragStart="dragStart"
         :listDate="listDate"
       />
     </ul>
@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { toRaw } from "vue";
 import Entry from "./Entry.vue";
 import { actions } from "../utils";
 import shortid from "shortid";
@@ -38,8 +39,11 @@ export default {
   components: {
     Entry,
   },
-  // Eventually pass in props for styling component
   props: {
+    id: {
+      type: Number,
+      required: false,
+    },
     listDate: {
       type: Date,
       required: true,
@@ -55,22 +59,14 @@ export default {
   },
   data() {
     return {
-      entries: {},
+      entries: [],
       isOver: false,
     };
   },
-
   created() {
+    // console.log(this.$parent.$refs)
     this.readEntries();
   },
-
-  watch: {
-    // do this if we change the date
-    listDate(newValue) {
-      this.readEntries();
-    },
-  },
-
   mounted() {
     // https://learnvue.co/2020/01/how-to-add-drag-and-drop-to-your-vuejs-project/
     this.$refs.details.addEventListener("dragenter", () => {
@@ -80,26 +76,33 @@ export default {
       this.isOver = false;
     });
   },
-
+  watch: {
+    // do this if we change the date
+    listDate(newValue) {
+      this.readEntries();
+    },
+  },
   methods: {
     initEntry() {
-      console.log("Init entry");
+      console.log("initEntry");
       // Add to entries state and to chrome storage
+      const key = shortid.generate();
       let newEntry = {
+        key,
         text: "",
         color: "blue",
         active: false,
         new: true,
       };
       // Need to use Vue.set in order to have reactivity for objects
-      const key = shortid.generate();
-      this.entries[key] = newEntry;
+      this.entries.push(newEntry);
     },
 
     //===============
     // DRAG FUNCTIONS
     // https://learnvue.co/2020/01/how-to-add-drag-and-drop-to-your-vuejs-project/
     dragStart(evt, key, entry, parentId) {
+      console.log("dragStart");
       // We need a callback so we can remove from the original data and entries list
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
@@ -111,48 +114,44 @@ export default {
     },
     // On drop, we will add to our list and delete from old one
     onDrop(evt) {
+      console.log("onDrop");
       this.isOver = false;
       // get original parent id
-      const parentId = parseInt(evt.dataTransfer.getData("parentId"));
+      const parentId = evt.dataTransfer.getData("parentId");
       const key = evt.dataTransfer.getData("key");
+      console.log(parentId);
+      console.log(this.id);
 
       // If in the same list, exit the function
-      if (parentId === this._uid) return;
+      if (parentId === this.id) return;
 
       // Else, lets grab the data from datatransfer
       const entryJSON = evt.dataTransfer.getData("text/plain");
       const entry = JSON.parse(entryJSON);
 
-      // find the original parent component by reference of this parent
-      let originalParent = this.$parent.$children.find(
-        (list) => list._uid === parentId
-      );
+      this.$parent.$refs[parentId][0].deleteEntry(key);
 
-      originalParent.deleteEntry(key);
-      this.entries[key] = entry;
-      this.createEntry(entry, key);
+      this.entries.push(entry);
+      this.createEntry(entry);
     },
 
-    //===============
-    // CRUD FUNCTIONS
-    createEntry(entry, key) {
-      console.log("CreateEntry");
-      console.log(entry);
-      console.log(key);
+    createEntry(entry) {
+      console.log("createEntry");
+      const index = toRaw(this.entries).findIndex((e) => e.key === entry.key);
       if (entry.text.length === 0) {
-        delete this.entries[key];
-        // Vue.delete(this.entries, key);
+        this.entries.splice(index, 1);
         return;
       }
-      delete this.entries[key]["new"];
+      delete this.entries[index].new;
       actions
-        .create({ date: this.dateStamp, entry, key })
+        .create({ date: this.dateStamp, entry, key: entry.key })
         .then((result) => {
           // console.log(result);
         })
         .catch((e) => console.error(e));
     },
     readEntries() {
+      console.log("readEntries");
       actions
         .read({ date: this.dateStamp })
         .then((result) => {
@@ -161,24 +160,24 @@ export default {
         .catch((e) => console.error(e));
     },
     updateEntry(key) {
+      console.log("updateEntry");
       // check if entry is any different than before
-      // Instead of doing just this i should specify what is being changed maybe?
-      this.entries[key] = this.entries[key];
-      // Vue.set(this.entries, key, this.entries[key]);
+      const index = this.entries.findIndex((e) => e.key === key);
       actions
-        .update({ date: this.dateStamp, entry: this.entries[key], key })
+        .update({ date: this.dateStamp, entry: this.entries[index], key })
         .then((result) => {
           // console.log(result);
         })
         .catch((e) => console.error(e));
     },
     deleteEntry(key) {
-      // console.log("Delete Entry");
-      if (this.entries[key].hasOwnProperty("time")) {
+      console.log("Delete Entry");
+      const entries = toRaw(this.entries);
+      const index = entries.findIndex((e) => e.key === key);
+      if (this.entries[index].hasOwnProperty("time")) {
         chrome.alarms.clear(key); // clearing alarm if it has time
       }
-      delete this.entries[key];
-      // Vue.delete(this.entries, key);
+      this.entries.splice(index, 1);
       actions
         .delete({ date: this.dateStamp, key })
         .then((result) => {
@@ -189,7 +188,7 @@ export default {
   },
   computed: {
     dateStamp() {
-      return this.listDate.toLocaleDateString();
+      return this.listDate.toLocaleDateString("en-US").replaceAll("/", "_");
     },
     dayNumber() {
       return this.listDate.getDate();

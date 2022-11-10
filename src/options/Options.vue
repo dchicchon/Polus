@@ -2,7 +2,7 @@
   <div class="main">
     <h1>Polus Options</h1>
 
-    <h2>Developer Info</h2>
+    <h2>Developer Tools</h2>
     <div>
       <h3>Alarms</h3>
       <ul>
@@ -19,10 +19,27 @@
         </li>
       </ul>
     </div>
+    <div>
+      <h3>Storage</h3>
+
+      <!-- Need to be able to reset polus -->
+
+      <!-- Need to be able to delete entries -->
+      <ul>
+        <!-- <li v-for="(item, index) in storage" :key="`${index}`">
+          {{ item }}
+        </li> -->
+      </ul>
+    </div>
+    <div>
+      <h3>Reset Polus</h3>
+      <button @click="resetExtension">Reset Polus</button>
+    </div>
     <!-- Here we can display dev info maybe? -->
   </div>
 </template>
 <script>
+import { actions } from "../utils";
 // Popup Entry Point. Should create a check to see if user is logged in with firebase
 export default {
   // components in the popup
@@ -44,7 +61,22 @@ export default {
     };
   },
 
-  methods: {},
+  methods: {
+    /**
+     * This will allow you to remove all of the entries in your database
+     */
+    resetExtension: () => {
+      // const baseUserSettings = {
+      //   changePhoto: true,
+      //   indexOpen: false,
+      //   newTab: true,
+      //   notifications: false,
+      //   pmode: false,
+      //   view: "week",
+      // };
+      actions.resetSyncDatabase();
+    },
+  },
 
   // computed in app, costs less than using methods
   computed: {
@@ -67,7 +99,7 @@ body {
   margin: 0;
   padding: 10px;
   display: flex;
-  justify-content: center;
+  // justify-content: center;
 }
 .main {
   width: 100%;

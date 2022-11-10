@@ -13,6 +13,9 @@ console.log(mode);
 const getConfig = () => {
   if (mode === 'development') {
     return defineConfig({
+      build: {
+        minify: false,
+      },
       plugins: [
         vue(),
         crx({ manifest })

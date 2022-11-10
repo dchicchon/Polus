@@ -22,7 +22,9 @@
     <div class="monthDays">
       <EntryList
         v-for="(date, index) in dateList"
+        :ref="`${index}`"
         :key="index"
+        :id="index"
         :listDate="date"
         :dateTitle="true"
         :classNames="['monthDay']"

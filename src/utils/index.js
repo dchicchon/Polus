@@ -48,104 +48,128 @@ class Store {
   }
 }
 
-
 const store = chrome.storage || new Store();
 
-
-const useLocal = (date) => {
+/**
+ * Use the local storage if an entry is being set to a date more than a week in the past
+ * @param {*} date 
+ * @returns 
+ */
+const storageType = (date) => {
   const todayDate = new Date();
-  const entryListDate = new Date(date);
-  const monthMS = 1000 * 60 * 60 * 24 * 30
-  return todayDate.getTime() - entryListDate.getTime() > monthMS
+  const entryListDate = new Date(date.replaceAll('_', '/'));
+  const weekMS = 1000 * 60 * 60 * 24 * 7
+  if (todayDate.getTime() - entryListDate.getTime() > weekMS) {
+    return 'sync'
+  } else {
+    return 'local'
+  }
 }
 
 // Local storage manipulation
-/** 
-  Get entryDate objects from chrome.storage.local asynchronously and return them 
-  to use on our Entry Lists
-*/
-const getLocal = async ({ key }) => {
-  return new Promise((resolve, reject) => {
-    store.local.get([key], (result) => {
-      if (Object.keys(result).length > 0) {
-        resolve(result[key]); // this should return everything
-      }
-      resolve({});
-    });
-  });
-}
-const setLocal = async ({ key, value }) => {
-  // maybe use sync instead if the user is logged in?
-  return new Promise((resolve, reject) => {
-    store.local.set({ [key]: value }, (result) => {
-      resolve(result);
-    });
-  });
-};
-const removeLocal = async ({ key }) => {
-  return new Promise((resolve, reject) => {
-    store.local.remove([key], (result) => {
-      resolve(result);
-    });
-  });
-};
-
-const clearLocal = async ({ }) => {
-  return new Promise((resolve, reject) => {
-    // remove everything from storage besides background info and userSettings
-    store.local.get(null, result => {
-      delete result.userSettings;
-      delete result.background;
-      for (const key in result) {
-        removeLocal({ key })
-      }
-      resolve({})
+const local = {
+  /** 
+    Get entryDate objects from chrome.storage.local asynchronously and return them 
+    to use on our Entry Lists
+  */
+  get: async ({ key }) => {
+    console.log('getLocal')
+    return new Promise((resolve, reject) => {
+      store.local.get([key], (result) => {
+        if (Object.keys(result).length > 0) {
+          resolve(result[key]); // this should return everything
+        }
+        resolve([]);
+      });
     })
+  },
+  set: async ({ key, value }) => {
+    // maybe use sync instead if the user is logged in?
+    return new Promise((resolve, reject) => {
+      store.local.set({ [key]: value }, (result) => {
+        resolve(result);
+      });
+    });
+  },
+  remove: async ({ key }) => {
+    return new Promise((resolve, reject) => {
+      store.local.remove([key], (result) => {
+        resolve(result);
+      });
+    });
+  },
+  clear: async () => {
+    return new Promise((resolve, reject) => {
+      // remove everything from storage besides background info and userSettings
+      store.local.get(null, result => {
+        for (const key in result) {
+          removeLocal({ key })
+        }
+        resolve({})
+      })
 
-  })
+    })
+  }
 }
 
-// SYNC
-const getSync = async ({ key }) => {
-  return new Promise((resolve, reject) => {
-    store.sync.get([key], (result) => {
-      if (Object.keys(result).length > 0) {
-        resolve(result[key]); // this should return everything
-      }
-      resolve({});
+// Sync storage manipulation
+const sync = {
+  /**
+   * Returns an array of entries based on the key provided
+   * @param {string} key 
+   * @returns {Array}
+   */
+  get: async ({ key }) => {
+    console.log('getSync');
+    return new Promise((resolve, reject) => {
+      store.sync.get([key], (result) => {
+        console.log(result);
+        if (Object.keys(result).length > 0) {
+          resolve(result[key]); // this should return everything
+        }
+        resolve([]);
+      });
     });
-  });
-};
+  },
 
-const setSync = async ({ key, value }) => {
-  // maybe use sync instead if the user is logged in?
-  return new Promise((resolve, reject) => {
-    store.sync.set({ [key]: value }, (result) => {
-      resolve(result);
+  set: async ({ key, value }) => {
+    // maybe use sync instead if the user is logged in?
+    return new Promise((resolve, reject) => {
+      store.sync.set({ [key]: value }, (result) => {
+        resolve(result);
+      });
     });
-  });
-};
+  },
 
-const removeSync = async ({ key }) => {
-  return new Promise((resolve, reject) => {
-    store.sync.remove([key], (result) => {
-      resolve(result);
+  remove: async ({ key }) => {
+    return new Promise((resolve, reject) => {
+      store.sync.remove([key], (result) => {
+        resolve(result);
+      });
     });
-  });
-};
+  },
 
-const clearSync = async ({ }) => {
-  return new Promise((resolve, reject) => {
-    // remove everything from storage besides background info and userSettings
-    store.sync.get(null, result => {
-      delete result.userSettings;
-      delete result.background;
-      for (const key in result) {
-        removeSync({ key })
-      }
-      resolve({})
+  clear: async () => {
+    console.log('clearSync');
+    return new Promise((resolve, reject) => {
+      // remove everything from storage besides background info and userSettings
+      store.sync.get(null, result => {
+        console.log('result');
+        console.log(result);
+        delete result.userSettings;
+        delete result.background;
+        for (const key in result) {
+          removeSync({ key })
+        }
+        resolve({})
+      })
     })
-  })
+  }
+}
+
+const stores = {
+  local,
+  sync
 }
 
 export const state = reactive({
@@ -156,89 +180,70 @@ export const state = reactive({
 
 export const actions = {
   initUserSettings: async () => {
-    let userSettings = await getSync({ key: 'userSettings' })
+    let userSettings = await stores.sync.get({ key: 'userSettings' })
     if (!userSettings) return;
     state.userSettings = userSettings
   },
   initBackground: async () => {
-    let background = await getSync({ key: 'background' })
+    let background = await stores.sync.get({ key: 'background' })
     if (!background) return;
     state.background = background;
   },
   setBackground: () => {
-    setSync({ key: 'background', value: state.background })
+    stores.sync.set({ key: 'background', value: state.background })
   },
   setUserSettings: () => {
-    setSync({ key: 'userSettings', value: state.userSettings })
+    stores.sync.set({ key: 'userSettings', value: state.userSettings })
   },
   setDate: (key) => {
     state.date = date;
   },
   resetSyncDatabase: async () => {
-    await clearSync()
+    await stores.sync.clearSync()
   },
-  create: async ({ date, entry, key }) => {
+  create: async ({ date, entry }) => {
+    console.log('create');
+    const type = storageType(date);
     try {
-      if (useLocal(date)) {
-        const dateObject = await getLocal({ key: date });
-        dateObject[key] = entry;
-        await setLocal({ key: date, value: dateObject });
-      } else {
-        const dateObject = await getSync({ key: date });
-        dateObject[key] = entry;
-        await setSync({ key: date, value: dateObject });
-
-      }
+      const dateArr = await stores[type].get({ key: date })
+      dateArr.push(entry);
+      stores[type].set({ key: date, value: dateArr })
     } catch (e) {
       console.error(e)
     }
-
   },
   read: async ({ date }) => {
+    console.log('read');
+    const type = storageType(date);
     try {
-      let dateObject
-      if (useLocal(date)) {
-        dateObject = await getLocal({ key: date })
-      } else {
-        dateObject = await getSync({ key: date });
-      }
-      return dateObject
+      return stores[type].get({ key: date })
     } catch (e) {
       console.error(e)
     }
   },
   update: async ({ date, entry, key }) => {
-    let dateObject = await getSync({ key: date });
-    let result;
-    if (key in dateObject) {
-      dateObject[key] = entry;
-      result = await setSync({ key: date, value: dateObject });
-    } else {
-      dateObject = await getLocal({ date })
-      dateObject[key] = entry;
-      result = await setLocal({ key: date, value: dateObject });
-    }
+    console.log('update');
+    const type = storageType(date);
+    const dateArr = await stores[type].get({ key: date })
+    const index = dateArr.findIndex(e => e.key === key);
+    dateArr[index] = entry;
+    const result = await stores[type].set({ key: date, value: dateArr })
     return result;
   },
-
   delete: async ({ date, key }) => {
-    let dateObject = await getSync({ key: date });
+    console.log('delete');
     let results;
-    if (key in dateObject) {
-      delete dateObject[key];
-      if (Object.keys(dateObject).length === 0) {
-        results = await removeSync({ key: date });
-      } else {
-        results = await setSync({ key: date, value: dateObject });
-      }
+    const type = storageType(date);
+    const dateArray = await stores[type].get({ key: date })
+    const index = dateArray.findIndex(e => e.key === key);
+    console.log(dateArray);
+    dateArray.splice(index, 1)
+    if (dateArray.length === 0) {
+      console.log('Delete Date')
+      results = await stores[type].remove({ key: date })
     } else {
-      dateObject = await getLocal({ key: date })
-      delete dateObject[key]
-      if (Object.keys(dateObject).length === 0) {
-        results = await removeLocal({ key: date })
-      } else {
-        results = await setLocal({ key: date, value: dateObject })
-      }
+      console.log('Set new array')
+      results = await stores[type].set({ key: date, value: dateArray })
     }
     return results;
   },
@@ -247,7 +252,6 @@ export const actions = {
   * @param name - name of alarm
   * @param time - time for alarm to go off
   * @returns void
-  * @type {{name: String, time: Number}} 
   */
   createAlarm: ({ name, time }) => {
     chrome.permissions.contains({ permissions: ["notifications"] }, (result) => {

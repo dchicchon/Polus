@@ -6,7 +6,7 @@
     :class="[entry.color, { checked: entry.active }]"
     v-if="entry.new"
     ref="newEntry"
-    v-on:blur="createEntry(entry, entryKey)"
+    v-on:blur="createEntry(entry)"
     v-on:keydown.enter="$event.target.blur()"
   >
   </textarea>
@@ -18,10 +18,7 @@
     class="entry"
     :class="[entry.color, { checked: entry.active }]"
     @click="changeMode('menu')"
-    draggable
-    @dragstart="dragStart($event, entryKey, entry, $parent._uid)"
   >
-    <!-- @dragend="dragEnd($event, key)" -->
     {{ entry.text }}
   </li>
   <!-- End Inactive Entry -->
@@ -33,8 +30,6 @@
     class="entry"
     :class="[entry.color]"
     @click="(e) => altChangeActive(e)"
-    draggable
-    @dragstart="dragStart($event, entryKey, entry, $parent._uid)"
   >
     <div class="entry-container">
       <p class="text" v-if="mode !== 'edit'" :class="{ checked: entry.active }">
@@ -85,7 +80,7 @@
           />
           <input
             class="entryBtn"
-            v-model="entry.time"
+            v-model="time"
             @mouseup="changeTimeMode"
             @input="selectTime"
             placeholder="none"
@@ -122,7 +117,7 @@
           />
         </button>
         <!-- Delete Entry -->
-        <button @click="() => deleteEntry(entryKey)" class="entryBtn">
+        <button @click="() => deleteEntry(entry.key)" class="entryBtn">
           <img
             :style="{ filter: 'invert(1)' }"
             alt="delete"
@@ -147,10 +142,6 @@ export default {
       required: false,
       type: Function,
     },
-    entryKey: {
-      type: String,
-      required: true,
-    },
     entry: {
       required: true,
       type: Object,
@@ -170,20 +161,14 @@ export default {
   },
   data() {
     return {
-      // ...this.entry,
-      newTime: "",
+      time: "",
       newText: "",
       mode: "",
     };
   },
   created() {
-    console.log('Created');
-    // console.log(this.entry);
-    // this.newEntry = this.entry.new || false;
-    // this.text = this.entry.text;
-    // this.color = this.entry.color;
-    // this.active = this.entry.active;
-    // this.time = this.entry.time || "";
+    console.log("Created");
+    this.time = this.entry.time || "";
   },
   mounted() {
     if (this.$refs.newEntry) this.$refs.newEntry.focus(); // add focus on new entry textarea
@@ -215,12 +200,14 @@ export default {
       if (color !== this.entry.color) {
         this.entry.color = color;
         this.changeMode("menu");
-        this.updateEntry(this.entryKey);
+        this.updateEntry(this.entry.key);
       }
     },
     selectTime() {
-      if (this.time !== this.entry.time) {
-        this.entry.time = this.time;
+      console.log("select time");
+      console.log(this.time);
+      if (!this.entry.time) {
+        console.log("There is no time entry here");
         let eventDate = new Date(this.listDate);
         let hours = parseInt(this.time[0] + this.time[1]);
         let minutes = parseInt(this.time[3] + this.time[4]);
@@ -229,55 +216,72 @@ export default {
         eventDate.setMinutes(minutes);
         const ms = eventDate.getTime() - Date.now();
         if (ms > 0) {
+          console.log("Create the alarm");
           actions.createAlarm({
             name: this.entry.key,
             time: eventDate.getTime(),
           });
         }
-        // we should remove the previous alarm set
-        // We can use this to check if notifications have been enabled so that we can show the user
       }
+      // if (this.time !== this.entry.time) {
+      //   this.entry.time = this.time;
+      //   let eventDate = new Date(this.listDate);
+      //   let hours = parseInt(this.time[0] + this.time[1]);
+      //   let minutes = parseInt(this.time[3] + this.time[4]);
+      //   eventDate.setSeconds(0);
+      //   eventDate.setHours(hours);
+      //   eventDate.setMinutes(minutes);
+      //   const ms = eventDate.getTime() - Date.now();
+      //   if (ms > 0) {
+      //     actions.createAlarm({
+      //       name: this.entry.key,
+      //       time: eventDate.getTime(),
+      //     });
+      //   }
+      //   // we should remove the previous alarm set
+      //   // We can use this to check if notifications have been enabled so that we can show the user
+      // }
     },
     submitTime() {
       this.changeMode("menu");
     },
-    saveTime() {
-      this.newTime = this.entry.time ? this.entry.time : "12:00";
-      if (this.newTime !== this.time) {
-        this.entry.time = this.time;
-        let eventDate = new Date(this.listDate);
-        let hours = parseInt(this.time[0] + this.time[1]);
-        let minutes = parseInt(this.time[3] + this.time[4]);
-        eventDate.setSeconds(0);
-        eventDate.setHours(hours);
-        eventDate.setMinutes(minutes);
-        const ms = eventDate.getTime() - Date.now();
-        // if alarm is in the future
-        if (ms > 0) {
-          // Check if notifications are allowed
-          chrome.permissions.contains(
-            {
-              permissions: ["notifications"],
-            },
-            (result) => {
-              // If allowed, create an alarm for this entry
-              if (result) {
-                chrome.alarms.create(this.entryKey, {
-                  when: eventDate.getTime(),
-                });
-              }
-            }
-          );
-        }
-        // We can use this to check if notifications have been enabled so that we can show the user
-        this.updateEntry(this.entryKey);
-      }
+    // saveTime() {
+    //   this.newTime = this.entry.time ? this.entry.time : "12:00";
+    //   if (this.newTime !== this.time) {
+    //     this.entry.time = this.time;
+    //     let eventDate = new Date(this.listDate);
+    //     let hours = parseInt(this.time[0] + this.time[1]);
+    //     let minutes = parseInt(this.time[3] + this.time[4]);
+    //     eventDate.setSeconds(0);
+    //     eventDate.setHours(hours);
+    //     eventDate.setMinutes(minutes);
+    //     const ms = eventDate.getTime() - Date.now();
+    //     // if alarm is in the future
+    //     if (ms > 0) {
+    //       // Check if notifications are allowed
+    //       chrome.permissions.contains(
+    //         {
+    //           permissions: ["notifications"],
+    //         },
+    //         (result) => {
+    //           // If allowed, create an alarm for this entry
+    //           if (result) {
+    //             chrome.alarms.create(this.entry.key, {
+    //               when: eventDate.getTime(),
+    //             });
+    //           }
+    //         }
+    //       );
+    //     }
+    //     // We can use this to check if notifications have been enabled so that we can show the user
+    //     this.updateEntry(this.entry.key);
+    //   }
 
-      // Add this.timeEntry() later
-    },
+    // Add this.timeEntry() later
+    // },
     checkEntry() {
       this.entry.active = !this.entry.active;
-      this.updateEntry(this.entryKey);
+      this.updateEntry(this.entry.key);
     },
     editEntry() {
       this.mode = "edit";
@@ -289,7 +293,7 @@ export default {
       if (this.newText !== this.entry.text) {
         this.entry.text = this.newText;
         this.newText = "";
-        this.updateEntry(this.entryKey);
+        this.updateEntry(this.entry.key);
       }
     },
   },
