@@ -6,7 +6,6 @@ const require = createRequire(import.meta.url);
 const manifest = require('./manifest.json')
 
 const mode = process.env.APP_ENV;
-console.log(mode);
 
 // https://vitejs.dev/config/
 
@@ -21,7 +20,8 @@ const getConfig = () => {
         crx({ manifest })
       ],
     })
-  } else {
+  }
+  else {
     return defineConfig({
       esbuild: {
         drop: ['console', 'debugger']

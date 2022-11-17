@@ -64,7 +64,6 @@ export default {
     };
   },
   created() {
-    // console.log(this.$parent.$refs)
     this.readEntries();
   },
   mounted() {
@@ -84,7 +83,7 @@ export default {
   },
   methods: {
     initEntry() {
-      console.log("initEntry");
+      console.info("initEntry");
       // Add to entries state and to chrome storage
       const key = shortid.generate();
       let newEntry = {
@@ -102,7 +101,7 @@ export default {
     // DRAG FUNCTIONS
     // https://learnvue.co/2020/01/how-to-add-drag-and-drop-to-your-vuejs-project/
     dragStart(evt, key, entry, parentId) {
-      console.log("dragStart");
+      console.info("dragStart");
       // We need a callback so we can remove from the original data and entries list
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
@@ -114,13 +113,11 @@ export default {
     },
     // On drop, we will add to our list and delete from old one
     onDrop(evt) {
-      console.log("onDrop");
+      console.info("onDrop");
       this.isOver = false;
       // get original parent id
-      const parentId = evt.dataTransfer.getData("parentId");
+      const parentId = parseInt(evt.dataTransfer.getData("parentId"));
       const key = evt.dataTransfer.getData("key");
-      console.log(parentId);
-      console.log(this.id);
 
       // If in the same list, exit the function
       if (parentId === this.id) return;
@@ -136,7 +133,7 @@ export default {
     },
 
     createEntry(entry) {
-      console.log("createEntry");
+      console.info("createEntry");
       const index = toRaw(this.entries).findIndex((e) => e.key === entry.key);
       if (entry.text.length === 0) {
         this.entries.splice(index, 1);
@@ -146,32 +143,33 @@ export default {
       actions
         .create({ date: this.dateStamp, entry, key: entry.key })
         .then((result) => {
-          // console.log(result);
+          console.info({ result });
         })
         .catch((e) => console.error(e));
     },
     readEntries() {
-      console.log("readEntries");
+      console.info("readEntries");
       actions
         .read({ date: this.dateStamp })
         .then((result) => {
+          console.info({ result });
           this.entries = result;
         })
         .catch((e) => console.error(e));
     },
     updateEntry(key) {
-      console.log("updateEntry");
+      console.info("updateEntry");
       // check if entry is any different than before
       const index = this.entries.findIndex((e) => e.key === key);
       actions
         .update({ date: this.dateStamp, entry: this.entries[index], key })
         .then((result) => {
-          // console.log(result);
+          console.info({ result });
         })
         .catch((e) => console.error(e));
     },
     deleteEntry(key) {
-      console.log("Delete Entry");
+      console.info("Delete Entry");
       const entries = toRaw(this.entries);
       const index = entries.findIndex((e) => e.key === key);
       if (this.entries[index].hasOwnProperty("time")) {
@@ -181,7 +179,7 @@ export default {
       actions
         .delete({ date: this.dateStamp, key })
         .then((result) => {
-          // console.log(result);
+          console.info({ result });
         })
         .catch((e) => console.error(e));
     },

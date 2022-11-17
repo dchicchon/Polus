@@ -1,6 +1,7 @@
 // Runtime OnInstalled Listeners
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason == "install") {
+    console.info('Installing Application')
     createBackgroundAlarm(); // change background photo
     createSyncToLocalAlarm(); // bring sync to local
     chrome.runtime.setUninstallURL(
@@ -22,6 +23,7 @@ chrome.runtime.onInstalled.addListener((details) => {
     chrome.storage.sync.set({ userSettings });
     getPhoto(); // get background photo
   } else if (details.reason == "update") {
+    console.info('Updating extension')
     // also immediately run a sync to local
     moveToLocal();
     createSyncToLocalAlarm();
@@ -30,6 +32,7 @@ chrome.runtime.onInstalled.addListener((details) => {
 
 // Context Menu Click Listeners
 chrome.contextMenus.onClicked.addListener(function (result) {
+  console.info('contextMenu onClicked')
   if (result["menuItemId"] === "open-sesame") {
     chrome.storage.sync.get("userSettings", (result) => {
       let { userSettings } = result;
@@ -43,6 +46,7 @@ chrome.contextMenus.onClicked.addListener(function (result) {
 
 // Alarm Listeners
 chrome.alarms.onAlarm.addListener((alarm) => {
+  console.info('alarams onAlarm')
   if (alarm.name === "changeBackground") {
     chrome.storage.sync.get("userSettings", (result) => {
       let { userSettings } = result;
@@ -82,6 +86,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
  */
 
 const createSyncToLocalAlarm = () => {
+  console.info('createSyncToLocalAlarm')
   let nextWeek = new Date();
   nextWeek.setDate(nextWeek.getDate() + 14);
   chrome.alarms.create("moveToLocal", {
@@ -94,6 +99,8 @@ const createSyncToLocalAlarm = () => {
  * Create an alarm for changing the background photo. Calls getPhoto()
  */
 const createBackgroundAlarm = () => {
+  console.info('createBackgroundAlarm')
+
   let midnight = new Date();
   midnight.setHours(23, 59, 59);
   // Create alarm that executes every 25 hours
@@ -108,8 +115,8 @@ const createBackgroundAlarm = () => {
   to chrome.storage.local to avoid going over the storage limit in 
   chrome.storage.sync
 */
-
 const moveToLocal = () => {
+  console.info('moveToLocal')
   // Move all entryDates from X months ago to localstorage
   chrome.storage.sync.get(null, (result) => {
     delete result.userSettings;
@@ -134,6 +141,7 @@ const moveToLocal = () => {
  * Clears all notifications from the system tray
  */
 const clearNotifications = () => {
+  console.info('clearNotifications')
   chrome.notifications.getAll((result) => {
     let notifications = Object.keys(result);
     for (let notification of notifications) {
@@ -143,13 +151,12 @@ const clearNotifications = () => {
 };
 
 /**
- *
  * Get new photo from collection https://unsplash.com/documentation and will
  * store it in the users chrome storage sync . Gets called whenever the alarm
  * changeBackground is fired
  */
 const getPhoto = () => {
-  // console.log("Getting Photo")
+  console.info("Getting Photo")
   // This url hits an api endpoint to get a random photo and saves it to user's chrome storage
   let url =
     "https://api.unsplash.com/photos/random/?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&collections=8974511";
@@ -167,7 +174,6 @@ const getPhoto = () => {
       throw err
     })
     .then((photo) => {
-      // console.log("third then")
       let url = photo.urls.raw;
       let location = photo.location.name ? `${photo.location.name}` : "Unknown";
       let author = photo.user.name ? `${photo.user.name}` : "Unknown";
@@ -183,7 +189,7 @@ const getPhoto = () => {
       chrome.storage.sync.set({ background });
     })
     .catch((err) => {
-      // console.log("Final error")
+      console.error(err)
       throw err
     });
 };

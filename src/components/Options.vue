@@ -78,6 +78,7 @@ export default {
   },
   methods: {
     modifyNotificationPermission(event, name) {
+      console.debug("modifyNotificationPermission");
       // get the current setting for notifications from user settings
       if (state.userSettings.notifications) {
         // ask if user wants to disable notifications
@@ -86,8 +87,6 @@ export default {
             permissions: ["notifications"],
           },
           (removed) => {
-            console.log("modifying permsissions");
-            console.log(removed);
             if (removed) {
               // The permissions have been removed.
               state.userSettings.notifications = false;

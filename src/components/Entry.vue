@@ -167,7 +167,6 @@ export default {
     };
   },
   created() {
-    console.log("Created");
     this.time = this.entry.time || "";
   },
   mounted() {
@@ -204,10 +203,8 @@ export default {
       }
     },
     selectTime() {
-      console.log("select time");
-      console.log(this.time);
+      console.debug("selectTime");
       if (!this.entry.time) {
-        console.log("There is no time entry here");
         let eventDate = new Date(this.listDate);
         let hours = parseInt(this.time[0] + this.time[1]);
         let minutes = parseInt(this.time[3] + this.time[4]);
@@ -216,8 +213,7 @@ export default {
         eventDate.setMinutes(minutes);
         const ms = eventDate.getTime() - Date.now();
         if (ms > 0) {
-          console.log("Create the alarm");
-          actions.createAlarm({
+          actions.createNotification({
             name: this.entry.key,
             time: eventDate.getTime(),
           });

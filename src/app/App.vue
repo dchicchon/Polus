@@ -20,7 +20,6 @@ export default {
     Calendar,
   },
   // here we retrieve the information via store
-  beforeCreate() {},
   mounted() {
     window.addEventListener("resize", this.mountBackground);
     this.mountBackground();
@@ -40,16 +39,6 @@ export default {
       this.$refs.main.style.display = state.userSettings.pmode
         ? "none"
         : "block";
-
-      // this is for local images
-      // chrome.storage.sync.get(["background", "userSettings"], (result) => {
-      // chrome.storage.sync.get("image", (syncRes) => {
-      // if (Object.keys(syncRes).length > 0) {
-      //   let image = syncRes.image;
-      //   page[0].style.background = `url(${image})`;
-      // }else {}
-      // });
-      // });
     },
   },
 };
@@ -231,5 +220,4 @@ button:hover {
   height: 100px;
   background: none !important;
 }
-
 </style>

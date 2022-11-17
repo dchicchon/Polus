@@ -2,11 +2,12 @@ import { createApp } from "vue";
 import { actions } from "../utils";
 import Options from './Options.vue';
 
-const start = async () => {
+const startOptions = async () => {
+    console.info('Start Options')
     await actions.initUserSettings()
-    const popup = createApp(Options).mount('#app')
+    createApp(Options).mount('#app')
 };
 
 window.onload = () => {
-    start();
+    startOptions();
 };

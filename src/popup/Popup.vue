@@ -56,7 +56,7 @@ export default {
   // computed in app, costs less than using methods
   computed: {
     currentTabComponent() {
-      // console.log("Current Tab Component");
+      console.debug("currentTabComponent");
       let component = this.tab.charAt(0).toUpperCase() + this.tab.slice(1);
       return component;
     },

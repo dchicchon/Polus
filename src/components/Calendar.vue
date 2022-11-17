@@ -45,7 +45,6 @@ export default {
     };
   },
   created() {
-    // console.log("created")
     chrome.storage.sync.get("userSettings", (result) => {
       let { userSettings } = result;
       this.userSettings = userSettings;

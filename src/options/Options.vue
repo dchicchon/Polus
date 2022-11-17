@@ -7,7 +7,10 @@
       <h3>Alarms</h3>
       <ul>
         <li v-for="(alarm, index) in alarms" :key="`${index}`">
-          Name: {{ alarm.name }} Scheduled Time: {{ alarm.scheduledTime }}
+          <p v-for="(alarm, key) in alarm" :key="`${key}`">
+            {{ key }}: {{ alarm }}
+          </p>
+          <!-- Name: {{ alarm.name }} Scheduled Time: {{ alarm.scheduledTime }} -->
         </li>
       </ul>
     </div>
@@ -44,9 +47,16 @@ import { actions } from "../utils";
 export default {
   // components in the popup
   created() {
-    console.log("lets get alar s");
     chrome.alarms.getAll((result) => {
-      this.alarms = result;
+      //name
+      //scheduledTime
+      const alarms = result.map((alarm) => {
+        const timeMS = alarm.scheduledTime;
+        const date = new Date(timeMS);
+        alarm.scheduledTime = date.toLocaleString();
+        return alarm;
+      });
+      this.alarms = alarms;
     });
     chrome.permissions.getAll((result) => {
       this.permissions = result.permissions;

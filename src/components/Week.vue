@@ -47,12 +47,6 @@ export default {
       date: new Date(),
     };
   },
-  created() {
-    console.log("Created Week");
-  },
-  mounted() {
-    console.log(this.$refs);
-  },
   methods: {
     changeDate(amount) {
       let changeDate = new Date(this.date); // had to do this because computed couldn't see that it was updating

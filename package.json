@@ -1,6 +1,6 @@
 {
   "name": "polus",
-  "version": "2.0.1",
+  "version": "1.8.0",
   "description": "A new tab planner extension",
   "author": "dchicchon",
   "type": "module",
@@ -9,6 +9,7 @@
     "dev": "vite",
     "build": "npm run build:dev",
     "build:dev": "APP_ENV=development vite build",
+    "build:watch": "nodemon -e js,vue,html --ignore dist/ --exec npm run build:dev",
     "build:prod": "APP_ENV=production vite build",
     "preview": "vite preview"
   },
@@ -20,6 +21,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^9.7.0",
     "material-design-icons": "^3.0.1",
+    "nodemon": "^2.0.20",
     "prettier": "^2.7.1",
     "sass": "^1.55.0",
     "shortid": "^2.2.16",
