@@ -39,12 +39,11 @@
         placeholder="https://unsplash.com/photos/NuBvAE6VfSM"
         v-model="photoLink"
       />
-      <button @click="submitPhoto" class="blue md-primary md-raised md-dense">
-        Submit
-      </button>
-      <!-- <md-button @click="submitPhoto" class="blue md-primary md-raised md-dense"
-        >Submit</md-button
-      > -->
+      <Button :onClick="submitPhoto" title="Submit"></Button>
+    </div>
+
+    <div>
+      <p class="extension-link" @click="openOptions">Additional Options page</p>
     </div>
 
     <!-- In order to save on user space, we will remove this item -->
@@ -60,21 +59,22 @@
 <script>
 import { actions, state } from "../utils";
 import Toggle from "./Toggle.vue";
+import Button from "./Button.vue";
 export default {
   components: {
     Toggle,
+    Button,
   },
   data() {
     return {
       userSettings: {},
+      optionsUrl: "",
       photoLink: "",
       error: "",
     };
   },
   created() {
     this.userSettings = state.userSettings;
-    //   On created, get all the items from storage
-    // this.getSettings();
   },
   methods: {
     modifyNotificationPermission(event, name) {
@@ -152,6 +152,10 @@ export default {
         });
     },
 
+    openOptions() {
+      actions.getOptionsPage();
+    }
+
     // // Allow user to submit photo from os
     // async handleFile() {
     //   const options = {
@@ -208,6 +212,13 @@ export default {
 #photoURL {
   width: 95%;
   outline: none;
+}
+
+.extension-link {
+  text-decoration: underline;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .error {

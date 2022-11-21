@@ -445,15 +445,15 @@ select option {
   border: none;
   touch-action: none;
   user-select: none;
-  // transition: background 0.5s, height 0.25s;
   transition: background 0.5s;
   color: white;
   margin: 0.25rem auto;
   padding: 0.5rem;
   border-radius: 25px;
   font-size: 0.9rem;
-  cursor: pointer;
-
+  &:hover {
+    cursor: pointer;
+  }
   .entry-container {
     display: flex;
     flex-direction: column;

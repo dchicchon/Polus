@@ -13,7 +13,7 @@
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href="https://danielchicchon.io/polus"
+            href="https://danielchicchon.com/polus"
             >Site</a
           >
           <a

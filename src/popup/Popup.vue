@@ -26,18 +26,13 @@
   </div>
 </template>
 <script>
-import Options from "../components/Options.vue";
-import Updates from "../components/Updates.vue";
-// in dev environment
-import Dev from "../components/Dev.vue";
+import Options from "../components/PopupOptions.vue";
 
 // Popup Entry Point. Should create a check to see if user is logged in with firebase
 export default {
   // components in the popup
   components: {
     Options,
-    Updates,
-    Dev,
   },
 
   data() {
@@ -63,8 +58,7 @@ export default {
   },
 };
 </script>
-<style lang="scss" >
-// not scoped
+<style lang="scss">
 html {
   height: 0px !important;
 }
@@ -101,6 +95,10 @@ body {
   /* Handle on hover */
   &::-webkit-scrollbar-thumb:hover {
     background: #555;
+  }
+  .page-title {
+    font-size: 20px;
+    font-weight: 200;
   }
 }
 </style>

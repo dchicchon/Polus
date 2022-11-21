@@ -1,4 +1,6 @@
+console.info('Starting Background Page')
 // Runtime OnInstalled Listeners
+console.info('Setting onInstalled listeners')
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason == "install") {
     console.info('Installing Application')
@@ -26,11 +28,12 @@ chrome.runtime.onInstalled.addListener((details) => {
     console.info('Updating extension')
     // also immediately run a sync to local
     moveToLocal();
-    createSyncToLocalAlarm();
+    moveToLocalAlarm();
   }
 });
 
 // Context Menu Click Listeners
+console.info('Setting context menu listeners')
 chrome.contextMenus.onClicked.addListener(function (result) {
   console.info('contextMenu onClicked')
   if (result["menuItemId"] === "open-sesame") {
@@ -45,8 +48,10 @@ chrome.contextMenus.onClicked.addListener(function (result) {
 });
 
 // Alarm Listeners
+console.info('Setting onAlarm listeners')
 chrome.alarms.onAlarm.addListener((alarm) => {
-  console.info('alarams onAlarm')
+  console.info('alarms onAlarm')
+  console.info({ alarm })
   if (alarm.name === "changeBackground") {
     chrome.storage.sync.get("userSettings", (result) => {
       let { userSettings } = result;
@@ -60,9 +65,11 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   // Notification Alarms
   else {
     // have the alarm occur, look at the alarm name for the key of the entry
-    let dateStamp = new Date().toLocaleDateString("en-US");
+    let dateStamp = new Date().toLocaleDateString("en-US").replaceAll("/", "_");
+    // transform it into what we use
     // replace with the -
     chrome.storage.sync.get([dateStamp], (result) => {
+      console.info({ result })
       let entries = result[dateStamp];
       let entry = entries.find((entry) => entry.key === alarm.name);
       let notificationObj = {
@@ -71,6 +78,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         title: "Polus",
         iconUrl: "/assets/polus_icon.png",
       };
+      console.info({ notificationObj })
       // Clear all other notification before this
       chrome.notifications.create(entry.key, notificationObj);
       chrome.notifications.onClicked.addListener((notificationId) => {
@@ -84,9 +92,8 @@ chrome.alarms.onAlarm.addListener((alarm) => {
  * Create a recurring alarm for function @function moveToLocal
  * Chnage every 2 weeks
  */
-
-const createSyncToLocalAlarm = () => {
-  console.info('createSyncToLocalAlarm')
+const moveToLocalAlarm = () => {
+  console.info('moveToLocalAlarm')
   let nextWeek = new Date();
   nextWeek.setDate(nextWeek.getDate() + 14);
   chrome.alarms.create("moveToLocal", {
@@ -117,17 +124,16 @@ const createBackgroundAlarm = () => {
 */
 const moveToLocal = () => {
   console.info('moveToLocal')
-  // Move all entryDates from X months ago to localstorage
+  // Move all entryDates from 1 week ago to localstorage
   chrome.storage.sync.get(null, (result) => {
     delete result.userSettings;
     delete result.background;
     // go through our items
     for (const date in result) {
       const today = new Date();
-      const entryDate = new Date(date);
-      // check if its older than a month old
-      const monthMS = 1000 * 60 * 60 * 24 * 30;
-      if (today.getTime() - entryDate.getTime() > monthMS) {
+      const entryDate = new Date(date.replaceAll('_', '/'));
+      const twoWeeksMS = 1000 * 60 * 60 * 24 * 7;
+      if (today.getTime() - entryDate.getTime() > twoWeeksMS) {
         // place the date inside of localStorage and deletefrom syncStorage
         chrome.storage.local.set({ [date]: result[date] }, () => {
           chrome.storage.sync.remove([date]);

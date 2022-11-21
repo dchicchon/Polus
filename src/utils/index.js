@@ -66,7 +66,6 @@ const stores = {
     }
   },
   // Sync storage manipulation
-
   sync: {
     /**
      * Returns an array of entries based on the key provided
@@ -209,6 +208,7 @@ export const actions = {
     chromeAPI.permissions.contains({ permissions: ["notifications"] }, (result) => {
       // If allowed, create an alarm for this entry
       if (result) {
+        console.info('user has notifications permission. Creating alarm');
         chromeAPI.alarms.create(name, {
           when: time,
         });
@@ -219,6 +219,51 @@ export const actions = {
     console.info('actions.showDefaultTab');
     chromeAPI.tabs.update({
       url: "chrome-search://local-ntp/local-ntp.html",
+    });
+  },
+  removeNotificationAlarms: () => {
+    console.log('removeNotificationAlarms');
+    chromeAPI.alarms.getAll((result) => {
+      console.log({ result })
+      const mainList = result.filter(alarm => {
+        return alarm.name !== 'changeBackground' && alarm.name !== 'moveToLocal'
+      })
+      console.log({ mainList })
+      mainList.forEach(alarm => {
+        chromeAPI.alarms.clear(alarm.name)
+      })
+    })
+  },
+  getOptionsPage: () => {
+    chromeAPI.runtime.openOptionsPage();
+  },
+  /**
+  Move all chrome.storage.sync entry dates that are older than 1 month 
+  to chrome.storage.local to avoid going over the storage limit in 
+  chrome.storage.sync
+*/
+  moveToLocal: () => {
+    console.info('moveToLocal')
+    // Move all entryDates from 2 weeks ago to localstorage
+    chromeAPI.storage.sync.get(null, (result) => {
+      console.info({ result })
+      delete result.userSettings;
+      delete result.background;
+      // go through our items
+      for (const date in result) {
+        console.info('Date to check')
+        console.info({ date })
+        const today = new Date(); // today
+        const entryDate = new Date(date.replaceAll('_', '/')); // normalize date
+        const weekMS = 1000 * 60 * 60 * 24 * 7; // one week
+        if (today.getTime() - entryDate.getTime() > weekMS) {
+          console.info(`Moving date:${date} from sync to local`);
+          // place the date inside of localStorage and deletefrom syncStorage
+          chromeAPI.storage.local.set({ [date]: result[date] }, () => {
+            chrome.storage.sync.remove([date]);
+          });
+        }
+      }
     });
   }
 };
