@@ -74,9 +74,9 @@
           </li>
         </ul>
       </div>
-      <div>
+      <!-- <div>
         <Button :onClick="moveToLocal" title="Move to local"></Button>
-      </div>
+      </div> -->
     </div>
     <div class="pane"></div>
   </div>

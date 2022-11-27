@@ -134,7 +134,8 @@ export default {
 
     createEntry(entry) {
       console.info("createEntry");
-      const index = toRaw(this.entries).findIndex((e) => e.key === entry.key);
+      const rawEntries = toRaw(this.entries);
+      const index = rawEntries.findIndex((e) => e.key === entry.key);
       if (entry.text.length === 0) {
         this.entries.splice(index, 1);
         return;
@@ -160,9 +161,11 @@ export default {
     updateEntry(key) {
       console.info("updateEntry");
       // check if entry is any different than before
-      const index = this.entries.findIndex((e) => e.key === key);
+      const rawEntries = toRaw(this.entries);
+      const index = rawEntries.findIndex((e) => e.key === key);
+      const entry = rawEntries[index];
       actions
-        .update({ date: this.dateStamp, entry: this.entries[index], key })
+        .update({ date: this.dateStamp, entry, key })
         .then((result) => {
           console.info({ result });
         })
@@ -170,8 +173,8 @@ export default {
     },
     deleteEntry(key) {
       console.info("Delete Entry");
-      const entries = toRaw(this.entries);
-      const index = entries.findIndex((e) => e.key === key);
+      const rawEntries = toRaw(this.entries);
+      const index = rawEntries.findIndex((e) => e.key === key);
       if (this.entries[index].hasOwnProperty("time")) {
         chrome.alarms.clear(key); // clearing alarm if it has time
       }
