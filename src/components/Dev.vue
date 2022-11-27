@@ -14,10 +14,6 @@ export default {
     return {};
   },
   mounted() {
-    // chrome.storage.sync.get(["reload"], (result) => {
-    //   console.log("Current State");
-    //   console.log(result);
-    // });
   },
   methods: {
     checkAlarms() {

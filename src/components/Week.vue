@@ -26,7 +26,9 @@
     <div class="weekdays">
       <EntryList
         v-for="(date, index) in dateList"
+        :ref="`${index}`"
         :key="index"
+        :id="index"
         :listDate="date"
         :dateTitle="true"
         :classNames="['weekday']"
@@ -45,7 +47,6 @@ export default {
       date: new Date(),
     };
   },
-  // created() {},
   methods: {
     changeDate(amount) {
       let changeDate = new Date(this.date); // had to do this because computed couldn't see that it was updating

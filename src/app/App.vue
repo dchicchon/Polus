@@ -9,10 +9,10 @@
 </template>
 
 <script>
-import Navbar from "./components/Navbar.vue";
-import Clock from "./components/Clock.vue";
-import Calendar from "./components/Calendar.vue";
-import { state } from "../utils/store";
+import Navbar from "../components/Navbar.vue";
+import Clock from "../components/Clock.vue";
+import Calendar from "../components/Calendar.vue";
+import { state } from "../utils";
 export default {
   components: {
     Navbar,
@@ -20,17 +20,16 @@ export default {
     Calendar,
   },
   // here we retrieve the information via store
-  beforeCreate() {},
   mounted() {
-    window.addEventListener("resize", this.setBackground);
-    this.setBackground();
+    window.addEventListener("resize", this.mountBackground);
+    this.mountBackground();
   },
   destroyed() {
-    window.removeEventListener("resize", this.setBackground);
+    window.removeEventListener("resize", this.mountBackground);
   },
   methods: {
     //   Work on the background transition to load on page
-    setBackground() {
+    mountBackground() {
       if (!state.userSettings || !state.background) return;
       let page = document.getElementsByTagName("html");
       let image = state.background.url;
@@ -40,16 +39,6 @@ export default {
       this.$refs.main.style.display = state.userSettings.pmode
         ? "none"
         : "block";
-
-      // this is for local images
-      // chrome.storage.sync.get(["background", "userSettings"], (result) => {
-      // chrome.storage.sync.get("image", (syncRes) => {
-      // if (Object.keys(syncRes).length > 0) {
-      //   let image = syncRes.image;
-      //   page[0].style.background = `url(${image})`;
-      // }else {}
-      // });
-      // });
     },
   },
 };
@@ -231,5 +220,4 @@ button:hover {
   height: 100px;
   background: none !important;
 }
-
 </style>

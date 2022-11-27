@@ -5,7 +5,7 @@
       <div id="app-info">
         <div id="app-title" ref="title">
           <!-- To bring in the img, we must use "/assets" in order to create a relative path for the compiler to find -->
-          <!-- <img class="app-icon" src="assets/polus_icon.png" alt="App icon" /> -->
+          <img class="app-icon" src="/assets/polus_icon.png" alt="App icon" />
         </div>
         <div id="app-items" ref="items">
           <a href="https://mail.google.com/mail/u/0/"> Gmail </a>
@@ -13,7 +13,7 @@
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href="https://danielchicchon.io/polus"
+            href="https://danielchicchon.com/polus"
             >Site</a
           >
           <a

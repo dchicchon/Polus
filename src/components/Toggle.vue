@@ -1,7 +1,7 @@
 <template>
   <div>
     {{ description }}
-    <label @click="toggleItem($event, name)" for="switch" class="switch">
+    <label @click="() => toggleItem($event, name)" for="switch" class="switch">
       <input type="checkbox" class="toggle" v-model="currentValue" />
       <span class="slider round"></span>
     </label>

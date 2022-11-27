@@ -14,26 +14,25 @@
   </div>
 </template>
 
-  
 <script>
 import EntryList from "./EntryList.vue";
-import { state, actions } from "../../utils/store";
 export default {
   components: {
     EntryList,
   },
   data() {
     return {
-      date: new Date()
+      date: new Date(),
     };
   },
 
   methods: {
     changeDay(amount) {
-      console.log("Change date")
+      console.info("changeDay");
       let changeDate = new Date(this.date);
       changeDate.setDate(changeDate.getDate() + amount);
-      this.date = changeDate
+      console.info(changeDate);
+      this.date = changeDate;
     },
   },
 
@@ -47,11 +46,10 @@ export default {
 
     dayTitle() {
       let options = { weekday: "short" };
-      console.log("computing day");
       return `${this.date.toLocaleString(
         undefined,
         options
-      )} ${state.date.toLocaleDateString()}`;
+      )} ${this.date.toLocaleDateString()}`;
     },
   },
 };
