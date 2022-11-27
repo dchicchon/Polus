@@ -14,6 +14,7 @@ const getConfig = () => {
     return defineConfig({
       build: {
         minify: false,
+        outDir: 'dist'
       },
       plugins: [
         vue(),
@@ -23,6 +24,9 @@ const getConfig = () => {
   }
   else {
     return defineConfig({
+      build: {
+        outDir: 'prod'
+      },
       esbuild: {
         drop: ['console', 'debugger']
       },

@@ -5,9 +5,9 @@
   "author": "dchicchon",
   "type": "module",
   "scripts": {
-    "prebuild": "npx rimraf dist",
+    "prebuild": "npx rimraf prod",
     "dev": "vite",
-    "build": "npm run build:dev",
+    "build": "npm run build:prod",
     "build:dev": "APP_ENV=development vite build",
     "build:watch": "nodemon -e js,vue,html --ignore dist/ --exec npm run build:dev",
     "build:prod": "APP_ENV=production vite build",

@@ -156,50 +156,6 @@ export default {
       actions.getOptionsPage();
     }
 
-    // // Allow user to submit photo from os
-    // async handleFile() {
-    //   const options = {
-    //     types: [
-    //       {
-    //         description: "Image",
-    //         accept: {
-    //           "image/*": [".jpg"],
-    //         },
-    //       },
-    //     ],
-    //   };
-    //   let [fileHandle] = await window.showOpenFilePicker(options);
-    //   const file = await fileHandle.getFile(); // once a user picks an image return the path of that image
-    //   //  Lets let the user do the reader on the load
-    //   let reader = new FileReader();
-    //   reader.addEventListener(
-    //     "load",
-    //     function () {
-    //       // USE INDEXED DB INSTEAD
-    //       chrome.storage.sync.set({ background: false }, () => {
-    //         chrome.storage.sync.set({ image: reader.result }, () => {
-    //           chrome.tabs.query(
-    //             { active: true, currentWindow: true },
-    //             (tabs) => {
-    //               chrome.tabs.reload(tabs[0].id);
-    //             }
-    //           );
-    //         });
-    //       });
-    //     },
-    //     false
-    //   );
-    //   if (file.size < 4500000) {
-    //     reader.readAsDataURL(file);
-    //     this.error = "";
-    //   } else {
-    //     this.error = "File Size is too large";
-    //   }
-    // },
-
-    // uploadPhoto() {
-    //   this.handleFile();
-    // },
   },
 };
 </script>

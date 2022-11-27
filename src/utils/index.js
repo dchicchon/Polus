@@ -254,6 +254,7 @@ export const actions = {
         console.info('Date to check')
         console.info({ date })
         const today = new Date(); // today
+        // Ensure that we transform previous date style (/ vs _)
         const entryDate = new Date(date.replaceAll('_', '/')); // normalize date
         const weekMS = 1000 * 60 * 60 * 24 * 7; // one week
         if (today.getTime() - entryDate.getTime() > weekMS) {
