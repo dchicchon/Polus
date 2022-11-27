@@ -26,9 +26,7 @@ chrome.runtime.onInstalled.addListener((details) => {
     getPhoto(); // get background photo
   } else if (details.reason == "update") {
     console.info('Updating extension')
-    // also immediately run a sync to local
-    moveToLocal();
-    moveToLocalAlarm();
+    // ammendEntries();
   }
 });
 
@@ -65,7 +63,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   // Notification Alarms
   else {
     // have the alarm occur, look at the alarm name for the key of the entry
-    let dateStamp = new Date().toLocaleDateString("en-US").replaceAll("/", "_");
+    let dateStamp = new Date().toLocaleDateString("en-US").replaceAll('_', '/');
     // transform it into what we use
     // replace with the -
     chrome.storage.sync.get([dateStamp], (result) => {
@@ -89,9 +87,9 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 });
 
 /**
- * Create a recurring alarm for function @function moveToLocal
- * Chnage every 2 weeks
- */
+//  * Create a recurring alarm for function @function moveToLocal
+//  * Chnage every 2 weeks
+//  */
 const moveToLocalAlarm = () => {
   console.info('moveToLocalAlarm')
   let nextWeek = new Date();
@@ -132,13 +130,17 @@ const moveToLocal = () => {
     for (const date in result) {
       const today = new Date();
       const entryDate = new Date(date.replaceAll('_', '/'));
-      const twoWeeksMS = 1000 * 60 * 60 * 24 * 7;
-      if (today.getTime() - entryDate.getTime() > twoWeeksMS) {
-        // place the date inside of localStorage and deletefrom syncStorage
-        chrome.storage.local.set({ [date]: result[date] }, () => {
-          chrome.storage.sync.remove([date]);
-        });
+      // if it's a valid date (i.e. us timeformat)
+      if (entryDate.getTime() !== NaN) {
+        const weekMS = 1000 * 60 * 60 * 24 * 7;
+        const entries = result[date]
+        if (today.getTime() - entryDate.getTime() > weekMS) {
+          chrome.storage.local.set({ [date]: entries }, () => {
+            chrome.storage.sync.remove(date);
+          });
+        }
       }
+
     }
   });
 };
@@ -155,6 +157,64 @@ const clearNotifications = () => {
     }
   });
 };
+
+/**
+ * The great mistake of 2022. Revert all entries from _ to /
+ */
+// const ammendEntries = () => {
+
+//   // Do all sync
+//   chrome.storage.sync.get(null, (result) => {
+//     delete result.userSettings;
+//     delete result.background;
+//     const entriesToFix = {}
+//     // remove all underscored
+//     for (const date in result) {
+//       // check if the date contains an _
+//       const containsUnderscore = date.includes('_');
+//       if (containsUnderscore) {
+//         entriesToFix[date] = result[date];
+//         delete result[date];
+//       }
+//     }
+//     // combine underscored if found
+//     for (const filteredDate in result) {
+//       const testDate = filteredDate.replaceAll('/', '_');
+//       if (entriesToFix[testDate]) {
+//         const toAmmendEntries = entriesToFix[testDate];
+//         const currentEntries = result[filteredDate];
+//         const combinedEntries = [...currentEntries, ...toAmmendEntries]
+//         chrome.storage.sync.set({ [filteredDate]: combinedEntries })
+//       }
+//     }
+//   })
+
+//   // Do all local
+//   chrome.storage.local.get(null, (result) => {
+//     delete result.userSettings;
+//     delete result.background;
+//     const entriesToFix = {}
+//     // remove all underscored
+//     for (const date in result) {
+//       // check if the date contains an _
+//       const containsUnderscore = date.includes('_');
+//       if (containsUnderscore) {
+//         entriesToFix[date] = result[date];
+//         delete result[date];
+//       }
+//     }
+//     // combine underscored if found
+//     for (const filteredDate in result) {
+//       const testDate = filteredDate.replaceAll('/', '_');
+//       if (entriesToFix[testDate]) {
+//         const toAmmendEntries = entriesToFix[testDate];
+//         const currentEntries = result[filteredDate];
+//         const combinedEntries = [...currentEntries, ...toAmmendEntries]
+//         chrome.storage.local.set({ [filteredDate]: combinedEntries })
+//       }
+//     }
+//   })
+// }
 
 /**
  * Get new photo from collection https://unsplash.com/documentation and will

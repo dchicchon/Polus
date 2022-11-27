@@ -3,20 +3,15 @@ import { reactive } from "vue";
 const chromeAPI = chrome
 /**
  * Use the local storage if an entry is being set to a date more than a week in the past
- * @param {*} date 
+ * @param {Date} date use a real date value, not the stamp
  * @returns 
  */
 const storageType = (date) => {
   const todayDate = new Date();
-  const entryListDate = new Date(date.replaceAll('_', '/'));
+  const entryListDate = new Date(date);
   const weekMS = 1000 * 60 * 60 * 24 * 7
   const timeDiff = todayDate.getTime() - entryListDate.getTime();
-
-  if (timeDiff > weekMS) {
-    return 'local'
-  } else {
-    return 'sync'
-  }
+  return timeDiff > weekMS ? 'local' : 'sync';
 }
 
 const stores = {
@@ -72,7 +67,7 @@ const stores = {
      * @param {string} key 
      * @returns {Array}
      */
-    get: async ({ key }) => {
+    get: ({ key }) => {
       console.debug('getSync');
       return new Promise((resolve, reject) => {
         chromeAPI.storage.sync.get([key], (result) => {
@@ -85,7 +80,7 @@ const stores = {
       });
     },
 
-    set: async ({ key, value }) => {
+    set: ({ key, value }) => {
       // maybe use sync instead if the user is logged in?
       return new Promise((resolve, reject) => {
         chromeAPI.storage.sync.set({ [key]: value }, (result) => {
@@ -94,7 +89,7 @@ const stores = {
       });
     },
 
-    remove: async ({ key }) => {
+    remove: ({ key }) => {
       return new Promise((resolve, reject) => {
         chromeAPI.storage.sync.remove([key], (result) => {
           resolve(result);
@@ -102,7 +97,7 @@ const stores = {
       });
     },
 
-    clear: async () => {
+    clear: () => {
       console.debug('clearSync');
       return new Promise((resolve, reject) => {
         // remove everything from storage besides background info and userSettings
@@ -151,20 +146,31 @@ export const actions = {
   },
   create: async ({ date, entry }) => {
     console.debug('actions.create');
-    const type = storageType(date);
+    const safeDate = date.replaceAll('_', '/')
+    const dateStamp = date;
+    const type = storageType(safeDate);
     try {
-      const entriesArr = await stores[type].get({ key: date })
+      const entriesArr = await stores[type].get({ key: dateStamp })
       entriesArr.push(entry);
-      stores[type].set({ key: date, value: entriesArr })
+      stores[type].set({ key: dateStamp, value: entriesArr })
     } catch (e) {
       console.error(e)
     }
   },
   read: async ({ date }) => {
     console.debug('read');
-    const type = storageType(date);
+    const safeDate = date.replaceAll('_', '/')
+    const dateStamp = date;
+    const type = storageType(safeDate);
     try {
-      return stores[type].get({ key: date })
+      const entries = await stores[type].get({ key: dateStamp });
+      // we should just add old entries to our total entries
+      // retry but with user's actual locale
+      const originalDate = new Date(safeDate);
+      const originalDateStamp = originalDate.toLocaleDateString();
+      const oldEntries = await stores[type].get({ key: originalDateStamp })
+      const allEntries = [...entries, ...oldEntries]
+      return allEntries
     } catch (e) {
       console.error(e)
     }
@@ -172,28 +178,79 @@ export const actions = {
   update: async ({ date, entry, key }) => {
     console.debug('actions.update');
     console.debug({ date, entry, key })
-    const type = storageType(date);
-    const dateArr = await stores[type].get({ key: date })
-    const index = dateArr.findIndex(e => e.key === key);
-    dateArr[index] = entry;
-    const result = await stores[type].set({ key: date, value: dateArr })
+    let result;
+    const safeDate = date.replaceAll('_', '/')
+    const dateStamp = date;
+    const type = storageType(safeDate);
+    const entries = await stores[type].get({ key: dateStamp })
+    const index = entries.findIndex(e => e.key === key);
+    if (index !== -1) {
+      entries[index] = entry;
+    } else {
+      // if not found, must mean it's in the old version. Bring it to the new version
+      console.log({ entry });
+      entries.push(entry);
+    }
+    console.log({ entries })
+    result = await stores[type].set({ key: dateStamp, value: entries })
+    if (index === -1) {
+      // delete from old style
+      const originalDate = new Date(safeDate);
+      const originalDateStamp = originalDate.toLocaleDateString();
+      const oldEntriesArr = await stores[type].get({ key: originalDateStamp })
+      const oldIndex = oldEntriesArr.findIndex(e => e.key === key);
+      console.debug({ oldEntriesArr });
+      oldEntriesArr.splice(oldIndex, 1)
+      if (oldEntriesArr.length === 0) {
+        console.debug('Delete entries array at date')
+        result = await stores[type].remove({ key: originalDateStamp })
+      } else {
+        console.debug('Set updated entries array')
+        result = await stores[type].set({ key: originalDateStamp, value: oldEntriesArr })
+      }
+    }
+
     return result;
   },
+  /**
+   * 
+   * @param {string} date entryListDate of entry
+   * @param {string} key entry key
+   * @returns 
+   */
   delete: async ({ date, key }) => {
     console.debug('actions.delete');
     console.debug({ date, key })
+    const safeDate = date.replaceAll('_', '/')
+    const dateStamp = date;
     let results;
-    const type = storageType(date);
-    const dateArray = await stores[type].get({ key: date })
-    const index = dateArray.findIndex(e => e.key === key);
-    console.debug({ dateArray });
-    dateArray.splice(index, 1)
-    if (dateArray.length === 0) {
-      console.debug('Delete entries array at date')
-      results = await stores[type].remove({ key: date })
+    const type = storageType(safeDate);
+    const entriesArr = await stores[type].get({ key: dateStamp });
+    const index = entriesArr.findIndex(e => e.key === key);
+    if (index !== -1) {
+      console.debug({ entriesArr });
+      entriesArr.splice(index, 1)
+      if (entriesArr.length === 0) {
+        console.debug('Delete entries array at date')
+        results = await stores[type].remove({ key: dateStamp })
+      } else {
+        console.debug('Set updated entries array')
+        results = await stores[type].set({ key: dateStamp, value: entriesArr })
+      }
     } else {
-      console.debug('Set updated entries array')
-      results = await stores[type].set({ key: date, value: dateArray })
+      const originalDate = new Date(safeDate);
+      const originalDateStamp = originalDate.toLocaleDateString();
+      const oldEntriesArr = await stores[type].get({ key: originalDateStamp })
+      const oldIndex = oldEntriesArr.findIndex(e => e.key === key);
+      console.debug({ oldEntriesArr });
+      oldEntriesArr.splice(oldIndex, 1)
+      if (oldEntriesArr.length === 0) {
+        console.debug('Delete entries array at date')
+        results = await stores[type].remove({ key: originalDateStamp })
+      } else {
+        console.debug('Set updated entries array')
+        results = await stores[type].set({ key: originalDateStamp, value: oldEntriesArr })
+      }
     }
     return results;
   },
@@ -244,7 +301,7 @@ export const actions = {
 */
   moveToLocal: () => {
     console.info('moveToLocal')
-    // Move all entryDates from 2 weeks ago to localstorage
+    // Move all entryDates from 1 week ago to localstorage
     chromeAPI.storage.sync.get(null, (result) => {
       console.info({ result })
       delete result.userSettings;
