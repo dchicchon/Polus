@@ -1,5 +1,10 @@
 import { reactive } from "vue";
 
+/**
+ * * UTILS FILE
+ * * CONSOLE LEVEL: DEBUG ONLY
+ */
+
 const chromeAPI = chrome
 /**
  * Use the local storage if an entry is being set to a date more than a week in the past
@@ -21,8 +26,8 @@ const stores = {
       Get entryDate objects from chrome.storage.local asynchronously and return them 
       to use on our Entry Lists
     */
-    get: async ({ key }) => {
-      console.debug('getLocal')
+    get: ({ key }) => {
+      console.debug('local.get');
       return new Promise((resolve, reject) => {
         chromeAPI.storage.local.get([key], (result) => {
           if (Object.keys(result).length > 0) {
@@ -32,7 +37,8 @@ const stores = {
         });
       })
     },
-    set: async ({ key, value }) => {
+    set: ({ key, value }) => {
+      console.debug('local.set');
       // maybe use sync instead if the user is logged in?
       return new Promise((resolve, reject) => {
         chromeAPI.storage.local.set({ [key]: value }, (result) => {
@@ -40,19 +46,21 @@ const stores = {
         });
       });
     },
-    remove: async ({ key }) => {
+    remove: ({ key }) => {
+      console.debug('local.remove');
       return new Promise((resolve, reject) => {
         chromeAPI.storage.local.remove([key], (result) => {
           resolve(result);
         });
       });
     },
-    clear: async () => {
+    clear: () => {
+      console.debug('local.clear');
       return new Promise((resolve, reject) => {
         // remove everything from storage besides background info and userSettings
         chromeAPI.storage.local.get(null, result => {
           for (const key in result) {
-            removeLocal({ key })
+            stores.local.remove({ key })
           }
           resolve({})
         })
@@ -68,7 +76,7 @@ const stores = {
      * @returns {Array}
      */
     get: ({ key }) => {
-      console.debug('getSync');
+      console.debug('sync.get');
       return new Promise((resolve, reject) => {
         chromeAPI.storage.sync.get([key], (result) => {
           console.debug({ result });
@@ -81,6 +89,7 @@ const stores = {
     },
 
     set: ({ key, value }) => {
+      console.debug('sync.set');
       // maybe use sync instead if the user is logged in?
       return new Promise((resolve, reject) => {
         chromeAPI.storage.sync.set({ [key]: value }, (result) => {
@@ -90,6 +99,7 @@ const stores = {
     },
 
     remove: ({ key }) => {
+      console.debug('sync.remove');
       return new Promise((resolve, reject) => {
         chromeAPI.storage.sync.remove([key], (result) => {
           resolve(result);
@@ -98,15 +108,15 @@ const stores = {
     },
 
     clear: () => {
-      console.debug('clearSync');
+      console.debug('sync.clear');
       return new Promise((resolve, reject) => {
         // remove everything from storage besides background info and userSettings
-        chromeAPI.sync.get(null, result => {
+        chromeAPI.storage.sync.get(null, result => {
           console.debug({ result });
           delete result.userSettings;
           delete result.background;
           for (const key in result) {
-            removeSync({ key })
+            stores.sync.remove({ key })
           }
           resolve({})
         })
@@ -122,34 +132,42 @@ export const state = reactive({
 
 export const actions = {
   initUserSettings: async () => {
-    console.info('actions.initUserSettings')
-    let userSettings = await stores.sync.get({ key: 'userSettings' })
-    if (!userSettings) return;
+    console.debug('actions.initUserSettings')
+    const userSettings = await stores.sync.get({ key: 'userSettings' })
+    if (!userSettings) return; // there is something wrong if this is not here we should think about this
     state.userSettings = userSettings
   },
+  setUserSettings: () => {
+    console.debug('actions.setUserSettings');
+    stores.sync.set({ key: 'userSettings', value: state.userSettings })
+  },
   initBackground: async () => {
-    console.info('actions.initBackground')
-    let background = await stores.sync.get({ key: 'background' })
-    if (!background) return;
+    console.debug('actions.initBackground')
+    const background = await stores.sync.get({ key: 'background' })
+    if (!background) return; // there is something wrong if this is not here we should think about this
     state.background = background;
   },
   setBackground: () => {
-    console.info('actions.setBackground');
+    console.debug('actions.setBackground');
     stores.sync.set({ key: 'background', value: state.background })
   },
-  setUserSettings: () => {
-    console.info('actions.setUserSettings');
-    stores.sync.set({ key: 'userSettings', value: state.userSettings })
-  },
   resetSyncDatabase: async () => {
-    await stores.sync.clearSync()
+    await stores.sync.clear()
+  },
+  resetLocalDatabase: async () => {
+    await stores.local.clear()
   },
   create: async ({ date, entry }) => {
     console.debug('actions.create');
+    console.debug({ date, entry })
     const safeDate = date.replaceAll('_', '/')
     const dateStamp = date;
     const type = storageType(safeDate);
     try {
+      /**
+       * TODO: TECH DEBT
+       * TODO: What might be better to do here is to just bring the array here rather than reading again
+       */
       const entriesArr = await stores[type].get({ key: dateStamp })
       entriesArr.push(entry);
       stores[type].set({ key: dateStamp, value: entriesArr })
@@ -158,14 +176,18 @@ export const actions = {
     }
   },
   read: async ({ date }) => {
-    console.debug('read');
-    const safeDate = date.replaceAll('_', '/')
+    console.debug('actions.read');
+    console.debug({ date })
     const dateStamp = date;
+    const safeDate = date.replaceAll('_', '/')
     const type = storageType(safeDate);
     try {
       const entries = await stores[type].get({ key: dateStamp });
-      // we should just add old entries to our total entries
-      // retry but with user's actual locale
+      /**
+       * TODO: TECH DEBT
+       * TODO: need this for old way of getting entires. could rethink this later on
+       * TODO: this introduces a double read which can affect costs over time
+       */
       const originalDate = new Date(safeDate);
       const originalDateStamp = originalDate.toLocaleDateString();
       const oldEntries = await stores[type].get({ key: originalDateStamp })
@@ -186,15 +208,11 @@ export const actions = {
     const index = entries.findIndex(e => e.key === key);
     if (index !== -1) {
       entries[index] = entry;
+      result = await stores[type].set({ key: dateStamp, value: entries })
+      return result;
     } else {
-      // if not found, must mean it's in the old version. Bring it to the new version
-      console.log({ entry });
+      // if not found, must mean it's in the old version. Bring it to the new version then delete
       entries.push(entry);
-    }
-    console.log({ entries })
-    result = await stores[type].set({ key: dateStamp, value: entries })
-    if (index === -1) {
-      // delete from old style
       const originalDate = new Date(safeDate);
       const originalDateStamp = originalDate.toLocaleDateString();
       const oldEntriesArr = await stores[type].get({ key: originalDateStamp })
@@ -208,9 +226,9 @@ export const actions = {
         console.debug('Set updated entries array')
         result = await stores[type].set({ key: originalDateStamp, value: oldEntriesArr })
       }
+      return result;
     }
 
-    return result;
   },
   /**
    * 
@@ -261,11 +279,11 @@ export const actions = {
   * @returns void
   */
   createNotification: ({ name, time }) => {
-    console.info('actions.createAlarm');
+    console.debug('actions.createAlarm');
     chromeAPI.permissions.contains({ permissions: ["notifications"] }, (result) => {
       // If allowed, create an alarm for this entry
       if (result) {
-        console.info('user has notifications permission. Creating alarm');
+        console.debug('user has notifications permission. Creating alarm');
         chromeAPI.alarms.create(name, {
           when: time,
         });
@@ -273,19 +291,19 @@ export const actions = {
     })
   },
   showDefaultTab: () => {
-    console.info('actions.showDefaultTab');
+    console.debug('actions.showDefaultTab');
     chromeAPI.tabs.update({
       url: "chrome-search://local-ntp/local-ntp.html",
     });
   },
   removeNotificationAlarms: () => {
-    console.log('removeNotificationAlarms');
+    console.debug('removeNotificationAlarms');
     chromeAPI.alarms.getAll((result) => {
-      console.log({ result })
+      console.debug({ result })
       const mainList = result.filter(alarm => {
         return alarm.name !== 'changeBackground' && alarm.name !== 'moveToLocal'
       })
-      console.log({ mainList })
+      console.debug({ mainList })
       mainList.forEach(alarm => {
         chromeAPI.alarms.clear(alarm.name)
       })
@@ -300,22 +318,22 @@ export const actions = {
   chrome.storage.sync
 */
   moveToLocal: () => {
-    console.info('moveToLocal')
+    console.debug('moveToLocal')
     // Move all entryDates from 1 week ago to localstorage
     chromeAPI.storage.sync.get(null, (result) => {
-      console.info({ result })
+      console.debug({ result })
       delete result.userSettings;
       delete result.background;
       // go through our items
       for (const date in result) {
-        console.info('Date to check')
-        console.info({ date })
+        console.debug('Date to check')
+        console.debug({ date })
         const today = new Date(); // today
         // Ensure that we transform previous date style (/ vs _)
         const entryDate = new Date(date.replaceAll('_', '/')); // normalize date
         const weekMS = 1000 * 60 * 60 * 24 * 7; // one week
         if (today.getTime() - entryDate.getTime() > weekMS) {
-          console.info(`Moving date:${date} from sync to local`);
+          console.debug(`Moving date:${date} from sync to local`);
           // place the date inside of localStorage and deletefrom syncStorage
           chromeAPI.storage.local.set({ [date]: result[date] }, () => {
             chrome.storage.sync.remove([date]);

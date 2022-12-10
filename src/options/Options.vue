@@ -50,33 +50,43 @@
       </div>
 
       <!-- DEV -->
-      <h2>Developer Tools</h2>
-      <div>
-        <h3>Alarms</h3>
-        <ul>
-          <li v-for="(alarm, index) in alarms" :key="`${index}`">
-            <p v-for="(alarm, key) in alarm" :key="`${key}`">
-              {{ key }}: {{ alarm }}
-            </p>
-            <!-- Name: {{ alarm.name }} Scheduled Time: {{ alarm.scheduledTime }} -->
-          </li>
-        </ul>
-        <Button
-          :onClick="removeNotificationAlarms"
-          title="Clear notification alarms"
-        ></Button>
+      <div v-if="dev">
+        <h2>Developer Info</h2>
+        <div>
+          <h3>Alarms</h3>
+          <ul>
+            <li v-for="(alarm, index) in alarms" :key="`${index}`">
+              <p v-for="(alarm, key) in alarm" :key="`${key}`">
+                {{ key }}: {{ alarm }}
+              </p>
+              <!-- Name: {{ alarm.name }} Scheduled Time: {{ alarm.scheduledTime }} -->
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3>Permissions</h3>
+          <ul>
+            <li v-for="(permission, index) in permissions" :key="`${index}`">
+              Permission: {{ permission }}
+            </li>
+          </ul>
+        </div>
+        <div>
+          <Button :onClick="moveToLocal" title="Move to local"></Button>
+          <Button
+            :onClick="removeNotificationAlarms"
+            title="Clear notification alarms"
+          ></Button>
+          <Button
+            :onClick="resetSyncEntries"
+            title="Reset Sync Entries"
+          ></Button>
+          <Button
+            :onClick="resetLocalEntries"
+            title="Reset Local Entries"
+          ></Button>
+        </div>
       </div>
-      <div>
-        <h3>Permissions</h3>
-        <ul>
-          <li v-for="(permission, index) in permissions" :key="`${index}`">
-            Permission: {{ permission }}
-          </li>
-        </ul>
-      </div>
-      <!-- <div>
-        <Button :onClick="moveToLocal" title="Move to local"></Button>
-      </div> -->
     </div>
     <div class="pane"></div>
   </div>
@@ -88,7 +98,6 @@ import Toggle from "../components/Toggle.vue";
 // Popup Entry Point. Should create a check to see if user is logged in with firebase
 export default {
   // components in the popup
-
   components: {
     Button,
     Toggle,
@@ -100,24 +109,27 @@ export default {
       alarms: [],
       permissions: [],
       userSettings: {},
+      mode: "",
     };
   },
   created() {
     this.userSettings = state.userSettings;
-    chrome.alarms.getAll((result) => {
-      //name
-      //scheduledTime
-      const alarms = result.map((alarm) => {
-        const timeMS = alarm.scheduledTime;
-        const date = new Date(timeMS);
-        alarm.scheduledTime = date.toLocaleString();
-        return alarm;
+    this.dev = import.meta.env.DEV;
+    if (this.dev) {
+      chrome.alarms.getAll((result) => {
+        console.log({ result });
+        const alarms = result.map((alarm) => {
+          const timeMS = alarm.scheduledTime;
+          const date = new Date(timeMS);
+          alarm.scheduledTime = date.toLocaleString();
+          return alarm;
+        });
+        this.alarms = alarms;
       });
-      this.alarms = alarms;
-    });
-    chrome.permissions.getAll((result) => {
-      this.permissions = result.permissions;
-    });
+      chrome.permissions.getAll((result) => {
+        this.permissions = result.permissions;
+      });
+    }
   },
   methods: {
     removeNotificationAlarms() {
@@ -202,17 +214,73 @@ export default {
     /**
      * This will allow you to remove all of the entries in your database
      */
-    // resetEntries: () => {
-    // const baseUserSettings = {
-    //   changePhoto: true,
-    //   indexOpen: false,
-    //   newTab: true,
-    //   notifications: false,
-    //   pmode: false,
-    //   view: "week",
-    // };
-    // actions.resetSyncDatabase();
-    // },
+    resetSyncEntries: () => {
+      actions.resetSyncDatabase();
+    },
+    resetLocalEntries: () => {
+      actions.resetLocalDatabase();
+    },
+    /**
+     * This should construct entries that cover the following
+     * 1. A normal format of entry for Polus (A1)
+     * 2. Entries that follow `/` format rather than `_` (A2)
+     * 3. Entries that are of another locale besides US (A3)
+     * 4. Another Locale besides US (A4)
+     * 5. All of these except for 2 weeks ago (A5-A8)
+     *
+     * List of locales
+     * https://stackoverflow.com/questions/52549577/javascript-get-the-complete-list-of-locales-supported-by-the-browser
+     */
+    createTestEntries: () => {
+      const todayDate = new Date();
+      const a1Format = todayDate
+        .toLocaleDateString("en-US")
+        .replaceAll("/", "_");
+      const a2Format = todayDate.toLocaleDateString("en-US");
+      const a3Format = todayDate.toLocaleDateString("es");
+      const a4Format = todayDate.toLocaleDateString("cs");
+      const twoWeeksAgo = new Date().setDate();
+      const a5Format = twoWeeksAgo
+        .toLocaleDateString("en-US")
+        .replaceAll("/", "_");
+      const a6Format = twoWeeksAgo.toLocaleDateString("en-US");
+      const a7Format = twoWeeksAgo.toLocaleDateString("es");
+      const a8Format = twoWeeksAgo.toLocaleDateString("cs");
+
+      // run entries twice
+      const entries = [
+        {
+          key: "a1",
+          color: "blue",
+          active: false,
+          text: "",
+        },
+        {
+          key: "a2",
+          color: "blue",
+          active: false,
+          text: "a2",
+        },
+        {
+          key: "a3",
+          color: "blue",
+          active: false,
+          text: "a3",
+        },
+        {
+          key: "a4",
+          color: "blue",
+          active: false,
+          text: "a4",
+        },
+      ];
+
+      // insert today entries
+      entries.forEach((entry) => {});
+
+      // insert twoweeksago entries
+      entries.forEach((entry) => {});
+    },
   },
 
   // computed in app, costs less than using methods

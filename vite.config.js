@@ -12,6 +12,7 @@ const mode = process.env.APP_ENV;
 const getConfig = () => {
   if (mode === 'development') {
     return defineConfig({
+      mode: 'development',
       build: {
         minify: false,
         outDir: 'dist'
@@ -24,6 +25,7 @@ const getConfig = () => {
   }
   else {
     return defineConfig({
+      mode: 'production',
       build: {
         outDir: 'prod'
       },
