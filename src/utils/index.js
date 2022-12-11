@@ -325,21 +325,36 @@ export const actions = {
       delete result.userSettings;
       delete result.background;
       // go through our items
-      for (const date in result) {
+      Object.keys(result).forEach(date => {
         console.debug('Date to check')
         console.debug({ date })
         const today = new Date(); // today
-        // Ensure that we transform previous date style (/ vs _)
         const entryDate = new Date(date.replaceAll('_', '/')); // normalize date
-        const weekMS = 1000 * 60 * 60 * 24 * 7; // one week
-        if (today.getTime() - entryDate.getTime() > weekMS) {
-          console.debug(`Moving date:${date} from sync to local`);
-          // place the date inside of localStorage and deletefrom syncStorage
-          chromeAPI.storage.local.set({ [date]: result[date] }, () => {
-            chrome.storage.sync.remove([date]);
-          });
+        if (actions.isDate(entryDate)) {
+          console.debug(`Created valid date from ${date}`)
+          const weekMS = 1000 * 60 * 60 * 24 * 7; // one week
+          if (today.getTime() - entryDate.getTime() > weekMS) {
+            console.debug(`Moving date:${date} from sync to local`);
+            const entries = result[date];
+            // place the date inside of localStorage and deletefrom syncStorage
+            chromeAPI.storage.local.set({ [date]: entries }, () => {
+              chrome.storage.sync.remove([date]);
+            });
+          }
+        } else {
+          console.debug(`Could not create a valid date from ${date}`)
         }
-      }
+      })
     });
+  },
+  isDate: (date) => {
+    return date instanceof Date && !isNaN(date);
+  },
+  testFunc: () => {
+    console.debug('testFunc')
+    const today = new Date();
+    const dateString = today.toLocaleDateString();
+    const createDate = new Date(dateString); // this works since were in our own locale
+    console.debug({ today, dateString, createDate })
   }
 };

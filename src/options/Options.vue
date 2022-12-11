@@ -78,7 +78,8 @@
           <Button :onClick="moveToLocal">Move to local</Button>
           <Button :onClick="resetSyncEntries">Reset Sync Entries</Button>
           <Button :onClick="resetLocalEntries">Reset Local Entries</Button>
-          <Button :onClick="createTestEntries">Create Sync Entries</Button>
+          <Button :onClick="createTestEntries">Create Test Entries</Button>
+          <Button :onClick="testFunc">Run Test Func</Button>
         </div>
       </div>
     </div>
@@ -316,6 +317,10 @@ export default {
           }
         );
       });
+    },
+
+    testFunc: () => {
+      actions.testFunc();
     },
   },
 
