@@ -46,7 +46,7 @@
           placeholder="https://unsplash.com/photos/NuBvAE6VfSM"
           v-model="photoLink"
         />
-        <Button :onClick="submitPhoto" title="Submit"></Button>
+        <Button :onClick="submitPhoto">Submit</Button>
       </div>
 
       <!-- DEV -->
@@ -72,19 +72,13 @@
           </ul>
         </div>
         <div>
-          <Button :onClick="moveToLocal" title="Move to local"></Button>
-          <Button
-            :onClick="removeNotificationAlarms"
-            title="Clear notification alarms"
-          ></Button>
-          <Button
-            :onClick="resetSyncEntries"
-            title="Reset Sync Entries"
-          ></Button>
-          <Button
-            :onClick="resetLocalEntries"
-            title="Reset Local Entries"
-          ></Button>
+          <Button :onClick="clearNotificationAlarms"
+            >Clear notification alarms</Button
+          >
+          <Button :onClick="moveToLocal">Move to local</Button>
+          <Button :onClick="resetSyncEntries">Reset Sync Entries</Button>
+          <Button :onClick="resetLocalEntries">Reset Local Entries</Button>
+          <Button :onClick="createTestEntries">Create Sync Entries</Button>
         </div>
       </div>
     </div>
@@ -132,10 +126,6 @@ export default {
     }
   },
   methods: {
-    removeNotificationAlarms() {
-      console.info("Removing alarms");
-      actions.removeNotificationAlarms();
-    },
     toggleItem(event, name) {
       state.userSettings[name] = !state.userSettings[name];
       actions.setUserSettings();
@@ -208,6 +198,10 @@ export default {
         );
       }
     },
+    clearNotificationAlarms() {
+      console.info("Removing alarms");
+      actions.removeNotificationAlarms();
+    },
     moveToLocal() {
       actions.moveToLocal();
     },
@@ -221,31 +215,29 @@ export default {
       actions.resetLocalDatabase();
     },
     /**
-     * This should construct entries that cover the following
+     * This should construct entries in sync that cover the following
      * 1. A normal format of entry for Polus (A1)
      * 2. Entries that follow `/` format rather than `_` (A2)
-     * 3. Entries that are of another locale besides US (A3)
-     * 4. Another Locale besides US (A4)
-     * 5. All of these except for 2 weeks ago (A5-A8)
+     * 3. Entries that are of another locale besides US (A3-A4)
      *
      * List of locales
      * https://stackoverflow.com/questions/52549577/javascript-get-the-complete-list-of-locales-supported-by-the-browser
+     *
+     * Change locales
+     * https://www.comparitech.com/blog/vpn-privacy/change-location-chrome-firefox-spoof/#:~:text=Manually%20change%20your%20location%20in%20Chrome&text=Hit%20Esc%2C%20then%20click%20the,latitude%20and%20longitude%20you%20want.
      */
     createTestEntries: () => {
-      const todayDate = new Date();
-      const a1Format = todayDate
-        .toLocaleDateString("en-US")
-        .replaceAll("/", "_");
-      const a2Format = todayDate.toLocaleDateString("en-US");
-      const a3Format = todayDate.toLocaleDateString("es");
-      const a4Format = todayDate.toLocaleDateString("cs");
-      const twoWeeksAgo = new Date().setDate();
-      const a5Format = twoWeeksAgo
-        .toLocaleDateString("en-US")
-        .replaceAll("/", "_");
-      const a6Format = twoWeeksAgo.toLocaleDateString("en-US");
-      const a7Format = twoWeeksAgo.toLocaleDateString("es");
-      const a8Format = twoWeeksAgo.toLocaleDateString("cs");
+      const generateFormats = (date) => {
+        return {
+          a1: date.toLocaleDateString("en-US").replaceAll("/", "_"),
+          a2: date.toLocaleDateString("en-US"),
+          a3: date.toLocaleDateString("es"), // Spanish
+          a4: date.toLocaleDateString("cs"), // Czech
+          a5: date.toLocaleDateString("da"), // Danish
+          a6: date.toLocaleDateString("fr"), // French
+          a7: date.toLocaleDateString("af"), // Afrikaans
+        };
+      };
 
       // run entries twice
       const entries = [
@@ -253,33 +245,77 @@ export default {
           key: "a1",
           color: "blue",
           active: false,
-          text: "",
+          text: "Main Format",
         },
         {
           key: "a2",
           color: "blue",
           active: false,
-          text: "a2",
+          text: "Old Format",
         },
         {
           key: "a3",
           color: "blue",
           active: false,
-          text: "a3",
+          text: "Old 'Spanish' Format",
         },
         {
           key: "a4",
           color: "blue",
           active: false,
-          text: "a4",
+          text: "Old 'Czech' Format",
+        },
+        {
+          key: "a5",
+          color: "blue",
+          active: false,
+          text: "Old 'Danish' Format",
+        },
+        {
+          key: "a6",
+          color: "blue",
+          active: false,
+          text: "Old 'French' Format",
+        },
+        {
+          key: "a7",
+          color: "blue",
+          active: false,
+          text: "Old 'Afrikaans' Format",
         },
       ];
 
+      const today = new Date();
+      const todayFormats = generateFormats(today);
       // insert today entries
-      entries.forEach((entry) => {});
+      entries.forEach((entry) => {
+        console.info("Create Today Entry");
+        const dateFormat = todayFormats[entry.key];
+        chrome.storage.sync.set(
+          {
+            [dateFormat]: [entry],
+          },
+          (result) => {
+            console.info({ result });
+          }
+        );
+      });
 
+      const twoWeeksAgo = new Date(today.setDate(today.getDate() - 14));
+      const twoWeeksAgoFormats = generateFormats(twoWeeksAgo);
       // insert twoweeksago entries
-      entries.forEach((entry) => {});
+      entries.forEach((entry) => {
+        console.info("Create Two Weeks Ago Entry");
+        const dateFormat = twoWeeksAgoFormats[entry.key];
+        chrome.storage.sync.set(
+          {
+            [dateFormat]: [entry],
+          },
+          (result) => {
+            console.info({ result });
+          }
+        );
+      });
     },
   },
 
