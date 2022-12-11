@@ -26,11 +26,10 @@ const recurringAlarms = {
         delete result.userSettings;
         delete result.background;
         // go through our items
-        for (const date in result) {
+        Object.keys(result).forEach(date => {
           const today = new Date();
           const entryDate = new Date(date.replaceAll('_', '/'));
-          // if it's a valid date (i.e. us timeformat)
-          if (entryDate.getTime() !== NaN) {
+          if (isDate(entryDate)) {
             const weekMS = 1000 * 60 * 60 * 24 * 7;
             const entries = result[date]
             if (today.getTime() - entryDate.getTime() > weekMS) {
@@ -39,8 +38,7 @@ const recurringAlarms = {
               });
             }
           }
-
-        }
+        })
       });
     }
   },
@@ -124,6 +122,10 @@ const alarmCheck = () => {
   })
 }
 
+const isDate = (date) => {
+  return date instanceof Date && !isNaN(date);
+}
+
 // Alarm Listeners
 console.info('Setting onAlarm listeners')
 chrome.alarms.onAlarm.addListener((alarm) => {
@@ -165,9 +167,6 @@ chrome.runtime.onInstalled.addListener((details) => {
     console.info('Updating extension')
   }
 });
-
-
-
 
 // Context Menu Click Listeners
 console.info('Setting context menu listeners')

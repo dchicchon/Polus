@@ -25,11 +25,6 @@
   "offline_enabled": true,
   "options_page": "options.html",
   "optional_permissions": ["notifications"],
-  "permissions": [
-    "alarms",
-    "contextMenus",
-    "storage",
-    "unlimitedStorage"
-  ],
+  "permissions": ["alarms", "contextMenus", "storage", "unlimitedStorage"],
   "short_name": "Polus"
 }
