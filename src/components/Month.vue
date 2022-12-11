@@ -48,6 +48,7 @@ export default {
   },
 
   created() {
+    console.log("on mount");
     this.createWeekdays();
   },
 
@@ -56,6 +57,25 @@ export default {
       let changeDate = new Date(this.date); // current date:
       changeDate.setMonth(this.date.getMonth() + amount);
       this.date = changeDate;
+    },
+    createWeekdays() {
+      console.log("Create weekdays");
+      let startDate = new Date(this.date);
+      // This is how we set it to sunday
+      const days = [];
+      while (startDate.getDay() !== 0) {
+        // while startDate.getDay is not equal to 0, continue to set date
+        startDate.setDate(startDate.getDate() - 1);
+      }
+      for (let i = 0; i < 7; i++) {
+        let dayDate = new Date(startDate).toLocaleDateString(undefined, {
+          weekday: "long",
+        });
+        days.push(dayDate);
+        startDate.setDate(startDate.getDate() + 1);
+      }
+      this.weekdays = days;
+      console.log(this.weekdays);
     },
   },
   computed: {
@@ -97,22 +117,6 @@ export default {
         return week;
       }
       return dates;
-    },
-    createWeekdays() {
-      let startDate = new Date(this.date);
-      // This is how we set it to sunday
-      const days = [];
-      while (startDate.getDay() !== 0) {
-        // while startDate.getDay is not equal to 0, continue to set date
-        startDate.setDate(startDate.getDate() - 1);
-        for (let i = 0; i < 7; i++) {
-          let dayDate = new Date(startDate);
-          days.push(dayDate);
-        }
-      }
-      this.weekdays = days.map((day) =>
-        day.toLocaleDateString(undefined, { weekday: "long" })
-      );
     },
   },
 };

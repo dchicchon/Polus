@@ -318,7 +318,6 @@ export default {
         );
       });
     },
-
     testFunc: () => {
       actions.testFunc();
     },
