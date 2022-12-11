@@ -15,13 +15,16 @@
       <button @click="changeDate(7)" class="arrow">→</button>
     </div>
     <div class="weekdayNames">
-      <h2>Sunday</h2>
+      <h2 v-for="day in weekdays" :key="day">
+        {{ day }}
+      </h2>
+      <!-- <h2>Sunday</h2>
       <h2>Monday</h2>
       <h2>Tuesday</h2>
       <h2>Wednesday</h2>
       <h2>Thursday</h2>
       <h2>Friday</h2>
-      <h2>Saturday</h2>
+      <h2>Saturday</h2> -->
     </div>
     <div class="weekdays">
       <EntryList
@@ -45,6 +48,7 @@ export default {
   data() {
     return {
       date: new Date(),
+      weekdays: [],
     };
   },
   methods: {
@@ -74,6 +78,9 @@ export default {
         dates.push(thisDate);
         startDate.setDate(startDate.getDate() + 1);
       }
+      this.weekdays = dates.map((date) =>
+        date.toLocaleDateString(undefined, { weekday: "long" })
+      );
       return dates;
     },
   },

@@ -11,13 +11,13 @@
       <button @click="changeMonth(1)" class="arrow">→</button>
     </div>
     <div class="weekdayNames">
-      <h2 style="padding: 0px 0px 0.5rem; text-align: center">Sunday</h2>
-      <h2 style="padding: 0px 0px 0.5rem; text-align: center">Monday</h2>
-      <h2 style="padding: 0px 0px 0.5rem; text-align: center">Tuesday</h2>
-      <h2 style="padding: 0px 0px 0.5rem; text-align: center">Wednesday</h2>
-      <h2 style="padding: 0px 0px 0.5rem; text-align: center">Thursday</h2>
-      <h2 style="padding: 0px 0px 0.5rem; text-align: center">Friday</h2>
-      <h2 style="padding: 0px 0px 0.5rem; text-align: center">Saturday</h2>
+      <h2
+        v-for="day in weekdays"
+        :key="day"
+        style="padding: 0px 0px 0.5rem; text-align: center"
+      >
+        {{ day }}
+      </h2>
     </div>
     <div class="monthDays">
       <EntryList
@@ -34,7 +34,6 @@
 </template>
 
 <script>
-
 import EntryList from "./EntryList.vue";
 export default {
   components: {
@@ -44,10 +43,13 @@ export default {
   data() {
     return {
       date: new Date(),
+      weekdays: [],
     };
   },
 
-  created() {},
+  created() {
+    this.createWeekdays();
+  },
 
   methods: {
     changeMonth(amount) {
@@ -62,8 +64,6 @@ export default {
       let date = new Date(this.date);
       return date.toLocaleDateString(undefined, options);
     },
-
-    // what is date list? -> Used for making Entry Lists
     dateList() {
       let dates = [];
       let startDate = new Date(this.date);
@@ -98,6 +98,22 @@ export default {
       }
       return dates;
     },
+    createWeekdays() {
+      let startDate = new Date(this.date);
+      // This is how we set it to sunday
+      const days = [];
+      while (startDate.getDay() !== 0) {
+        // while startDate.getDay is not equal to 0, continue to set date
+        startDate.setDate(startDate.getDate() - 1);
+        for (let i = 0; i < 7; i++) {
+          let dayDate = new Date(startDate);
+          days.push(dayDate);
+        }
+      }
+      this.weekdays = days.map((day) =>
+        day.toLocaleDateString(undefined, { weekday: "long" })
+      );
+    },
   },
 };
 </script>
@@ -112,7 +128,6 @@ export default {
   text-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
 }
 #month {
-
   flex-direction: column;
   justify-content: center;
   .weekdayNames {

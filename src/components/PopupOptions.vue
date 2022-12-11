@@ -39,7 +39,7 @@
         placeholder="https://unsplash.com/photos/NuBvAE6VfSM"
         v-model="photoLink"
       />
-      <Button :onClick="submitPhoto" title="Submit"></Button>
+      <Button :onClick="submitPhoto">Submit</Button>
     </div>
 
     <div>
@@ -154,8 +154,7 @@ export default {
 
     openOptions() {
       actions.getOptionsPage();
-    }
-
+    },
   },
 };
 </script>

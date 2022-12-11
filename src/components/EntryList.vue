@@ -28,7 +28,6 @@
     <button @click="initEntry" :value="dateStamp" class="addButton">+</button>
   </div>
 </template>
-
 <script>
 import { toRaw } from "vue";
 import Entry from "./Entry.vue";
@@ -96,10 +95,6 @@ export default {
       // Need to use Vue.set in order to have reactivity for objects
       this.entries.push(newEntry);
     },
-
-    //===============
-    // DRAG FUNCTIONS
-    // https://learnvue.co/2020/01/how-to-add-drag-and-drop-to-your-vuejs-project/
     dragStart(evt, key, entry, parentId) {
       console.info("dragStart");
       // We need a callback so we can remove from the original data and entries list
@@ -111,7 +106,6 @@ export default {
       evt.dataTransfer.setData("parentId", parentId);
       evt.dataTransfer.setData("key", key);
     },
-    // On drop, we will add to our list and delete from old one
     onDrop(evt) {
       console.info("onDrop");
       this.isOver = false;
@@ -131,7 +125,6 @@ export default {
       this.entries.push(entry);
       this.createEntry(entry);
     },
-
     createEntry(entry) {
       console.info("createEntry");
       const rawEntries = toRaw(this.entries);
@@ -216,7 +209,6 @@ export default {
   },
 };
 </script>
-
 <style lang="scss" scoped>
 .over {
   background: rgba(37, 37, 37, 0.329) !important;

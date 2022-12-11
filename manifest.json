@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Polus",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "description": "An new extension planner",
   "author": "dchicchon",
   "icons": {

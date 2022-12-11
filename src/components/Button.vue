@@ -1,14 +1,12 @@
 <template>
-  <button class="main-button" @click="onClick">{{ title }}</button>
+  <button class="main-button" @click="onClick">
+    <slot></slot>
+  </button>
 </template>
 
 <script>
 export default {
   props: {
-    title: {
-      type: String,
-      required: true,
-    },
     onClick: {
       type: Function,
       required: true,
