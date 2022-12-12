@@ -300,7 +300,6 @@ export default {
         return this.mode === "edit" ? "show" : "no-show";
       },
     },
-
     colorOptions: {
       get() {
         return ["blue", "green", "gold", "purple", "orange", "red"];

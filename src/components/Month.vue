@@ -48,7 +48,6 @@ export default {
   },
 
   created() {
-    console.log("on mount");
     this.createWeekdays();
   },
 
@@ -59,7 +58,6 @@ export default {
       this.date = changeDate;
     },
     createWeekdays() {
-      console.log("Create weekdays");
       let startDate = new Date(this.date);
       // This is how we set it to sunday
       const days = [];
@@ -75,7 +73,6 @@ export default {
         startDate.setDate(startDate.getDate() + 1);
       }
       this.weekdays = days;
-      console.log(this.weekdays);
     },
   },
   computed: {

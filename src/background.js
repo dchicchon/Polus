@@ -189,8 +189,11 @@ chrome.contextMenus.onClicked.addListener(function (result) {
  * @param {string} id notification id
  */
 const handleNotification = (id) => {
+  console.info('handleNotification')
+  console.info({ id });
   // get the current date. be sure to replace all
-  let dateStamp = new Date().toLocaleDateString("en-US").replaceAll('_', '/');
+  let dateStamp = new Date().toLocaleDateString("en-US").replaceAll('/', '_');
+  console.info({ dateStamp });
   chrome.storage.sync.get([dateStamp], (result) => {
     console.info({ result })
     let entries = result[dateStamp];
