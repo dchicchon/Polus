@@ -28,7 +28,7 @@
     "vite": "^2.9.0"
   },
   "bugs": {
-    "url": "https://github.com/dchicchon/Polus/issues"
+    "url": "https://git`hub.com/dchicchon/Polus/issues"
   },
   "homepage": "https://github.com/dchicchon/Polus#readme",
   "keywords": [],
@@ -38,6 +38,7 @@
     "url": "git+https://github.com/dchicchon/Polus.git"
   },
   "dependencies": {
+    "@dchicchon/vite-plugin-html-config": "^1.0.16",
     "vue": "^3.2.41"
   }
 }

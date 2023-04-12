@@ -2,7 +2,7 @@
   <div>
     {{ description }}
     <label @click="() => toggleItem($event, name)" for="switch" class="switch">
-      <input type="checkbox" class="toggle" v-model="currentValue" />
+      <input type="checkbox" class="toggle" :checked="currentValue" />
       <span class="slider round"></span>
     </label>
   </div>

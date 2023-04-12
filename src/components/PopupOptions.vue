@@ -46,13 +46,6 @@
       <p class="extension-link" @click="openOptions">Additional Options page</p>
     </div>
 
-    <!-- In order to save on user space, we will remove this item -->
-    <!-- <div>
-      Select a photo from your computer ({{ "<" }} 5MB)
-      <md-button @click="uploadPhoto" class="blue md-primary md-raised md-dense"
-        >Upload</md-button
-      >
-    </div> -->
     <p class="error">{{ error }}</p>
   </div>
 </template>

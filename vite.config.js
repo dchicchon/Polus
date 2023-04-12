@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite'
 import { createRequire } from 'module'
 import vue from '@vitejs/plugin-vue'
+import htmlPlugin from '@dchicchon/vite-plugin-html-config'
 import { crx } from '@crxjs/vite-plugin'
 const require = createRequire(import.meta.url);
-const manifest = require('./manifest.json')
+const manifestProd = require('./manifest-prod.json')
+const manifestDev = require('./manifest-dev.json')
 
 const mode = process.env.APP_ENV;
 
@@ -18,8 +20,21 @@ const getConfig = () => {
         outDir: 'dist'
       },
       plugins: [
+        htmlPlugin({
+          files: {
+            'index.html': {
+              title: 'Test - Polus'
+            },
+            'options.html': {
+              title: 'Test - Options'
+            },
+            'popup.html': {
+              title: 'Test - Options'
+            }
+          }
+        }),
         vue(),
-        crx({ manifest })
+        crx({ manifest: manifestDev }),
       ],
     })
   }
@@ -34,7 +49,8 @@ const getConfig = () => {
       },
       plugins: [
         vue(),
-        crx({ manifest })
+        htmlPlugin({ title: 'Polus' }),
+        crx({ manifest: manifestProd })
       ],
     })
 
