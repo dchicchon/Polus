@@ -3,6 +3,12 @@
     <div class="container">
       <component :is="currentTabComponent"></component>
     </div>
+    <div class="popup_nav">
+      <h3
+      @click="changeTab($event, 'options')"
+      >Options</h3>
+      <h3>Account</h3>
+    </div>
     <!-- <md-bottom-bar class="blue" md-type="shift">
       <md-bottom-bar-item
         @click="($event) => changeTab($event, 'options')"
@@ -64,10 +70,12 @@ html {
 }
 body {
   width: 300px;
-  height: 350px;
+  height: 250px;
   margin: 0;
 }
-
+#app {
+  height: 100%;
+}
 .blue {
   background-color: #1197d4 !important;
 }
@@ -100,5 +108,24 @@ body {
     font-size: 20px;
     font-weight: 200;
   }
+}
+
+.popup_nav {
+  display: flex;
+  color: white;
+  background-color: rgb(14, 108, 151);
+  // justify-content: space-around;
+}
+.popup_nav > h3 {
+  cursor: pointer;
+  margin: 0;
+  flex: 2;
+  text-align: center;
+  padding: 1em;
+  background-color: rgb(14, 108, 151);
+  transition: background-color 0.5s;
+}
+.popup_nav > h3:hover {
+  background: rgb(19, 138, 193);
 }
 </style>
