@@ -292,8 +292,12 @@ chrome.cookies.set(
 
 [Link to Documentation](https://developer.chrome.com/extensions/cookies)
 
+#### Preact Signals
+
+I'm using [Preact Signals](https://preactjs.com/guide/v10/signals) to manage a global state for userSettings and drag and drop
+
 ### Dragging Entries
 
-[Here](https://codesandbox.io/s/64829x0m93?file=/src/index.js) is a reference for how I was able to drag entries in and between lists.
+[This code sandbox](https://codesandbox.io/s/64829x0m93?file=/src/index.js) is a reference for how I was able to drag entries in and between lists.
 
 <hr>
