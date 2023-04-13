@@ -41,7 +41,7 @@ function Day() {
         </button>
       </div>
       <div className={styles.dayDiv}>
-        <EntryList />
+        <EntryList date={date} />
         {/* <EntryList v-bind:listDate="date" /> */}
       </div>
     </div>

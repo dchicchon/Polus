@@ -1,162 +1,197 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import styles from './Entry.module.scss';
 
-function Entry({ entry }) {
-  if (entry.new) {
-    <textarea
-      //   v-model="entry.text"
-      className={`${styles.newEntry} ${styles.entry}`}
+const entryModes = {
+  NEW: "NEW",
+  INACTIVE: "INACTIVE",
+  ACTIVE: "ACTIVE",
+  EDIT: "EDIT",
+  COLOR: "COLOR",
+}
+const colorOptions = ["blue", "green", "gold", "purple", "orange", "red"];
+function Entry({ date, entry }) {
+
+  const [mode, setMode] = useState(entryModes.INACTIVE);
+  const editRef = useRef(null);
+
+  const changeMode = (event, newMode) => {
+    event.stopPropagation();
+    console.log({ newMode })
+    // lets prevent the mode from going to inactive?
+    setMode(newMode);
+  }
+
+  const selectColor = () => {
+    console.log('submit color')
+  }
+
+  const submitEdit = () => {
+    console.log('submit edit')
+  }
+
+  useEffect(() => {
+    if (entry.new && mode !== entryModes.NEW) {
+      setMode(entryModes.NEW)
+    }
+  }, [])
+
+  if (mode === entryModes.NEW) {
+    return (
+      <textarea
+        //   v-model="entry.text"
+        className={`${styles.newEntry} ${styles.entry}`}
       //   :class="[entry.color, { checked: entry.active }]"
       //   v-if="entry.new"
       //   ref="newEntry"
       //   v-on:blur="createEntry(entry)"
       //   v-on:keydown.enter="$event.target.blur()"
-    ></textarea>;
+      ></textarea>
+    )
+
   }
-  return (
-    <>
-      {/* <!-- New Entry --> */}
 
-      {/* <!-- End New Entry --> */}
-
-      {/* <!-- Inactive Entry (fade-in  was added previously but it looked a little funny) --> */}
+  if (mode === entryModes.INACTIVE) {
+    return (
       <li
-        //   v-else-if="mode === ''"
-        className="entry"
-        //   :class="[entry.color, { checked: entry.active }]"
-        //   @click="changeMode('menu')"
+        className={`${styles.entry} ${styles[entry.color]} ${styles[entry.active]}`}
+        onClick={() => setMode(entryModes.ACTIVE)}
+      //   :class="[entry.color, { checked: entry.active }]"
+      //   @click="changeMode('menu')"
       >
-        {/* { entry.text } */}
+        {entry.text}
       </li>
-      {/* <!-- End Inactive Entry --> */}
+    )
 
-      {/* <!-- Its the fact that it's getting rerendered --> */}
-      {/* <!-- Active --> */}
-      <li
-        //   v-else
-        className="entry"
-        //   :class="[entry.color]"
-        //   @click="(e) => altChangeActive(e)"
-      >
-        <div className="entry-container">
+  }
+
+  return (
+    <li
+      className={`${styles.entry} ${styles[entry.color]}`}
+      onClick={(e) => changeMode(e, entryModes.INACTIVE)}
+    >
+      <div className={styles.entry_container}>
+        {mode !== entryModes.EDIT &&
           <p
             className="text"
-            // v-if="mode !== 'edit'"
-            // :class="{ checked: entry.active }"
+          // :class="{ checked: entry.active }"
           >
-            {/* // {entry.text} */}
+            {entry.text}
           </p>
+        }
 
-          {/* // <!-- Begin Edit Entry TextArea --> */}
-          <textarea
-            //   v-model="newText"
-            //   :class="textClass"
-            //   ref="textarea"
-            class="editEntry"
-          ></textarea>
-          {/* <!-- Begin Edit Entry TextArea --> */}
+        <textarea
+          ref={editRef}
+          className={`${styles.editEntry} ${entryModes.EDIT ? styles.show : styles.no_show}`}
+          value={entry.text}
+        ></textarea>
 
-          {/* <!-- Button Container --> */}
-          <div class="button-container">
-            {/* <!-- Color --> */}
-            <button
-              // @click="changeMode('color')"
-              // :disabled="mode === 'color'"
-              class="entryBtn"
+        <div class={styles.button_container}>
+          <button
+            onClick={(e) => changeMode(e, entryModes.COLOR)}
+            disabled={mode === entryModes.COLOR}
+            className={styles.entryBtn}
+          >
+            <img
+              style={{ filter: 'invert(1)' }}
+              alt="color"
+              src="/assets/entry_icons/palette.png"
+            />
+            <select
+              value=''
+              onInput={(e) => selectColor(e.target.value)}
             >
-              <img
-                //   :style="{ filter: 'invert(1)' }"
-                alt="color"
-                src="/assets/entry_icons/palette.png"
-              />
-              <select
-              // :value="''"
-              // @input="selectColor($event.target.value)"
-              >
+              {colorOptions.map(color => (
                 <option
-                // v-for="(option, index) in colorOptions"
-                // :value="option"
-                // :key="index"
-                // :class="option"
+                  value={color}
+                  className={styles[entry.color]}
                 >
-                  {/* { option } */}
+                  {color}
                 </option>
-              </select>
-            </button>
+              ))}
 
-            {/* <!-- Begin Time --> */}
-            {/* <!-- Superimpose time and input on top of each other --> */}
-            <div id="time-section">
-              <img
-                //   :style="{ filter: 'invert(1)' }"
-                alt="clock"
-                src="/assets/entry_icons/clock.png"
-              />
-              <input
-                className="entryBtn"
-                //   v-model="time"
-                //   @mouseup="changeTimeMode"
-                //   @input="selectTime"
-                placeholder="none"
-                //   ref="time"
-                type="time"
-              />
-            </div>
+            </select>
+          </button>
 
-            {/* <!-- End Time --> */}
+          {/* <!-- Superimpose time and input on top of each other --> */}
+          <div id="time-section">
+            <img
+              style={{ filter: 'invert(1)' }}
+              alt="clock"
+              src="/assets/entry_icons/clock.png"
+            />
+            <input
+              className={styles.entryBtn}
+              //   v-model="time"
+              //   @mouseup="changeTimeMode"
+              //   @input="selectTime"
+              placeholder="none"
+              //   ref="time"
+              type="time"
+            />
+          </div>
 
-            {/* <!-- Save Edit --> */}
+          {mode === entryModes.EDIT ?
             <button
-              //   v-if="mode === 'edit'"
-              //   @click="submitEdit"
-              className="entryBtn"
+              onClick={(e) => {
+                changeMode(e, entryModes.ACTIVE)
+                submitEdit();
+              }}
+              className={styles.entryBtn}
             >
               <img
-                //   :style="{ filter: 'invert(1)' }"
+                style={{ filter: 'invert(1)' }}
                 alt="save"
                 src="/assets/entry_icons/save.png"
               />
-            </button>
-            {/* <!-- Begin Edit --> */}
+            </button> :
             <button
-              //    v-if="mode !== 'edit'"
-              // @click="editEntry"
-              className="entryBtn"
+              onClick={(e) => {
+                changeMode(e, entryModes.EDIT)
+                editRef.current.focus();
+              }}
+              className={styles.entryBtn}
             >
               <img
-                //   :style="{ filter: 'invert(1)' }"
+                style={{ filter: 'invert(1)' }}
                 alt="edit"
                 src="/assets/entry_icons/edit.png"
               />
             </button>
+          }
 
-            {/* <!-- Check Entry --> */}
-            <button
-              //    @click="checkEntry"
-              className="entryBtn"
-            >
-              <img
-                //   :style="{ filter: 'invert(1)' }"
-                alt="done"
-                src="/assets/entry_icons/done.png"
-              />
-            </button>
-            {/* <!-- Delete Entry --> */}
-            <button
-              //   @click="() => deleteEntry(entry.key)"
-              className="entryBtn"
-            >
-              <img
-                //   :style="{ filter: 'invert(1)' }"
-                alt="delete"
-                src="/assets/entry_icons/delete.png"
-              />
-            </button>
-          </div>
+
+
+          {/* <!-- Check Entry --> */}
+          <button
+            //    @click="checkEntry"
+            className={styles.entryBtn}
+          >
+            <img
+              style={{ filter: 'invert(1)' }}
+
+              alt="done"
+              src="/assets/entry_icons/done.png"
+            />
+          </button>
+          {/* <!-- Delete Entry --> */}
+          <button
+            //   @click="() => deleteEntry(entry.key)"
+            className={styles.entryBtn}
+          >
+            <img
+              style={{ filter: 'invert(1)' }}
+              alt="delete"
+              src="/assets/entry_icons/delete.png"
+            />
+          </button>
         </div>
-      </li>
-    </>
+      </div>
+    </li>
   );
+
+
+
+
 }
 
 export default Entry;
