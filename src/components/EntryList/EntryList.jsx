@@ -49,13 +49,20 @@ function EntryList({ date, dateStamp }) {
       })
       .catch((e) => console.error(e));
   };
-  const updateEntry = (key) => {
+  const updateEntry = (key, updatedEntry) => {
     console.info('updateEntry');
-    // check if entry is any different than before
+
+    // we should update the entries?
     const index = entries.findIndex((e) => e.key === key);
-    const entry = entries[index];
+    setEntries((prevEntries) => {
+      const updatedEntries = prevEntries.slice();
+      updatedEntries[index] = updatedEntry;
+      return updatedEntries;
+    });
+    // check if entry is any different than before
+    // const entry = entries[index];
     actions
-      .update({ date: dateStamp, entry, key })
+      .update({ date: dateStamp, entry: updatedEntry, key })
       .then((result) => {})
       .catch((e) => console.error(e));
   };

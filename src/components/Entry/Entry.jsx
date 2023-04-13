@@ -36,7 +36,11 @@ function Entry({
 
   const submitEdit = () => {
     console.log('submit edit');
-    updateEntry(entry.key);
+    const updatedEntry = {
+      ...entry,
+      text: newText,
+    };
+    updateEntry(entry.key, updatedEntry);
   };
 
   useEffect(() => {
@@ -45,12 +49,10 @@ function Entry({
     }
   }, []);
   useEffect(() => {
-    if (newRef.current) {
-      console.log('focusing on new textarea');
+    if (mode === entryModes.NEW) {
       newRef.current.focus();
     }
-    if (editRef.current) {
-      console.log('focusing on edit textarea');
+    if (mode === entryModes.EDIT) {
       editRef.current.focus();
     }
   }, [mode]);
@@ -75,7 +77,7 @@ function Entry({
           setMode(entryModes.INACTIVE);
         }}
         className={`${styles.newEntry} ${styles.entry} ${styles[entry.color]}`}
-        onBlur={() => {}}
+        // onBlur={() => {}}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             console.log('blur target');
@@ -106,6 +108,7 @@ function Entry({
     );
   }
 
+  //   Menu Mode
   return (
     <li
       className={`${styles.entry} ${styles[entry.color]}`}
@@ -118,6 +121,13 @@ function Entry({
             className={`${styles.editEntry} ${
               entryModes.EDIT ? styles.show : styles.no_show
             }`}
+            onChange={(e) => {
+              console.log('value changed');
+              const text = e.target.value;
+              if (text.length === 0) return deleteEntry(entry.key);
+              if (text === entry.text) return;
+              setNewText(e.target.value);
+            }}
             value={newText}
           ></textarea>
         ) : (
