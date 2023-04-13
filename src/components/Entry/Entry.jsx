@@ -1,17 +1,22 @@
+import { useState } from 'preact/hooks';
 import styles from './Entry.module.scss';
-function Entry(props) {
+
+function Entry({ entry }) {
+  if (entry.new) {
+    <textarea
+      //   v-model="entry.text"
+      className={`${styles.newEntry} ${styles.entry}`}
+      //   :class="[entry.color, { checked: entry.active }]"
+      //   v-if="entry.new"
+      //   ref="newEntry"
+      //   v-on:blur="createEntry(entry)"
+      //   v-on:keydown.enter="$event.target.blur()"
+    ></textarea>;
+  }
   return (
     <>
       {/* <!-- New Entry --> */}
-      <textarea
-        //   v-model="entry.text"
-        className={`${styles.newEntry} ${styles.entry}`}
-        //   :class="[entry.color, { checked: entry.active }]"
-        //   v-if="entry.new"
-        //   ref="newEntry"
-        //   v-on:blur="createEntry(entry)"
-        //   v-on:keydown.enter="$event.target.blur()"
-      ></textarea>
+
       {/* <!-- End New Entry --> */}
 
       {/* <!-- Inactive Entry (fade-in  was added previously but it looked a little funny) --> */}

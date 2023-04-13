@@ -41,7 +41,6 @@ const getConfig = () => {
         //     }
         //   }
         // }),
-        // vue(),
         crx({ manifest: manifestDev }),
       ],
     })
@@ -62,7 +61,6 @@ const getConfig = () => {
       },
       plugins: [
         preact(),
-        // vue(),
         // htmlPlugin({ title: 'Polus' }),
         crx({ manifest: manifestProd })
       ],
