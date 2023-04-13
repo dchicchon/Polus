@@ -73,12 +73,12 @@ const recurringAlarms = {
           if (!response.ok) throw response.statusText;
           return response;
         })
-        .catch((err) => {
-          throw err
+        .catch((error) => {
+          console.log({ error })
         })
         .then((response) => response.json())
-        .catch((err) => {
-          throw err
+        .catch((error) => {
+          console.log({ error })
         })
         .then((photo) => {
           let url = photo.urls.raw;
@@ -95,9 +95,8 @@ const recurringAlarms = {
           };
           chrome.storage.sync.set({ background });
         })
-        .catch((err) => {
-          console.error(err)
-          throw err
+        .catch((error) => {
+          console.error({ error })
         });
     }
   }

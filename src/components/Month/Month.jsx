@@ -31,6 +31,7 @@ function Month() {
   };
 
   const createDateList = () => {
+    console.log('creating date list');
     let dates = [];
     let startDate = new Date(date);
     let currentMonth = startDate.getMonth(); // what month is it
@@ -46,11 +47,6 @@ function Month() {
     // instead check if its equal to the next month. Easy!
     let nextDate = new Date();
     nextDate.setMonth(currentMonth + 1);
-    // if the startDate month is equal to the next month, then exit this loop
-    while (startDate.getMonth() !== nextDate.getMonth()) {
-      let week = makeWeek();
-      dates = [...dates, ...week];
-    }
 
     // Make a week while we are still in the same month
     function makeWeek() {
@@ -62,6 +58,13 @@ function Month() {
       }
       return week;
     }
+    // if the startDate month is equal to the next month, then exit this loop
+    while (startDate.getMonth() !== nextDate.getMonth()) {
+      let week = makeWeek();
+      dates = [...dates, ...week];
+    }
+
+
     setDateList(dates);
   };
 
@@ -96,11 +99,11 @@ function Month() {
       </div>
       <div className={styles.monthDays}>
         {dateList.length > 0
-          ? dateList.map(() => (
+          ? dateList.map((dateListItem) => (
             <div className={styles.monthDay}>
               <EntryList
                 date={date}
-                dateStamp={date.toLocaleDateString('en-US').replaceAll('/', '_')}
+                dateStamp={dateListItem.toLocaleDateString('en-US').replaceAll('/', '_')}
               />
             </div>
           ))

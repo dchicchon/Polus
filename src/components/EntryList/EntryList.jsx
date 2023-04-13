@@ -24,16 +24,12 @@ function EntryList({ dateStamp }) {
   }
 
   const createEntry = (entry) => {
-    console.info("createEntry");
-    console.log({ entry })
     const index = entries.findIndex((e) => e.key === entry.key);
     setEntries(prevEntries => {
-      // gotta get the entry, then we delete it's property .new
       const updatedEntries = prevEntries.slice();
       delete updatedEntries[index].new
       return updatedEntries
     })
-    console.log('made it here');
     actions
       .create({ date: dateStamp, entry, key: entry.key })
       .then((result) => {
@@ -48,7 +44,7 @@ function EntryList({ dateStamp }) {
     actions
       .read({ date: dateStamp })
       .then((result) => {
-        console.info({ result });
+        // console.info({ result });
         setEntries(result);
       })
       .catch((e) => console.error(e));
@@ -72,7 +68,8 @@ function EntryList({ dateStamp }) {
       chrome.alarms.clear(key); // clearing alarm if it has time
     }
     setEntries((prevEntries) => {
-      const updatedEntries = prevEntries.slice().splice(index, 1);
+      const updatedEntries = prevEntries.slice();
+      updatedEntries.splice(index, 1);
       return updatedEntries
     })
     actions
@@ -83,10 +80,7 @@ function EntryList({ dateStamp }) {
       .catch((e) => console.error(e));
   }
 
-
-
   useEffect(() => {
-    console.log('create entry list')
     readEntries();
   }, [])
   return (
