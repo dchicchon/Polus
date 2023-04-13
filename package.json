@@ -19,7 +19,6 @@
     "cross-env": "^7.0.3",
     "nodemon": "^2.0.20",
     "rollup-plugin-analyzer": "^4.0.0",
-    "shortid": "^2.2.16",
     "vite": "^4.2.1"
   },
   "bugs": {

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'preact/hooks';
-import shortid from 'shortid';
 import { actions, entryMoved } from '../../utils/index';
 import Entry from '../Entry/Entry';
 
 import styles from './EntryList.module.scss';
+
 
 function EntryList({ date, dateStamp }) {
   const [entries, setEntries] = useState([]);
@@ -12,7 +12,7 @@ function EntryList({ date, dateStamp }) {
   const initEntry = () => {
     console.info('initEntry');
     // Add to entries state and to chrome storage
-    const key = shortid.generate();
+    const key = Date.now();
     let newEntry = {
       key,
       text: '',
