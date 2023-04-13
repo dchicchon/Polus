@@ -90,7 +90,7 @@
         </div>
 
         <!-- End Time -->
- 
+
         <!-- Save Edit -->
         <button v-if="mode === 'edit'" @click="submitEdit" class="entryBtn">
           <img

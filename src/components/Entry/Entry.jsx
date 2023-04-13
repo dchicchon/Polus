@@ -2,45 +2,58 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import styles from './Entry.module.scss';
 
 const entryModes = {
-  NEW: "NEW",
-  INACTIVE: "INACTIVE",
-  ACTIVE: "ACTIVE",
-  EDIT: "EDIT",
-  COLOR: "COLOR",
-}
-const colorOptions = ["blue", "green", "gold", "purple", "orange", "red"];
-function Entry({ entry, dateStamp, createEntry, updateEntry, deleteEntry }) {
-
+  NEW: 'NEW',
+  INACTIVE: 'INACTIVE',
+  ACTIVE: 'ACTIVE',
+  EDIT: 'EDIT',
+  COLOR: 'COLOR',
+};
+const colorOptions = ['blue', 'green', 'gold', 'purple', 'orange', 'red'];
+function Entry({
+  entry,
+  entryDragStart,
+  entryDragEnd,
+  dateStamp,
+  createEntry,
+  updateEntry,
+  deleteEntry,
+}) {
   const [mode, setMode] = useState(entryModes.INACTIVE);
-  const [newText, setNewText] = useState('');
+  const [newText, setNewText] = useState(entry.text);
   const editRef = useRef(null);
   const newRef = useRef(null);
 
   const changeMode = (event, newMode) => {
     event.stopPropagation();
-    console.log({ newMode })
+    console.log({ newMode });
     // lets prevent the mode from going to inactive?
     setMode(newMode);
-  }
+  };
 
   const selectColor = () => {
-    console.log('submit color')
-  }
+    console.log('submit color');
+  };
 
   const submitEdit = () => {
-    console.log('submit edit')
+    console.log('submit edit');
     updateEntry(entry.key);
-  }
+  };
 
   useEffect(() => {
     if (entry.new && mode !== entryModes.NEW) {
-      setMode(entryModes.NEW)
+      setMode(entryModes.NEW);
     }
+  }, []);
+  useEffect(() => {
     if (newRef.current) {
-      console.log('focusing on new textarea')
+      console.log('focusing on new textarea');
       newRef.current.focus();
     }
-  }, [])
+    if (editRef.current) {
+      console.log('focusing on edit textarea');
+      editRef.current.focus();
+    }
+  }, [mode]);
 
   if (mode === entryModes.NEW) {
     return (
@@ -55,24 +68,23 @@ function Entry({ entry, dateStamp, createEntry, updateEntry, deleteEntry }) {
           delete entry.new;
           const newEntry = {
             ...entry,
-            text
-          }
-          createEntry(newEntry)
-          setNewText(e.target.value)
+            text,
+          };
+          createEntry(newEntry);
+          setNewText(e.target.value);
+          setMode(entryModes.INACTIVE);
         }}
         className={`${styles.newEntry} ${styles.entry} ${styles[entry.color]}`}
-        onBlur={() => {
-        }}
+        onBlur={() => {}}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            console.log('blur target')
+            console.log('blur target');
             e.target.blur();
           }
         }}
-      //   :class="[entry.color, { checked: entry.active }]"
+        //   :class="[entry.color, { checked: entry.active }]"
       ></textarea>
-    )
-
+    );
   }
 
   if (mode === entryModes.INACTIVE) {
@@ -80,13 +92,18 @@ function Entry({ entry, dateStamp, createEntry, updateEntry, deleteEntry }) {
       <li
         className={`${styles.entry} ${styles[entry.color]} ${styles[entry.active]}`}
         onClick={() => setMode(entryModes.ACTIVE)}
-      //   :class="[entry.color, { checked: entry.active }]"
-      //   @click="changeMode('menu')"
+        draggable={true}
+        onDragStart={(e) => {
+          entryDragStart(e, entry, dateStamp);
+        }}
+        onDragEnd={(e) => {
+          entryDragEnd(e, entry.key);
+        }}
+        //   :class="[entry.color, { checked: entry.active }]"
       >
-        {entry.text}
+        {newText}
       </li>
-    )
-
+    );
   }
 
   return (
@@ -95,23 +112,22 @@ function Entry({ entry, dateStamp, createEntry, updateEntry, deleteEntry }) {
       onClick={(e) => changeMode(e, entryModes.INACTIVE)}
     >
       <div className={styles.entry_container}>
-        {mode === entryModes.EDIT ?
+        {mode === entryModes.EDIT ? (
           <textarea
             ref={editRef}
-            className={`${styles.editEntry} ${entryModes.EDIT ? styles.show : styles.no_show}`}
-            value={entry.text}
+            className={`${styles.editEntry} ${
+              entryModes.EDIT ? styles.show : styles.no_show
+            }`}
+            value={newText}
           ></textarea>
-          :
+        ) : (
           <p
             className="text"
-          // :class="{ checked: entry.active }"
+            // :class="{ checked: entry.active }"
           >
-            {entry.text}
+            {newText}
           </p>
-
-        }
-
-
+        )}
 
         <div class={styles.button_container}>
           <button
@@ -124,19 +140,12 @@ function Entry({ entry, dateStamp, createEntry, updateEntry, deleteEntry }) {
               alt="color"
               src="/assets/entry_icons/palette.png"
             />
-            <select
-              value=''
-              onInput={(e) => selectColor(e.target.value)}
-            >
-              {colorOptions.map(color => (
-                <option
-                  value={color}
-                  className={styles[entry.color]}
-                >
+            <select value="" onInput={(e) => selectColor(e.target.value)}>
+              {colorOptions.map((color) => (
+                <option value={color} className={styles[entry.color]}>
                   {color}
                 </option>
               ))}
-
             </select>
           </button>
 
@@ -158,10 +167,10 @@ function Entry({ entry, dateStamp, createEntry, updateEntry, deleteEntry }) {
             />
           </div>
 
-          {mode === entryModes.EDIT ?
+          {mode === entryModes.EDIT ? (
             <button
               onClick={(e) => {
-                changeMode(e, entryModes.ACTIVE)
+                changeMode(e, entryModes.ACTIVE);
                 submitEdit();
               }}
               className={styles.entryBtn}
@@ -171,11 +180,11 @@ function Entry({ entry, dateStamp, createEntry, updateEntry, deleteEntry }) {
                 alt="save"
                 src="/assets/entry_icons/save.png"
               />
-            </button> :
+            </button>
+          ) : (
             <button
               onClick={(e) => {
-                changeMode(e, entryModes.EDIT)
-                editRef.current.focus();
+                changeMode(e, entryModes.EDIT);
               }}
               className={styles.entryBtn}
             >
@@ -185,9 +194,7 @@ function Entry({ entry, dateStamp, createEntry, updateEntry, deleteEntry }) {
                 src="/assets/entry_icons/edit.png"
               />
             </button>
-          }
-
-
+          )}
 
           {/* <!-- Check Entry --> */}
           <button
@@ -196,16 +203,12 @@ function Entry({ entry, dateStamp, createEntry, updateEntry, deleteEntry }) {
           >
             <img
               style={{ filter: 'invert(1)' }}
-
               alt="done"
               src="/assets/entry_icons/done.png"
             />
           </button>
           {/* <!-- Delete Entry --> */}
-          <button
-            onClick={() => deleteEntry(entry.key)}
-            className={styles.entryBtn}
-          >
+          <button onClick={() => deleteEntry(entry.key)} className={styles.entryBtn}>
             <img
               style={{ filter: 'invert(1)' }}
               alt="delete"
@@ -216,10 +219,6 @@ function Entry({ entry, dateStamp, createEntry, updateEntry, deleteEntry }) {
       </div>
     </li>
   );
-
-
-
-
 }
 
 export default Entry;

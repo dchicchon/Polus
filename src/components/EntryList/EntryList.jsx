@@ -1,135 +1,143 @@
 import { useEffect, useState } from 'preact/hooks';
 import shortid from 'shortid';
-import { actions } from '../../utils/index';
+import { actions, entryMoved } from '../../utils/index';
 import Entry from '../Entry/Entry';
 
 import styles from './EntryList.module.scss';
 
-function EntryList({ dateStamp }) {
-
-  const [entries, setEntries] = useState([])
+function EntryList({ date, dateStamp }) {
+  const [entries, setEntries] = useState([]);
+  const [isOver, setIsOver] = useState(false);
+  //   const [entryMoved, setEntryMoved] = useState(false);
   const initEntry = () => {
-    console.info("initEntry");
+    console.info('initEntry');
     // Add to entries state and to chrome storage
     const key = shortid.generate();
     let newEntry = {
       key,
-      text: "",
-      color: "blue",
+      text: '',
+      color: 'blue',
       active: false,
       new: true,
     };
 
-    setEntries(prevEntries => [...prevEntries, newEntry])
-  }
+    setEntries((prevEntries) => [...prevEntries, newEntry]);
+  };
 
   const createEntry = (entry) => {
     const index = entries.findIndex((e) => e.key === entry.key);
-    setEntries(prevEntries => {
+    setEntries((prevEntries) => {
       const updatedEntries = prevEntries.slice();
-      delete updatedEntries[index].new
-      return updatedEntries
-    })
+      if (index >= 0) {
+        delete updatedEntries[index].new;
+      } else {
+        updatedEntries.push(entry);
+      }
+      return updatedEntries;
+    });
     actions
       .create({ date: dateStamp, entry, key: entry.key })
-      .then((result) => {
-        console.info({ result });
-      })
+      .then((result) => {})
       .catch((e) => console.error(e));
-  }
+  };
   const readEntries = () => {
-    // eventually we'll read from an actual store. For now lets just
-    // make a fake store of entries
-    console.info("readEntries");
+    console.info('readEntries');
     actions
       .read({ date: dateStamp })
       .then((result) => {
-        // console.info({ result });
         setEntries(result);
       })
       .catch((e) => console.error(e));
-  }
+  };
   const updateEntry = (key) => {
-    console.info("updateEntry");
+    console.info('updateEntry');
     // check if entry is any different than before
     const index = entries.findIndex((e) => e.key === key);
     const entry = entries[index];
     actions
       .update({ date: dateStamp, entry, key })
-      .then((result) => {
-        console.info({ result });
-      })
+      .then((result) => {})
       .catch((e) => console.error(e));
-  }
+  };
   const deleteEntry = (key) => {
-    console.info("Delete Entry");
+    console.info('Delete Entry');
     const index = entries.findIndex((e) => e.key === key);
-    if (entries[index].hasOwnProperty("time")) {
+    if (entries[index].hasOwnProperty('time')) {
       chrome.alarms.clear(key); // clearing alarm if it has time
     }
     setEntries((prevEntries) => {
       const updatedEntries = prevEntries.slice();
       updatedEntries.splice(index, 1);
-      return updatedEntries
-    })
+      return updatedEntries;
+    });
     actions
       .delete({ date: dateStamp, key })
-      .then((result) => {
-        console.info({ result });
-      })
+      .then((result) => {})
       .catch((e) => console.error(e));
-  }
-
+  };
+  const entryDragEnd = (event, key) => {
+    console.log('entry drag end');
+    if (entryMoved.value) {
+      entryMoved.value = false;
+      deleteEntry(key);
+    }
+  };
+  const entryDragStart = (event, entry, originalDate) => {
+    event.dataTransfer.setData('application/json', JSON.stringify(entry));
+    event.dataTransfer.setData('date', originalDate);
+    event.dataTransfer.setData('key', entry.key);
+    event.dataTransfer.effectAllowed = 'move';
+  };
+  const onDrop = (event) => {
+    setIsOver(false);
+    const originalDate = event.dataTransfer.getData('date');
+    if (originalDate === dateStamp) return;
+    entryMoved.value = true;
+    const entry = JSON.parse(event.dataTransfer.getData('application/json'));
+    createEntry(entry);
+  };
+  const dragOver = (event) => {
+    setIsOver(true);
+    event.preventDefault();
+    event.stopPropagation();
+  };
+  const dragLeave = (event) => {
+    setIsOver(false);
+  };
   useEffect(() => {
     readEntries();
-  }, [])
+  }, [date]);
   return (
     <div
-      className={styles.details}
-    // :class="addClasses"
-    // @drop="onDrop($event)"
-    // @dragover.prevent
-    // ref="details"
+      className={`${styles.details} ${isOver ? styles.over : ''}`}
+      onDragOver={dragOver}
+      onDragLeave={dragLeave}
+      onDrop={onDrop}
     >
       <div
         // v-if="dateTitle"
         // :style="todayDate"
         className={styles.dateTitle}
       >
-        {/* { dayNumber } */}
+        {date.getDate()}
       </div>
 
-      <ul
-        // v-if="entries.length"
-        // ref="entryList"
-        className={styles.entryList}
-      >
-
-        {entries.length > 0 ? entries.map((entry) => (
-          <Entry
-            createEntry={createEntry}
-            updateEntry={updateEntry}
-            deleteEntry={deleteEntry}
-            dateStamp={dateStamp}
-            entry={entry}
-          // v-for="(entry, index) in entries"
-          // :key="index"
-          // :entry="entry"
-          // draggable="true"
-          // @dragstart="dragStart($event, entry.key, entry, id)"
-          // :createEntry="createEntry"
-          // :updateEntry="updateEntry"
-          // :deleteEntry="deleteEntry"
-          // :listDate="listDate"
-          />
-        )) : ''}
-
+      <ul className={styles.entryList}>
+        {entries.length > 0
+          ? entries.map((entry) => (
+              <Entry
+                entryDragEnd={entryDragEnd}
+                entryDragStart={entryDragStart}
+                createEntry={createEntry}
+                updateEntry={updateEntry}
+                deleteEntry={deleteEntry}
+                dateStamp={dateStamp}
+                entry={entry}
+              />
+            ))
+          : ''}
       </ul>
-      <ul
-        // v-else
-        //  ref="entryList"
-        className={styles.entryList}
-      ></ul>
+      <ul className={styles.entryList}></ul>
 
       <button
         onClick={initEntry}

@@ -41,7 +41,10 @@ function Day() {
         </button>
       </div>
       <div className={styles.dayDiv}>
-        <EntryList dateStamp={date.toLocaleDateString("en-US").replaceAll('/', '_')} />
+        <EntryList
+          date={date}
+          dateStamp={date.toLocaleDateString('en-US').replaceAll('/', '_')}
+        />
       </div>
     </div>
   );

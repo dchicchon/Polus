@@ -69,12 +69,18 @@ function Week() {
         {weekdays.length > 0 ? weekdays.map((weekday) => <h2>{weekday}</h2>) : ''}
       </div>
       <div className={styles.weekdays}>
-        {dateList.length > 0 ? dateList.map(dateListItem => (
-          <EntryList
-            dateStamp={dateListItem.toLocaleDateString('en-US').replaceAll('/', '_')}
-          />
-        )) : ''}
-
+        {dateList.length > 0
+          ? dateList.map((dateListItem) => (
+              <div className={styles.weekday}>
+                <EntryList
+                  date={dateListItem}
+                  dateStamp={dateListItem
+                    .toLocaleDateString('en-US')
+                    .replaceAll('/', '_')}
+                />
+              </div>
+            ))
+          : ''}
 
         {/* <EntryList
             v-for="(date, index) in dateList"
