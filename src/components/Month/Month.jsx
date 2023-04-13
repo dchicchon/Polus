@@ -90,17 +90,20 @@ function Month() {
       <div className={styles.weekdayNames}>
         {weekdays.length > 0
           ? weekdays.map((day) => (
-              <h2 style="padding: 0px 0px 0.5rem; text-align: center">{day}</h2>
-            ))
+            <h2 style="padding: 0px 0px 0.5rem; text-align: center">{day}</h2>
+          ))
           : ''}
       </div>
       <div className={styles.monthDays}>
         {dateList.length > 0
           ? dateList.map(() => (
-              <div className={styles.monthDay}>
-                <EntryList />
-              </div>
-            ))
+            <div className={styles.monthDay}>
+              <EntryList
+                date={date}
+                dateStamp={date.toLocaleDateString('en-US').replaceAll('/', '_')}
+              />
+            </div>
+          ))
           : ''}
         {/* <EntryList
             v-for="(date, index) in dateList"

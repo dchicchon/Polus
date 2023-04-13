@@ -68,8 +68,10 @@ function Week() {
       </div>
       <div className={styles.weekdays}>
         {weekdays.length > 0 ? weekdays.map(weekday => (
-        <EntryList />
-
+          <EntryList
+            date={date}
+            dateStamp={date.toLocaleDateString('en-US').replaceAll('/', '_')}
+          />
         )) : ''}
         {/* <EntryList
             v-for="(date, index) in dateList"

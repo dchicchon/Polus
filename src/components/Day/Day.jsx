@@ -41,8 +41,7 @@ function Day() {
         </button>
       </div>
       <div className={styles.dayDiv}>
-        <EntryList date={date} />
-        {/* <EntryList v-bind:listDate="date" /> */}
+        <EntryList dateStamp={date.toLocaleDateString("en-US").replaceAll('/', '_')} />
       </div>
     </div>
   );

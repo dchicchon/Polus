@@ -9,10 +9,12 @@ const entryModes = {
   COLOR: "COLOR",
 }
 const colorOptions = ["blue", "green", "gold", "purple", "orange", "red"];
-function Entry({ date, entry }) {
+function Entry({ entry, dateStamp, createEntry, updateEntry, deleteEntry }) {
 
   const [mode, setMode] = useState(entryModes.INACTIVE);
+  const [newText, setNewText] = useState('');
   const editRef = useRef(null);
+  const newRef = useRef(null);
 
   const changeMode = (event, newMode) => {
     event.stopPropagation();
@@ -27,24 +29,47 @@ function Entry({ date, entry }) {
 
   const submitEdit = () => {
     console.log('submit edit')
+    updateEntry(entry.key);
   }
 
   useEffect(() => {
     if (entry.new && mode !== entryModes.NEW) {
       setMode(entryModes.NEW)
     }
+    if (newRef.current) {
+      console.log('focusing on new textarea')
+      newRef.current.focus();
+    }
   }, [])
 
   if (mode === entryModes.NEW) {
     return (
       <textarea
-        //   v-model="entry.text"
-        className={`${styles.newEntry} ${styles.entry}`}
+        ref={newRef}
+        value={newText}
+        onChange={(e) => {
+          console.log('value changed');
+          const text = e.target.value;
+          if (text.length === 0) return deleteEntry(entry.key);
+          // delete new property
+          delete entry.new;
+          const newEntry = {
+            ...entry,
+            text
+          }
+          createEntry(newEntry)
+          setNewText(e.target.value)
+        }}
+        className={`${styles.newEntry} ${styles.entry} ${styles[entry.color]}`}
+        onBlur={() => {
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            console.log('blur target')
+            e.target.blur();
+          }
+        }}
       //   :class="[entry.color, { checked: entry.active }]"
-      //   v-if="entry.new"
-      //   ref="newEntry"
-      //   v-on:blur="createEntry(entry)"
-      //   v-on:keydown.enter="$event.target.blur()"
       ></textarea>
     )
 
@@ -70,20 +95,23 @@ function Entry({ date, entry }) {
       onClick={(e) => changeMode(e, entryModes.INACTIVE)}
     >
       <div className={styles.entry_container}>
-        {mode !== entryModes.EDIT &&
+        {mode === entryModes.EDIT ?
+          <textarea
+            ref={editRef}
+            className={`${styles.editEntry} ${entryModes.EDIT ? styles.show : styles.no_show}`}
+            value={entry.text}
+          ></textarea>
+          :
           <p
             className="text"
           // :class="{ checked: entry.active }"
           >
             {entry.text}
           </p>
+
         }
 
-        <textarea
-          ref={editRef}
-          className={`${styles.editEntry} ${entryModes.EDIT ? styles.show : styles.no_show}`}
-          value={entry.text}
-        ></textarea>
+
 
         <div class={styles.button_container}>
           <button
@@ -175,7 +203,7 @@ function Entry({ date, entry }) {
           </button>
           {/* <!-- Delete Entry --> */}
           <button
-            //   @click="() => deleteEntry(entry.key)"
+            onClick={() => deleteEntry(entry.key)}
             className={styles.entryBtn}
           >
             <img
