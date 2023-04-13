@@ -1,50 +1,3 @@
-<template>
-  <div>
-    <Navbar />
-    <main ref="main">
-      <Clock />
-      <Calendar />
-    </main>
-  </div>
-</template>
-
-<script>
-import Navbar from "../components/Navbar.vue";
-import Clock from "../components/Clock.vue";
-import Calendar from "../components/Calendar.vue";
-import { state } from "../utils";
-export default {
-  components: {
-    Navbar,
-    Clock,
-    Calendar,
-  }, 
-  // here we retrieve the information via store
-  mounted() {
-    window.addEventListener("resize", this.mountBackground);
-    this.mountBackground();
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.mountBackground);
-  },
-  methods: {
-    //   Work on the background transition to load on page
-    mountBackground() {
-      if (!state.userSettings || !state.background) return;
-      let page = document.getElementsByTagName("html");
-      let image = state.background.url;
-      page[0].style.background = `rgba(0,0,0,0.9) url(${
-        image + `&w=${window.innerWidth}`
-      }) no-repeat fixed`;
-      this.$refs.main.style.display = state.userSettings.pmode
-        ? "none"
-        : "block";
-    },
-  },
-};
-</script>
-
-<style lang="scss">
 // STYLE VARIABLES
 // ===================
 $title-fontsize: 2rem;
@@ -55,8 +8,6 @@ $day-background: rgba(0, 0, 0, 0.15);
 
 // ===================
 
-// HTML ELEMENT STYLING
-// ===================
 .material-icons {
   &.md-18 {
     font-size: 18px;
@@ -71,9 +22,9 @@ $day-background: rgba(0, 0, 0, 0.15);
 html {
   background: black;
   overflow-y: scroll;
-  transition: background 5s ease;
+  transition: background 1s ease;
   backdrop-filter: brightness(90%);
-  font-family: "Segoe UI", Tahoma, sans-serif;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
   // max-width: 100vw;
   /* width */
   &::-webkit-scrollbar {
@@ -220,4 +171,3 @@ button:hover {
   height: 100px;
   background: none !important;
 }
-</style>

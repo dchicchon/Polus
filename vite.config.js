@@ -1,7 +1,8 @@
 import { defineConfig } from 'vite'
+import preact from "@preact/preset-vite"
 import { createRequire } from 'module'
-import vue from '@vitejs/plugin-vue'
-import htmlPlugin from '@dchicchon/vite-plugin-html-config'
+import analyze from "rollup-plugin-analyzer";
+// import htmlPlugin from '@dchicchon/vite-plugin-html-config'
 import { crx } from '@crxjs/vite-plugin'
 const require = createRequire(import.meta.url);
 const manifestProd = require('./manifest-prod.json')
@@ -17,23 +18,30 @@ const getConfig = () => {
       mode: 'development',
       build: {
         minify: false,
-        outDir: 'dist'
+        outDir: 'dist',
+        rollupOptions: {
+          plugins: [analyze(
+            { summaryOnly: true }
+          )]
+        }
       },
+
       plugins: [
-        htmlPlugin({
-          files: {
-            'index.html': {
-              title: 'Test - Polus'
-            },
-            'options.html': {
-              title: 'Test - Options'
-            },
-            'popup.html': {
-              title: 'Test - Options'
-            }
-          }
-        }),
-        vue(),
+        preact(),
+        // htmlPlugin({
+        //   files: {
+        //     'index.html': {
+        //       title: 'Test - Polus'
+        //     },
+        //     'options.html': {
+        //       title: 'Test - Options'
+        //     },
+        //     'popup.html': {
+        //       title: 'Test - Options'
+        //     }
+        //   }
+        // }),
+        // vue(),
         crx({ manifest: manifestDev }),
       ],
     })
@@ -42,14 +50,20 @@ const getConfig = () => {
     return defineConfig({
       mode: 'production',
       build: {
-        outDir: 'prod'
+        outDir: 'prod',
+        rollupOptions: {
+          plugins: [analyze(
+            { summaryOnly: true }
+          )]
+        }
       },
       esbuild: {
         drop: ['console', 'debugger']
       },
       plugins: [
-        vue(),
-        htmlPlugin({ title: 'Polus' }),
+        preact(),
+        // vue(),
+        // htmlPlugin({ title: 'Polus' }),
         crx({ manifest: manifestProd })
       ],
     })

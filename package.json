@@ -9,13 +9,13 @@
     "dev": "vite",
     "build": "npm run build:prod",
     "build:dev": "APP_ENV=development vite build",
-    "build:watch": "nodemon -e js,vue,html --ignore dist/ --exec npm run build:dev",
+    "build:watch": "nodemon -e js,jsx,html,scss,css --ignore dist/ --exec npm run build:dev",
     "build:prod": "APP_ENV=production vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@crxjs/vite-plugin": "^1.0.14",
-    "@vitejs/plugin-vue": "^2.3.3",
+    "@crxjs/vite-plugin": "^2.0.0-beta.15",
+    "@preact/preset-vite": "^2.5.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.26.0",
     "eslint-plugin-prettier": "^4.2.1",
@@ -23,9 +23,10 @@
     "material-design-icons": "^3.0.1",
     "nodemon": "^2.0.20",
     "prettier": "^2.7.1",
+    "rollup-plugin-analyzer": "^4.0.0",
     "sass": "^1.55.0",
     "shortid": "^2.2.16",
-    "vite": "^2.9.0"
+    "vite": "^4.2.1"
   },
   "bugs": {
     "url": "https://git`hub.com/dchicchon/Polus/issues"
@@ -38,7 +39,6 @@
     "url": "git+https://github.com/dchicchon/Polus.git"
   },
   "dependencies": {
-    "@dchicchon/vite-plugin-html-config": "^1.0.16",
-    "vue": "^3.2.41"
+    "preact": "^10.13.2"
   }
 }
