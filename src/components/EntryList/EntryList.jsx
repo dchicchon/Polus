@@ -1,18 +1,15 @@
 import { useEffect, useState } from 'preact/hooks';
-import { actions, entryMoved } from '../../utils/index';
+import { actions, entryMoved, generateId } from '../../utils/index';
 import Entry from '../Entry/Entry';
 
 import styles from './EntryList.module.scss';
 
-
 function EntryList({ date, dateStamp }) {
   const [entries, setEntries] = useState([]);
   const [isOver, setIsOver] = useState(false);
-  //   const [entryMoved, setEntryMoved] = useState(false);
   const initEntry = () => {
     console.info('initEntry');
-    // Add to entries state and to chrome storage
-    const key = Date.now();
+    const key = generateId();
     let newEntry = {
       key,
       text: '',

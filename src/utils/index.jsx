@@ -260,3 +260,10 @@ export const actions = {
     return background;
   },
 };
+
+export const generateId = () => {
+  const alpha = 'abcdefghijklmnopqrstuvwxyz';
+  const char = alpha[Math.floor(Math.random() * alpha.length)];
+  const id = `${char}-${Date.now()}`;
+  return id;
+};
