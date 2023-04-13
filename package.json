@@ -8,9 +8,9 @@
     "prebuild": "npx rimraf prod",
     "dev": "vite",
     "build": "npm run build:prod",
-    "build:dev": "APP_ENV=development vite build",
+    "build:dev": "cross-env APP_ENV=development vite build",
     "build:watch": "nodemon -e js,jsx,html,scss,css --ignore dist/ --exec npm run build:dev",
-    "build:prod": "APP_ENV=production vite build",
+    "build:prod": "cross-env APP_ENV=production vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
