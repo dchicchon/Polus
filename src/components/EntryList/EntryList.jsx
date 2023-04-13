@@ -48,7 +48,6 @@ function EntryList({ date, dateStamp }) {
   };
   const updateEntry = (key, updatedEntry) => {
     console.info('updateEntry');
-
     // we should update the entries?
     const index = entries.findIndex((e) => e.key === key);
     setEntries((prevEntries) => {
@@ -56,8 +55,6 @@ function EntryList({ date, dateStamp }) {
       updatedEntries[index] = updatedEntry;
       return updatedEntries;
     });
-    // check if entry is any different than before
-    // const entry = entries[index];
     actions
       .update({ date: dateStamp, entry: updatedEntry, key })
       .then((result) => {})

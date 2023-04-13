@@ -20,6 +20,7 @@ function Entry({
 }) {
   const [mode, setMode] = useState(entryModes.INACTIVE);
   const [newText, setNewText] = useState(entry.text);
+  const [newColor, setNewColor] = useState(entry.color);
   const editRef = useRef(null);
   const newRef = useRef(null);
 
@@ -30,8 +31,16 @@ function Entry({
     setMode(newMode);
   };
 
-  const selectColor = () => {
+  const selectColor = (selectedColor) => {
     console.log('submit color');
+    console.log({ selectedColor });
+    if (selectedColor === entry.color) return;
+    setNewColor(selectedColor);
+    const updatedEntry = {
+      ...entry,
+      color: selectedColor,
+    };
+    updateEntry(entry.key, updatedEntry);
   };
 
   const submitEdit = () => {
@@ -111,7 +120,7 @@ function Entry({
   //   Menu Mode
   return (
     <li
-      className={`${styles.entry} ${styles[entry.color]}`}
+      className={`${styles.entry} ${styles[newColor]}`}
       onClick={(e) => changeMode(e, entryModes.INACTIVE)}
     >
       <div className={styles.entry_container}>
@@ -150,7 +159,13 @@ function Entry({
               alt="color"
               src="/assets/entry_icons/palette.png"
             />
-            <select value="" onInput={(e) => selectColor(e.target.value)}>
+            <select
+              value=""
+              onInput={(e) => {
+                selectColor(e.target.value);
+                changeMode(e, entryModes.ACTIVE);
+              }}
+            >
               {colorOptions.map((color) => (
                 <option value={color} className={styles[entry.color]}>
                   {color}
