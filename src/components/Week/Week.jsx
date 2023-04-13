@@ -5,6 +5,7 @@ import styles from './Week.module.scss';
 function Week() {
   const [date, setDate] = useState(new Date());
   const [weekdays, setWeekdays] = useState([]);
+  const [dateList, setDateList] = useState([]);
   const [weekTitle, setWeekTitle] = useState('');
 
   const changeDay = (amount) => {
@@ -28,6 +29,7 @@ function Week() {
       newDate.toLocaleDateString(undefined, { weekday: 'long' })
     );
     setWeekdays(newWeekdays);
+    setDateList(dates);
   };
 
   const getWeekTitle = () => {
@@ -67,12 +69,13 @@ function Week() {
         {weekdays.length > 0 ? weekdays.map((weekday) => <h2>{weekday}</h2>) : ''}
       </div>
       <div className={styles.weekdays}>
-        {weekdays.length > 0 ? weekdays.map(weekday => (
+        {dateList.length > 0 ? dateList.map(dateListItem => (
           <EntryList
-            date={date}
-            dateStamp={date.toLocaleDateString('en-US').replaceAll('/', '_')}
+            dateStamp={dateListItem.toLocaleDateString('en-US').replaceAll('/', '_')}
           />
         )) : ''}
+
+
         {/* <EntryList
             v-for="(date, index) in dateList"
             :ref="`${index}`"

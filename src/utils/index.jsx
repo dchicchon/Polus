@@ -1,6 +1,8 @@
 
 import { signal } from '@preact/signals'
 
+export const userSettings = signal({})
+
 const chromeAPI = chrome;
 /**
  * Use the local storage if an entry is being set to a date more than a week in the past
@@ -248,5 +250,12 @@ export const actions = {
             }
         }
         return results;
+    },
+
+    getBackground: async () => {
+        console.debug('actions.getBackground')
+        const background = await stores.sync.get({ key: 'background' })
+        if (!background) return; // there is something wrong if this is not here we should think about this
+        return background;
     },
 }
