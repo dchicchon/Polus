@@ -1,6 +1,9 @@
 import styles from './Navbar.module.scss';
+import { backgroundInfo } from '../../utils';
+import { useEffect } from 'preact/hooks';
 
 function Navbar() {
+  useEffect(() => {}, [backgroundInfo.value]);
   return (
     <ul id={styles.nav}>
       <li id="app_info_box">
@@ -47,21 +50,27 @@ function Navbar() {
 
       <li id="background_info_box" style="float: right">
         <div id={styles.background_info}>
-          <span id={styles.background_location}> {{ location }}</span>
+          <span id={styles.background_location}> {backgroundInfo.value.location}</span>
           <span id={styles.background_source}>
             Photo by
             <a
               id={styles.photo_link}
+              href={
+                backgroundInfo.value.photoLink + '?utm_source=Planner&utm_medium=referral'
+              }
               // :href="link"
               target="_blank"
               rel="noopener noreferrer"
-            ></a>
-            on
+            >
+              {' '}
+              {backgroundInfo.value.author}{' '}
+            </a>
+            on{' '}
             <a
               id={styles.site_link}
               target="_blank"
               rel="noopener noreferrer"
-              href="https://unsplash.com/?utm_source=Planner&utm_medium=referral"
+              href="https://unsplash.com/?utm_source=Polus&utm_medium=referral"
             >
               Unsplash
             </a>

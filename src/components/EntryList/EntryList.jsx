@@ -20,7 +20,6 @@ function EntryList({ date, dateStamp }) {
 
     setEntries((prevEntries) => [...prevEntries, newEntry]);
   };
-
   const createEntry = (entry) => {
     const index = entries.findIndex((e) => e.key === entry.key);
     setEntries((prevEntries) => {
@@ -116,7 +115,6 @@ function EntryList({ date, dateStamp }) {
       onDrop={onDrop}
     >
       <div
-        // v-if="dateTitle"
         // :style="todayDate"
         className={styles.dateTitle}
       >
@@ -140,11 +138,7 @@ function EntryList({ date, dateStamp }) {
       </ul>
       <ul className={styles.entryList}></ul>
 
-      <button
-        onClick={initEntry}
-        // :value="dateStamp"
-        className={styles.addButton}
-      >
+      <button onClick={initEntry} className={styles.addButton}>
         +
       </button>
     </div>

@@ -1,6 +1,7 @@
 import { signal } from '@preact/signals';
 
 export const userSettings = signal({});
+export const backgroundInfo = signal({});
 export const entryMoved = signal(false);
 const chromeAPI = chrome;
 /**
@@ -252,11 +253,12 @@ export const actions = {
     }
     return results;
   },
-
   getBackground: async () => {
     console.debug('actions.getBackground');
     const background = await stores.sync.get({ key: 'background' });
     if (!background) return; // there is something wrong if this is not here we should think about this
+    console.log(background);
+    backgroundInfo.value = background;
     return background;
   },
 };

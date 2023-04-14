@@ -18,7 +18,7 @@ export default {
     Navbar,
     Clock,
     Calendar,
-  }, 
+  },
   // here we retrieve the information via store
   mounted() {
     window.addEventListener("resize", this.mountBackground);
