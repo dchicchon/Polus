@@ -253,13 +253,17 @@ export const actions = {
     }
     return results;
   },
-  getBackground: async () => {
+  initializeUserSettings: async () => {
+    console.debug('actions.getBackground');
+    const foundUserSettings = await stores.sync.get({ key: 'userSettings' });
+    if (!foundUserSettings) return; // there is something wrong if this is not here we should think about this
+    userSettings.value = foundUserSettings;
+  },
+  initializeBackground: async () => {
     console.debug('actions.getBackground');
     const background = await stores.sync.get({ key: 'background' });
     if (!background) return; // there is something wrong if this is not here we should think about this
-    console.log(background);
     backgroundInfo.value = background;
-    return background;
   },
 };
 

@@ -1,7 +1,10 @@
 import { render } from 'preact';
+import { actions } from '../utils/index.jsx';
 import App from './App.jsx';
 
 const startApp = async () => {
+  actions.initializeBackground();
+  actions.initializeUserSettings();
   render(<App />, document.getElementById('app'));
 };
 

@@ -1,9 +1,12 @@
 import styles from './Navbar.module.scss';
-import { backgroundInfo } from '../../utils';
-import { useEffect } from 'preact/hooks';
+import { backgroundInfo, userSettings } from '../../utils';
 
 function Navbar() {
-  useEffect(() => {}, [backgroundInfo.value]);
+
+  const togglePhotoMode = () => {
+    userSettings.value.pmode = !userSettings.value.pmode;
+  }
+
   return (
     <ul id={styles.nav}>
       <li id="app_info_box">
