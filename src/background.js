@@ -93,6 +93,7 @@ const recurringAlarms = {
             photoLink,
             downloadLink,
           };
+
           chrome.storage.sync.set({ background });
         })
         .catch((error) => {

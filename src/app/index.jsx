@@ -2,14 +2,10 @@ import { render } from 'preact';
 import { actions } from '../utils/index.jsx';
 import App from './App.jsx';
 
-const startApp = async () => {
+window.onload = () => {
   actions.initializeBackground();
   actions.initializeUserSettings();
   render(<App />, document.getElementById('app'));
-};
-
-window.onload = () => {
-  startApp();
 };
 
 // import { createApp } from "vue";

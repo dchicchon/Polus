@@ -2,25 +2,33 @@ import { useState, useEffect } from 'preact/hooks';
 import Day from '../Day/Day';
 import Month from '../Month/Month';
 import Week from '../Week/Week';
+import { userSettings } from '../../utils';
 
 import styles from './Calendar.module.scss';
 
 function Calendar() {
-  const [component, setComponent] = useState(null);
+  const [component, setComponent] = useState('');
   useEffect(() => {
-    setComponent(<Day />);
+    changeView(userSettings.value.view);
   }, []);
 
   const changeView = (type) => {
+    const snapshot = { ...userSettings.value };
     switch (type) {
       case 'day':
         setComponent(<Day />);
+        snapshot.view = 'day';
+        userSettings.value = snapshot;
         break;
       case 'week':
         setComponent(<Week />);
+        snapshot.view = 'week';
+        userSettings.value = snapshot;
         break;
       case 'month':
         setComponent(<Month />);
+        snapshot.view = 'month';
+        userSettings.value = snapshot;
         break;
     }
   };

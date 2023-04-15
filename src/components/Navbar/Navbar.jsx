@@ -2,11 +2,9 @@ import styles from './Navbar.module.scss';
 import { backgroundInfo, userSettings } from '../../utils';
 
 function Navbar() {
-
   const togglePhotoMode = () => {
-    userSettings.value.pmode = !userSettings.value.pmode;
-  }
-
+    userSettings.value = { ...userSettings.value, pmode: !userSettings.value.pmode };
+  };
   return (
     <ul id={styles.nav}>
       <li id="app_info_box">
@@ -41,7 +39,7 @@ function Navbar() {
             </a>
             <a
               id={styles.pmode}
-              // @click="photoMode"
+              onClick={togglePhotoMode}
               target="_blank"
               rel="noopener noreferrer"
             >

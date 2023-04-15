@@ -1,9 +1,40 @@
-import { signal } from '@preact/signals';
+import { signal, effect, computed } from '@preact/signals';
 
 export const userSettings = signal({});
 export const backgroundInfo = signal({});
 export const entryMoved = signal(false);
+
 const chromeAPI = chrome;
+if (chromeAPI) {
+  // add listeners, we could potentially use this later on
+  // chromeAPI.storage.onChanged.addListener((changes, areaName) => {
+  //   console.log({ changes, areaName });
+  // });
+}
+
+const defaultUserSettings = {
+  changePhoto: true,
+  indexOpen: false,
+  newTab: true,
+  notifications: false,
+  pmode: false,
+  view: 'week',
+};
+const defaultBackgroundSettings = {
+  url: '',
+  location: '',
+  author: '',
+  photoLink: '',
+  downloadLink: '',
+};
+
+export const generateId = () => {
+  const alpha = 'abcdefghijklmnopqrstuvwxyz';
+  const char = alpha[Math.floor(Math.random() * alpha.length)];
+  const id = `${char}-${Date.now()}`;
+  return id;
+};
+
 /**
  * Use the local storage if an entry is being set to a date more than a week in the past
  * @param {Date} date use a real date value, not the stamp
@@ -256,20 +287,44 @@ export const actions = {
   initializeUserSettings: async () => {
     console.debug('actions.getBackground');
     const foundUserSettings = await stores.sync.get({ key: 'userSettings' });
-    if (!foundUserSettings) return; // there is something wrong if this is not here we should think about this
+    if (!foundUserSettings || Object.keys(foundUserSettings).length === 0) {
+      console.debug('storage: setting default userSettings');
+      userSettings.value = defaultUserSettings;
+      return;
+    }
     userSettings.value = foundUserSettings;
   },
   initializeBackground: async () => {
     console.debug('actions.getBackground');
-    const background = await stores.sync.get({ key: 'background' });
-    if (!background) return; // there is something wrong if this is not here we should think about this
-    backgroundInfo.value = background;
+    const foundBackgroundInfo = await stores.sync.get({ key: 'background' });
+    if (!foundBackgroundInfo || Object.keys(foundBackgroundInfo).length === 0) {
+      console.debug('storage: setting default backgroundInfo');
+      backgroundInfo.value = defaultBackgroundSettings;
+      return;
+    }
+    const page = document.getElementsByTagName('html');
+    const image = foundBackgroundInfo.url;
+    page[0].style.background = `rgba(0,0,0,0.9) url(${
+      image + `&w=${window.innerWidth}`
+    }) no-repeat fixed`;
+    backgroundInfo.value = foundBackgroundInfo;
   },
 };
 
-export const generateId = () => {
-  const alpha = 'abcdefghijklmnopqrstuvwxyz';
-  const char = alpha[Math.floor(Math.random() * alpha.length)];
-  const id = `${char}-${Date.now()}`;
-  return id;
-};
+// if we see that userSettings is empty, we should refresh it
+// if we see that backgroundSettings is empty, maybe we should refresh that too?
+// we should be careful about breaking the max quota for sync storage. Just be aware of that
+
+effect(() => {
+  console.debug('effect: backgroundInfo');
+  if (Object.keys(backgroundInfo.value).length === 0) return;
+  console.debug('storage: updating background');
+  stores.sync.set({ key: 'background', value: backgroundInfo.value });
+});
+
+effect(() => {
+  console.debug('effect: userSettings');
+  if (Object.keys(userSettings.value).length === 0) return;
+  console.debug('storage: updating userSettings');
+  stores.sync.set({ key: 'userSettings', value: userSettings.value });
+});
