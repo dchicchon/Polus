@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'preact/hooks';
 import Day from '../Day/Day';
 import Month from '../Month/Month';
 import Week from '../Week/Week';
@@ -7,28 +6,16 @@ import { userSettings } from '../../utils';
 import styles from './Calendar.module.scss';
 
 function Calendar() {
-  const [component, setComponent] = useState('');
-  useEffect(() => {
-    changeView(userSettings.value.view);
-  }, []);
-
   const changeView = (type) => {
-    const snapshot = { ...userSettings.value };
     switch (type) {
       case 'day':
-        setComponent(<Day />);
-        snapshot.view = 'day';
-        userSettings.value = snapshot;
+        userSettings.value = { ...userSettings.value, view: type };
         break;
       case 'week':
-        setComponent(<Week />);
-        snapshot.view = 'week';
-        userSettings.value = snapshot;
+        userSettings.value = { ...userSettings.value, view: type };
         break;
       case 'month':
-        setComponent(<Month />);
-        snapshot.view = 'month';
-        userSettings.value = snapshot;
+        userSettings.value = { ...userSettings.value, view: type };
         break;
     }
   };
@@ -58,7 +45,11 @@ function Calendar() {
         </button>
       </div>
       <div>
-        <section>{component}</section>
+        <section>
+          {userSettings.value.view === 'day' && <Day />}
+          {userSettings.value.view === 'week' && <Week />}
+          {userSettings.value.view === 'month' && <Month />}
+        </section>
       </div>
     </div>
   );

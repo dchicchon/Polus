@@ -1,4 +1,3 @@
-// import { useEffect } from 'preact/hooks';
 import Navbar from '../components/Navbar/Navbar.jsx';
 import Clock from '../components/Clock/Clock.jsx';
 import Calendar from '../components/Calendar/Calendar.jsx';
