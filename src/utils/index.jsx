@@ -309,6 +309,18 @@ export const actions = {
     }) no-repeat fixed`;
     backgroundInfo.value = foundBackgroundInfo;
   },
+  createNotification: ({ name, time }) => {
+    console.debug('actions.createAlarm');
+    chromeAPI.permissions.contains({ permissions: ['notifications'] }, (result) => {
+      // If allowed, create an alarm for this entry
+      if (result) {
+        console.debug('user has notifications permission. Creating alarm');
+        chromeAPI.alarms.create(name, {
+          when: time,
+        });
+      }
+    });
+  },
 };
 
 // if we see that userSettings is empty, we should refresh it

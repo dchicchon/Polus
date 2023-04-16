@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { actions } from '../../utils/index';
 import styles from './Entry.module.scss';
 
 const entryModes = {
@@ -7,6 +8,7 @@ const entryModes = {
   ACTIVE: 'ACTIVE',
   EDIT: 'EDIT',
   COLOR: 'COLOR',
+  TIME: 'TIME',
 };
 const colorOptions = ['blue', 'green', 'gold', 'purple', 'orange', 'red'];
 function Entry({
@@ -18,6 +20,7 @@ function Entry({
   updateEntry,
   deleteEntry,
 }) {
+  const [time, setTime] = useState(entry.time || '');
   const [mode, setMode] = useState(entryModes.INACTIVE);
   const [newText, setNewText] = useState(entry.text);
   const [newColor, setNewColor] = useState(entry.color);
@@ -59,6 +62,36 @@ function Entry({
     const updatedEntry = {
       ...entry,
       text: newText,
+    };
+    updateEntry(entry.key, updatedEntry);
+  };
+
+  // You must actually submit time in order to create a notification
+  const submitTime = () => {
+    console.log('submitTime');
+    console.log({
+      original: entry.time,
+      time,
+    });
+    if (entry.time === time) return;
+    console.log('actually submitting');
+    const entryDate = new Date(dateStamp.replace(/_/g, '/'));
+    const hours = parseInt(time[0] + time[1]);
+    const minutes = parseInt(time[3] + time[4]);
+    entryDate.setSeconds(0);
+    entryDate.setHours(hours);
+    entryDate.setMinutes(minutes);
+    const ms = entryDate.getTime() - Date.now();
+    if (ms > 0) {
+      // if notifications allowed?
+      actions.createNotification({
+        name: entry.key,
+        time: entryDate.getTime(),
+      });
+    }
+    const updatedEntry = {
+      ...entry,
+      time,
     };
     updateEntry(entry.key, updatedEntry);
   };
@@ -153,12 +186,7 @@ function Entry({
             value={newText}
           ></textarea>
         ) : (
-          <p
-            className={`${entry.active ? styles.checked : ''}`}
-            // :class="{ checked: entry.active }"
-          >
-            {newText}
-          </p>
+          <p className={`${entry.active ? styles.checked : ''}`}>{newText}</p>
         )}
 
         <div class={styles.button_container}>
@@ -187,6 +215,7 @@ function Entry({
             </select>
           </button>
 
+          {/* maybe we can make another button for save time? */}
           {/* <!-- Superimpose time and input on top of each other --> */}
           <div id="time-section">
             <img
@@ -196,7 +225,15 @@ function Entry({
             />
             <input
               className={styles.entryBtn}
-              //   v-model="time"
+              onClick={(e) => {
+                // change mode to time if not time already
+                if (mode !== entryModes.TIME) {
+                  return changeMode(e, entryModes.TIME);
+                }
+                return submitTime();
+              }}
+              value={time}
+              onInput={(e) => setTime(e.target.value)}
               //   @mouseup="changeTimeMode"
               //   @input="selectTime"
               placeholder="none"
