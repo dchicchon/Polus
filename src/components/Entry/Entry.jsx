@@ -31,6 +31,17 @@ function Entry({
     setMode(newMode);
   };
 
+  const toggleCompleted = (event) => {
+    console.log('toggle completed');
+    const updatedEntry = {
+      ...entry,
+      active: !entry.active,
+    };
+    console.log({ updatedEntry });
+    updateEntry(entry.key, updatedEntry);
+    event.stopPropagation();
+  };
+
   const selectColor = (selectedColor) => {
     console.log('submit color');
     console.log({ selectedColor });
@@ -101,7 +112,9 @@ function Entry({
   if (mode === entryModes.INACTIVE) {
     return (
       <li
-        className={`${styles.entry} ${styles[entry.color]} ${styles[entry.active]}`}
+        className={`${styles.entry} ${styles[entry.color]}  ${
+          entry.active ? styles.checked : ''
+        }`}
         onClick={() => setMode(entryModes.ACTIVE)}
         draggable={true}
         onDragStart={(e) => {
@@ -141,7 +154,7 @@ function Entry({
           ></textarea>
         ) : (
           <p
-            className="text"
+            className={`${entry.active ? styles.checked : ''}`}
             // :class="{ checked: entry.active }"
           >
             {newText}
@@ -222,10 +235,7 @@ function Entry({
           )}
 
           {/* <!-- Check Entry --> */}
-          <button
-            //    @click="checkEntry"
-            className={styles.entryBtn}
-          >
+          <button onClick={toggleCompleted} className={styles.entryBtn}>
             <img
               style={{ filter: 'invert(1)' }}
               alt="done"
