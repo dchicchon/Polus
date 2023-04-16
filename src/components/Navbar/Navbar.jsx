@@ -57,7 +57,7 @@ function Navbar() {
             <a
               id={styles.photo_link}
               href={
-                backgroundInfo.value.photoLink + '?utm_source=Planner&utm_medium=referral'
+                backgroundInfo.value.photoLink + '?utm_source=Polus&utm_medium=referral'
               }
               // :href="link"
               target="_blank"

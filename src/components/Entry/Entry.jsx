@@ -160,7 +160,7 @@ function Entry({
               src="/assets/entry_icons/palette.png"
             />
             <select
-              value=""
+              value={entry.color}
               onInput={(e) => {
                 selectColor(e.target.value);
                 changeMode(e, entryModes.ACTIVE);
