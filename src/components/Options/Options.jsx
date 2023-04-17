@@ -2,11 +2,12 @@ import { signal } from '@preact/signals'
 import Toggle from '../Toggle/Toggle'
 import Button from '../Button/Button'
 import { backgroundInfo, userSettings } from '../../utils'
+import { actions } from '../../utils'
 import styles from './styles.module.scss'
 
 const inputPhoto = signal('')
 
-function Options() {
+function Options({ linkToOptions }) {
     const toggleItem = (name) => {
         if (name === 'notifications') {
             if (userSettings.value[name]) {
@@ -73,6 +74,7 @@ function Options() {
             });
     }
     const openOptions = () => {
+        actions.getOptionsPage();
         console.log('openOptions')
     }
     return (
@@ -98,7 +100,7 @@ function Options() {
             />
 
             <div>
-                Select Photo from
+                Select Photo from{" "}
                 <span>
                     <a
                         href="https://unsplash.com/"
@@ -118,7 +120,7 @@ function Options() {
             </div>
 
             <div>
-                <p className={styles.extension_link} onClick={openOptions}>Additional Options page</p>
+                {linkToOptions && <p className={styles.extension_link} onClick={openOptions}>Additional Options page</p>}
             </div>
 
             <p className={styles.error}>

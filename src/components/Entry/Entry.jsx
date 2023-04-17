@@ -10,7 +10,6 @@ const entryModes = {
   COLOR: 'COLOR',
   SELECTEDCOLOR: "SELECTEDCOLOR",
   TIME: 'TIME',
-  SELECTEDTIME: 'SELECTEDTIME',
 };
 const colorOptions = ['blue', 'green', 'gold', 'purple', 'orange', 'red'];
 function Entry({
@@ -80,7 +79,6 @@ function Entry({
     entryDate.setMinutes(minutes);
     const ms = entryDate.getTime() - Date.now();
     if (ms > 0) {
-      // if notifications allowed?
       actions.createNotification({
         name: entry.key,
         time: entryDate.getTime(),

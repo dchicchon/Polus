@@ -15,7 +15,7 @@ function Popup() {
     return (
         <div class="main">
             <div class="container">
-                {tab.value === tabs.OPTIONS && <Options />}
+                {tab.value === tabs.OPTIONS && <Options linkToOptions />}
                 {tab.value === tabs.ACCOUNT && <Account />}
             </div>
             <div class="popup_nav">

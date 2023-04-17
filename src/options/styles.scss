@@ -1,0 +1,48 @@
+html {
+    margin: 0;
+    color: white;
+    background: rgb(19, 24, 27);
+}
+
+body {
+    margin: 0;
+    font-size: 100%;
+}
+
+.page {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+
+a {
+    color: white;
+}
+
+input {
+    margin: 5px;
+}
+
+.pane {
+    background: rgb(78, 103, 114);
+    width: 25vw;
+    height: 100%;
+    // border-right: 2px solid black;
+    // border-left: 2px solid black;
+}
+
+.main {
+    width: 100%;
+    height: 100%;
+    padding: 0px 50px;
+    overflow: auto;
+}
+
+.title-box {
+    display: flex;
+    gap: 5px;
+}
+
+.title {
+    line-height: 50px;
+}
