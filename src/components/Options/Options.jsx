@@ -1,7 +1,10 @@
+import { signal } from '@preact/signals'
 import Toggle from '../Toggle/Toggle'
 import Button from '../Button/Button'
-import { userSettings } from '../../utils'
+import { backgroundInfo, userSettings } from '../../utils'
 import styles from './styles.module.scss'
+
+const inputPhoto = signal('')
 
 function Options() {
     const toggleItem = (name) => {
@@ -35,8 +38,8 @@ function Options() {
     }
     const submitPhoto = () => {
         console.log('submitPhoto')
-        if (photoLink.length === 0) return;
-        const arr = photoLink.split("/");
+        if (inputPhoto.value.length === 0) return;
+        const arr = inputPhoto.value.split("/");
         const id = arr[arr.length - 1];
         const requestPhotoURL = `https://api.unsplash.com/photos/${id}/?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&`;
         fetch(requestPhotoURL, { mode: "cors", credentials: "omit" })
@@ -46,22 +49,21 @@ function Options() {
             })
             .then((response) => response.json())
             .then((photo) => {
-                let url = photo.urls.raw;
-                let location = photo.location.name
+                const url = photo.urls.raw;
+                const location = photo.location.name
                     ? `${photo.location.name}`
                     : "Unknown";
-                let author = photo.user.name ? `${photo.user.name}` : "Unknown";
-                let photoLink = photo.links.html;
-                let downloadLink = `https://unsplash.com/photos/${photo.id}/download?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&force=true`;
-                let background = {
+                const author = photo.user.name ? `${photo.user.name}` : "Unknown";
+                const photoLink = photo.links.html;
+                const downloadLink = `https://unsplash.com/photos/${photo.id}/download?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&force=true`;
+                const newBackground = {
                     url,
                     location,
                     author,
                     photoLink,
                     downloadLink,
                 };
-                state.background = background;
-                actions.setBackground();
+                backgroundInfo.value = newBackground
                 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                     chrome.tabs.reload(tabs[0].id);
                 });
@@ -106,10 +108,11 @@ function Options() {
                     </a>
                 </span>
                 <input
+                    onChange={(event) => inputPhoto.value = event.target.value}
+                    value={inputPhoto}
                     id="photoURL"
                     type="text"
                     placeholder="https://unsplash.com/photos/NuBvAE6VfSM"
-                // v-model="photoLink"
                 />
                 <Button onClick={submitPhoto} title="Submit" />
             </div>
