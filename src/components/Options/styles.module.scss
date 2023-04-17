@@ -1,0 +1,20 @@
+.notification_time_text {
+    margin: 0;
+}
+
+#photoURL {
+    width: 95%;
+    outline: none;
+}
+
+.extension_link {
+    text-decoration: underline;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.error {
+    color: red;
+}
