@@ -17,7 +17,6 @@ function Popup() {
             <div class="container">
                 {tab.value === tabs.OPTIONS && <Options />}
                 {tab.value === tabs.ACCOUNT && <Account />}
-                {/* <component :is="currentTabComponent"></component> */}
             </div>
             <div class="popup_nav">
                 <h3 onClick={() => tab.value = tabs.OPTIONS}>Options</h3>

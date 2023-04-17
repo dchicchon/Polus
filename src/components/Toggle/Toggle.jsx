@@ -4,14 +4,11 @@ import styles from './styles.module.scss'
 function Toggle({ description, toggleItem, name, currentValue }) {
     return (
         <div>
-            {description}
+            {description}{' '}
             <label
-                onClick={(e) => toggleItem(e, name)}
-                //  @click="() => toggleItem($event, name)" 
+                onClick={() => toggleItem(name)}
                 for="switch" className={styles.switch}>
-                <input type="checkbox" className={styles.toggle}
-                // :checked="currentValue" 
-                />
+                <input type="checkbox" className={styles.toggle} checked={currentValue} />
                 <span className={`${styles.slider} ${styles.round}`}></span>
             </label>
         </div>

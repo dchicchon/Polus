@@ -1,11 +1,18 @@
 import { render } from 'preact';
-import { actions } from '../utils/index.jsx';
+import { actions, userSettings } from '../utils/index.jsx';
 import App from './App.jsx';
 
-window.onload = () => {
-  actions.initializeBackground();
-  actions.initializeUserSettings();
-  render(<App />, document.getElementById('app'));
+
+window.onload = async () => {
+  await actions.initializeBackground();
+  await actions.initializeUserSettings();
+  console.log(userSettings.value)
+  // check the user settings?
+  if (userSettings.value.newTab || userSettings.value.indexOpen) {
+    return render(<App />, document.getElementById('app'));
+  }
+  actions.showDefaultTab();
+  
 };
 
 // import { createApp } from "vue";

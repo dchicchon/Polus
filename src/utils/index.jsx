@@ -304,9 +304,8 @@ export const actions = {
     }
     const page = document.getElementsByTagName('html');
     const image = foundBackgroundInfo.url;
-    page[0].style.background = `rgba(0,0,0,0.9) url(${
-      image + `&w=${window.innerWidth}`
-    }) no-repeat fixed`;
+    page[0].style.background = `rgba(0,0,0,0.9) url(${image + `&w=${window.innerWidth}`
+      }) no-repeat fixed`;
     backgroundInfo.value = foundBackgroundInfo;
   },
   createNotification: ({ name, time }) => {
@@ -321,6 +320,12 @@ export const actions = {
       }
     });
   },
+  showDefaultTab: () => {
+    console.debug('actions.showDefaultTab');
+    chromeAPI.tabs.update({
+      url: "chrome-search://local-ntp/local-ntp.html",
+    });
+  }
 };
 
 // if we see that userSettings is empty, we should refresh it
