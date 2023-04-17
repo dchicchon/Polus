@@ -1,16 +1,31 @@
 .main_button {
-    margin: 5px;
-    padding: 10px;
-    color: white;
-    outline: none;
-    border: 1px solid rgb(14, 108, 151);
-    border-radius: 10px;
-    background-color: rgb(14, 108, 151);
-    transition: background-color 0.5s, border 0.5s;
+  margin: 5px;
+  padding: 10px;
+  color: white;
+  outline: none;
+  border-radius: 10px;
 
-    &:hover {
-        background-color: rgb(19, 128, 179);
-        cursor: pointer;
-        border: 1px solid white;
-    }
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.blue {
+  border: 1px solid rgb(14, 108, 151);
+  background-color: rgb(14, 108, 151);
+  transition: background-color 0.5s, border 0.5s;
+  &:hover {
+    border: 1px solid white;
+    background-color: rgb(19, 128, 179);
+  }
+}
+
+.orange {
+  border: 1px solid rgb(14, 108, 151);
+  background-color: rgb(190 87 8);
+  transition: background-color 0.5s, border 0.5s;
+  &:hover {
+    border: 1px solid white;
+    background-color: rgb(227, 104, 9);
+  }
 }

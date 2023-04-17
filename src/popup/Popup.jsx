@@ -1,5 +1,5 @@
-import Options from '../components/Options/Options';
 import { signal } from '@preact/signals';
+import Options from '../components/Options/Options';
 import Account from '../components/Account/Account';
 
 import './styles.scss'

@@ -98,6 +98,21 @@ function DevInfo() {
         }
       );
     });
+
+    const twoWeeksFromNow = new Date(today.setDate(today.getDate() + 14 * 2));
+    const twoWeeksFromNowFormats = generateFormats(twoWeeksFromNow);
+    entries.forEach((entry) => {
+      console.info("Create Two Weeks From Now Entry");
+      const dateFormat = twoWeeksFromNowFormats[entry.key];
+      chrome.storage.sync.set(
+        {
+          [dateFormat]: [entry],
+        },
+        (result) => {
+          console.info({ result });
+        }
+      );
+    });
   }
 
   const resetLocalEntries = () => {

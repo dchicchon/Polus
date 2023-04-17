@@ -18,7 +18,7 @@ html {
   .container {
     margin: 10px 10px 0px 10px;
     height: 100%;
-    // overflow: auto;
+    overflow: auto;
     &::-webkit-scrollbar {
       width: 3px;
       height: 2px;
@@ -36,7 +36,7 @@ html {
       background: #555;
     }
     .page-title {
-      margin: 0;
+      margin-top: 0;
       font-size: 20px;
       font-weight: 200;
     }

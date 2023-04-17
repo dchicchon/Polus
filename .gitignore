@@ -3,3 +3,4 @@ dist
 prod
 .DS_Store
 *.mjs
+/src/utils/config.js
