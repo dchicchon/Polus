@@ -8,7 +8,9 @@ const entryModes = {
   ACTIVE: 'ACTIVE',
   EDIT: 'EDIT',
   COLOR: 'COLOR',
+  SELECTEDCOLOR: "SELECTEDCOLOR",
   TIME: 'TIME',
+  SELECTEDTIME: 'SELECTEDTIME',
 };
 const colorOptions = ['blue', 'green', 'gold', 'purple', 'orange', 'red'];
 function Entry({
@@ -26,10 +28,10 @@ function Entry({
   const [newColor, setNewColor] = useState(entry.color);
   const editRef = useRef(null);
   const newRef = useRef(null);
+  const timeRef = useRef(null);
 
   const changeMode = (event, newMode) => {
     event.stopPropagation();
-    console.log({ newMode });
     setMode(newMode);
   };
 
@@ -67,13 +69,9 @@ function Entry({
 
   // You must actually submit time in order to create a notification
   const submitTime = () => {
-    console.log('submitTime');
-    console.log({
-      original: entry.time,
-      time,
-    });
+    timeRef.current.style.display = 'none';
+    setTimeout(() => (timeRef.current.style.display = "block"), 1);
     if (entry.time === time) return;
-    console.log('actually submitting');
     const entryDate = new Date(dateStamp.replace(/_/g, '/'));
     const hours = parseInt(time[0] + time[1]);
     const minutes = parseInt(time[3] + time[4]);
@@ -93,6 +91,7 @@ function Entry({
       time,
     };
     updateEntry(entry.key, updatedEntry);
+    // do what we did before, remove input then bring it back
   };
 
   useEffect(() => {
@@ -181,7 +180,11 @@ function Entry({
       onDragEnd={(e) => {
         entryDragEnd(e, entry.key);
       }}
-      onClick={(e) => changeMode(e, entryModes.INACTIVE)}
+      onClick={(e) => {
+        if (mode === entryModes.ACTIVE) {
+          changeMode(e, entryModes.INACTIVE)
+        }
+      }}
     >
       <div className={styles.entry_container}>
         {mode === entryModes.EDIT ? (
@@ -204,7 +207,17 @@ function Entry({
 
         <div class={styles.button_container}>
           <button
-            onClick={(e) => changeMode(e, entryModes.COLOR)}
+            onClick={(e) => {
+              console.log('button was clicked');
+              console.log({ clickColorMode: mode })
+              if (mode !== entryModes.SELECTEDCOLOR) {
+                changeMode(e, entryModes.COLOR)
+              }
+              else {
+                changeMode(e, entryModes.ACTIVE);
+              }
+
+            }}
             disabled={mode === entryModes.COLOR}
             className={styles.entryBtn}
           >
@@ -217,7 +230,7 @@ function Entry({
               value={entry.color}
               onInput={(e) => {
                 selectColor(e.target.value);
-                changeMode(e, entryModes.ACTIVE);
+                changeMode(e, entryModes.SELECTEDCOLOR);
               }}
             >
               {colorOptions.map((color) => (
@@ -228,7 +241,6 @@ function Entry({
             </select>
           </button>
 
-          {/* maybe we can make another button for save time? */}
           {/* <!-- Superimpose time and input on top of each other --> */}
           <div id="time-section">
             <img
@@ -238,19 +250,19 @@ function Entry({
             />
             <input
               className={styles.entryBtn}
+              onBlur={(event) => {
+                changeMode(event, entryModes.ACTIVE)
+              }}
               onClick={(e) => {
-                // change mode to time if not time already
                 if (mode !== entryModes.TIME) {
                   return changeMode(e, entryModes.TIME);
                 }
-                return submitTime();
+                submitTime();
               }}
               value={time}
               onInput={(e) => setTime(e.target.value)}
-              //   @mouseup="changeTimeMode"
-              //   @input="selectTime"
               placeholder="none"
-              //   ref="time"
+              ref={timeRef}
               type="time"
             />
           </div>

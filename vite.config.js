@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import preact from "@preact/preset-vite"
 import { createRequire } from 'module'
 import analyze from "rollup-plugin-analyzer";
-// import htmlPlugin from '@dchicchon/vite-plugin-html-config'
 import { crx } from '@crxjs/vite-plugin'
 const require = createRequire(import.meta.url);
 const manifestProd = require('./manifest-prod.json')
@@ -28,19 +27,6 @@ const getConfig = () => {
 
       plugins: [
         preact(),
-        // htmlPlugin({
-        //   files: {
-        //     'index.html': {
-        //       title: 'Test - Polus'
-        //     },
-        //     'options.html': {
-        //       title: 'Test - Options'
-        //     },
-        //     'popup.html': {
-        //       title: 'Test - Options'
-        //     }
-        //   }
-        // }),
         crx({ manifest: manifestDev }),
       ],
     })
@@ -61,7 +47,6 @@ const getConfig = () => {
       },
       plugins: [
         preact(),
-        // htmlPlugin({ title: 'Polus' }),
         crx({ manifest: manifestProd })
       ],
     })

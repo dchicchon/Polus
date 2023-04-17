@@ -148,7 +148,6 @@ export default {
     },
     listDate: {
       type: Date,
-      // required: true,
     },
     createEntry: {
       type: Function,
@@ -219,62 +218,11 @@ export default {
           });
         }
       }
-      // if (this.time !== this.entry.time) {
-      //   this.entry.time = this.time;
-      //   let eventDate = new Date(this.listDate);
-      //   let hours = parseInt(this.time[0] + this.time[1]);
-      //   let minutes = parseInt(this.time[3] + this.time[4]);
-      //   eventDate.setSeconds(0);
-      //   eventDate.setHours(hours);
-      //   eventDate.setMinutes(minutes);
-      //   const ms = eventDate.getTime() - Date.now();
-      //   if (ms > 0) {
-      //     actions.createAlarm({
-      //       name: this.entry.key,
-      //       time: eventDate.getTime(),
-      //     });
-      //   }
-      //   // we should remove the previous alarm set
-      //   // We can use this to check if notifications have been enabled so that we can show the user
-      // }
+
     },
     submitTime() {
       this.changeMode("menu");
     },
-    // saveTime() {
-    //   this.newTime = this.entry.time ? this.entry.time : "12:00";
-    //   if (this.newTime !== this.time) {
-    //     this.entry.time = this.time;
-    //     let eventDate = new Date(this.listDate);
-    //     let hours = parseInt(this.time[0] + this.time[1]);
-    //     let minutes = parseInt(this.time[3] + this.time[4]);
-    //     eventDate.setSeconds(0);
-    //     eventDate.setHours(hours);
-    //     eventDate.setMinutes(minutes);
-    //     const ms = eventDate.getTime() - Date.now();
-    //     // if alarm is in the future
-    //     if (ms > 0) {
-    //       // Check if notifications are allowed
-    //       chrome.permissions.contains(
-    //         {
-    //           permissions: ["notifications"],
-    //         },
-    //         (result) => {
-    //           // If allowed, create an alarm for this entry
-    //           if (result) {
-    //             chrome.alarms.create(this.entry.key, {
-    //               when: eventDate.getTime(),
-    //             });
-    //           }
-    //         }
-    //       );
-    //     }
-    //     // We can use this to check if notifications have been enabled so that we can show the user
-    //     this.updateEntry(this.entry.key);
-    //   }
-
-    // Add this.timeEntry() later
-    // },
     checkEntry() {
       this.entry.active = !this.entry.active;
       this.updateEntry(this.entry.key);

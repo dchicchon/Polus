@@ -87,7 +87,6 @@ function EntryList({ date, dateStamp }) {
     event.dataTransfer.setData('date', originalDate);
     event.dataTransfer.setData('key', entry.key);
     event.dataTransfer.effectAllowed = 'move';
-    console.log({ entry })
   };
   const onDrop = (event) => {
     setIsOver(false);

@@ -9,6 +9,11 @@
     "48": "assets/polus_icon48.png",
     "128": "assets/polus_icon128.png"
   },
+  "action": {
+    "default_title": "Polus",
+    "default_icon": "assets/polus_tab_icon.png",
+    "default_popup": "popup.html"
+  },
   "background": {
     "service_worker": "src/background.js",
     "type": "module"
@@ -18,7 +23,15 @@
   },
   "incognito": "not_allowed",
   "offline_enabled": true,
-  "optional_permissions": ["notifications"],
-  "permissions": ["alarms", "contextMenus", "storage", "unlimitedStorage"],
+  "options_page": "options.html",
+  "optional_permissions": [
+    "notifications"
+  ],
+  "permissions": [
+    "alarms",
+    "contextMenus",
+    "storage",
+    "unlimitedStorage"
+  ],
   "short_name": "Polus"
 }
