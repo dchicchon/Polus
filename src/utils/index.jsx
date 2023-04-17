@@ -1,4 +1,4 @@
-import { signal, effect, computed } from '@preact/signals';
+import { signal, effect } from '@preact/signals';
 
 export const userSettings = signal({});
 export const backgroundInfo = signal({});

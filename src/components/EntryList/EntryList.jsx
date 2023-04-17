@@ -33,7 +33,7 @@ function EntryList({ date, dateStamp }) {
     });
     actions
       .create({ date: dateStamp, entry, key: entry.key })
-      .then((result) => {})
+      .then((result) => { })
       .catch((e) => console.error(e));
   };
   const readEntries = () => {
@@ -56,7 +56,7 @@ function EntryList({ date, dateStamp }) {
     });
     actions
       .update({ date: dateStamp, entry: updatedEntry, key })
-      .then((result) => {})
+      .then((result) => { })
       .catch((e) => console.error(e));
   };
   const deleteEntry = (key) => {
@@ -72,7 +72,7 @@ function EntryList({ date, dateStamp }) {
     });
     actions
       .delete({ date: dateStamp, key })
-      .then((result) => {})
+      .then((result) => { })
       .catch((e) => console.error(e));
   };
   const entryDragEnd = (event, key) => {
@@ -87,6 +87,7 @@ function EntryList({ date, dateStamp }) {
     event.dataTransfer.setData('date', originalDate);
     event.dataTransfer.setData('key', entry.key);
     event.dataTransfer.effectAllowed = 'move';
+    console.log({ entry })
   };
   const onDrop = (event) => {
     setIsOver(false);
@@ -124,16 +125,16 @@ function EntryList({ date, dateStamp }) {
       <ul className={styles.entryList}>
         {entries.length > 0
           ? entries.map((entry) => (
-              <Entry
-                entryDragEnd={entryDragEnd}
-                entryDragStart={entryDragStart}
-                createEntry={createEntry}
-                updateEntry={updateEntry}
-                deleteEntry={deleteEntry}
-                dateStamp={dateStamp}
-                entry={entry}
-              />
-            ))
+            <Entry
+              entryDragEnd={entryDragEnd}
+              entryDragStart={entryDragStart}
+              createEntry={createEntry}
+              updateEntry={updateEntry}
+              deleteEntry={deleteEntry}
+              dateStamp={dateStamp}
+              entry={entry}
+            />
+          ))
           : ''}
       </ul>
       <ul className={styles.entryList}></ul>

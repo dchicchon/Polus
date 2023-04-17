@@ -30,7 +30,6 @@ function Entry({
   const changeMode = (event, newMode) => {
     event.stopPropagation();
     console.log({ newMode });
-    // lets prevent the mode from going to inactive?
     setMode(newMode);
   };
 
@@ -102,6 +101,7 @@ function Entry({
     }
   }, []);
   useEffect(() => {
+    console.log({ mode })
     if (mode === entryModes.NEW) {
       newRef.current.focus();
     }
@@ -137,7 +137,7 @@ function Entry({
             e.target.blur();
           }
         }}
-        //   :class="[entry.color, { checked: entry.active }]"
+      //   :class="[entry.color, { checked: entry.active }]"
       ></textarea>
     );
   }
@@ -145,18 +145,21 @@ function Entry({
   if (mode === entryModes.INACTIVE) {
     return (
       <li
-        className={`${styles.entry} ${styles[entry.color]}  ${
-          entry.active ? styles.checked : ''
-        }`}
+        className={`${styles.entry} ${styles[entry.color]}  ${entry.active ? styles.checked : ''
+          }`}
         onClick={() => setMode(entryModes.ACTIVE)}
         draggable={true}
         onDragStart={(e) => {
-          entryDragStart(e, entry, dateStamp);
+          const draggedEntry = {
+            ...entry,
+            text: newText
+          }
+          entryDragStart(e, draggedEntry, dateStamp);
         }}
         onDragEnd={(e) => {
           entryDragEnd(e, entry.key);
         }}
-        //   :class="[entry.color, { checked: entry.active }]"
+      //   :class="[entry.color, { checked: entry.active }]"
       >
         {newText}
       </li>
@@ -167,15 +170,25 @@ function Entry({
   return (
     <li
       className={`${styles.entry} ${styles[newColor]}`}
+      draggable={true}
+      onDragStart={(e) => {
+        const draggedEntry = {
+          ...entry,
+          text: newText
+        }
+        entryDragStart(e, draggedEntry, dateStamp);
+      }}
+      onDragEnd={(e) => {
+        entryDragEnd(e, entry.key);
+      }}
       onClick={(e) => changeMode(e, entryModes.INACTIVE)}
     >
       <div className={styles.entry_container}>
         {mode === entryModes.EDIT ? (
           <textarea
             ref={editRef}
-            className={`${styles.editEntry} ${
-              entryModes.EDIT ? styles.show : styles.no_show
-            }`}
+            className={`${styles.editEntry} ${entryModes.EDIT ? styles.show : styles.no_show
+              }`}
             onChange={(e) => {
               console.log('value changed');
               const text = e.target.value;
