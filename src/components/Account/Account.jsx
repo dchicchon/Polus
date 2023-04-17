@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  deleteUser as firebaseDeleteUser,
 } from 'firebase/auth';
 
 import Button from '../Button/Button';
@@ -19,6 +20,7 @@ const authPages = {
 
 const authPage = signal(authPages.LOGIN);
 const loggedIn = signal(false);
+const showDelete = signal(false);
 const email = signal('');
 const password = signal('');
 const confirmPassword = signal('');
@@ -35,8 +37,8 @@ function LoginPage({ switchPage }) {
       .then((userCredential) => {
         console.log('User Credential');
         console.log(userCredential);
-        // this.page = "summary";
-        // Here I then need to get some user info using firebase firestore methods
+        email.value = '';
+        password.value = '';
       })
       .catch((error) => {
         console.log('Error in signin');
@@ -88,8 +90,9 @@ function SignupPage({ switchPage }) {
       .then((userCredential) => {
         console.log('User Credential');
         console.log(userCredential);
-        // this.page = "summary";
-        // this.$firebase.firestore().collection("users").doc()
+        email.value = '';
+        password.value = '';
+        confirmPassword.value = '';
       })
       .catch((error) => {
         console.log('Error in Sign Up');
@@ -147,10 +150,34 @@ function UserPage() {
         console.log({ error });
       });
   };
+
+  const deleteUser = () => {
+    const auth = getAuth();
+    const { currentUser } = auth;
+    firebaseDeleteUser(currentUser)
+      .then(() => {
+        console.log('user was deleted');
+      })
+      .catch((error) => {
+        console.log('error occurred while deleting user');
+        console.log({ error });
+      });
+  };
+
   return (
     <div>
       <h3 className="page-title">User</h3>
       <Button onClick={logout} title="Log out" />
+      <Button
+        onClick={() => (showDelete.value = !showDelete.value)}
+        title="Delete Account"
+      />
+      {showDelete.value && (
+        <>
+          <p>Are you sure you want to delete your account?</p>
+          <Button color="orange" onClick={deleteUser} title="Confirm Delete" />
+        </>
+      )}
     </div>
   );
 }

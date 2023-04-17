@@ -1,15 +1,15 @@
+import styles from './styles.module.scss';
 
-import styles from './styles.module.scss'
-
-function Button({ onClick, title }) {
-    return (
-        <button
-            class={styles.main_button}
-            onClick={onClick}
-        >
-            {title}
-        </button>
-    )
+function Button({ onClick, title, color }) {
+  const selectedColor = color || 'blue';
+  return (
+    <button
+      className={`${styles.main_button} ${styles[selectedColor]}`}
+      onClick={onClick}
+    >
+      {title}
+    </button>
+  );
 }
 
 export default Button;
