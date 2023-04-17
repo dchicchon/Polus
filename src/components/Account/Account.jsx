@@ -1,27 +1,111 @@
-import Button from '../Button/Button'
 import { signal } from '@preact/signals';
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+} from "firebase/auth";
+
+import Button from '../Button/Button'
 
 import styles from './styles.module.scss'
 
-const loggedIn = signal(false);
-const username = signal('');
-const password = signal('');
+const authPages = {
+    SIGNUP: "SIGNUP",
+    LOGIN: "LOGIN"
+}
 
-function LoginPage() {
+const authPage = signal(authPages.LOGIN)
+const loggedIn = signal(false);
+const email = signal('');
+const password = signal('');
+const confirmPassword = signal('');
+
+function LoginPage({ switchPage }) {
+
     const login = () => {
         console.log('login')
-        console.log(username);
+        console.log(email);
         console.log(password)
+        const auth = getAuth();
+        console.log("Logging In...");
+        // use firebase signin system
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                console.log("User Credential");
+                console.log(userCredential);
+                // this.page = "summary";
+                // Here I then need to get some user info using firebase firestore methods
+            })
+            .catch((error) => {
+                console.log("Error in signin");
+                console.log({ error })
+                // this.error = error.message;
+            });
     }
+
+
+
+    const logout = () => {
+        const auth = getAuth();
+        auth.signOut()
+            .then(() => {
+                console.log("Sign Out successful");
+            })
+            .catch((error) => {
+                console.log({ error })
+            });
+    }
+
     return (
         <div>
-            <h3 className={styles.account_title}>Login page</h3>
+            <h2 className='page-title'>Login</h2>
             <div className={styles.login_form}>
-                <label for={styles.username}>Username</label>
-                <input onInput={e => username.value = e.target.value} type="text" id={styles.username} className={styles.username} value={username} />
+                <label for={styles.email}>Email</label>
+                <input onInput={e => email.value = e.target.value} type="text" id={styles.email} className={styles.email} value={email} />
                 <label for={styles.password}>Password</label>
                 <input onInput={e => password.value = e.target.value} type="password" id={styles.password} className={styles.password} value={password} />
                 <Button onClick={login} title="Login" />
+                <p>Don't have an account? {' '}<span onClick={() => switchPage(authPages.SIGNUP)}>Sign up here</span></p>
+            </div>
+        </div>
+    )
+}
+
+function SignupPage({ switchPage }) {
+    const signup = () => {
+        console.log("Signing in...");
+        if (password !== confirmPassword) {
+            // this.error = "Passwords must match";
+            return;
+        }
+        const auth = getAuth();
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                console.log("User Credential");
+                console.log(userCredential);
+                // this.page = "summary";
+                // this.$firebase.firestore().collection("users").doc()
+            })
+            .catch((error) => {
+                console.log("Error in Sign Up");
+                console.log({ error })
+                // this.error = error.message;
+            });
+    }
+    return (
+        <div>
+            <h2 className='page-title'>Signup</h2>
+            <div className={styles.login_form}>
+                <label for={styles.email}>Email</label>
+                <input onInput={e => email.value = e.target.value} type="text" id={styles.email} className={styles.email} value={email} />
+                <label for={styles.password}>Password</label>
+                <input onInput={e => password.value = e.target.value} type="password" id={styles.password} className={styles.password} value={password} />
+                <label for={styles.password}>Confirm Password</label>
+                <input onInput={e => confirmPassword.value = e.target.value} type="password" id={styles.password} className={styles.password} value={confirmPassword} />
+                <Button onClick={signup} title="Signup" />
+                <p>Already have an account?  {' '}<span onClick={() => switchPage(authPages.LOGIN)}>Log in here</span></p>
+
             </div>
         </div>
     )
@@ -30,17 +114,24 @@ function LoginPage() {
 function UserPage() {
     return (
         <div>
-            <h3 className={styles.account_title}>User page</h3>
+            <h3 className='page-title'>User page</h3>
             {/* what would we include here for users? */}
         </div>
     )
 }
 
+function AuthPage() {
+    const switchPage = (value) => {
+        authPage.value = value;
+    }
+    return authPage.value === authPages.LOGIN ? <LoginPage switchPage={switchPage} /> : <SignupPage switchPage={switchPage} />
+}
+
 function Account() {
     return (
         <div>
-            <h2 className="page-title">Account</h2>
-            {loggedIn.value ? <UserPage /> : <LoginPage />}
+            {/* <h2 className="page-title">Account</h2> */}
+            {loggedIn.value ? <UserPage /> : <AuthPage />}
         </div>
     )
 }
