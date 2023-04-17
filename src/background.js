@@ -1,5 +1,10 @@
 console.info('Starting Background Page')
 
+const STORAGEKEYS = {
+  USERSETTINGS: "userSettings",
+  BACKGROUND: "background"
+}
+
 // Recurring alarms object
 const recurringAlarms = {
   moveToLocal: {
@@ -59,46 +64,48 @@ const recurringAlarms = {
      * changeBackground is fired
     */
     execute: () => {
-      chrome.storage.sync.get("userSettings", (result) => {
-        let { userSettings } = result;
+      chrome.storage.sync.get(STORAGEKEYS.USERSETTINGS, (result) => {
+        const { userSettings } = result;
         if (!userSettings.changePhoto) return;
-      });
-      console.info("Getting Photo")
-      // This url hits an api endpoint to get a random photo and saves it to user's chrome storage
-      let url =
-        "https://api.unsplash.com/photos/random/?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&collections=8974511";
 
-      fetch(url, { mode: "cors", credentials: "omit" })
-        .then((response) => {
-          if (!response.ok) throw response.statusText;
-          return response;
-        })
-        .catch((err) => {
-          throw err
-        })
-        .then((response) => response.json())
-        .catch((err) => {
-          throw err
-        })
-        .then((photo) => {
-          let url = photo.urls.raw;
-          let location = photo.location.name ? `${photo.location.name}` : "Unknown";
-          let author = photo.user.name ? `${photo.user.name}` : "Unknown";
-          let photoLink = photo.links.html;
-          let downloadLink = `https://unsplash.com/photos/${photo.id}/download?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&force=true`;
-          let background = {
-            url,
-            location,
-            author,
-            photoLink,
-            downloadLink,
-          };
-          chrome.storage.sync.set({ background });
-        })
-        .catch((err) => {
-          console.error(err)
-          throw err
-        });
+        console.info("Getting Photo")
+        // This url hits an api endpoint to get a random photo and saves it to user's chrome storage
+        const url =
+          "https://api.unsplash.com/photos/random/?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&collections=8974511";
+        fetch(url, { mode: "cors", credentials: "omit" })
+          .then((response) => {
+            if (!response.ok) throw response.statusText;
+            return response;
+          })
+          .catch((error) => {
+            console.log({ error })
+          })
+          .then((response) => response.json())
+          .catch((error) => {
+            console.log({ error })
+          })
+          .then((photo) => {
+            let url = photo.urls.raw;
+            let location = photo.location.name ? `${photo.location.name}` : "Unknown";
+            let author = photo.user.name ? `${photo.user.name}` : "Unknown";
+            let photoLink = photo.links.html;
+            let downloadLink = `https://unsplash.com/photos/${photo.id}/download?client_id=fdf184d2efd7efc38157064835198f0ce7d9c4f7bfcec07df0d9e64378a8d630&force=true`;
+            let background = {
+              url,
+              location,
+              author,
+              photoLink,
+              downloadLink,
+            };
+
+            chrome.storage.sync.set({ [STORAGEKEYS.BACKGROUND]: background });
+          })
+          .catch((error) => {
+            console.error({ error })
+          });
+      });
+
+
     }
   }
 }
@@ -161,7 +168,7 @@ chrome.runtime.onInstalled.addListener((details) => {
       contexts: ["action"],
       id: "open-sesame",
     });
-    chrome.storage.sync.set({ userSettings });
+    chrome.storage.sync.set({ [STORAGEKEYS.USERSETTINGS]: userSettings });
     recurringAlarms.changeBackground.execute(); // get initial photo;
   } else if (details.reason == "update") {
     console.info('Updating extension')
@@ -176,7 +183,7 @@ chrome.contextMenus.onClicked.addListener(function (result) {
     chrome.storage.sync.get("userSettings", (result) => {
       let { userSettings } = result;
       userSettings.indexOpen = true;
-      chrome.storage.sync.set({ userSettings }, () => {
+      chrome.storage.sync.set({ [STORAGEKEYS.USERSETTINGS]: userSettings }, () => {
         chrome.tabs.create({}); // create a new tab
       });
     });

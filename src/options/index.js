@@ -1,13 +1,8 @@
-import { createApp } from "vue";
-import { actions } from "../utils";
-import Options from './Options.vue';
+import { render } from 'preact';
+import { actions } from '../utils/index.jsx';
+import OptionPage from './OptionsPage.jsx';
 
-const startOptions = async () => {
-    console.info('Start Options')
-    await actions.initUserSettings()
-    createApp(Options).mount('#app')
-};
-
-window.onload = () => {
-    startOptions();
+window.onload = async () => {
+    await actions.initializeUserSettings();
+    render(<OptionPage />, document.getElementById('app'));
 };

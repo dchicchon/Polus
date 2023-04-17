@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Polus",
-  "version": "1.8.3",
+  "name": "Test - Polus",
+  "version": "2.0",
   "description": "An new extension planner",
   "author": "dchicchon",
   "icons": {
@@ -24,7 +24,14 @@
   "incognito": "not_allowed",
   "offline_enabled": true,
   "options_page": "options.html",
-  "optional_permissions": ["notifications"],
-  "permissions": ["alarms", "contextMenus", "storage", "unlimitedStorage"],
+  "optional_permissions": [
+    "notifications"
+  ],
+  "permissions": [
+    "alarms",
+    "contextMenus",
+    "storage",
+    "unlimitedStorage"
+  ],
   "short_name": "Polus"
 }

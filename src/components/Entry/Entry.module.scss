@@ -1,0 +1,260 @@
+$brightness: 100%;
+
+// Modify semantic tags here
+textarea {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  resize: none;
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    width: 10px;
+    border: 4px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    background-color: #fff;
+    transition: background 0.5s;
+    box-shadow: inset -1px -1px 0px rgb(0 0 0 / 5%), inset 1px 1px 0px rgb(0 0 0 / 5%);
+    border-radius: 25px;
+  }
+  &::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}
+
+input[type='time'] {
+  display: block;
+  position: absolute;
+  padding-inline-start: 0px;
+  border: none;
+  background: none;
+  color: white;
+  width: 25px;
+  height: 25px;
+  transform: translateY(-28px);
+
+  // clock
+  &::-webkit-calendar-picker-indicator {
+    display: flex;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    background: none;
+    padding: 0px;
+    margin: 0px;
+  }
+
+  /* Wrapper around the hour, minute, second, and am/pm fields as well as 
+the up and down buttons and the 'X' button */
+  &::-webkit-datetime-edit-fields-wrapper {
+    // display: flex;
+    display: none;
+  }
+  /* The space between the fields - between hour and minute, the minute and 
+second, second and am/pm */
+  &::-webkit-datetime-edit-text {
+    display: none;
+    // padding: 19px 4px;
+  }
+
+  /* The naming convention for the hour, minute, second, and am/pm field is
+`-webkit-datetime-edit-{field}-field` */
+
+  /* Hour */
+  &::-webkit-datetime-edit-hour-field {
+    background: rgb(56 147 200 / 75%);
+    border-radius: 15%;
+    color: #fff;
+  }
+
+  /* Minute */
+  &::-webkit-datetime-edit-minute-field {
+    background: rgb(56 147 200 / 75%);
+    border-radius: 15%;
+    color: #fff;
+  }
+
+  /* AM/PM */
+  &::-webkit-datetime-edit-ampm-field {
+    background: rgb(56 147 200 / 75%);
+    border-radius: 15%;
+    display: none;
+    color: #fff;
+  }
+
+  /* 'X' button for resetting/clearing time */
+  &::-webkit-clear-button {
+    display: none;
+  }
+
+  /* Up/Down arrows for incrementing/decrementing the value */
+  &::-webkit-inner-spin-button {
+    display: none;
+  }
+}
+
+select {
+  color: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: '';
+  height: 25px;
+  position: absolute;
+  background: none;
+  border: none;
+  outline: none;
+  // width:100%;
+  width: 25px;
+  transform: translateX(-23px);
+}
+
+select option {
+  margin: 40px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.checked {
+  text-decoration: line-through;
+}
+
+.entry {
+  width: 90%;
+  text-align: center;
+  white-space: normal;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: none;
+  touch-action: none;
+  user-select: none;
+  transition: background 0.5s;
+  color: white;
+  margin: 0.25rem auto;
+  padding: 0.5rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  &:hover {
+    cursor: pointer;
+  }
+  .entry_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    .editEntry {
+      font-family: 'Segoe UI', Tahoma, sans-serif !important;
+      border: none;
+      padding: 0;
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      float: left;
+      background: none;
+      color: white;
+      text-overflow: ellipsis;
+      height: 60px;
+      &.show {
+        opacity: 1;
+      }
+      &.no_show {
+        margin: 0 auto;
+        opacity: 0;
+        height: 0;
+      }
+    }
+  }
+}
+
+.newEntry {
+  transition: none;
+  margin: 0.25rem auto;
+  float: left;
+
+  animation-name: 'grow';
+  animation-fill-mode: forwards;
+  animation-duration: 0.25s;
+
+  &:focus {
+    border: none;
+    outline: none;
+  }
+}
+
+.entryBtn {
+  background: none;
+  transition: background 0.5s;
+  padding: 0;
+  width: 25px;
+  height: 25px;
+  font-size: 0.9rem;
+  border-radius: 100%;
+  &:hover {
+    // background: #00000073;
+    background: #2a2a2a73;
+    filter: brightness($brightness);
+  }
+}
+
+.activeBtn {
+  color: rgb(0 0 0 / 0.69);
+}
+
+.button_container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+@keyframes grow {
+  from {
+    width: 10%;
+  }
+  to {
+    width: 90%;
+  }
+}
+
+.fade_in {
+  animation-name: 'fadeIn';
+  animation-fill-mode: forwards;
+  animation-duration: 0.25s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.75;
+  }
+}
+
+// COLORS
+.blue {
+  background: rgba(21, 115, 170, 0.75);
+}
+
+.green {
+  background: rgba(7, 128, 7, 0.75);
+}
+
+.gold {
+  background: rgba(185, 174, 8, 0.75);
+}
+
+.purple {
+  background: rgba(122, 39, 138, 0.75);
+}
+
+.orange {
+  background: rgba(251, 119, 5, 0.75);
+}
+
+.red {
+  background: rgba(220, 5, 5, 0.75);
+}
+
+.cyan {
+  background: rgba(0, 220, 255, 0.75);
+}

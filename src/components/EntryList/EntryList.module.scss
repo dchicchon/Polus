@@ -1,0 +1,61 @@
+.over {
+  background: rgba(37, 37, 37, 0.329) !important;
+}
+
+.details {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 15rem;
+
+  .dateTitle {
+    border-radius: 12px;
+    margin: 0.25rem 0;
+    width: 20px;
+    height: 20px;
+    min-width: 16px;
+    text-align: center;
+  }
+  .entryList {
+    margin: 0;
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  .addButton {
+    background: none;
+    width: 1.5rem;
+    font-size: 1.25rem;
+    border-radius: 100%;
+    opacity: 0;
+    transition: background 0.5s, opacity 0.5s;
+    padding: 0 0.4rem;
+  }
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    width: 10px;
+    border: 4px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    background-color: #888;
+    background-color: none;
+
+    transition: background 0.5s;
+    box-shadow: inset -1px -1px 0px rgb(0 0 0 / 5%), inset 1px 1px 0px rgb(0 0 0 / 5%);
+    border-radius: 25px;
+  }
+  &::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+  &:hover {
+    // mask-position: left top;
+    .addButton {
+      opacity: 1;
+    }
+  }
+}

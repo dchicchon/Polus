@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "Polus",
+  "version": "2.0",
+  "description": "An new extension planner",
+  "author": "dchicchon",
+  "icons": {
+    "16": "assets/polus_tab_icon.png",
+    "48": "assets/polus_icon48.png",
+    "128": "assets/polus_icon128.png"
+  },
+  "action": {
+    "default_title": "Polus",
+    "default_icon": "assets/polus_tab_icon.png",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "incognito": "not_allowed",
+  "offline_enabled": true,
+  "options_page": "options.html",
+  "optional_permissions": [
+    "notifications"
+  ],
+  "permissions": [
+    "alarms",
+    "contextMenus",
+    "storage",
+    "unlimitedStorage"
+  ],
+  "short_name": "Polus"
+}

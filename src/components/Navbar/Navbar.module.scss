@@ -1,0 +1,144 @@
+#nav {
+  list-style-type: none;
+  height: 3rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  li {
+    float: left;
+    display: block;
+    a {
+      text-decoration: none;
+    }
+  }
+}
+
+#app_info {
+  display: grid;
+  font-size: 1.5rem;
+  height: 45px;
+  &:hover {
+    #app_title {
+      display: none;
+    }
+    #app_items {
+      display: inline-block;
+    }
+  }
+  // Default Display
+  #app_title {
+    padding: 10px;
+    grid-column: 1;
+    grid-row: 1;
+    display: inline-block;
+    animation-name: fadeIn;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
+    .app_icon {
+      width: 35px;
+      height: 35px;
+    }
+    .app_sub {
+      display: inline-block;
+      font-weight: 200;
+      letter-spacing: 0.1rem;
+      text-shadow: 0 0 15px rgba(0, 0, 0, 1);
+      transform: translateY(-25%);
+    }
+  }
+
+  #app_items {
+    display: none;
+    background: rgba(15, 15, 15, 0.6);
+    border-bottom-right-radius: 8px;
+    grid-column: 1;
+    grid-row: 1;
+    animation-name: fadeIn;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
+
+    a {
+      transition: background 0.25s;
+      font-size: 15px;
+      padding: 10px;
+      cursor: pointer;
+      display: inline-block;
+      &:hover {
+        background-color: rgba($color: white, $alpha: 0.1);
+      }
+    }
+  }
+}
+
+#background_info {
+  display: grid;
+  text-align: center;
+  font-size: 1rem;
+  background-blend-mode: screen;
+  &:hover {
+    #background_location {
+      display: none;
+    }
+    #background_source {
+      display: inline-block;
+    }
+  }
+
+  #background_location {
+    grid-column: 1;
+    grid-row: 1;
+    padding: 0.75rem;
+    display: inline-block;
+    animation-name: fadeIn;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
+  }
+  #background_source {
+    display: none;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-bottom-left-radius: 8px;
+    background: rgba(15, 15, 15, 0.6);
+    grid-column: 1;
+    grid-row: 1;
+    // opacity: 0;
+    animation-name: fadeIn;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
+    a {
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    #download {
+      margin-left: 0.5rem;
+      color: white;
+      cursor: pointer;
+    }
+  }
+
+  #background_link {
+    position: relative;
+    text-decoration: none;
+    color: white;
+  }
+}
+
+.google_dropdown_btn {
+  cursor: none;
+  background: none;
+}
+.google_dropdown {
+  position: relative;
+  &:hover {
+    .google_dropdown_content {
+      display: block;
+    }
+  }
+}
+.google_dropdown_content {
+  display: none;
+  position: absolute;
+  background: rgba(15, 15, 15, 0.6);
+}

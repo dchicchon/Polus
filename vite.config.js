@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite'
+import preact from "@preact/preset-vite"
 import { createRequire } from 'module'
-import vue from '@vitejs/plugin-vue'
+import analyze from "rollup-plugin-analyzer";
 import { crx } from '@crxjs/vite-plugin'
 const require = createRequire(import.meta.url);
-const manifest = require('./manifest.json')
+const manifestProd = require('./manifest-prod.json')
+const manifestDev = require('./manifest-dev.json')
 
 const mode = process.env.APP_ENV;
 
@@ -15,11 +17,17 @@ const getConfig = () => {
       mode: 'development',
       build: {
         minify: false,
-        outDir: 'dist'
+        outDir: 'dist',
+        rollupOptions: {
+          plugins: [analyze(
+            { summaryOnly: true }
+          )]
+        }
       },
+
       plugins: [
-        vue(),
-        crx({ manifest })
+        preact(),
+        crx({ manifest: manifestDev }),
       ],
     })
   }
@@ -27,14 +35,19 @@ const getConfig = () => {
     return defineConfig({
       mode: 'production',
       build: {
-        outDir: 'prod'
+        outDir: 'prod',
+        rollupOptions: {
+          plugins: [analyze(
+            { summaryOnly: true }
+          )]
+        }
       },
       esbuild: {
         drop: ['console', 'debugger']
       },
       plugins: [
-        vue(),
-        crx({ manifest })
+        preact(),
+        crx({ manifest: manifestProd })
       ],
     })
 
