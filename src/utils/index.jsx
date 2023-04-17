@@ -304,8 +304,9 @@ export const actions = {
     }
     const page = document.getElementsByTagName('html');
     const image = foundBackgroundInfo.url;
-    page[0].style.background = `rgba(0,0,0,0.9) url(${image + `&w=${window.innerWidth}`
-      }) no-repeat fixed`;
+    page[0].style.background = `rgba(0,0,0,0.9) url(${
+      image + `&w=${window.innerWidth}`
+    }) no-repeat fixed`;
     backgroundInfo.value = foundBackgroundInfo;
   },
   createNotification: ({ name, time }) => {
@@ -322,17 +323,17 @@ export const actions = {
   showDefaultTab: () => {
     console.debug('actions.showDefaultTab');
     chromeAPI.tabs.update({
-      url: "chrome-search://local-ntp/local-ntp.html",
+      url: 'chrome-search://local-ntp/local-ntp.html',
     });
   },
   getOptionsPage: () => {
     chromeAPI.runtime.openOptionsPage();
   },
   resetSyncDatabase: async () => {
-    await stores.sync.clear()
+    await stores.sync.clear();
   },
   resetLocalDatabase: async () => {
-    await stores.local.clear()
+    await stores.local.clear();
   },
   /**
  Move all chrome.storage.sync entry dates that are older than 1 month 
@@ -340,20 +341,20 @@ export const actions = {
  chrome.storage.sync
 */
   moveToLocal: () => {
-    console.debug('moveToLocal')
+    console.debug('moveToLocal');
     // Move all entryDates from 1 week ago to localstorage
     chromeAPI.storage.sync.get(null, (result) => {
-      console.debug({ result })
+      console.debug({ result });
       delete result.userSettings;
       delete result.background;
       // go through our items
-      Object.keys(result).forEach(date => {
-        console.debug('Date to check')
-        console.debug({ date })
+      Object.keys(result).forEach((date) => {
+        console.debug('Date to check');
+        console.debug({ date });
         const today = new Date(); // today
         const entryDate = new Date(date.replaceAll('_', '/')); // normalize date
         if (actions.isDate(entryDate)) {
-          console.debug(`Created valid date from ${date}`)
+          console.debug(`Created valid date from ${date}`);
           const weekMS = 1000 * 60 * 60 * 24 * 7; // one week
           if (today.getTime() - entryDate.getTime() > weekMS) {
             console.debug(`Moving date:${date} from sync to local`);
@@ -364,34 +365,34 @@ export const actions = {
             });
           }
         } else {
-          console.debug(`Could not create a valid date from ${date}`)
+          console.debug(`Could not create a valid date from ${date}`);
         }
-      })
+      });
     });
   },
   removeNotificationAlarms: () => {
     console.debug('removeNotificationAlarms');
     chromeAPI.alarms.getAll((result) => {
-      console.debug({ result })
-      const mainList = result.filter(alarm => {
-        return alarm.name !== 'changeBackground' && alarm.name !== 'moveToLocal'
-      })
-      console.debug({ mainList })
-      mainList.forEach(alarm => {
-        chromeAPI.alarms.clear(alarm.name)
-      })
-    })
+      console.debug({ result });
+      const mainList = result.filter((alarm) => {
+        return alarm.name !== 'changeBackground' && alarm.name !== 'moveToLocal';
+      });
+      console.debug({ mainList });
+      mainList.forEach((alarm) => {
+        chromeAPI.alarms.clear(alarm.name);
+      });
+    });
   },
   isDate: (date) => {
     return date instanceof Date && !isNaN(date);
   },
   testFunc: () => {
-    console.debug('testFunc')
+    console.debug('testFunc');
     const today = new Date();
     const dateString = today.toLocaleDateString();
     const createDate = new Date(dateString); // this works since were in our own locale
-    console.debug({ today, dateString, createDate })
-  }
+    console.debug({ today, dateString, createDate });
+  },
 };
 
 // if we see that userSettings is empty, we should refresh it
