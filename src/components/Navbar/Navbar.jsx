@@ -11,7 +11,7 @@ function Navbar() {
         <div id={styles.app_info}>
           <div
             id={styles.app_title}
-            //   ref="title"
+          //   ref="title"
           >
             {/* To bring in the img, we must use "/assets" in order to create a relative path for the compiler to find */}
             <img
@@ -75,7 +75,10 @@ function Navbar() {
             >
               Unsplash
             </a>
-            <a id={styles.download} rel="nofollow" target="_blank" download>
+            <a id={styles.download} rel="nofollow" target="_blank"
+              href={backgroundInfo.value.downloadLink}
+              download={'Photo'}
+            >
               &#8681;
             </a>
           </span>
