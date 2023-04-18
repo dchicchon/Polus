@@ -292,7 +292,10 @@ chrome.cookies.set(
 
 [Link to Documentation](https://developer.chrome.com/extensions/cookies)
 
-#### Preact Signals
+### Firebase Messaging
+I'm using [Firebase Messaging]() to send messages back and forth from the mobile app to the chrome extension. [Here's a tutorial](https://www.plasmo.com/blog/posts/firebase-cloud-messaging-chrome-extension) on how I started using messaging
+
+### Preact Signals
 
 I'm using [Preact Signals](https://preactjs.com/guide/v10/signals) to manage a global state for userSettings and drag and drop
 
