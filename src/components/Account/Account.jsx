@@ -142,7 +142,6 @@ function SignupPage({ switchPage }) {
 }
 
 function UserPage() {
-  console.log({ hasMessagePermssion: hasMessaging.value });
   const logout = () => {
     const auth = getAuth();
     signOut(auth)
@@ -173,7 +172,7 @@ function UserPage() {
       <h3 className="page-title">User</h3>
       <Toggle
         name="messaging"
-        description="Enable message passing"
+        description="Enable messaging"
         currentValue={hasMessaging.value}
         toggleItem={() => {
           actions.toggleMessaging();
@@ -209,14 +208,19 @@ function AuthPage() {
 
 function Account() {
   const [foundUser, setFoundUser] = useState();
+
+  const checkMessaging = async () => {
+    hasMessaging.value = await actions.hasMessaging();
+  }
+
   useEffect(() => {
     console.log('useeffect account');
     const auth = getAuth();
+    checkMessaging();
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        hasMessaging.value = actions.hasMessaging();
         loggedIn.value = true;
-        console.log({ user });
+        // console.log({ user });
         setFoundUser(user);
       } else {
         console.log('user is not logged in');

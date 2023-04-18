@@ -59,10 +59,10 @@ function EntryList({ date, dateStamp }) {
       .then((result) => { })
       .catch((e) => console.error(e));
   };
-  const deleteEntry = (key) => {
+  const deleteEntry = (key, wasDragged) => {
     console.info('Delete Entry');
     const index = entries.findIndex((e) => e.key === key);
-    if (entries[index].hasOwnProperty('time')) {
+    if (entries[index].hasOwnProperty('time') && !wasDragged) {
       chrome.alarms.clear(key); // clearing alarm if it has time
     }
     setEntries((prevEntries) => {
@@ -79,7 +79,7 @@ function EntryList({ date, dateStamp }) {
     console.log('entry drag end');
     if (entryMoved.value) {
       entryMoved.value = false;
-      deleteEntry(key);
+      deleteEntry(key, true);
     }
   };
   const entryDragStart = (event, entry, originalDate) => {
@@ -88,13 +88,30 @@ function EntryList({ date, dateStamp }) {
     event.dataTransfer.setData('key', entry.key);
     event.dataTransfer.effectAllowed = 'move';
   };
-  const onDrop = (event) => {
+  const onDrop = async (event) => {
     setIsOver(false);
     const originalDate = event.dataTransfer.getData('date');
     if (originalDate === dateStamp) return;
     entryMoved.value = true;
     const entry = JSON.parse(event.dataTransfer.getData('application/json'));
     createEntry(entry);
+    const hasNotifications = await actions.hasNotifications();
+    if (entry.time && hasNotifications) {
+      const entryDate = new Date(dateStamp.replace(/_/g, '/'));
+      const hours = parseInt(entry.time[0] + entry.time[1]);
+      const minutes = parseInt(entry.time[3] + entry.time[4]);
+      entryDate.setSeconds(0);
+      entryDate.setHours(hours);
+      entryDate.setMinutes(minutes);
+      const ms = entryDate.getTime() - Date.now();
+      if (ms > 0) {
+        actions.createNotification({
+          name: entry.key,
+          time: entryDate.getTime(),
+        });
+      }
+      // lets create the notification for the new date
+    }
   };
   const dragOver = (event) => {
     setIsOver(true);

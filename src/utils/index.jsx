@@ -304,21 +304,20 @@ export const actions = {
     }
     const page = document.getElementsByTagName('html');
     const image = foundBackgroundInfo.url;
-    page[0].style.background = `rgba(0,0,0,0.9) url(${
-      image + `&w=${window.innerWidth}`
-    }) no-repeat fixed`;
+    page[0].style.background = `rgba(0,0,0,0.9) url(${image + `&w=${window.innerWidth}`
+      }) no-repeat fixed`;
     backgroundInfo.value = foundBackgroundInfo;
   },
-  createNotification: ({ name, time }) => {
+  createNotification: async ({ name, time }) => {
     console.debug('actions.createAlarm');
-    chromeAPI.permissions.contains({ permissions: ['notifications'] }, (result) => {
-      if (result) {
-        console.debug('user has notifications permission. Creating alarm');
-        chromeAPI.alarms.create(name, {
-          when: time,
-        });
-      }
-    });
+    const hasNotifications = await actions.hasNotifications();
+    if (hasNotifications) {
+      // we should check to see if we already have an alarm with this name? maybe
+      console.debug('user has notifications permission. Creating alarm');
+      chromeAPI.alarms.create(name, {
+        when: time,
+      });
+    }
   },
   showDefaultTab: () => {
     console.debug('actions.showDefaultTab');
@@ -393,21 +392,23 @@ export const actions = {
     const createDate = new Date(dateString); // this works since were in our own locale
     console.debug({ today, dateString, createDate });
   },
-  // check if messaging permission is available
-  hasMessaging: () => {
-    chromeAPI.permissions.contains({ permissions: ['gcm'] }, (result) => {
-      if (result) {
-        console.debug('user has messaging permission permission');
-        return true;
-      }
-      return false;
-    });
+  hasNotifications: async () => {
+    const result = await chromeAPI.permissions.contains({ permissions: ['notifications'] });
+    console.log({ result })
+    return result;
   },
-  toggleMessaging: () => {
+  // check if messaging permission is available
+  hasMessaging: async () => {
+    const result = await chromeAPI.permissions.contains({ permissions: ['gcm'] });
+    console.log({ result })
+    return result;
+  },
+  toggleMessaging: async () => {
     console.log('toggling messaging');
-    if (actions.hasMessaging()) {
+    const hasMessaging = await actions.hasMessaging();
+    if (hasMessaging) {
       console.log('removing permission');
-      chrome.permissions.remove(
+      chromeAPI.permissions.remove(
         {
           permissions: ['gcm'],
         },
@@ -419,7 +420,7 @@ export const actions = {
       );
     } else {
       console.log('enabling permission');
-      chrome.permissions.request(
+      chromeAPI.permissions.request(
         {
           permissions: ['gcm'],
         },

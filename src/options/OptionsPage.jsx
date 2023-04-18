@@ -1,12 +1,29 @@
 import { signal } from "@preact/signals"
+import { useEffect } from "preact/hooks"
 import Options from "../components/Options/Options"
 import Button from "../components/Button/Button"
 import { actions } from "../utils"
 import './styles.scss'
 
 const devMode = signal(import.meta.env.MODE === 'development')
+const permissions = signal([]);
+const alarms = signal([]);
 
 function DevInfo() {
+
+  const getAllPermissions = async () => {
+    const foundPermissions = await chrome.permissions.getAll()
+    permissions.value = foundPermissions.permissions;
+  }
+  const getAllAlarms = async () => {
+    const foundAlarms = await chrome.alarms.getAll();
+    console.log(foundAlarms)
+    alarms.value = foundAlarms;
+  }
+  useEffect(() => {
+    getAllAlarms();
+    getAllPermissions();
+  }, [])
 
   const createTestEntries = () => {
     const generateFormats = (date) => {
@@ -114,20 +131,16 @@ function DevInfo() {
       );
     });
   }
-
   const resetLocalEntries = () => {
     actions.resetLocalDatabase();
 
   }
-
   const resetSyncEntries = () => {
     actions.resetSyncDatabase();
   }
-
   const testFunc = () => {
     actions.testFunc();
   }
-
   const moveToLocal = () => {
     actions.moveToLocal();
   }
@@ -141,29 +154,21 @@ function DevInfo() {
       <div>
         <h3>Alarms</h3>
         <ul>
-          <li
-          // v-for="(alarm, index) in alarms" \
-          // key="`${index}`"
-          >
-            <p
-            // v-for="(alarm, key) in alarm"
-            //  key="`${key}`"
-            >
-              {/* {key}: {alarm} */}
-            </p>
-            {/* <!-- Name: {{ alarm.name }} Scheduled Time: {{ alarm.scheduledTime }} --> */}
-          </li>
+          {alarms.value.length > 0 && alarms.value.map(alarm => (
+            <li>
+              {alarm.name} -  {new Date(alarm.scheduledTime).toLocaleString()}
+            </li>
+          ))}
         </ul>
       </div>
       <div>
         <h3>Permissions</h3>
         <ul>
-          <li
-          // v-for="(permission, index) in permissions" 
-          // key="`${index}`"
-          >
-            {/* Permission: {permission} */}
-          </li>
+          {permissions.value.length > 0 && permissions.value.map((permission) => (
+            <li>
+              {permission}
+            </li>
+          ))}
         </ul>
       </div>
       <div>
