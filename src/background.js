@@ -181,8 +181,8 @@ const registerMessaging = async () => {
   chrome.gcm.register(['274422794820'], (registerOutput) => {
     console.info({ registerOutput })
     if (registerOutput) {
-      console.info('Register messaging succeeded. Adding Messaging event listeners')
-      chrome.gcm.onMessage.addListener(message => {
+      console.info('Register messaging succeeded. Adding messaging event listeners')
+      chrome.gcm.onMessage.addListener((message) => {
         console.info("Message:", message)
       })
     }
