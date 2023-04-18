@@ -393,6 +393,43 @@ export const actions = {
     const createDate = new Date(dateString); // this works since were in our own locale
     console.debug({ today, dateString, createDate });
   },
+  // check if messaging permission is available
+  hasMessaging: () => {
+    chromeAPI.permissions.contains({ permissions: ['gcm'] }, (result) => {
+      if (result) {
+        console.debug('user has messaging permission permission');
+        return true;
+      }
+      return false;
+    });
+  },
+  toggleMessaging: () => {
+    console.log('toggling messaging');
+    if (actions.hasMessaging()) {
+      console.log('removing permission');
+      chrome.permissions.remove(
+        {
+          permissions: ['gcm'],
+        },
+        (removed) => {
+          if (removed) {
+            if (!removed) return;
+          }
+        }
+      );
+    } else {
+      console.log('enabling permission');
+      chrome.permissions.request(
+        {
+          permissions: ['gcm'],
+        },
+        (granted) => {
+          if (!granted) return;
+          console.log('granted');
+        }
+      );
+    }
+  },
 };
 
 // if we see that userSettings is empty, we should refresh it

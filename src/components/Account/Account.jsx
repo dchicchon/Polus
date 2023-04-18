@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import { signal } from '@preact/signals';
+import { actions } from '../../utils';
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -9,6 +10,7 @@ import {
   deleteUser as firebaseDeleteUser,
 } from 'firebase/auth';
 
+import Toggle from '../Toggle/Toggle';
 import Button from '../Button/Button';
 
 import styles from './styles.module.scss';
@@ -24,6 +26,7 @@ const showDelete = signal(false);
 const email = signal('');
 const password = signal('');
 const confirmPassword = signal('');
+const hasMessaging = signal(false);
 
 function LoginPage({ switchPage }) {
   const login = () => {
@@ -139,6 +142,7 @@ function SignupPage({ switchPage }) {
 }
 
 function UserPage() {
+  console.log({ hasMessagePermssion: hasMessaging.value });
   const logout = () => {
     const auth = getAuth();
     signOut(auth)
@@ -167,6 +171,15 @@ function UserPage() {
   return (
     <div>
       <h3 className="page-title">User</h3>
+      <Toggle
+        name="messaging"
+        description="Enable message passing"
+        currentValue={hasMessaging.value}
+        toggleItem={() => {
+          actions.toggleMessaging();
+          hasMessaging.value = !hasMessaging.value;
+        }}
+      />
       <Button onClick={logout} title="Log out" />
       <Button
         onClick={() => (showDelete.value = !showDelete.value)}
@@ -201,6 +214,7 @@ function Account() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        hasMessaging.value = actions.hasMessaging();
         loggedIn.value = true;
         console.log({ user });
         setFoundUser(user);
