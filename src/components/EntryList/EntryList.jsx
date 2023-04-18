@@ -10,6 +10,7 @@ function EntryList({ date, dateStamp }) {
   const initEntry = () => {
     console.info('initEntry');
     const key = generateId();
+    console.log({ key })
     let newEntry = {
       key,
       text: '',
