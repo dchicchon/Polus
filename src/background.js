@@ -1,3 +1,4 @@
+import { firebaseConfig } from "./utils/config";
 
 const STORAGEKEYS = {
   USERSETTINGS: "userSettings",
@@ -178,7 +179,7 @@ const clearNotifications = () => {
 
 const registerMessaging = async () => {
   console.info('Register messaging')
-  chrome.gcm.register(['274422794820'], (registerOutput) => {
+  chrome.gcm.register([firebaseConfig.messagingSenderId], (registerOutput) => {
     console.info({ registerOutput })
     if (registerOutput) {
       console.info('Register messaging succeeded. Adding messaging event listeners')
