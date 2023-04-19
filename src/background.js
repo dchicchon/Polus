@@ -182,13 +182,34 @@ const registerMessaging = async () => {
   chrome.gcm.register([firebaseConfig.messagingSenderId], (registerOutput) => {
     console.info({ registerOutput })
     if (registerOutput) {
+      // We should confirm that register output is the same for every app
+      // "APA91bGpXZgV2qr-OPZ0aOjGIh_dmKJ6OcYQKyX4miZToDfbr0w9EXDDOrbbeZ8ZRio6fYS-5O9a1gChDYl6_gwL0XEgaXYjgRBaoIXH86ooXalr93WGiQK32zXOhYW38fiTLWlFzAeSW857eiQmof30TEC3A1UQjA"
+      // "APA91bGpXZgV2qr-OPZ0aOjGIh_dmKJ6OcYQKyX4miZToDfbr0w9EXDDOrbbeZ8ZRio6fYS-5O9a1gChDYl6_gwL0XEgaXYjgRBaoIXH86ooXalr93WGiQK32zXOhYW38fiTLWlFzAeSW857eiQmof30TEC3A1UQjA"
+      // console.log('initialize firebase')
+      // initializeApp(firebaseConfig);
+      // const auth = getAuth();
+      // const user = auth.currentUser;
+      // console.log({ user })
+
+      // we should map the register output to the user's account id
+      // should we be doing this somewhere? Maybe in the popup?
       console.info('Register messaging succeeded. Adding messaging event listeners')
       chrome.gcm.onMessage.addListener((message) => {
+        // the message we receive will hopefully be an entry
+        // that we can then turn into a notification and a new entry
+        // for our sync storage if it is a valid sync entry
         console.info("Message:", message)
       })
     }
   })
 
+}
+
+const unregisterMessaging = async () => {
+  console.info('Unregister messaging');
+  chrome.gcm.unregister(() => {
+    console.info('Unregister messaging: success')
+  })
 }
 
 const setupAlarmListeners = () => {
@@ -257,18 +278,19 @@ const setupMessagingListeners = async () => {
   let registered = false;
   console.info('Setting up messaging listeners')
   const hasMessaging = await chrome.permissions.contains({ permissions: ['gcm'] })
-  if (hasMessaging && !registered) {
+  if (hasMessaging) {
     registered = true;
     registerMessaging();
   }
 
   // Lets do an onchange thing here
   chrome.permissions.onAdded.addListener((changedPermissions) => {
-    if (changedPermissions.permissions.includes('gcm') && !registered) {
+    if (!changedPermissions.permissions.includes('gcm') && registered) {
+      registered = false;
+      unregisterMessaging();
+    } else if (changedPermissions.permissions.includes('gcm') && !registered) {
       registered = true;
       registerMessaging();
-    } else {
-      registered = false;
     }
   })
 }
@@ -280,6 +302,5 @@ const startBackgroundPage = () => {
   setupAlarmListeners();
   setupMessagingListeners();
 }
-
 
 startBackgroundPage();

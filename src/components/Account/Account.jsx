@@ -9,6 +9,14 @@ import {
   onAuthStateChanged,
   deleteUser as firebaseDeleteUser,
 } from 'firebase/auth';
+import {
+  getFirestore,
+  getDoc,
+  updateDoc,
+  setDoc,
+  doc,
+  collection,
+} from 'firebase/firestore/lite';
 
 import Toggle from '../Toggle/Toggle';
 import Button from '../Button/Button';
@@ -27,6 +35,7 @@ const email = signal('');
 const password = signal('');
 const confirmPassword = signal('');
 const hasMessaging = signal(false);
+const registeredMessaging = signal(false);
 
 function LoginPage({ switchPage }) {
   const login = () => {
@@ -90,17 +99,26 @@ function SignupPage({ switchPage }) {
     }
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email.value, password.value)
-      .then((userCredential) => {
-        console.log('User Credential');
-        console.log(userCredential);
+      .then(async (userCredential) => {
+        // this means that the signup was successful
+        // lets create a document for this user based on the id
+        console.log({ userCredential });
+        const { uid } = userCredential.user;
+        // lets create the user
+        const firestore = getFirestore();
+        const docRef = doc(firestore, 'users', uid);
+        const userData = {
+          extensionRegisterIds: [],
+          mobileRegisterIds: [],
+        };
+        const addedDoc = await setDoc(docRef, userData);
+        console.log({ addedDoc });
         email.value = '';
         password.value = '';
-        confirmPassword.value = '';
       })
       .catch((error) => {
         console.log('Error in Sign Up');
         console.log({ error });
-        // this.error = error.message;
       });
   };
   return (
@@ -209,23 +227,28 @@ function AuthPage() {
 function Account() {
   const [foundUser, setFoundUser] = useState();
 
+  const registerMessaging = async () => {};
+
   const checkMessaging = async () => {
     hasMessaging.value = await actions.hasMessaging();
-  }
+  };
 
   useEffect(() => {
     console.log('useeffect account');
     const auth = getAuth();
-    checkMessaging();
     onAuthStateChanged(auth, (user) => {
       if (user) {
         loggedIn.value = true;
-        // console.log({ user });
+        if (hasMessaging.value && loggedIn.value) {
+          // if were logged in and we have gcm, we should register here?
+        }
         setFoundUser(user);
       } else {
         console.log('user is not logged in');
+        loggedIn.value = false;
       }
     });
+    checkMessaging();
   }, []);
   return <div>{loggedIn.value ? <UserPage user={foundUser} /> : <AuthPage />}</div>;
 }

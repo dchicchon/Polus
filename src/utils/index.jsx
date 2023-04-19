@@ -1,5 +1,4 @@
 import { signal, effect } from '@preact/signals';
-
 export const userSettings = signal({});
 export const backgroundInfo = signal({});
 export const entryMoved = signal(false);
@@ -150,10 +149,8 @@ const stores = {
     },
   },
 };
-// were going to use preact signals to update our date like we did with
-// vue reactive
-// lets see how it goes
 
+// Maybe we should split up our actions? This one object might be too big
 export const actions = {
   create: async ({ date, entry }) => {
     console.debug('actions.create');
@@ -304,8 +301,9 @@ export const actions = {
     }
     const page = document.getElementsByTagName('html');
     const image = foundBackgroundInfo.url;
-    page[0].style.background = `rgba(0,0,0,0.9) url(${image + `&w=${window.innerWidth}`
-      }) no-repeat fixed`;
+    page[0].style.background = `rgba(0,0,0,0.9) url(${
+      image + `&w=${window.innerWidth}`
+    }) no-repeat fixed`;
     backgroundInfo.value = foundBackgroundInfo;
   },
   createNotification: async ({ name, time }) => {
@@ -393,14 +391,16 @@ export const actions = {
     console.debug({ today, dateString, createDate });
   },
   hasNotifications: async () => {
-    const result = await chromeAPI.permissions.contains({ permissions: ['notifications'] });
-    console.log({ result })
+    const result = await chromeAPI.permissions.contains({
+      permissions: ['notifications'],
+    });
+    console.log({ result });
     return result;
   },
   // check if messaging permission is available
   hasMessaging: async () => {
     const result = await chromeAPI.permissions.contains({ permissions: ['gcm'] });
-    console.log({ result })
+    console.log({ result });
     return result;
   },
   toggleMessaging: async () => {
@@ -431,6 +431,7 @@ export const actions = {
       );
     }
   },
+ 
 };
 
 // if we see that userSettings is empty, we should refresh it
