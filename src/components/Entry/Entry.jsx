@@ -8,7 +8,7 @@ const entryModes = {
   ACTIVE: 'ACTIVE',
   EDIT: 'EDIT',
   COLOR: 'COLOR',
-  SELECTEDCOLOR: "SELECTEDCOLOR",
+  SELECTEDCOLOR: 'SELECTEDCOLOR',
   TIME: 'TIME',
 };
 const colorOptions = ['blue', 'green', 'gold', 'purple', 'orange', 'red'];
@@ -36,12 +36,7 @@ function Entry({
 
   const toggleCompleted = (event) => {
     console.log('toggle completed');
-    const updatedEntry = {
-      ...entry,
-      active: !entry.active,
-    };
-    console.log({ updatedEntry });
-    updateEntry(entry.key, updatedEntry);
+    updateEntry(entry.key, { active: !entry.active });
     event.stopPropagation();
   };
 
@@ -50,11 +45,7 @@ function Entry({
     console.log({ selectedColor });
     if (selectedColor === entry.color) return;
     setNewColor(selectedColor);
-    const updatedEntry = {
-      ...entry,
-      color: selectedColor,
-    };
-    updateEntry(entry.key, updatedEntry);
+    updateEntry(entry.key, { color: selectedColor });
   };
 
   const submitEdit = () => {
@@ -63,13 +54,13 @@ function Entry({
       ...entry,
       text: newText,
     };
-    updateEntry(entry.key, updatedEntry);
+    updateEntry(entry.key, { text: newText });
   };
 
   // You must actually submit time in order to create a notification
   const submitTime = () => {
     timeRef.current.style.display = 'none';
-    setTimeout(() => (timeRef.current.style.display = "block"), 1);
+    setTimeout(() => (timeRef.current.style.display = 'block'), 1);
     if (entry.time === time) return;
     const entryDate = new Date(dateStamp.replace(/_/g, '/'));
     const hours = parseInt(time[0] + time[1]);
@@ -84,12 +75,7 @@ function Entry({
         time: entryDate.getTime(),
       });
     }
-    const updatedEntry = {
-      ...entry,
-      time,
-    };
-    updateEntry(entry.key, updatedEntry);
-    // do what we did before, remove input then bring it back
+    updateEntry(entry.key, { time });
   };
 
   useEffect(() => {
@@ -98,7 +84,7 @@ function Entry({
     }
   }, []);
   useEffect(() => {
-    console.log({ mode })
+    console.log({ mode });
     if (mode === entryModes.NEW) {
       newRef.current.focus();
     }
@@ -122,8 +108,8 @@ function Entry({
             ...entry,
             text,
           };
-          createEntry(newEntry);
           setNewText(e.target.value);
+          createEntry(newEntry);
           setMode(entryModes.INACTIVE);
         }}
         className={`${styles.newEntry} ${styles.entry} ${styles[entry.color]}`}
@@ -134,7 +120,7 @@ function Entry({
             e.target.blur();
           }
         }}
-      //   :class="[entry.color, { checked: entry.active }]"
+        //   :class="[entry.color, { checked: entry.active }]"
       ></textarea>
     );
   }
@@ -142,21 +128,22 @@ function Entry({
   if (mode === entryModes.INACTIVE) {
     return (
       <li
-        className={`${styles.entry} ${styles[entry.color]}  ${entry.active ? styles.checked : ''
-          }`}
+        className={`${styles.entry} ${styles[entry.color]}  ${
+          entry.active ? styles.checked : ''
+        }`}
         onClick={() => setMode(entryModes.ACTIVE)}
         draggable={true}
         onDragStart={(e) => {
           const draggedEntry = {
             ...entry,
-            text: newText
-          }
+            text: newText,
+          };
           entryDragStart(e, draggedEntry, dateStamp);
         }}
         onDragEnd={(e) => {
           entryDragEnd(e, entry.key);
         }}
-      //   :class="[entry.color, { checked: entry.active }]"
+        //   :class="[entry.color, { checked: entry.active }]"
       >
         {newText}
       </li>
@@ -171,8 +158,8 @@ function Entry({
       onDragStart={(e) => {
         const draggedEntry = {
           ...entry,
-          text: newText
-        }
+          text: newText,
+        };
         entryDragStart(e, draggedEntry, dateStamp);
       }}
       onDragEnd={(e) => {
@@ -180,7 +167,7 @@ function Entry({
       }}
       onClick={(e) => {
         if (mode === entryModes.ACTIVE) {
-          changeMode(e, entryModes.INACTIVE)
+          changeMode(e, entryModes.INACTIVE);
         }
       }}
     >
@@ -188,8 +175,9 @@ function Entry({
         {mode === entryModes.EDIT ? (
           <textarea
             ref={editRef}
-            className={`${styles.editEntry} ${entryModes.EDIT ? styles.show : styles.no_show
-              }`}
+            className={`${styles.editEntry} ${
+              entryModes.EDIT ? styles.show : styles.no_show
+            }`}
             onChange={(e) => {
               console.log('value changed');
               const text = e.target.value;
@@ -207,14 +195,12 @@ function Entry({
           <button
             onClick={(e) => {
               console.log('button was clicked');
-              console.log({ clickColorMode: mode })
+              console.log({ clickColorMode: mode });
               if (mode !== entryModes.SELECTEDCOLOR) {
-                changeMode(e, entryModes.COLOR)
-              }
-              else {
+                changeMode(e, entryModes.COLOR);
+              } else {
                 changeMode(e, entryModes.ACTIVE);
               }
-
             }}
             disabled={mode === entryModes.COLOR}
             className={styles.entryBtn}
@@ -249,7 +235,7 @@ function Entry({
             <input
               className={styles.entryBtn}
               onBlur={(event) => {
-                changeMode(event, entryModes.ACTIVE)
+                changeMode(event, entryModes.ACTIVE);
               }}
               onClick={(e) => {
                 if (mode !== entryModes.TIME) {

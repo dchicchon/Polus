@@ -8,25 +8,26 @@ function EntryList({ date, dateStamp }) {
   const [entries, setEntries] = useState([]);
   const [isOver, setIsOver] = useState(false);
   const initEntry = () => {
-    console.info('initEntry');
+    console.debug('initEntry');
     const key = generateId();
-    console.log({ key })
-    let newEntry = {
+    const newEntry = {
       key,
       text: '',
       color: 'blue',
       active: false,
       new: true,
     };
-
     setEntries((prevEntries) => [...prevEntries, newEntry]);
   };
   const createEntry = (entry) => {
+    console.debug('createEntry');
     const index = entries.findIndex((e) => e.key === entry.key);
     setEntries((prevEntries) => {
       const updatedEntries = prevEntries.slice();
       if (index >= 0) {
         delete updatedEntries[index].new;
+        updatedEntries[index].text = entry.text;
+        // we have to update the entry here
       } else {
         updatedEntries.push(entry);
       }
@@ -34,7 +35,7 @@ function EntryList({ date, dateStamp }) {
     });
     actions
       .create({ date: dateStamp, entry, key: entry.key })
-      .then((result) => { })
+      .then((result) => {})
       .catch((e) => console.error(e));
   };
   const readEntries = () => {
@@ -46,22 +47,26 @@ function EntryList({ date, dateStamp }) {
       })
       .catch((e) => console.error(e));
   };
-  const updateEntry = (key, updatedEntry) => {
-    console.info('updateEntry');
+  const updateEntry = (key, updates) => {
+    console.debug('updateEntry');
     // we should update the entries?
     const index = entries.findIndex((e) => e.key === key);
     setEntries((prevEntries) => {
       const updatedEntries = prevEntries.slice();
-      updatedEntries[index] = updatedEntry;
+      updatedEntries[index] = {
+        ...updatedEntries[index],
+        ...updates,
+      };
+      const updatedEntry = updatedEntries[index];
+      actions
+        .update({ date: dateStamp, entry: updatedEntry, key })
+        .then((result) => {})
+        .catch((e) => console.error(e));
       return updatedEntries;
     });
-    actions
-      .update({ date: dateStamp, entry: updatedEntry, key })
-      .then((result) => { })
-      .catch((e) => console.error(e));
   };
   const deleteEntry = (key, wasDragged) => {
-    console.info('Delete Entry');
+    console.debug('deleteEntry');
     const index = entries.findIndex((e) => e.key === key);
     if (entries[index].hasOwnProperty('time') && !wasDragged) {
       chrome.alarms.clear(key); // clearing alarm if it has time
@@ -73,23 +78,25 @@ function EntryList({ date, dateStamp }) {
     });
     actions
       .delete({ date: dateStamp, key })
-      .then((result) => { })
+      .then((result) => {})
       .catch((e) => console.error(e));
   };
   const entryDragEnd = (event, key) => {
-    console.log('entry drag end');
+    console.debug('entryDragEnd');
     if (entryMoved.value) {
       entryMoved.value = false;
       deleteEntry(key, true);
     }
   };
   const entryDragStart = (event, entry, originalDate) => {
+    console.debug('entryDragStart');
     event.dataTransfer.setData('application/json', JSON.stringify(entry));
     event.dataTransfer.setData('date', originalDate);
     event.dataTransfer.setData('key', entry.key);
     event.dataTransfer.effectAllowed = 'move';
   };
   const onDrop = async (event) => {
+    console.debug('onDrop');
     setIsOver(false);
     const originalDate = event.dataTransfer.getData('date');
     if (originalDate === dateStamp) return;
@@ -115,11 +122,13 @@ function EntryList({ date, dateStamp }) {
     }
   };
   const dragOver = (event) => {
+    console.debug('dragOver');
     setIsOver(true);
     event.preventDefault();
     event.stopPropagation();
   };
   const dragLeave = (event) => {
+    console.debug('dragLeave');
     setIsOver(false);
   };
   useEffect(() => {
@@ -142,16 +151,16 @@ function EntryList({ date, dateStamp }) {
       <ul className={styles.entryList}>
         {entries.length > 0
           ? entries.map((entry) => (
-            <Entry
-              entryDragEnd={entryDragEnd}
-              entryDragStart={entryDragStart}
-              createEntry={createEntry}
-              updateEntry={updateEntry}
-              deleteEntry={deleteEntry}
-              dateStamp={dateStamp}
-              entry={entry}
-            />
-          ))
+              <Entry
+                entryDragEnd={entryDragEnd}
+                entryDragStart={entryDragStart}
+                createEntry={createEntry}
+                updateEntry={updateEntry}
+                deleteEntry={deleteEntry}
+                dateStamp={dateStamp}
+                entry={entry}
+              />
+            ))
           : ''}
       </ul>
       <ul className={styles.entryList}></ul>
