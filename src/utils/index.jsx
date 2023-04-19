@@ -60,7 +60,7 @@ const stores = {
           if (Object.keys(result).length > 0) {
             resolve(result[key]); // this should return everything
           }
-          resolve([]);
+          resolve(null);
         });
       });
     },
@@ -108,7 +108,7 @@ const stores = {
           if (Object.keys(result).length > 0) {
             resolve(result[key]); // this should return everything
           }
-          resolve([]);
+          resolve(null);
         });
       });
     },
@@ -166,9 +166,10 @@ export const actions = {
        * TODO: TECH DEBT
        * TODO: What might be better to do here is to just bring the array here rather than reading again
        */
-      const entriesArr = await stores[type].get({ key: dateStamp });
-      entriesArr.push(entry);
-      stores[type].set({ key: dateStamp, value: entriesArr });
+      const foundEntries = await stores[type].get({ key: dateStamp });
+      const entries = foundEntries || [];
+      entries.push(entry);
+      stores[type].set({ key: dateStamp, value: entries });
     } catch (e) {
       console.error(e);
     }
@@ -183,15 +184,12 @@ export const actions = {
     const safeDate = date.replaceAll('_', '/');
     const type = storageType(safeDate);
     try {
-      const entries = await stores[type].get({ key: dateStamp });
-      /**
-       * TODO: TECH DEBT
-       * TODO: need this for old way of getting entires. could rethink this later on
-       * TODO: this introduces a double read which can affect costs over time
-       */
+      const foundEntries = await stores[type].get({ key: dateStamp });
+      const entries = foundEntries || [];
       const originalDate = new Date(safeDate);
       const originalDateStamp = originalDate.toLocaleDateString();
-      const oldEntries = await stores[type].get({ key: originalDateStamp });
+      const foundOldEntries = await stores[type].get({ key: originalDateStamp });
+      const oldEntries = foundOldEntries || [];
       const allEntries = [...entries, ...oldEntries];
       return allEntries;
     } catch (e) {
@@ -208,7 +206,8 @@ export const actions = {
     const safeDate = date.replaceAll('_', '/');
     const dateStamp = date;
     const type = storageType(safeDate);
-    const entries = await stores[type].get({ key: dateStamp });
+    const foundEntries = await stores[type].get({ key: dateStamp });
+    const entries = foundEntries || [];
     const index = entries.findIndex((e) => e.key === key);
     if (index !== -1) {
       entries[index] = entry;
@@ -219,7 +218,8 @@ export const actions = {
       entries.push(entry);
       const originalDate = new Date(safeDate);
       const originalDateStamp = originalDate.toLocaleDateString();
-      const oldEntriesArr = await stores[type].get({ key: originalDateStamp });
+      const foundOldEntries = await stores[type].get({ key: originalDateStamp });
+      const oldEntriesArr = foundOldEntries || [];
       const oldIndex = oldEntriesArr.findIndex((e) => e.key === key);
       console.debug({ oldEntriesArr });
       oldEntriesArr.splice(oldIndex, 1);
@@ -249,7 +249,8 @@ export const actions = {
     const dateStamp = date;
     let results;
     const type = storageType(safeDate);
-    const entriesArr = await stores[type].get({ key: dateStamp });
+    const foundEntries = await stores[type].get({ key: dateStamp });
+    const entriesArr = foundEntries || [];
     const index = entriesArr.findIndex((e) => e.key === key);
     if (index !== -1) {
       console.debug({ entriesArr });
@@ -264,7 +265,8 @@ export const actions = {
     } else {
       const originalDate = new Date(safeDate);
       const originalDateStamp = originalDate.toLocaleDateString();
-      const oldEntriesArr = await stores[type].get({ key: originalDateStamp });
+      const foundOldEntries = await stores[type].get({ key: originalDateStamp });
+      const oldEntriesArr = foundOldEntries || [];
       const oldIndex = oldEntriesArr.findIndex((e) => e.key === key);
       console.debug({ oldEntriesArr });
       oldEntriesArr.splice(oldIndex, 1);
@@ -404,7 +406,7 @@ export const actions = {
     return result;
   },
   toggleMessaging: async () => {
-    console.log('toggling messaging');
+    console.debug('toggling messaging');
     const hasMessaging = await actions.hasMessaging();
     if (hasMessaging) {
       console.log('removing permission');
@@ -431,7 +433,18 @@ export const actions = {
       );
     }
   },
- 
+  hasRegistration: async () => {
+    const result = await stores.local.get({ key: 'registerId' });
+    return result;
+  },
+  setRegistration: async (value) => {
+    const result = await stores.local.set({ key: 'registerId', value });
+    return result;
+  },
+  removeRegistration: async () => {
+    const result = await stores.local.remove({ key: 'registerId' });
+    return result;
+  },
 };
 
 // if we see that userSettings is empty, we should refresh it

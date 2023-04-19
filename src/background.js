@@ -1,8 +1,10 @@
 import { firebaseConfig } from "./utils/config";
+import { actions } from "./utils";
 
 const STORAGEKEYS = {
   USERSETTINGS: "userSettings",
-  BACKGROUND: "background"
+  BACKGROUND: "background",
+  REGISTERID: "registerId"
 }
 
 // Recurring alarms object
@@ -182,23 +184,15 @@ const registerMessaging = async () => {
   chrome.gcm.register([firebaseConfig.messagingSenderId], (registerOutput) => {
     console.info({ registerOutput })
     if (registerOutput) {
-      // We should confirm that register output is the same for every app
-      // "APA91bGpXZgV2qr-OPZ0aOjGIh_dmKJ6OcYQKyX4miZToDfbr0w9EXDDOrbbeZ8ZRio6fYS-5O9a1gChDYl6_gwL0XEgaXYjgRBaoIXH86ooXalr93WGiQK32zXOhYW38fiTLWlFzAeSW857eiQmof30TEC3A1UQjA"
-      // "APA91bGpXZgV2qr-OPZ0aOjGIh_dmKJ6OcYQKyX4miZToDfbr0w9EXDDOrbbeZ8ZRio6fYS-5O9a1gChDYl6_gwL0XEgaXYjgRBaoIXH86ooXalr93WGiQK32zXOhYW38fiTLWlFzAeSW857eiQmof30TEC3A1UQjA"
-      // console.log('initialize firebase')
-      // initializeApp(firebaseConfig);
-      // const auth = getAuth();
-      // const user = auth.currentUser;
-      // console.log({ user })
-
-      // we should map the register output to the user's account id
-      // should we be doing this somewhere? Maybe in the popup?
       console.info('Register messaging succeeded. Adding messaging event listeners')
       chrome.gcm.onMessage.addListener((message) => {
-        // the message we receive will hopefully be an entry
-        // that we can then turn into a notification and a new entry
-        // for our sync storage if it is a valid sync entry
-        console.info("Message:", message)
+        console.info('Message listener fired');
+        if (message) {
+          console.log({ message })
+          const { dateStamp, ...entry } = message.data;
+          entry.active = entry.active === 'true';
+          actions.create({ date: dateStamp, entry })
+        }
       })
     }
   })
@@ -209,6 +203,7 @@ const unregisterMessaging = async () => {
   console.info('Unregister messaging');
   chrome.gcm.unregister(() => {
     console.info('Unregister messaging: success')
+    actions.removeRegistration();
   })
 }
 
@@ -275,21 +270,20 @@ const setupContextMenuListeners = () => {
 }
 
 const setupMessagingListeners = async () => {
-  let registered = false;
+  // let registered = false;
   console.info('Setting up messaging listeners')
   const hasMessaging = await chrome.permissions.contains({ permissions: ['gcm'] })
-  if (hasMessaging) {
-    registered = true;
+  const isRegistered = await actions.hasRegistration();
+  if (hasMessaging && isRegistered) {
+    // registered = true;
     registerMessaging();
   }
 
   // Lets do an onchange thing here
   chrome.permissions.onAdded.addListener((changedPermissions) => {
-    if (!changedPermissions.permissions.includes('gcm') && registered) {
-      registered = false;
+    if (!changedPermissions.permissions.includes('gcm') && isRegistered) {
       unregisterMessaging();
-    } else if (changedPermissions.permissions.includes('gcm') && !registered) {
-      registered = true;
+    } else if (changedPermissions.permissions.includes('gcm') && !isRegistered) {
       registerMessaging();
     }
   })
