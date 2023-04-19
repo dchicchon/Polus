@@ -189,11 +189,21 @@ const registerMessaging = async () => {
       chrome.gcm.onMessage.addListener((message) => {
         console.info('Message listener fired');
         if (message) {
-          // could be a create, update, or delete?
           console.log({ message })
-          const { dateStamp, ...entry } = message.data;
+          const { dateStamp, messageType, ...entry } = message.data;
           entry.active = entry.active === 'true';
-          actions.create({ date: dateStamp, entry })
+
+          // CRUD MESSENGER
+          if (messageType === 'create') {
+            actions.create({ date: dateStamp, entry })
+          } else if (messageType === 'update') {
+            actions.update({ date: dateStamp, entry, key: entry.key })
+          } else if (messageType === 'delete') {
+            actions.delete({ date: dateStamp, key: entry.key })
+          } else {
+            console.warn('Message Type not specified for message');
+            console.warn({ message: message.data })
+          }
         }
       })
     }
