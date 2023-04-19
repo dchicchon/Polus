@@ -1,5 +1,7 @@
 import { signal, effect } from '@preact/signals';
 
+// eventually we will have to bring firebase here
+
 export const userSettings = signal({});
 export const backgroundInfo = signal({});
 export const entryMoved = signal(false);
@@ -61,7 +63,7 @@ const stores = {
           if (Object.keys(result).length > 0) {
             resolve(result[key]); // this should return everything
           }
-          resolve([]);
+          resolve(null);
         });
       });
     },
@@ -109,7 +111,7 @@ const stores = {
           if (Object.keys(result).length > 0) {
             resolve(result[key]); // this should return everything
           }
-          resolve([]);
+          resolve(null);
         });
       });
     },
@@ -150,10 +152,13 @@ const stores = {
     },
   },
 };
-// were going to use preact signals to update our date like we did with
-// vue reactive
-// lets see how it goes
 
+// Have a hook here to send a message to 
+// registeredMobileIds if: 
+// there is a user logged in
+// there is a registeredMobileId? (maybe)
+
+// Maybe we should split up our actions? This one object might be too big
 export const actions = {
   create: async ({ date, entry }) => {
     console.debug('actions.create');
@@ -169,9 +174,10 @@ export const actions = {
        * TODO: TECH DEBT
        * TODO: What might be better to do here is to just bring the array here rather than reading again
        */
-      const entriesArr = await stores[type].get({ key: dateStamp });
-      entriesArr.push(entry);
-      stores[type].set({ key: dateStamp, value: entriesArr });
+      const foundEntries = await stores[type].get({ key: dateStamp });
+      const entries = foundEntries || [];
+      entries.push(entry);
+      stores[type].set({ key: dateStamp, value: entries });
     } catch (e) {
       console.error(e);
     }
@@ -186,15 +192,12 @@ export const actions = {
     const safeDate = date.replaceAll('_', '/');
     const type = storageType(safeDate);
     try {
-      const entries = await stores[type].get({ key: dateStamp });
-      /**
-       * TODO: TECH DEBT
-       * TODO: need this for old way of getting entires. could rethink this later on
-       * TODO: this introduces a double read which can affect costs over time
-       */
+      const foundEntries = await stores[type].get({ key: dateStamp });
+      const entries = foundEntries || [];
       const originalDate = new Date(safeDate);
       const originalDateStamp = originalDate.toLocaleDateString();
-      const oldEntries = await stores[type].get({ key: originalDateStamp });
+      const foundOldEntries = await stores[type].get({ key: originalDateStamp });
+      const oldEntries = foundOldEntries || [];
       const allEntries = [...entries, ...oldEntries];
       return allEntries;
     } catch (e) {
@@ -211,7 +214,8 @@ export const actions = {
     const safeDate = date.replaceAll('_', '/');
     const dateStamp = date;
     const type = storageType(safeDate);
-    const entries = await stores[type].get({ key: dateStamp });
+    const foundEntries = await stores[type].get({ key: dateStamp });
+    const entries = foundEntries || [];
     const index = entries.findIndex((e) => e.key === key);
     if (index !== -1) {
       entries[index] = entry;
@@ -222,7 +226,8 @@ export const actions = {
       entries.push(entry);
       const originalDate = new Date(safeDate);
       const originalDateStamp = originalDate.toLocaleDateString();
-      const oldEntriesArr = await stores[type].get({ key: originalDateStamp });
+      const foundOldEntries = await stores[type].get({ key: originalDateStamp });
+      const oldEntriesArr = foundOldEntries || [];
       const oldIndex = oldEntriesArr.findIndex((e) => e.key === key);
       console.debug({ oldEntriesArr });
       oldEntriesArr.splice(oldIndex, 1);
@@ -252,7 +257,8 @@ export const actions = {
     const dateStamp = date;
     let results;
     const type = storageType(safeDate);
-    const entriesArr = await stores[type].get({ key: dateStamp });
+    const foundEntries = await stores[type].get({ key: dateStamp });
+    const entriesArr = foundEntries || [];
     const index = entriesArr.findIndex((e) => e.key === key);
     if (index !== -1) {
       console.debug({ entriesArr });
@@ -267,7 +273,8 @@ export const actions = {
     } else {
       const originalDate = new Date(safeDate);
       const originalDateStamp = originalDate.toLocaleDateString();
-      const oldEntriesArr = await stores[type].get({ key: originalDateStamp });
+      const foundOldEntries = await stores[type].get({ key: originalDateStamp });
+      const oldEntriesArr = foundOldEntries || [];
       const oldIndex = oldEntriesArr.findIndex((e) => e.key === key);
       console.debug({ oldEntriesArr });
       oldEntriesArr.splice(oldIndex, 1);
@@ -309,16 +316,16 @@ export const actions = {
     }) no-repeat fixed`;
     backgroundInfo.value = foundBackgroundInfo;
   },
-  createNotification: ({ name, time }) => {
+  createNotification: async ({ name, time }) => {
     console.debug('actions.createAlarm');
-    chromeAPI.permissions.contains({ permissions: ['notifications'] }, (result) => {
-      if (result) {
-        console.debug('user has notifications permission. Creating alarm');
-        chromeAPI.alarms.create(name, {
-          when: time,
-        });
-      }
-    });
+    const hasNotifications = await actions.hasNotifications();
+    if (hasNotifications) {
+      // we should check to see if we already have an alarm with this name? maybe
+      console.debug('user has notifications permission. Creating alarm');
+      chromeAPI.alarms.create(name, {
+        when: time,
+      });
+    }
   },
   showDefaultTab: () => {
     console.debug('actions.showDefaultTab');
@@ -392,6 +399,59 @@ export const actions = {
     const dateString = today.toLocaleDateString();
     const createDate = new Date(dateString); // this works since were in our own locale
     console.debug({ today, dateString, createDate });
+  },
+  hasNotifications: async () => {
+    const result = await chromeAPI.permissions.contains({
+      permissions: ['notifications'],
+    });
+    console.log({ result });
+    return result;
+  },
+  // check if messaging permission is available
+  hasMessaging: async () => {
+    const result = await chromeAPI.permissions.contains({ permissions: ['gcm'] });
+    console.log({ result });
+    return result;
+  },
+  toggleMessaging: async () => {
+    console.debug('toggling messaging');
+    const hasMessaging = await actions.hasMessaging();
+    if (hasMessaging) {
+      console.log('removing permission');
+      chromeAPI.permissions.remove(
+        {
+          permissions: ['gcm'],
+        },
+        (removed) => {
+          if (removed) {
+            if (!removed) return;
+          }
+        }
+      );
+    } else {
+      console.log('enabling permission');
+      chromeAPI.permissions.request(
+        {
+          permissions: ['gcm'],
+        },
+        (granted) => {
+          if (!granted) return;
+          console.log('granted');
+        }
+      );
+    }
+  },
+  hasRegistration: async () => {
+    const result = await stores.local.get({ key: 'registerId' });
+    return result;
+  },
+  setRegistration: async (value) => {
+    const result = await stores.local.set({ key: 'registerId', value });
+    return result;
+  },
+  removeRegistration: async () => {
+    const result = await stores.local.remove({ key: 'registerId' });
+    return result;
   },
 };
 

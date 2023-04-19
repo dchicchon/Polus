@@ -1,8 +1,10 @@
-console.info('Starting Background Page')
+import { firebaseConfig } from "./utils/config";
+import { actions } from "./utils";
 
 const STORAGEKEYS = {
   USERSETTINGS: "userSettings",
-  BACKGROUND: "background"
+  BACKGROUND: "background",
+  REGISTERID: "registerId"
 }
 
 // Recurring alarms object
@@ -133,63 +135,6 @@ const isDate = (date) => {
   return date instanceof Date && !isNaN(date);
 }
 
-// Alarm Listeners
-console.info('Setting onAlarm listeners')
-chrome.alarms.onAlarm.addListener((alarm) => {
-  console.info(`Alarm fired: ${alarm.name}`)
-  if (Object.keys(recurringAlarms).includes(alarm.name)) {
-    recurringAlarms[alarm.name].execute();
-  } else {
-    handleNotification(alarm.name);
-  }
-});
-
-
-// Runtime OnInstalled Listeners
-console.info('Setting onInstalled listeners')
-chrome.runtime.onInstalled.addListener((details) => {
-  // check current alarms
-  alarmCheck();
-  if (details.reason == "install") {
-    console.info('Installing Application')
-    chrome.runtime.setUninstallURL(
-      "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit"
-    );
-    const userSettings = {
-      changePhoto: true,
-      indexOpen: false,
-      newTab: true,
-      notifications: false,
-      pmode: false,
-      view: "week",
-    };
-    chrome.contextMenus.create({
-      title: "Open",
-      contexts: ["action"],
-      id: "open-sesame",
-    });
-    chrome.storage.sync.set({ [STORAGEKEYS.USERSETTINGS]: userSettings });
-    recurringAlarms.changeBackground.execute(); // get initial photo;
-  } else if (details.reason == "update") {
-    console.info('Updating extension')
-  }
-});
-
-// Context Menu Click Listeners
-console.info('Setting context menu listeners')
-chrome.contextMenus.onClicked.addListener(function (result) {
-  console.info('contextMenu onClicked')
-  if (result["menuItemId"] === "open-sesame") {
-    chrome.storage.sync.get("userSettings", (result) => {
-      let { userSettings } = result;
-      userSettings.indexOpen = true;
-      chrome.storage.sync.set({ [STORAGEKEYS.USERSETTINGS]: userSettings }, () => {
-        chrome.tabs.create({}); // create a new tab
-      });
-    });
-  }
-});
-
 /**
  * @name handleNotification
  * @description handles an entry alarm to create a notification
@@ -205,7 +150,7 @@ const handleNotification = (id) => {
     console.info({ result })
     let entries = result[dateStamp];
     let entry = entries.find((entry) => entry.key === id);
-    let notificationObj = {
+    const notificationObj = {
       message: entry.text,
       type: "basic",
       title: "Polus",
@@ -233,3 +178,136 @@ const clearNotifications = () => {
     }
   });
 };
+
+const registerMessaging = async () => {
+  console.info('Register messaging')
+  chrome.gcm.register([firebaseConfig.messagingSenderId], (registerOutput) => {
+    console.info({ registerOutput })
+    if (registerOutput) {
+      actions.setRegistration(registerOutput)
+      console.info('Register messaging succeeded. Adding messaging event listeners')
+      chrome.gcm.onMessage.addListener((message) => {
+        console.info('Message listener fired');
+        if (message) {
+          console.log({ message })
+          const { dateStamp, messageType, ...entry } = message.data;
+          entry.active = entry.active === 'true';
+
+          // CRUD MESSENGER
+          if (messageType === 'create') {
+            actions.create({ date: dateStamp, entry })
+          } else if (messageType === 'update') {
+            actions.update({ date: dateStamp, entry, key: entry.key })
+          } else if (messageType === 'delete') {
+            actions.delete({ date: dateStamp, key: entry.key })
+          } else {
+            console.warn('Message Type not specified for message');
+            console.warn({ message: message.data })
+          }
+        }
+      })
+    }
+  })
+
+}
+
+const unregisterMessaging = async () => {
+  console.info('Unregister messaging');
+  chrome.gcm.unregister(() => {
+    console.info('Unregister messaging: success')
+    actions.removeRegistration();
+  })
+}
+
+const setupAlarmListeners = () => {
+  // Alarm Listeners
+  console.info('Setting onAlarm listeners')
+  chrome.alarms.onAlarm.addListener((alarm) => {
+    console.info(`Alarm fired: ${alarm.name}`)
+    if (Object.keys(recurringAlarms).includes(alarm.name)) {
+      recurringAlarms[alarm.name].execute();
+    } else {
+      handleNotification(alarm.name);
+    }
+  });
+}
+
+const setupOnInstalledListeners = () => {
+  // Runtime OnInstalled Listeners
+  console.info('Setting onInstalled listeners')
+  chrome.runtime.onInstalled.addListener((details) => {
+    // check current alarms
+    alarmCheck();
+    if (details.reason == "install") {
+      console.info('Installing Application')
+      chrome.runtime.setUninstallURL(
+        "https://docs.google.com/forms/d/1-ILvnBaztoC9R5TFyjDA_fWWbwo9WRB-s42Mqu4w9nA/edit"
+      );
+      const userSettings = {
+        changePhoto: true,
+        indexOpen: false,
+        newTab: true,
+        notifications: false,
+        pmode: false,
+        view: "week",
+      };
+      chrome.contextMenus.create({
+        title: "Open",
+        contexts: ["action"],
+        id: "open-sesame",
+      });
+      chrome.storage.sync.set({ [STORAGEKEYS.USERSETTINGS]: userSettings });
+      recurringAlarms.changeBackground.execute(); // get initial photo;
+    } else if (details.reason == "update") {
+      console.info('Updating extension')
+    }
+  });
+}
+
+const setupContextMenuListeners = () => {
+  // Context Menu Click Listeners
+  console.info('Setting context menu listeners')
+  chrome.contextMenus.onClicked.addListener(function (result) {
+    console.info('contextMenu onClicked')
+    if (result["menuItemId"] === "open-sesame") {
+      chrome.storage.sync.get("userSettings", (result) => {
+        let { userSettings } = result;
+        userSettings.indexOpen = true;
+        chrome.storage.sync.set({ [STORAGEKEYS.USERSETTINGS]: userSettings }, () => {
+          chrome.tabs.create({}); // create a new tab
+        });
+      });
+    }
+  });
+}
+
+const setupMessagingListeners = async () => {
+  console.info('Setting up messaging listeners')
+  const hasMessaging = await chrome.permissions.contains({ permissions: ['gcm'] })
+  if (hasMessaging && await actions.hasRegistration()) {
+    registerMessaging();
+  }
+
+  chrome.permissions.onAdded.addListener(async (changedPermissions) => {
+    console.log('permissions changed')
+    const isRegistered = await actions.hasRegistration();
+    if (!changedPermissions.permissions.includes('gcm') && isRegistered) {
+      unregisterMessaging();
+    } else if (changedPermissions.permissions.includes('gcm') && !isRegistered) {
+      registerMessaging();
+    }
+  })
+  chrome.storage.onChanged.addListener(async (changes, areaName) => {
+    console.log({ changes, areaName })
+  })
+}
+
+const startBackgroundPage = () => {
+  console.info('Starting Background Page')
+  setupOnInstalledListeners();
+  setupContextMenuListeners();
+  setupAlarmListeners();
+  setupMessagingListeners();
+}
+
+startBackgroundPage();

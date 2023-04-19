@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect } from 'preact/hooks';
 import { signal } from '@preact/signals';
+import { actions } from '../../utils';
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -8,7 +9,17 @@ import {
   onAuthStateChanged,
   deleteUser as firebaseDeleteUser,
 } from 'firebase/auth';
+import {
+  getFirestore,
+  updateDoc,
+  setDoc,
+  doc,
+  arrayUnion,
+  deleteDoc,
+} from 'firebase/firestore/lite';
+import { firebaseConfig } from '../../utils/config';
 
+import Toggle from '../Toggle/Toggle';
 import Button from '../Button/Button';
 
 import styles from './styles.module.scss';
@@ -24,6 +35,8 @@ const showDelete = signal(false);
 const email = signal('');
 const password = signal('');
 const confirmPassword = signal('');
+const hasMessaging = signal(false);
+// const registeredMessaging = signal(false);
 
 function LoginPage({ switchPage }) {
   const login = () => {
@@ -87,9 +100,17 @@ function SignupPage({ switchPage }) {
     }
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email.value, password.value)
-      .then((userCredential) => {
-        console.log('User Credential');
-        console.log(userCredential);
+      .then(async (userCredential) => {
+        const { uid } = userCredential.user;
+        // lets create the user
+        const firestore = getFirestore();
+        const docRef = doc(firestore, 'users', uid);
+        const userData = {
+          extensionRegisterIds: [],
+          mobileRegisterIds: [],
+        };
+        const addedDoc = await setDoc(docRef, userData);
+        console.log({ addedDoc });
         email.value = '';
         password.value = '';
         confirmPassword.value = '';
@@ -97,7 +118,6 @@ function SignupPage({ switchPage }) {
       .catch((error) => {
         console.log('Error in Sign Up');
         console.log({ error });
-        // this.error = error.message;
       });
   };
   return (
@@ -156,7 +176,9 @@ function UserPage() {
     const { currentUser } = auth;
     firebaseDeleteUser(currentUser)
       .then(() => {
-        console.log('user was deleted');
+        const firestore = getFirestore();
+        const docRef = doc(firestore, 'users', currentUser.uid);
+        deleteDoc(docRef);
       })
       .catch((error) => {
         console.log('error occurred while deleting user');
@@ -167,6 +189,15 @@ function UserPage() {
   return (
     <div>
       <h3 className="page-title">User</h3>
+      <Toggle
+        name="messaging"
+        description="Enable messaging"
+        currentValue={hasMessaging.value}
+        toggleItem={() => {
+          actions.toggleMessaging();
+          hasMessaging.value = !hasMessaging.value;
+        }}
+      />
       <Button onClick={logout} title="Log out" />
       <Button
         onClick={() => (showDelete.value = !showDelete.value)}
@@ -195,21 +226,38 @@ function AuthPage() {
 }
 
 function Account() {
-  const [foundUser, setFoundUser] = useState();
+  const checkMessaging = async () => {
+    hasMessaging.value = await actions.hasMessaging();
+  };
+
   useEffect(() => {
     console.log('useeffect account');
     const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
+        console.log('user is logged in');
         loggedIn.value = true;
-        console.log({ user });
-        setFoundUser(user);
+        const hasRegister = await actions.hasRegistration();
+        if (hasMessaging.value && loggedIn.value && !hasRegister) {
+          console.info('no register available. creating register for user');
+          const firestore = getFirestore();
+          const docRef = doc(firestore, 'users', user.uid);
+          chrome.gcm.register([firebaseConfig.messagingSenderId], (registerOutput) => {
+            const updateResult = updateDoc(docRef, {
+              extensionRegisterIds: arrayUnion(registerOutput),
+            });
+            console.log({ updateResult });
+            actions.setRegistration(registerOutput);
+          });
+        }
       } else {
         console.log('user is not logged in');
+        loggedIn.value = false;
       }
     });
+    checkMessaging();
   }, []);
-  return <div>{loggedIn.value ? <UserPage user={foundUser} /> : <AuthPage />}</div>;
+  return <div>{loggedIn.value ? <UserPage /> : <AuthPage />}</div>;
 }
 
 export default Account;

@@ -292,7 +292,10 @@ chrome.cookies.set(
 
 [Link to Documentation](https://developer.chrome.com/extensions/cookies)
 
-#### Preact Signals
+### Firebase Messaging
+I'm using [Firebase Messaging]() to send messages back and forth from the mobile app to the chrome extension. [Here's a tutorial](https://www.plasmo.com/blog/posts/firebase-cloud-messaging-chrome-extension) on how I started using messaging
+
+### Preact Signals
 
 I'm using [Preact Signals](https://preactjs.com/guide/v10/signals) to manage a global state for userSettings and drag and drop
 
@@ -301,3 +304,5 @@ I'm using [Preact Signals](https://preactjs.com/guide/v10/signals) to manage a g
 [This code sandbox](https://codesandbox.io/s/64829x0m93?file=/src/index.js) is a reference for how I was able to drag entries in and between lists.
 
 <hr>
+
+curl -X POST --header "Authorization: key=AAAAP-TfikQ:APA91bGLCKk3lHzuTGWvrQ3a4i-szKMA6KbDAopVs27tMovJ7UZq1t3U7UgiBl7Z-OjzyxxeXljhOC0cB1EbPtYi7pTapool9JWBDeIa3fhHFf5FYtMdpLfWJm3AOkDEK86BvvpEqD4S” --Header "Content-Type: application/json" https://fcm.googleapis.com/fcm/send -d "{\"to\”:\ "APA91bG-Y9qaHobjdhPA0OZeEVd563NHtDd4gT25LBNJvnTpiKLB0r2KkpT_Vy9BuY1X94dfKLgTsC07xR76gV3LjqlailGZ0gHGZ9RdaDaU4k7APONLbd-X0o9LhCo-3gH9wxA0Z-TVlk4cKedLjVX7uWkIk-bdhg"\”,\”notification\":{\"title\":\"Hello\",\"body\":\"Yellow\"}}"
