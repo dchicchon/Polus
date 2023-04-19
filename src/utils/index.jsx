@@ -1,4 +1,7 @@
 import { signal, effect } from '@preact/signals';
+
+// eventually we will have to bring firebase here
+
 export const userSettings = signal({});
 export const backgroundInfo = signal({});
 export const entryMoved = signal(false);
@@ -149,6 +152,11 @@ const stores = {
     },
   },
 };
+
+// Have a hook here to send a message to 
+// registeredMobileIds if: 
+// there is a user logged in
+// there is a registeredMobileId? (maybe)
 
 // Maybe we should split up our actions? This one object might be too big
 export const actions = {

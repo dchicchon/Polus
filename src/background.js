@@ -184,10 +184,12 @@ const registerMessaging = async () => {
   chrome.gcm.register([firebaseConfig.messagingSenderId], (registerOutput) => {
     console.info({ registerOutput })
     if (registerOutput) {
+      actions.setRegistration(registerOutput)
       console.info('Register messaging succeeded. Adding messaging event listeners')
       chrome.gcm.onMessage.addListener((message) => {
         console.info('Message listener fired');
         if (message) {
+          // could be a create, update, or delete?
           console.log({ message })
           const { dateStamp, ...entry } = message.data;
           entry.active = entry.active === 'true';
@@ -270,22 +272,23 @@ const setupContextMenuListeners = () => {
 }
 
 const setupMessagingListeners = async () => {
-  // let registered = false;
   console.info('Setting up messaging listeners')
   const hasMessaging = await chrome.permissions.contains({ permissions: ['gcm'] })
-  const isRegistered = await actions.hasRegistration();
-  if (hasMessaging && isRegistered) {
-    // registered = true;
+  if (hasMessaging && await actions.hasRegistration()) {
     registerMessaging();
   }
 
-  // Lets do an onchange thing here
-  chrome.permissions.onAdded.addListener((changedPermissions) => {
+  chrome.permissions.onAdded.addListener(async (changedPermissions) => {
+    console.log('permissions changed')
+    const isRegistered = await actions.hasRegistration();
     if (!changedPermissions.permissions.includes('gcm') && isRegistered) {
       unregisterMessaging();
     } else if (changedPermissions.permissions.includes('gcm') && !isRegistered) {
       registerMessaging();
     }
+  })
+  chrome.storage.onChanged.addListener(async (changes, areaName) => {
+    console.log({ changes, areaName })
   })
 }
 

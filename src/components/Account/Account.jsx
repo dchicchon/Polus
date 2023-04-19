@@ -237,20 +237,18 @@ function Account() {
       if (user) {
         console.log('user is logged in');
         loggedIn.value = true;
-        if (hasMessaging.value && loggedIn.value) {
-          const hasRegister = await actions.hasRegistration();
-          if (!hasRegister) {
-            console.info('no register available. creating register for user');
-            const firestore = getFirestore();
-            const docRef = doc(firestore, 'users', user.uid);
-            chrome.gcm.register([firebaseConfig.messagingSenderId], (registerOutput) => {
-              const updateResult = updateDoc(docRef, {
-                extensionRegisterIds: arrayUnion(registerOutput),
-              });
-              console.log({ updateResult });
-              actions.setRegistration(registerOutput);
+        const hasRegister = await actions.hasRegistration();
+        if (hasMessaging.value && loggedIn.value && !hasRegister) {
+          console.info('no register available. creating register for user');
+          const firestore = getFirestore();
+          const docRef = doc(firestore, 'users', user.uid);
+          chrome.gcm.register([firebaseConfig.messagingSenderId], (registerOutput) => {
+            const updateResult = updateDoc(docRef, {
+              extensionRegisterIds: arrayUnion(registerOutput),
             });
-          }
+            console.log({ updateResult });
+            actions.setRegistration(registerOutput);
+          });
         }
       } else {
         console.log('user is not logged in');
